@@ -5,40 +5,48 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+
+[assembly: CLSCompliant(true)]
+
 namespace VisioCleanup
 {
-    using System;
-    using System.IO;
-    using System.Reflection;
     using System.Threading.Tasks;
 
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
     using Serilog;
-    using Serilog.Core;
 
+    /// <summary>
+    ///     Main program.
+    /// </summary>
     internal class Program
     {
+        /// <summary>
+        ///     Main entry point.
+        /// </summary>
+        /// <param name="args">command line arguments.</param>
+        /// <returns>A <see cref="Task" /> representing the result of the asynchronous operation.</returns>
         public static Task Main(string[] args)
         {
             return CreateHostBuilder(args).RunConsoleAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-               .ConfigureLogging((hostingContext, logging) =>
-            {
-                logging.ClearProviders();
+        private static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args).ConfigureLogging(
+                (hostingContext, logging) =>
+                    {
+                        logging.ClearProviders();
 
-                var loggerConfiguration = new LoggerConfiguration();
-                loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
+                        var loggerConfiguration = new LoggerConfiguration();
+                        loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
 
-                Logger logger = loggerConfiguration.CreateLogger();
+                        var logger = loggerConfiguration.CreateLogger();
 
-                logging.AddSerilog(logger, true);
-            }).ConfigureServices((hostingContext, services) => { });
+                        logging.AddSerilog(logger, true);
+                    }).ConfigureServices((hostingContext, services) => { });
+        }
     }
 }
