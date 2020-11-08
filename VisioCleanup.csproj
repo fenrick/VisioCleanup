@@ -25,6 +25,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <COMReference Include="Microsoft.Office.Visio.dll">
+      <Guid>00021a98-0000-0000-c000-000000000046</Guid>
+      <VersionMajor>4</VersionMajor>
+      <VersionMinor>16</VersionMinor>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="appsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
