@@ -13,10 +13,13 @@ namespace VisioCleanup
 {
     using System.Threading.Tasks;
 
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
     using Serilog;
+
+    using VisioCleanup.Services;
 
     /// <summary>
     ///     Main program.
@@ -46,7 +49,14 @@ namespace VisioCleanup
                         var logger = loggerConfiguration.CreateLogger();
 
                         logging.AddSerilog(logger, true);
-                    }).ConfigureServices((hostingContext, services) => { });
+                    }).ConfigureServices(
+                (hostingContext, services) =>
+                    {
+                        services
+                            .Configure<VisioCleanupSettings>(
+                                hostingContext.Configuration.GetSection("VisioCleanupSettings"))
+                            .AddSingleton<IVisioHandler, VisioHandlerService>().AddHostedService<VisioCleanupService>();
+                    });
         }
     }
 }
