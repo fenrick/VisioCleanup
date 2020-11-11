@@ -7,8 +7,6 @@
 
 namespace VisioCleanup.Services
 {
-    using System.Runtime.InteropServices;
-
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Microsoft.Office.Interop.Visio;
@@ -64,9 +62,9 @@ namespace VisioCleanup.Services
 
             var sel = this.visioApplication.ActiveWindow.Selection;
 
-            this.logger.LogDebug("Document: ${app.ActiveDocument.Name}");
-            this.logger.LogDebug("Page: ${app.ActiveDocument.Pages[1].Name}");
-            this.logger.LogDebug("Selection count: ${sel.Count}");
+            this.logger.LogDebug($"Document: {this.visioApplication.ActiveDocument.Name}");
+            this.logger.LogDebug($"Page: {this.visioApplication.ActiveDocument.Pages[1].Name}");
+            this.logger.LogDebug($"Selection count: {sel.Count}");
         }
     }
 }
