@@ -28,9 +28,9 @@ namespace VisioCleanup.Services
         /// <summary>
         ///     Initialises a new instance of the <see cref="VisioCleanupService" /> class.
         /// </summary>
-        /// <param name="settings">External settings</param>
-        /// <param name="logger">Logging</param>
-        /// <param name="visioHandler">Visio Handler</param>
+        /// <param name="settings">External settings.</param>
+        /// <param name="logger">Logging.</param>
+        /// <param name="visioHandler">Visio Handler.</param>
         public VisioCleanupService(
             IOptions<VisioCleanupSettings> settings,
             ILogger<VisioCleanupService> logger,

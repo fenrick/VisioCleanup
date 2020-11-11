@@ -26,9 +26,7 @@ namespace VisioCleanup
     /// </summary>
     internal class Program
     {
-        /// <summary>
-        ///     Main entry point.
-        /// </summary>
+        /// <summary>Main entry point.</summary>
         /// <param name="args">command line arguments.</param>
         /// <returns>A <see cref="Task" /> representing the result of the asynchronous operation.</returns>
         public static Task Main(string[] args)
@@ -36,6 +34,9 @@ namespace VisioCleanup
             return CreateHostBuilder(args).RunConsoleAsync();
         }
 
+        /// <summary>The create host builder.</summary>
+        /// <param name="args">The args.</param>
+        /// <returns>The <see cref="IHostBuilder" />.</returns>
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args).ConfigureLogging(
