@@ -52,7 +52,6 @@ namespace VisioCleanup.Services
         /// <inheritdoc />
         public void Close()
         {
-            this.visioApplication = null;
         }
 
         /// <inheritdoc />
