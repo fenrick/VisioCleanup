@@ -52,12 +52,12 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             this.logger.LogDebug("Starting Visio Cleanup Service");
 
-            await Task.Run(
-                async () =>
+            return Task.Run(
+                () =>
                     {
                         this.logger.LogDebug("Opening connection to visio.");
                         this.visioHandler.Open();
