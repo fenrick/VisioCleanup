@@ -27,7 +27,7 @@ namespace VisioCleanup.Services
         /// </summary>
         /// <param name="shapeId">Shape ID for the shape.</param>
         /// <returns>Corners of a shape.</returns>
-        Task<Corners> CalculateCornersAsync(int shapeId);
+        Corners CalculateCorners(int shapeId);
 
         /// <summary>
         ///     Close visio session and shutdown.
@@ -39,12 +39,12 @@ namespace VisioCleanup.Services
         /// </summary>
         /// <param name="shapeId">Shape ID of the parent shape.</param>
         /// <returns>array of shape ids for children.</returns>
-        Task<int[]> GetChildrenAsync(int shapeId);
+        int[] GetChildren(int shapeId);
 
         /// <summary>
         ///     Open visio session.
         /// </summary>
-        Task OpenAsync();
+        void Open();
 
         /// <summary>
         ///     Find shapes in visio diagram and change their location and size to match diagramShapes.
@@ -56,7 +56,7 @@ namespace VisioCleanup.Services
         ///     Returns primary item of the current selection.
         /// </summary>
         /// <returns>shape id of primary item.</returns>
-        Task<int> SelectionPrimaryItemAsync();
+        int SelectionPrimaryItem();
     }
 
     /// <inheritdoc />
@@ -82,11 +82,11 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
-        public async Task<Corners> CalculateCornersAsync(int shapeId)
+        public Corners CalculateCorners(int shapeId)
         {
             var corners = default(Corners);
 
-            var shape = await this.GetShapeAsync(shapeId).ConfigureAwait(false);
+            var shape = this.GetShape(shapeId);
 
             if (shape is not null)
             {
@@ -110,11 +110,11 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
-        public async Task<int[]> GetChildrenAsync(int shapeId)
+        public int[] GetChildren(int shapeId)
         {
             var shapeIDs = new List<int>();
 
-            var parentShape = await this.GetShapeAsync(shapeId).ConfigureAwait(false);
+            var parentShape = this.GetShape(shapeId);
 
             var selection = parentShape.SpatialNeighbors[
                 (short)VisSpatialRelationCodes.visSpatialContain,
@@ -135,7 +135,7 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
-        public async Task OpenAsync()
+        public void Open()
         {
             this.logger.LogDebug("Opening connection to visio.");
             this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application
@@ -150,7 +150,7 @@ namespace VisioCleanup.Services
                 await this.ReDrawShapesAsync(childDiagramShape).ConfigureAwait(false);
             }
 
-            var shape = await this.GetShapeAsync(diagramShape.VisioId).ConfigureAwait(false);
+            var shape = this.GetShape(diagramShape.VisioId);
             this.logger.LogDebug($"Redrawing shape: {shape.Name}");
 
             /*
@@ -171,13 +171,13 @@ namespace VisioCleanup.Services
                 diagramShape.Corners.BottomSide + shape.Cells[this.settings.VisioLocPinYField]
                     .Result[this.settings.VisioUnits];
 
-            var newCorners = await this.CalculateCornersAsync(diagramShape.VisioId).ConfigureAwait(false);
+            var newCorners = this.CalculateCorners(diagramShape.VisioId);
 
             diagramShape.Corners = newCorners;
         }
 
         /// <inheritdoc />
-        public async Task<int> SelectionPrimaryItemAsync()
+        public int SelectionPrimaryItem()
         {
             Shape? primaryItem = null;
             primaryItem = this.visioApplication.ActiveWindow.Selection.PrimaryItem;
@@ -185,7 +185,7 @@ namespace VisioCleanup.Services
             return primaryItem?.ID ?? 0;
         }
 
-        private async Task<Shape> GetShapeAsync(int shapeId)
+        private Shape GetShape(int shapeId)
         {
             var activePage = this.visioApplication.ActivePage;
             var shape = activePage.Shapes.ItemFromID[shapeId];

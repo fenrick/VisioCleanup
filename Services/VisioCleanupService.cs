@@ -65,17 +65,17 @@ namespace VisioCleanup.Services
                             this.logger.LogDebug("Starting Visio Cleanup Service");
 
                             // open
-                            await this.visioHandler.OpenAsync().ConfigureAwait(false);
+                            this.visioHandler.Open();
 
-                            var shapeId = await this.visioHandler.SelectionPrimaryItemAsync().ConfigureAwait(false);
+                            var shapeId = this.visioHandler.SelectionPrimaryItem();
 
-                            var children = await this.visioHandler.GetChildrenAsync(shapeId).ConfigureAwait(false);
+                            var children = this.visioHandler.GetChildren(shapeId);
 
                             // assemble processing structure
                             this.logger.LogDebug("Processing parent shape.");
                             var parentShape = new DiagramShape(
                                 shapeId,
-                                await this.visioHandler.CalculateCornersAsync(shapeId).ConfigureAwait(false));
+                                this.visioHandler.CalculateCorners(shapeId));
 
                             this.logger.LogDebug("Final all children.");
                             foreach (var childId in children)
@@ -83,7 +83,7 @@ namespace VisioCleanup.Services
                                 parentShape.AddChildShape(
                                     new DiagramShape(
                                         childId,
-                                        await this.visioHandler.CalculateCornersAsync(childId).ConfigureAwait(false)));
+                                        this.visioHandler.CalculateCorners(childId)));
                             }
 
                             this.logger.LogDebug($"Children found: {parentShape.Children.Count}");
