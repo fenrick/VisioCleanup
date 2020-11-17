@@ -33,30 +33,43 @@ namespace VisioCleanup.Services
             // CLSIDFromProgIDEx doesn't exist.
             try
             {
-                CLSIDFromProgIDEx(progId, out classId);
+                CLSIDFromProgIDEx(
+                    progId,
+                    out classId);
             }
             catch (Exception)
             {
-                CLSIDFromProgID(progId, out classId);
+                CLSIDFromProgID(
+                    progId,
+                    out classId);
             }
 
-            GetActiveObject(ref classId, IntPtr.Zero, out var obj);
+            GetActiveObject(
+                ref classId,
+                IntPtr.Zero,
+                out var obj);
             return obj;
         }
 
-        [DllImport("ole32.dll", PreserveSig = false)]
+        [DllImport(
+            "ole32.dll",
+            PreserveSig = false)]
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
         [SecurityCritical] // auto-generated
         private static extern void CLSIDFromProgID([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
 
-        [DllImport("ole32.dll", PreserveSig = false)]
+        [DllImport(
+            "ole32.dll",
+            PreserveSig = false)]
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
         [SecurityCritical] // auto-generated
         private static extern void CLSIDFromProgIDEx([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
 
-        [DllImport("oleaut32.dll", PreserveSig = false)]
+        [DllImport(
+            "oleaut32.dll",
+            PreserveSig = false)]
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
         [SecurityCritical] // auto-generated
