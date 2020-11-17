@@ -106,7 +106,7 @@ namespace VisioCleanup.Services
                         }
                         catch (Exception e)
                         {
-                            this.logger.LogError(e,"Error processing");
+                            this.logger.LogError(e, "Error processing");
                         }
                     },
                 stoppingToken);
