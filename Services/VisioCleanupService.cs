@@ -21,7 +21,7 @@ namespace VisioCleanup.Services
     {
         private readonly ILogger<VisioCleanupService> logger;
 
-        private readonly IOptions<VisioCleanupSettings> settings;
+        private readonly VisioCleanupSettings settings;
 
         private readonly IVisioHandler visioHandler;
 
@@ -36,7 +36,7 @@ namespace VisioCleanup.Services
             ILogger<VisioCleanupService> logger,
             IVisioHandler visioHandler)
         {
-            this.settings = settings;
+            this.settings = settings.Value;
             this.logger = logger;
             this.visioHandler = visioHandler;
         }
