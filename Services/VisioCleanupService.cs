@@ -61,10 +61,10 @@ namespace VisioCleanup.Services
                     {
                         this.logger.LogDebug("Opening connection to visio.");
                         this.visioHandler.Open();
-                    },
-                stoppingToken).ConfigureAwait(false);
 
             this.logger.LogDebug("Completed processing Visio Cleanup.");
+                    },
+                stoppingToken);
         }
     }
 }
