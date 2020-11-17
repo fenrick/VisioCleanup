@@ -42,18 +42,13 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
-        public override async Task StopAsync(CancellationToken stoppingToken)
+        public override Task StopAsync(CancellationToken stoppingToken)
         {
             // clean-up tasks!
-            await Task.Run(
-                () =>
-                    {
-                        this.logger.LogDebug(@"Cleaning up visio handler");
-                        this.visioHandler?.Close();
-                    },
-                stoppingToken).ConfigureAwait(false);
+            this.logger.LogDebug(@"Cleaning up visio handler");
+            this.visioHandler?.Close();
 
-            await base.StopAsync(stoppingToken).ConfigureAwait(false);
+            return base.StopAsync(stoppingToken);
         }
 
         /// <inheritdoc />
