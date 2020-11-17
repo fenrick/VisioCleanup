@@ -5,8 +5,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-// ReSharper disable IdentifierTypo
-
 namespace VisioCleanup.Services
 {
     using System;
