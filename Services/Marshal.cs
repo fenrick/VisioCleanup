@@ -15,7 +15,7 @@ namespace VisioCleanup.Services
     /// <summary>
     ///     Implementation of .Net Framework 4.6 System.Runtime.InteropServices.Marshal.GetActiveObject().
     /// </summary>
-    internal class Marshal
+    internal static class Marshal
     {
         /// <summary>
         ///     Copy of System.Runtime.InteropServices.Marshal.GetActiveObject().
