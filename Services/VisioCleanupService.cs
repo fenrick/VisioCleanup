@@ -57,7 +57,7 @@ namespace VisioCleanup.Services
             this.logger.LogDebug("Starting Visio Cleanup Service");
 
             return Task.Run(
-                () =>
+                async () =>
                     {
                         this.logger.LogDebug("Opening connection to visio.");
                         this.visioHandler.Open();
