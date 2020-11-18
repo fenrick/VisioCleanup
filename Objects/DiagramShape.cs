@@ -188,6 +188,75 @@ namespace VisioCleanup.Objects
         {
             return HashCode.Combine(this.VisioId);
         }
+
+        /// <summary>
+        ///     Move shape down.
+        /// </summary>
+        /// <param name="movement">Amount to move shape.</param>
+        public void MoveDown(double movement)
+        {
+            var currentCorners = this.Corners;
+            currentCorners.TopSide -= movement;
+            currentCorners.BottomSide -= movement;
+            this.Corners = currentCorners;
+
+            foreach (var child in this.Children)
+            {
+                child.MoveDown(movement);
+            }
+        }
+
+        /// <summary>
+        ///     Move shape left.
+        /// </summary>
+        /// <param name="movement">Amount to move shape.</param>
+        public void MoveLeft(double movement)
+        {
+            var currentCorners = this.Corners;
+            currentCorners.LeftSide -= movement;
+            currentCorners.RightSide -= movement;
+            this.Corners = currentCorners;
+
+            foreach (var child in this.Children)
+            {
+                child.MoveLeft(movement);
+            }
+        }
+
+        /// <summary>
+        ///     Move shape right.
+        /// </summary>
+        /// <param name="movement">Amount to move shape.</param>
+        public void MoveRight(double movement)
+        {
+            var currentCorners = this.Corners;
+            currentCorners.LeftSide += movement;
+            currentCorners.RightSide += movement;
+            this.Corners = currentCorners;
+
+            foreach (var child in this.Children)
+            {
+                child.MoveRight(movement);
+            }
+        }
+
+        /// <summary>
+        ///     Move shape up.
+        /// </summary>
+        /// <param name="movement">Amount to move shape.</param>
+        public void MoveUp(double movement)
+        {
+            var currentCorners = this.Corners;
+            currentCorners.TopSide += movement;
+            currentCorners.BottomSide += movement;
+            this.Corners = currentCorners;
+
+            foreach (var child in this.Children)
+            {
+                child.MoveUp(movement);
+            }
+        }
+
         /// <summary>
         ///     Shrink shape to size of internal shapes.
         /// </summary>
