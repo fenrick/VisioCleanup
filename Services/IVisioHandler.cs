@@ -66,7 +66,7 @@ namespace VisioCleanup.Services
 
         private readonly VisioCleanupSettings settings;
 
-        private Application visioApplication;
+        private Application? visioApplication;
 
         /// <summary>
         ///     Initialises a new instance of the <see cref="VisioHandlerService" /> class.
