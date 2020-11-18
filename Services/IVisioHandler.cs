@@ -135,6 +135,13 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        public string GetShapeText(int shapeId)
+        {
+            var shape = this.GetShape(shapeId);
+            return shape.Text;
+        }
+
+        /// <inheritdoc />
         public void Open()
         {
             this.logger.LogDebug("Opening connection to visio.");
