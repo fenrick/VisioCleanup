@@ -167,8 +167,14 @@ namespace VisioCleanup.Objects
         /// <param name="childShape">New child shape of this shape.</param>
         public void AddChildShape(DiagramShape childShape)
         {
+            // set parent
             childShape.ParentShape = this;
+
+            // add to array
             this.Children.Add(childShape);
+
+            this.FindNeighbours();
+        }
         }
 
         /// <inheritdoc />
