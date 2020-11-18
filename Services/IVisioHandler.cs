@@ -176,17 +176,28 @@ namespace VisioCleanup.Services
             diagramShape.Corners = newCorners;
         }
 
+        /// <exception cref="InvalidOperationException">System not initialised.</exception>
         /// <inheritdoc />
         public int SelectionPrimaryItem()
         {
-            Shape? primaryItem = null;
-            primaryItem = this.visioApplication.ActiveWindow.Selection.PrimaryItem;
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
 
-            return primaryItem?.ID ?? 0;
+            var selection = this.visioApplication.ActiveWindow.Selection;
+            Shape primaryItem = selection.PrimaryItem;
+
+            return primaryItem.ID;
         }
 
         private Shape GetShape(int shapeId)
         {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
             var activePage = this.visioApplication.ActivePage;
             var shape = activePage.Shapes.ItemFromID[shapeId];
             return shape;
