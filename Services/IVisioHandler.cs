@@ -140,13 +140,36 @@ namespace VisioCleanup.Services
                 "Potential child shapes found: {CountOfSelection}",
                 selection.Count);
 
+            var tasks = new List<Task>();
             foreach (var child in selection)
             {
-                if (child is Shape childShape)
+                if (!(child is Shape childShape))
                 {
-                    shapeIDs.Add(childShape.ID);
+                    continue;
                 }
+
+                Task t = Task.Run(
+                    () =>
+                        {
+                            // check that immediate parent is the supplied shape.
+                            var parentSelection = childShape.SpatialNeighbors[
+                                (short)VisSpatialRelationCodes.visSpatialContainedIn,
+                                0,
+                                (short)VisSpatialRelationFlags.visSpatialFrontToBack];
+
+                            if (parentShape.Equals(parentSelection.PrimaryItem))
+                            {
+                                shapeIDs.Add(childShape.ID);
+                            }
+                        });
+                tasks.Add(t);
             }
+
+            Task.WaitAll(tasks.ToArray());
+
+            this.logger.LogDebug(
+                "Final child shapes found: {CountOfShapeIDs}",
+                shapeIDs.Count);
 
             return shapeIDs.ToArray();
         }
