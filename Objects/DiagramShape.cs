@@ -178,6 +178,141 @@ namespace VisioCleanup.Objects
 
             this.FindNeighbours();
         }
+
+        /// <summary>
+        ///     Loop through child shapes and move them until no overlaps.
+        /// </summary>
+        /// <param name="verticalSpacer">Vertical space between shapes.</param>
+        /// <param name="horizontalSpacer">Horizontal space between shapes.</param>
+        /// <param name="ultimateChildWidth">Width of child shapes.</param>
+        /// <param name="ultimateChildHeight">Height of child shapes.</param>
+        public void AdjustDiagram(
+            double verticalSpacer,
+            double horizontalSpacer,
+            double ultimateChildWidth,
+            double ultimateChildHeight)
+        {
+            if (this.Children.Count == 0)
+            {
+                var newCorners = this.Corners;
+                newCorners.BottomSide = newCorners.TopSide - ultimateChildHeight;
+                newCorners.RightSide = newCorners.LeftSide + ultimateChildWidth;
+                this.Corners = newCorners;
+            }
+
+            foreach (var shape in this.Children)
+            {
+                shape.AdjustDiagram(
+                    verticalSpacer,
+                    horizontalSpacer,
+                    ultimateChildWidth,
+                    ultimateChildHeight);
+
+                // space above
+                if (shape.ShapeAbove is not null)
+                {
+                    // compare top to bottom
+                    var currentSpace = shape.ShapeAbove.Corners.BottomSide - shape.Corners.TopSide;
+                    if (shape.Children.Count > 0)
+                    {
+                        if (!currentSpace.Equals(horizontalSpacer))
+                        {
+                            shape.ShapeAbove.MoveUp(horizontalSpacer - currentSpace);
+                        }
+                    }
+                    else
+                    {
+                        if (!currentSpace.Equals(verticalSpacer))
+                        {
+                            shape.ShapeAbove.MoveUp(verticalSpacer - currentSpace);
+                        }
+                    }
+                }
+
+                // space below
+                if (shape.ShapeBelow is not null)
+                {
+                    // compare top to bottom
+                    var currentSpace = shape.Corners.BottomSide - shape.ShapeBelow.Corners.TopSide;
+                    if (shape.Children.Count > 0)
+                    {
+                        if (!currentSpace.Equals(horizontalSpacer))
+                        {
+                            shape.ShapeBelow.MoveDown(verticalSpacer - currentSpace);
+                        }
+                    }
+                    else
+                    {
+                        if (!currentSpace.Equals(verticalSpacer))
+                        {
+                            shape.ShapeBelow.MoveDown(verticalSpacer - currentSpace);
+                        }
+                    }
+                }
+
+                // space left
+                if (shape.ShapeToLeft is not null)
+                {
+                    // compare top to bottom
+                    var currentSpace = shape.Corners.LeftSide - shape.ShapeToLeft.Corners.RightSide;
+                    if (!currentSpace.Equals(horizontalSpacer))
+                    {
+                        shape.ShapeToLeft.MoveLeft(horizontalSpacer - currentSpace);
+                    }
+                }
+
+                // space right
+                if (shape.ShapeToRight is not null)
+                {
+                    // compare top to bottom
+                    var currentSpace = shape.ShapeToRight.Corners.LeftSide - shape.Corners.RightSide;
+                    if (!currentSpace.Equals(horizontalSpacer))
+                    {
+                        shape.ShapeToRight.MoveRight(horizontalSpacer - currentSpace);
+                    }
+                }
+            }
+
+            this.ShrinkToChildren(
+                horizontalSpacer,
+                horizontalSpacer,
+                horizontalSpacer,
+                10);
+
+            var offsetChecker = false;
+            if (this.Children.Count > 0)
+            {
+                // find far left side (assume non-ragged side).
+                var leftSide = this.Children.OrderBy(shape => shape.Corners.LeftSide)
+                    .Select(shape => shape.Corners.LeftSide).Min();
+                var bottomOrdered = this.Children.Where(shape => shape.Corners.LeftSide.Equals(leftSide));
+
+                foreach (var shape in bottomOrdered)
+                {
+                    var nextShape = shape.ShapeToRight;
+                    while (nextShape != null)
+                    {
+                        var offset = shape.Corners.TopSide - nextShape.Corners.TopSide;
+                        if (offset != 0)
+                        {
+                            nextShape.MoveUp(offset);
+                            offsetChecker = true;
+                        }
+
+                        nextShape = nextShape.ShapeToRight;
+                    }
+                }
+            }
+
+            // if we moved the shapes at the end, let's just go over again to confirm all good.
+            if (offsetChecker)
+            {
+                this.AdjustDiagram(
+                    verticalSpacer,
+                    horizontalSpacer,
+                    ultimateChildWidth,
+                    ultimateChildHeight);
+            }
         }
 
         /// <inheritdoc />
