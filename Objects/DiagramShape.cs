@@ -9,6 +9,7 @@ namespace VisioCleanup.Objects
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     ///     Internal representation of a visio shape, including details of any child shapes.
