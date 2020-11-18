@@ -151,7 +151,9 @@ namespace VisioCleanup.Services
             }
 
             var shape = this.GetShape(diagramShape.VisioId);
-            this.logger.LogDebug($"Redrawing shape: {shape.Name}");
+            this.logger.LogDebug(
+                "Redrawing shape: {ShapeName}",
+                shape.Name);
 
             /*
                                          calculate values
