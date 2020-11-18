@@ -30,12 +30,14 @@ namespace VisioCleanup.Objects
         /// <param name="visioId">Visio shape ID.</param>
         /// <param name="shapeText">Visio shape text.</param>
         /// <param name="corners">Corners of the shape.</param>
-        public DiagramShape(int visioId, string shapeText, Corners corners)
+        /// <param name="shapeType">Shape type.</param>
+        public DiagramShape(int visioId, string shapeText, Corners corners, ShapeType shapeType)
         {
             this.VisioId = visioId;
             this.ShapeText = shapeText;
             this.Corners = corners;
             this.ParentShape = null;
+            this.ShapeType = shapeType;
             this.Children = new List<DiagramShape>();
         }
 
@@ -158,6 +160,11 @@ namespace VisioCleanup.Objects
                 }
             }
         }
+
+        /// <summary>
+        /// Gets or sets the shape type.
+        /// </summary>
+        public ShapeType ShapeType { get; set; }
 
         /// <summary>
         ///     Gets visio shape ID.
