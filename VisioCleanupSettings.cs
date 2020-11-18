@@ -18,6 +18,11 @@ namespace VisioCleanup
         public string? VisioHeightField { get; set; }
 
         /// <summary>
+        ///     Gets or sets Visio Horizontal Spacer.
+        /// </summary>
+        public double VisioHorizontalSpacer { get; set; }
+
+        /// <summary>
         ///     Gets or sets Visio LocPinX Field.
         /// </summary>
         public string? VisioLocPinXField { get; set; }
@@ -38,14 +43,14 @@ namespace VisioCleanup
         public string? VisioPinYField { get; set; }
 
         /// <summary>
-        ///     Gets or sets Visio Spacer.
-        /// </summary>
-        public double VisioSpacer { get; set; }
-
-        /// <summary>
         ///     Gets or sets Visio Units.
         /// </summary>
         public string? VisioUnits { get; set; }
+
+        /// <summary>
+        ///     Gets or sets Visio Vertical Spacer.
+        /// </summary>
+        public double VisioVerticalSpacer { get; set; }
 
         /// <summary>
         ///     Gets or sets Visio Width field.
