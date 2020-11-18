@@ -22,6 +22,8 @@ namespace VisioCleanup.Services
     /// </summary>
     internal class VisioCleanupService : BackgroundService
     {
+        private readonly IHostApplicationLifetime appLifetime;
+
         private readonly ILogger<VisioCleanupService> logger;
 
         private readonly VisioCleanupSettings settings;
@@ -34,14 +36,17 @@ namespace VisioCleanup.Services
         /// <param name="settings">External settings.</param>
         /// <param name="logger">Logging.</param>
         /// <param name="visioHandler">Visio Handler.</param>
+        /// <param name="appLifetime">Host application lifetime.</param>
         public VisioCleanupService(
             IOptions<VisioCleanupSettings> settings,
             ILogger<VisioCleanupService> logger,
-            IVisioHandler visioHandler)
+            IVisioHandler visioHandler,
+            IHostApplicationLifetime appLifetime)
         {
             this.settings = settings.Value;
             this.logger = logger;
             this.visioHandler = visioHandler;
+            this.appLifetime = appLifetime;
         }
 
         /// <inheritdoc />
@@ -110,6 +115,8 @@ namespace VisioCleanup.Services
                         }
                     },
                 stoppingToken);
+
+            this.appLifetime.StopApplication();
         }
     }
 }
