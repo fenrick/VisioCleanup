@@ -28,10 +28,12 @@ namespace VisioCleanup.Objects
         ///     Initialises a new instance of the <see cref="DiagramShape" /> class.
         /// </summary>
         /// <param name="visioId">Visio shape ID.</param>
+        /// <param name="shapeText">Visio shape text.</param>
         /// <param name="corners">Corners of the shape.</param>
-        public DiagramShape(int visioId, Corners corners)
+        public DiagramShape(int visioId, string shapeText, Corners corners)
         {
             this.VisioId = visioId;
+            this.ShapeText = shapeText;
             this.Corners = corners;
             this.ParentShape = null;
             this.Children = new List<DiagramShape>();
