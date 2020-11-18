@@ -49,7 +49,7 @@ namespace VisioCleanup.Services
         {
             // clean-up tasks!
             this.logger.LogDebug(@"Cleaning up visio handler");
-            this.visioHandler?.Close();
+            this.visioHandler.Close();
 
             return base.StopAsync(stoppingToken);
         }
