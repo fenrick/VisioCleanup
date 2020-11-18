@@ -42,6 +42,13 @@ namespace VisioCleanup.Services
         IEnumerable<int> GetChildren(int shapeId);
 
         /// <summary>
+        ///     Obtains the current shape text for a shape.
+        /// </summary>
+        /// <param name="shapeId">shape id.</param>
+        /// <returns>shape text.</returns>
+        string GetShapeText(int shapeId);
+
+        /// <summary>
         ///     Open visio session.
         /// </summary>
         void Open();
