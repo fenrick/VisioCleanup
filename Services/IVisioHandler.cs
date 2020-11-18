@@ -136,7 +136,9 @@ namespace VisioCleanup.Services
                 0,
                 (short)VisSpatialRelationFlags.visSpatialBackToFront];
 
-            this.logger.LogDebug($"Child shapes found: {selection.Count}");
+            this.logger.LogDebug(
+                "Potential child shapes found: {CountOfSelection}",
+                selection.Count);
 
             foreach (var child in selection)
             {
