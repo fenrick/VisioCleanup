@@ -60,61 +60,76 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        /// <exception cref="T:System.Threading.Tasks.TaskCanceledException">The task has been cancelled.</exception>
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            return Task.Run(
+            this.logger.LogDebug("Starting Visio Cleanup Service");
+
+            stoppingToken.Register(() => { this.logger.LogDebug("Stopping Visio Cleanup Service."); });
+
+            await Task.Run(
                 async () =>
                     {
                         try
                         {
-                            this.logger.LogDebug("Starting Visio Cleanup Service");
-
                             // open
                             this.visioHandler.Open();
 
-                            var shapeId = this.visioHandler.SelectionPrimaryItem();
-
-                            var children = this.visioHandler.GetChildren(shapeId);
+                            var masterShapeId = this.visioHandler.SelectionPrimaryItem();
 
                             // assemble processing structure
                             this.logger.LogDebug("Processing parent shape.");
                             var parentShape = new DiagramShape(
-                                shapeId,
-                                this.visioHandler.CalculateCorners(shapeId));
+                                masterShapeId,
+                                this.visioHandler.GetShapeText(masterShapeId),
+                                this.visioHandler.CalculateCorners(masterShapeId));
 
-                            this.logger.LogDebug("Final all children.");
-                            foreach (var childId in children)
+                            this.logger.LogDebug("Processing children.");
+                            var childShapeIds = this.visioHandler.GetChildren(masterShapeId);
+                            foreach (var childId in childShapeIds)
                             {
-                                parentShape.AddChildShape(
-                                    new DiagramShape(
-                                        childId,
-                                        this.visioHandler.CalculateCorners(childId)));
+                                // add to parent
+                                var childShape = new DiagramShape(
+                                    childId,
+                                    this.visioHandler.GetShapeText(childId),
+                                    this.visioHandler.CalculateCorners(childId));
+                                parentShape.AddChildShape(childShape);
+
+                                // add children of child
+                                var secondaryChildShapesIds = this.visioHandler.GetChildren(childId);
+                                foreach (var secondaryChildId in secondaryChildShapesIds)
+                                {
+                                    var secondaryChildShape = new DiagramShape(
+                                        secondaryChildId,
+                                        this.visioHandler.GetShapeText(secondaryChildId),
+                                        this.visioHandler.CalculateCorners(secondaryChildId));
+                                    childShape.AddChildShape(secondaryChildShape);
+                                }
                             }
 
-                            this.logger.LogDebug($"Children found: {parentShape.Children.Count}");
+                            this.logger.LogDebug("Adjusting spacing.");
 
-                            this.logger.LogDebug("Shrink child shapes.");
-
-                            // shrink child shapes.
-                            foreach (var child in parentShape.Children)
-                            {
-                                var childCorners = child.Corners;
-                                childCorners.BottomSide += 7.5;
-                                child.Corners = childCorners;
-                            }
+                            // adjust spacing
+                            parentShape.AdjustDiagram(
+                                this.settings.VisioVerticalSpacer,
+                                this.settings.VisioHorizontalSpacer,
+                                45,
+                                7.5);
 
                             this.logger.LogDebug("Redraw shapes.");
 
                             await this.visioHandler.ReDrawShapesAsync(parentShape).ConfigureAwait(false);
-
-                            this.logger.LogDebug("Completed processing Visio Cleanup.");
                         }
                         catch (Exception e)
                         {
-                            this.logger.LogError(e, "Error processing");
+                            this.logger.LogError(
+                                e,
+                                "Error processing");
                         }
                     },
-                stoppingToken);
+                stoppingToken).ConfigureAwait(false);
+
+            this.logger.LogDebug("Completed processing Visio Cleanup.");
 
             this.appLifetime.StopApplication();
         }
