@@ -39,7 +39,7 @@ namespace VisioCleanup.Services
         /// </summary>
         /// <param name="shapeId">Shape ID of the parent shape.</param>
         /// <returns>array of shape ids for children.</returns>
-        int[] GetChildren(int shapeId);
+        IEnumerable<int> GetChildren(int shapeId);
 
         /// <summary>
         ///     Open visio session.
@@ -110,7 +110,7 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
-        public int[] GetChildren(int shapeId)
+        public IEnumerable<int> GetChildren(int shapeId)
         {
             var shapeIDs = new List<int>();
 
