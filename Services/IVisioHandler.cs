@@ -57,6 +57,7 @@ namespace VisioCleanup.Services
         ///     Find shapes in visio diagram and change their location and size to match diagramShapes.
         /// </summary>
         /// <param name="diagramShape">Internal structure for modelling visio shapes.</param>
+        /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
         Task ReDrawShapesAsync(DiagramShape diagramShape);
 
         /// <summary>
@@ -95,18 +96,25 @@ namespace VisioCleanup.Services
 
             var shape = this.GetShape(shapeId);
 
-            if (shape is not null)
-            {
-                corners.LeftSide = shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits]
-                                   - shape.Cells[this.settings.VisioLocPinXField].Result[this.settings.VisioUnits];
-                corners.BottomSide = shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits]
-                                     - shape.Cells[this.settings.VisioLocPinYField].Result[this.settings.VisioUnits];
+            corners.LeftSide = Math.Round(
+                shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits]
+                - shape.Cells[this.settings.VisioLocPinXField].Result[this.settings.VisioUnits],
+                1,
+                MidpointRounding.AwayFromZero);
+            corners.BottomSide = Math.Round(
+                shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits]
+                - shape.Cells[this.settings.VisioLocPinYField].Result[this.settings.VisioUnits],
+                1,
+                MidpointRounding.AwayFromZero);
 
-                corners.RightSide = corners.LeftSide
-                                    + shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits];
-                corners.TopSide = corners.BottomSide + shape.Cells[this.settings.VisioHeightField]
-                                      .Result[this.settings.VisioUnits];
-            }
+            corners.RightSide = Math.Round(
+                corners.LeftSide + shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits],
+                1,
+                MidpointRounding.AwayFromZero);
+            corners.TopSide = Math.Round(
+                corners.BottomSide + shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits],
+                1,
+                MidpointRounding.AwayFromZero);
 
             return corners;
         }
