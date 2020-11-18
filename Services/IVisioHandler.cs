@@ -60,6 +60,8 @@ namespace VisioCleanup.Services
         /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
         Task ReDrawShapesAsync(DiagramShape diagramShape);
 
+        int[] Selection();
+
         /// <summary>
         ///     Returns primary item of the current selection.
         /// </summary>
@@ -131,8 +133,7 @@ namespace VisioCleanup.Services
 
             var parentShape = this.GetShape(shapeId);
 
-            var selection = parentShape.SpatialNeighbors[
-                (short)VisSpatialRelationCodes.visSpatialContain,
+            var selection = parentShape.SpatialNeighbors[(short)VisSpatialRelationCodes.visSpatialContain,
                 0,
                 (short)VisSpatialRelationFlags.visSpatialBackToFront];
 
@@ -197,32 +198,59 @@ namespace VisioCleanup.Services
                 await this.ReDrawShapesAsync(childDiagramShape).ConfigureAwait(false);
             }
 
-            var shape = this.GetShape(diagramShape.VisioId);
-            this.logger.LogDebug(
-                "Redrawing shape: {ShapeName}",
-                shape.Name);
+            switch (diagramShape.ShapeType)
+            {
+                case ShapeType.Existing:
+                    {
+                        var shape = this.GetShape(diagramShape.VisioId);
+                        this.logger.LogDebug(
+                            "Redrawing shape: {ShapeName}",
+                            shape.Name);
 
-            /*
-                                         calculate values
-                                        left + locPinX = pinX
-                                        bottom + locPinY = pinY
-                                        right - left = width
-                                        top - bottom = height
-                                        */
-            shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits] =
-                diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide;
-            shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits] =
-                diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide;
-            shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits] =
-                diagramShape.Corners.LeftSide + shape.Cells[this.settings.VisioLocPinXField]
-                    .Result[this.settings.VisioUnits];
-            shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits] =
-                diagramShape.Corners.BottomSide + shape.Cells[this.settings.VisioLocPinYField]
-                    .Result[this.settings.VisioUnits];
+                        /*
+                                             calculate values
+                                            left + locPinX = pinX
+                                            bottom + locPinY = pinY
+                                            right - left = width
+                                            top - bottom = height
+                                            */
+                        shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits] =
+                            diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide;
+                        shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits] =
+                            diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide;
+                        shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits] =
+                            diagramShape.Corners.LeftSide + shape.Cells[this.settings.VisioLocPinXField]
+                                .Result[this.settings.VisioUnits];
+                        shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits] =
+                            diagramShape.Corners.BottomSide + shape.Cells[this.settings.VisioLocPinYField]
+                                .Result[this.settings.VisioUnits];
 
-            var newCorners = this.CalculateCorners(diagramShape.VisioId);
+                        var newCorners = this.CalculateCorners(diagramShape.VisioId);
 
-            diagramShape.Corners = newCorners;
+                        diagramShape.Corners = newCorners;
+                        break;
+                    }
+            }
+        }
+
+        public int[] Selection()
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            var selection = this.visioApplication.ActiveWindow.Selection;
+
+            selection.GetIDs(out Array ids);
+            List<int> listShapeIds = new List<int>(ids.Length);
+
+            foreach (var id in ids)
+            {
+                listShapeIds.Add((int)id);
+            }
+
+            return listShapeIds.ToArray();
         }
 
         /// <exception cref="InvalidOperationException">System not initialised.</exception>

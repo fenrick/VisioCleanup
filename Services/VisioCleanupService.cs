@@ -8,12 +8,14 @@
 namespace VisioCleanup.Services
 {
     using System;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+    using Microsoft.Office.Interop.Visio;
 
     using VisioCleanup.Objects;
 
@@ -75,38 +77,81 @@ namespace VisioCleanup.Services
                             // open
                             this.visioHandler.Open();
 
-                            var masterShapeId = this.visioHandler.SelectionPrimaryItem();
+                            var selection = this.visioHandler.Selection();
 
-                            // assemble processing structure
-                            this.logger.LogDebug("Processing parent shape.");
-                            var parentShape = new DiagramShape(
-                                masterShapeId,
-                                this.visioHandler.GetShapeText(masterShapeId),
-                                this.visioHandler.CalculateCorners(masterShapeId));
-
-                            this.logger.LogDebug("Processing children.");
-                            var childShapeIds = this.visioHandler.GetChildren(masterShapeId);
-                            foreach (var childId in childShapeIds)
+                            DiagramShape parentShape;
+                            if (selection.Length == 1)
                             {
-                                // add to parent
-                                var childShape = new DiagramShape(
-                                    childId,
-                                    this.visioHandler.GetShapeText(childId),
-                                    this.visioHandler.CalculateCorners(childId));
-                                parentShape.AddChildShape(childShape);
+                                // use real master.
+                                var masterShapeId = this.visioHandler.SelectionPrimaryItem();
 
-                                // add children of child
-                                var secondaryChildShapesIds = this.visioHandler.GetChildren(childId);
-                                foreach (var secondaryChildId in secondaryChildShapesIds)
+                                // assemble processing structure
+                                this.logger.LogDebug("Processing parent shape.");
+                                parentShape = new DiagramShape(
+                                    masterShapeId,
+                                    this.visioHandler.GetShapeText(masterShapeId),
+                                    this.visioHandler.CalculateCorners(masterShapeId),
+                                    ShapeType.Existing);
+
+                                this.logger.LogDebug("Processing children.");
+                                var childShapeIds = this.visioHandler.GetChildren(masterShapeId);
+                                foreach (var childId in childShapeIds)
                                 {
-                                    var secondaryChildShape = new DiagramShape(
-                                        secondaryChildId,
-                                        this.visioHandler.GetShapeText(secondaryChildId),
-                                        this.visioHandler.CalculateCorners(secondaryChildId));
-                                    childShape.AddChildShape(secondaryChildShape);
+                                    // add to parent
+                                    var childShape = new DiagramShape(
+                                        childId,
+                                        this.visioHandler.GetShapeText(childId),
+                                        this.visioHandler.CalculateCorners(childId),
+                                        ShapeType.Existing);
+                                    parentShape.AddChildShape(childShape);
+
+                                    // add children of child
+                                    var secondaryChildShapesIds = this.visioHandler.GetChildren(childId);
+                                    foreach (var secondaryChildId in secondaryChildShapesIds)
+                                    {
+                                        var secondaryChildShape = new DiagramShape(
+                                            secondaryChildId,
+                                            this.visioHandler.GetShapeText(secondaryChildId),
+                                            this.visioHandler.CalculateCorners(secondaryChildId),
+                                            ShapeType.Existing);
+                                        childShape.AddChildShape(secondaryChildShape);
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                                // create a fake master.
+                                this.logger.LogDebug("Creating a fake master for selection.");
+                                parentShape = new DiagramShape(
+                                    0, "FAKE", default(Corners), ShapeType.FakeShape);
+
+                                this.logger.LogDebug("Adding selection as children");
+
+                                foreach (var childId in selection)
+                                {
+                                    // add to parent
+                                    var childShape = new DiagramShape(
+                                        childId,
+                                        this.visioHandler.GetShapeText(childId),
+                                        this.visioHandler.CalculateCorners(childId),
+                                        ShapeType.Existing);
+                                    parentShape.AddChildShape(childShape);
+
+                                    // add children of child
+                                    var secondaryChildShapesIds = this.visioHandler.GetChildren(childId);
+                                    foreach (var secondaryChildId in secondaryChildShapesIds)
+                                    {
+                                        var secondaryChildShape = new DiagramShape(
+                                            secondaryChildId,
+                                            this.visioHandler.GetShapeText(secondaryChildId),
+                                            this.visioHandler.CalculateCorners(secondaryChildId),
+                                            ShapeType.Existing);
+                                        childShape.AddChildShape(secondaryChildShape);
+                                    }
+
                                 }
                             }
-
                             this.logger.LogDebug("Adjusting spacing.");
 
                             // adjust spacing
