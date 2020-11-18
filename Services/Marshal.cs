@@ -35,7 +35,7 @@ namespace VisioCleanup.Services
                     progId,
                     out classId);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 CLSIDFromProgID(
                     progId,
