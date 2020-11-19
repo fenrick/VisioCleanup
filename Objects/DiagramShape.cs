@@ -162,7 +162,7 @@ namespace VisioCleanup.Objects
         }
 
         /// <summary>
-        /// Gets or sets the shape type.
+        ///     Gets or sets the shape type.
         /// </summary>
         public ShapeType ShapeType { get; set; }
 
