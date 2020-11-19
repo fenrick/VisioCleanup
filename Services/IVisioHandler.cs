@@ -39,7 +39,7 @@ namespace VisioCleanup.Services
         /// </summary>
         /// <param name="shapeId">Shape ID of the parent shape.</param>
         /// <returns>array of shape ids for children.</returns>
-        IEnumerable<int> GetChildren(int shapeId);
+        Task<IEnumerable<int>> GetChildren(int shapeId);
 
         /// <summary>
         ///     Obtains the current shape text for a shape.
@@ -127,13 +127,14 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
-        public IEnumerable<int> GetChildren(int shapeId)
+        public async Task<IEnumerable<int>> GetChildren(int shapeId)
         {
             var shapeIDs = new List<int>();
 
             var parentShape = this.GetShape(shapeId);
 
-            var selection = parentShape.SpatialNeighbors[(short)VisSpatialRelationCodes.visSpatialContain,
+            var selection = parentShape.SpatialNeighbors[
+                (short)VisSpatialRelationCodes.visSpatialContain,
                 0,
                 (short)VisSpatialRelationFlags.visSpatialBackToFront];
 
@@ -141,7 +142,7 @@ namespace VisioCleanup.Services
                 "Potential child shapes found: {CountOfSelection}",
                 selection.Count);
 
-            var tasks = new List<Task>();
+            // var tasks = new List<Task>();
             foreach (var child in selection)
             {
                 if (!(child is Shape childShape))
@@ -149,7 +150,7 @@ namespace VisioCleanup.Services
                     continue;
                 }
 
-                Task t = Task.Run(
+                await Task.Run(
                     () =>
                         {
                             // check that immediate parent is the supplied shape.
@@ -162,12 +163,12 @@ namespace VisioCleanup.Services
                             {
                                 shapeIDs.Add(childShape.ID);
                             }
-                        });
-                tasks.Add(t);
+                        }).ConfigureAwait(false);
+
+                // tasks.Add(t);
             }
 
-            Task.WaitAll(tasks.ToArray());
-
+            // Task.WaitAll(tasks.ToArray());
             this.logger.LogDebug(
                 "Final child shapes found: {CountOfShapeIDs}",
                 shapeIDs.Count);
