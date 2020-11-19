@@ -193,32 +193,36 @@ namespace VisioCleanup.Services
             {
                 case ShapeType.Existing:
                     {
-                        var shape = this.GetShape(diagramShape.VisioId);
-                        this.logger.LogDebug(
-                            "Redrawing shape: {ShapeName}",
-                            shape.Name);
+                        await Task.Run(
+                            () =>
+                                {
+                                    var shape = this.GetShape(diagramShape.VisioId);
+                                    this.logger.LogDebug(
+                                        "Redrawing shape: {ShapeName}",
+                                        shape.Name);
 
-                        /*
-                                             calculate values
-                                            left + locPinX = pinX
-                                            bottom + locPinY = pinY
-                                            right - left = width
-                                            top - bottom = height
-                                            */
-                        shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits] =
-                            diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide;
-                        shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits] =
-                            diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide;
-                        shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits] =
-                            diagramShape.Corners.LeftSide + shape.Cells[this.settings.VisioLocPinXField]
-                                .Result[this.settings.VisioUnits];
-                        shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits] =
-                            diagramShape.Corners.BottomSide + shape.Cells[this.settings.VisioLocPinYField]
-                                .Result[this.settings.VisioUnits];
+                                    /*
+                                                         calculate values
+                                                        left + locPinX = pinX
+                                                        bottom + locPinY = pinY
+                                                        right - left = width
+                                                        top - bottom = height
+                                                        */
+                                    shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits] =
+                                        diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide;
+                                    shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits] =
+                                        diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide;
+                                    shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits] =
+                                        diagramShape.Corners.LeftSide + shape.Cells[this.settings.VisioLocPinXField]
+                                            .Result[this.settings.VisioUnits];
+                                    shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits] =
+                                        diagramShape.Corners.BottomSide + shape.Cells[this.settings.VisioLocPinYField]
+                                            .Result[this.settings.VisioUnits];
 
-                        var newCorners = this.CalculateCorners(diagramShape.VisioId);
+                                    var newCorners = this.CalculateCorners(diagramShape.VisioId);
 
-                        diagramShape.Corners = newCorners;
+                                    diagramShape.Corners = newCorners;
+                                }).ConfigureAwait(false);
                         break;
                     }
             }
