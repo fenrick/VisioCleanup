@@ -28,16 +28,9 @@ namespace VisioCleanup.Objects
         ///     Initialises a new instance of the <see cref="DiagramShape" /> class.
         /// </summary>
         /// <param name="visioId">Visio shape ID.</param>
-        /// <param name="shapeText">Visio shape text.</param>
-        /// <param name="corners">Corners of the shape.</param>
-        /// <param name="shapeType">Shape type.</param>
-        public DiagramShape(int visioId, string shapeText, Corners corners, ShapeType shapeType)
+        public DiagramShape(int visioId)
         {
             this.VisioId = visioId;
-            this.ShapeText = shapeText;
-            this.Corners = corners;
-            this.ParentShape = null;
-            this.ShapeType = shapeType;
             this.Children = new List<DiagramShape>();
         }
 
@@ -52,14 +45,24 @@ namespace VisioCleanup.Objects
         public Corners Corners { get; set; }
 
         /// <summary>
-        ///     Gets the parent shape for this shape.
+        ///     Gets or sets the shape text.
         /// </summary>
-        public DiagramShape? ParentShape { get; private set; }
+        public string? ShapeText { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the shape type.
+        /// </summary>
+        public ShapeType ShapeType { get; set; }
+
+        /// <summary>
+        ///     Gets visio shape ID.
+        /// </summary>
+        public int VisioId { get; }
 
         /// <summary>
         ///     Gets or sets the shape above.
         /// </summary>
-        public DiagramShape? ShapeAbove
+        internal DiagramShape? ShapeAbove
         {
             get => this.shapeAbove;
             set
@@ -84,7 +87,7 @@ namespace VisioCleanup.Objects
         /// <summary>
         ///     Gets or sets the shape below.
         /// </summary>
-        public DiagramShape? ShapeBelow
+        internal DiagramShape? ShapeBelow
         {
             get => this.shapeBelow;
             set
@@ -107,14 +110,9 @@ namespace VisioCleanup.Objects
         }
 
         /// <summary>
-        ///     Gets the shape text.
-        /// </summary>
-        public string ShapeText { get; }
-
-        /// <summary>
         ///     Gets or sets the shape to the left.
         /// </summary>
-        public DiagramShape? ShapeToLeft
+        internal DiagramShape? ShapeToLeft
         {
             get => this.shapeToLeft;
             set
@@ -139,7 +137,7 @@ namespace VisioCleanup.Objects
         /// <summary>
         ///     Gets or sets the shape to the right.
         /// </summary>
-        public DiagramShape? ShapeToRight
+        internal DiagramShape? ShapeToRight
         {
             get => this.shapeToRight;
             set
@@ -162,165 +160,15 @@ namespace VisioCleanup.Objects
         }
 
         /// <summary>
-        ///     Gets or sets the shape type.
-        /// </summary>
-        public ShapeType ShapeType { get; set; }
-
-        /// <summary>
-        ///     Gets visio shape ID.
-        /// </summary>
-        public int VisioId { get; }
-
-        /// <summary>
         ///     Add child shape to parent.
         /// </summary>
         /// <param name="childShape">New child shape of this shape.</param>
         public void AddChildShape(DiagramShape childShape)
         {
-            // set parent
-            childShape.ParentShape = this;
-
             // add to array
             this.Children.Add(childShape);
 
             this.FindNeighbours();
-        }
-
-        /// <summary>
-        ///     Loop through child shapes and move them until no overlaps.
-        /// </summary>
-        /// <param name="verticalSpacer">Vertical space between shapes.</param>
-        /// <param name="horizontalSpacer">Horizontal space between shapes.</param>
-        /// <param name="ultimateChildWidth">Width of child shapes.</param>
-        /// <param name="ultimateChildHeight">Height of child shapes.</param>
-        public void AdjustDiagram(
-            double verticalSpacer,
-            double horizontalSpacer,
-            double ultimateChildWidth,
-            double ultimateChildHeight)
-        {
-            if (this.Children.Count == 0)
-            {
-                var newCorners = this.Corners;
-                newCorners.BottomSide = newCorners.TopSide - ultimateChildHeight;
-                newCorners.RightSide = newCorners.LeftSide + ultimateChildWidth;
-                this.Corners = newCorners;
-            }
-
-            foreach (var shape in this.Children)
-            {
-                shape.AdjustDiagram(
-                    verticalSpacer,
-                    horizontalSpacer,
-                    ultimateChildWidth,
-                    ultimateChildHeight);
-
-                // space above
-                if (shape.ShapeAbove is not null)
-                {
-                    // compare top to bottom
-                    var currentSpace = shape.ShapeAbove.Corners.BottomSide - shape.Corners.TopSide;
-                    if (shape.Children.Count > 0)
-                    {
-                        if (!currentSpace.Equals(horizontalSpacer))
-                        {
-                            shape.ShapeAbove.MoveUp(horizontalSpacer - currentSpace);
-                        }
-                    }
-                    else
-                    {
-                        if (!currentSpace.Equals(verticalSpacer))
-                        {
-                            shape.ShapeAbove.MoveUp(verticalSpacer - currentSpace);
-                        }
-                    }
-                }
-
-                // space below
-                if (shape.ShapeBelow is not null)
-                {
-                    // compare top to bottom
-                    var currentSpace = shape.Corners.BottomSide - shape.ShapeBelow.Corners.TopSide;
-                    if (shape.Children.Count > 0)
-                    {
-                        if (!currentSpace.Equals(horizontalSpacer))
-                        {
-                            shape.ShapeBelow.MoveDown(verticalSpacer - currentSpace);
-                        }
-                    }
-                    else
-                    {
-                        if (!currentSpace.Equals(verticalSpacer))
-                        {
-                            shape.ShapeBelow.MoveDown(verticalSpacer - currentSpace);
-                        }
-                    }
-                }
-
-                // space left
-                if (shape.ShapeToLeft is not null)
-                {
-                    // compare top to bottom
-                    var currentSpace = shape.Corners.LeftSide - shape.ShapeToLeft.Corners.RightSide;
-                    if (!currentSpace.Equals(horizontalSpacer))
-                    {
-                        shape.ShapeToLeft.MoveLeft(horizontalSpacer - currentSpace);
-                    }
-                }
-
-                // space right
-                if (shape.ShapeToRight is not null)
-                {
-                    // compare top to bottom
-                    var currentSpace = shape.ShapeToRight.Corners.LeftSide - shape.Corners.RightSide;
-                    if (!currentSpace.Equals(horizontalSpacer))
-                    {
-                        shape.ShapeToRight.MoveRight(horizontalSpacer - currentSpace);
-                    }
-                }
-            }
-
-            var offsetChecker = false;
-
-            offsetChecker = this.ShrinkToChildren(
-                horizontalSpacer,
-                horizontalSpacer,
-                horizontalSpacer,
-                10);
-
-            if (this.Children.Count > 0)
-            {
-                // find far left side (assume non-ragged side).
-                var leftSide = this.Children.OrderBy(shape => shape.Corners.LeftSide)
-                    .Select(shape => shape.Corners.LeftSide).Min();
-                var bottomOrdered = this.Children.Where(shape => shape.Corners.LeftSide.Equals(leftSide));
-
-                foreach (var shape in bottomOrdered)
-                {
-                    var nextShape = shape.ShapeToRight;
-                    while (nextShape != null)
-                    {
-                        var offset = shape.Corners.TopSide - nextShape.Corners.TopSide;
-                        if (offset != 0)
-                        {
-                            nextShape.MoveUp(offset);
-                            offsetChecker = true;
-                        }
-
-                        nextShape = nextShape.ShapeToRight;
-                    }
-                }
-            }
-
-            // if we moved the shapes at the end, let's just go over again to confirm all good.
-            if (offsetChecker)
-            {
-                this.AdjustDiagram(
-                    verticalSpacer,
-                    horizontalSpacer,
-                    ultimateChildWidth,
-                    ultimateChildHeight);
-            }
         }
 
         /// <inheritdoc />
@@ -342,10 +190,19 @@ namespace VisioCleanup.Objects
         }
 
         /// <summary>
+        /// Does this shape have children.
+        /// </summary>
+        /// <returns>true if at least one.</returns>
+        internal bool HasChildren()
+        {
+            return this.Children.Count > 0;
+        }
+
+        /// <summary>
         ///     Move shape down.
         /// </summary>
         /// <param name="movement">Amount to move shape.</param>
-        public void MoveDown(double movement)
+        internal void MoveDown(double movement)
         {
             var currentCorners = this.Corners;
             currentCorners.TopSide -= movement;
@@ -362,7 +219,7 @@ namespace VisioCleanup.Objects
         ///     Move shape left.
         /// </summary>
         /// <param name="movement">Amount to move shape.</param>
-        public void MoveLeft(double movement)
+        internal void MoveLeft(double movement)
         {
             var currentCorners = this.Corners;
             currentCorners.LeftSide -= movement;
@@ -379,7 +236,7 @@ namespace VisioCleanup.Objects
         ///     Move shape right.
         /// </summary>
         /// <param name="movement">Amount to move shape.</param>
-        public void MoveRight(double movement)
+        internal void MoveRight(double movement)
         {
             var currentCorners = this.Corners;
             currentCorners.LeftSide += movement;
@@ -396,7 +253,7 @@ namespace VisioCleanup.Objects
         ///     Move shape up.
         /// </summary>
         /// <param name="movement">Amount to move shape.</param>
-        public void MoveUp(double movement)
+        internal void MoveUp(double movement)
         {
             var currentCorners = this.Corners;
             currentCorners.TopSide += movement;
@@ -409,55 +266,11 @@ namespace VisioCleanup.Objects
             }
         }
 
-        /// <summary>
-        ///     Shrink shape to size of internal shapes.
-        /// </summary>
-        /// <param name="leftPadding">Left padding.</param>
-        /// <param name="rightPadding">Right padding.</param>
-        /// <param name="bottomPadding">Bottom padding.</param>
-        /// <param name="topPadding">Top padding.</param>
-        public bool ShrinkToChildren(double leftPadding, double rightPadding, double bottomPadding, double topPadding)
-        {
-            if (this.Children.Count <= 0)
-            {
-                return false;
-            }
-
-            var newCorners = this.Corners;
-
-            // left side
-            var leftSide = this.Children.OrderBy(shape => shape.Corners.LeftSide)
-                .Select(shape => shape.Corners.LeftSide).Min();
-            newCorners.LeftSide = leftSide - leftPadding;
-
-            // right side
-            var rightSide = this.Children.OrderBy(shape => shape.Corners.RightSide)
-                .Select(shape => shape.Corners.RightSide).Max();
-            newCorners.RightSide = rightSide + rightPadding;
-
-            // bottom side
-            var bottomSide = this.Children.OrderBy(shape => shape.Corners.BottomSide)
-                .Select(shape => shape.Corners.BottomSide).Min();
-            newCorners.BottomSide = bottomSide - bottomPadding;
-
-            // top side
-            var topSide = this.Children.OrderBy(shape => shape.Corners.TopSide).Select(shape => shape.Corners.TopSide)
-                .Max();
-            newCorners.TopSide = topSide + topPadding;
-
-            if (this.Corners.Equals(newCorners))
-            {
-                return false;
-            }
-
-            this.Corners = newCorners;
-            return true;
-        }
-
         private void FindNeighbours()
         {
             // reset all shapes.
-            foreach (var shape in this.Children)
+            var children = this.Children;
+            foreach (var shape in children)
             {
                 shape.ShapeAbove = null;
                 shape.ShapeBelow = null;
@@ -465,10 +278,10 @@ namespace VisioCleanup.Objects
                 shape.ShapeToRight = null;
             }
 
-            var lines = this.Children.OrderBy(shape => shape.Corners.LeftSide).Select(shape => shape.Corners.LeftSide);
+            var lines = children.OrderBy(shape => shape.Corners.LeftSide).Select(shape => shape.Corners.LeftSide);
             foreach (var line in lines.Distinct())
             {
-                var bottomOrdered = this.Children.Where(shape => shape.Corners.LeftSide.Equals(line))
+                var bottomOrdered = children.Where(shape => shape.Corners.LeftSide.Equals(line))
                     .OrderBy(shape => shape.Corners.BottomSide);
                 DiagramShape? currentShape = null;
 
@@ -493,10 +306,10 @@ namespace VisioCleanup.Objects
                 }
             }
 
-            lines = this.Children.OrderBy(shape => shape.Corners.BottomSide).Select(shape => shape.Corners.BottomSide);
+            lines = children.OrderBy(shape => shape.Corners.BottomSide).Select(shape => shape.Corners.BottomSide);
             foreach (var line in lines.Distinct())
             {
-                var bottomOrdered = this.Children.Where(shape => shape.Corners.BottomSide.Equals(line))
+                var bottomOrdered = children.Where(shape => shape.Corners.BottomSide.Equals(line))
                     .OrderBy(shape => shape.Corners.LeftSide);
                 DiagramShape? currentShape = null;
 
