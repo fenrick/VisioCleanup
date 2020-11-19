@@ -94,7 +94,7 @@ namespace VisioCleanup.Services
                                     ShapeType.Existing);
 
                                 this.logger.LogDebug("Processing children.");
-                                var childShapeIds = this.visioHandler.GetChildren(masterShapeId);
+                                var childShapeIds = await this.visioHandler.GetChildren(masterShapeId).ConfigureAwait(false);
                                 foreach (var childId in childShapeIds)
                                 {
                                     // add to parent
@@ -106,7 +106,7 @@ namespace VisioCleanup.Services
                                     parentShape.AddChildShape(childShape);
 
                                     // add children of child
-                                    var secondaryChildShapesIds = this.visioHandler.GetChildren(childId);
+                                    var secondaryChildShapesIds = await this.visioHandler.GetChildren(childId).ConfigureAwait(false);
                                     foreach (var secondaryChildId in secondaryChildShapesIds)
                                     {
                                         var secondaryChildShape = new DiagramShape(
@@ -139,7 +139,7 @@ namespace VisioCleanup.Services
                                     parentShape.AddChildShape(childShape);
 
                                     // add children of child
-                                    var secondaryChildShapesIds = this.visioHandler.GetChildren(childId);
+                                    var secondaryChildShapesIds = await this.visioHandler.GetChildren(childId).ConfigureAwait(false);
                                     foreach (var secondaryChildId in secondaryChildShapesIds)
                                     {
                                         var secondaryChildShape = new DiagramShape(
@@ -152,6 +152,7 @@ namespace VisioCleanup.Services
 
                                 }
                             }
+
                             this.logger.LogDebug("Adjusting spacing.");
 
                             // adjust spacing
