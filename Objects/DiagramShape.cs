@@ -280,13 +280,14 @@ namespace VisioCleanup.Objects
                 }
             }
 
-            this.ShrinkToChildren(
+            var offsetChecker = false;
+
+            offsetChecker = this.ShrinkToChildren(
                 horizontalSpacer,
                 horizontalSpacer,
                 horizontalSpacer,
                 10);
 
-            var offsetChecker = false;
             if (this.Children.Count > 0)
             {
                 // find far left side (assume non-ragged side).
@@ -415,11 +416,11 @@ namespace VisioCleanup.Objects
         /// <param name="rightPadding">Right padding.</param>
         /// <param name="bottomPadding">Bottom padding.</param>
         /// <param name="topPadding">Top padding.</param>
-        public void ShrinkToChildren(double leftPadding, double rightPadding, double bottomPadding, double topPadding)
+        public bool ShrinkToChildren(double leftPadding, double rightPadding, double bottomPadding, double topPadding)
         {
             if (this.Children.Count <= 0)
             {
-                return;
+                return false;
             }
 
             var newCorners = this.Corners;
@@ -444,7 +445,13 @@ namespace VisioCleanup.Objects
                 .Max();
             newCorners.TopSide = topSide + topPadding;
 
+            if (this.Corners.Equals(newCorners))
+            {
+                return false;
+            }
+
             this.Corners = newCorners;
+            return true;
         }
 
         private void FindNeighbours()
