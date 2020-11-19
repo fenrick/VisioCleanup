@@ -5,10 +5,10 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-
 namespace VisioCleanup.Objects
 {
+    using System;
+
     /// <summary>
     ///     Corners of a visio shape.
     /// </summary>
@@ -28,7 +28,11 @@ namespace VisioCleanup.Objects
         public double LeftSide
         {
             get => this.leftSide;
-            set => this.leftSide = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+            set =>
+                this.leftSide = Math.Round(
+                    value,
+                    1,
+                    MidpointRounding.AwayFromZero);
         }
 
         /// <summary>
@@ -37,7 +41,11 @@ namespace VisioCleanup.Objects
         public double RightSide
         {
             get => this.rightSide;
-            set => this.rightSide = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+            set =>
+                this.rightSide = Math.Round(
+                    value,
+                    1,
+                    MidpointRounding.AwayFromZero);
         }
 
         /// <summary>
@@ -46,7 +54,11 @@ namespace VisioCleanup.Objects
         public double BottomSide
         {
             get => this.bottomSide;
-            set => this.bottomSide = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+            set =>
+                this.bottomSide = Math.Round(
+                    value,
+                    1,
+                    MidpointRounding.AwayFromZero);
         }
 
         /// <summary>
@@ -55,25 +67,41 @@ namespace VisioCleanup.Objects
         public double TopSide
         {
             get => this.topSide;
-            set => this.topSide = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+            set =>
+                this.topSide = Math.Round(
+                    value,
+                    1,
+                    MidpointRounding.AwayFromZero);
         }
 
+        /// <inheritdoc />
         public override bool Equals(object? obj)
         {
             return obj is Corners corners && this.Equals(corners);
         }
 
+        /// <inheritdoc />
         public bool Equals(Corners other)
         {
-            return this.LeftSide.Equals(other.LeftSide) &&
-                   this.RightSide.Equals(other.RightSide) &&
-                   this.BottomSide.Equals(other.BottomSide) &&
-                   this.TopSide.Equals(other.TopSide);
+            return this.LeftSide.Equals(other.LeftSide) && this.RightSide.Equals(other.RightSide)
+                                                        && this.BottomSide.Equals(other.BottomSide)
+                                                        && this.TopSide.Equals(other.TopSide);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
-            return HashCode.Combine(this.LeftSide, this.RightSide, this.BottomSide, this.TopSide);
+            return HashCode.Combine(
+                this.LeftSide,
+                this.RightSide,
+                this.BottomSide,
+                this.TopSide);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"Top: {this.TopSide}, Right: {this.RightSide}, Bottom: {this.BottomSide}, Left: {this.LeftSide}";
         }
     }
 }

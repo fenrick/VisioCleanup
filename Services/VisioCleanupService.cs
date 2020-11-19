@@ -15,7 +15,6 @@ namespace VisioCleanup.Services
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using Microsoft.Office.Interop.Visio;
 
     using VisioCleanup.Objects;
 
@@ -87,80 +86,91 @@ namespace VisioCleanup.Services
 
                                 // assemble processing structure
                                 this.logger.LogDebug("Processing parent shape.");
-                                parentShape = new DiagramShape(
-                                    masterShapeId,
-                                    this.visioHandler.GetShapeText(masterShapeId),
-                                    this.visioHandler.CalculateCorners(masterShapeId),
-                                    ShapeType.Existing);
+                                parentShape = new DiagramShape(masterShapeId)
+                                                  {
+                                                      ShapeText = this.visioHandler.GetShapeText(masterShapeId),
+                                                      Corners = this.visioHandler.CalculateCorners(masterShapeId),
+                                                      ShapeType = ShapeType.Existing,
+                                                  };
 
                                 this.logger.LogDebug("Processing children.");
-                                var childShapeIds = await this.visioHandler.GetChildren(masterShapeId).ConfigureAwait(false);
+                                var childShapeIds = await this.visioHandler.GetChildrenAsync(masterShapeId)
+                                                        .ConfigureAwait(false);
                                 foreach (var childId in childShapeIds)
                                 {
                                     // add to parent
-                                    var childShape = new DiagramShape(
-                                        childId,
-                                        this.visioHandler.GetShapeText(childId),
-                                        this.visioHandler.CalculateCorners(childId),
-                                        ShapeType.Existing);
+                                    var childShape = new DiagramShape(childId)
+                                                         {
+                                                             ShapeText = this.visioHandler.GetShapeText(childId),
+                                                             Corners = this.visioHandler.CalculateCorners(childId),
+                                                             ShapeType = ShapeType.Existing,
+                                                         };
                                     parentShape.AddChildShape(childShape);
 
                                     // add children of child
-                                    var secondaryChildShapesIds = await this.visioHandler.GetChildren(childId).ConfigureAwait(false);
+                                    var secondaryChildShapesIds =
+                                        await this.visioHandler.GetChildrenAsync(childId).ConfigureAwait(false);
                                     foreach (var secondaryChildId in secondaryChildShapesIds)
                                     {
-                                        var secondaryChildShape = new DiagramShape(
-                                            secondaryChildId,
-                                            this.visioHandler.GetShapeText(secondaryChildId),
-                                            this.visioHandler.CalculateCorners(secondaryChildId),
-                                            ShapeType.Existing);
+                                        var secondaryChildShape = new DiagramShape(secondaryChildId)
+                                                                      {
+                                                                          ShapeText =
+                                                                              this.visioHandler.GetShapeText(
+                                                                                  secondaryChildId),
+                                                                          Corners = this.visioHandler.CalculateCorners(
+                                                                              secondaryChildId),
+                                                                          ShapeType = ShapeType.Existing,
+                                                                      };
                                         childShape.AddChildShape(secondaryChildShape);
                                     }
                                 }
-
                             }
                             else
                             {
                                 // create a fake master.
                                 this.logger.LogDebug("Creating a fake master for selection.");
-                                parentShape = new DiagramShape(
-                                    0, "FAKE", default(Corners), ShapeType.FakeShape);
+                                parentShape = new DiagramShape(0)
+                                                  {
+                                                      ShapeText = "FAKE",
+                                                      Corners = default,
+                                                      ShapeType = ShapeType.FakeShape,
+                                                  };
 
                                 this.logger.LogDebug("Adding selection as children");
 
                                 foreach (var childId in selection)
                                 {
                                     // add to parent
-                                    var childShape = new DiagramShape(
-                                        childId,
-                                        this.visioHandler.GetShapeText(childId),
-                                        this.visioHandler.CalculateCorners(childId),
-                                        ShapeType.Existing);
+                                    var childShape = new DiagramShape(childId)
+                                                         {
+                                                             ShapeText = this.visioHandler.GetShapeText(childId),
+                                                             Corners = this.visioHandler.CalculateCorners(childId),
+                                                             ShapeType = ShapeType.Existing,
+                                                         };
                                     parentShape.AddChildShape(childShape);
 
                                     // add children of child
-                                    var secondaryChildShapesIds = await this.visioHandler.GetChildren(childId).ConfigureAwait(false);
+                                    var secondaryChildShapesIds =
+                                        await this.visioHandler.GetChildrenAsync(childId).ConfigureAwait(false);
                                     foreach (var secondaryChildId in secondaryChildShapesIds)
                                     {
-                                        var secondaryChildShape = new DiagramShape(
-                                            secondaryChildId,
-                                            this.visioHandler.GetShapeText(secondaryChildId),
-                                            this.visioHandler.CalculateCorners(secondaryChildId),
-                                            ShapeType.Existing);
+                                        var secondaryChildShape = new DiagramShape(secondaryChildId)
+                                                                      {
+                                                                          ShapeText = this.visioHandler.GetShapeText(
+                                                                              secondaryChildId),
+                                                                          Corners = this.visioHandler.CalculateCorners(
+                                                                              secondaryChildId),
+                                                                          ShapeType = ShapeType.Existing,
+                                                                      };
                                         childShape.AddChildShape(secondaryChildShape);
                                     }
-
                                 }
                             }
 
                             this.logger.LogDebug("Adjusting spacing.");
 
                             // adjust spacing
-                            parentShape.AdjustDiagram(
-                                this.settings.VisioVerticalSpacer,
-                                this.settings.VisioHorizontalSpacer,
-                                45,
-                                7.5);
+                            this.AdjustDiagram(parentShape);
 
                             this.logger.LogDebug("Redraw shapes.");
 
@@ -178,6 +188,238 @@ namespace VisioCleanup.Services
             this.logger.LogDebug("Completed processing Visio Cleanup.");
 
             this.appLifetime.StopApplication();
+        }
+
+        /// <summary>
+        ///     Loop through child shapes and move them until no overlaps.
+        /// </summary>
+        /// <param name="diagramShape">Shape being adjusted.</param>
+        private void AdjustDiagram(DiagramShape diagramShape)
+        {
+            this.logger.LogDebug(
+                "Adjusting shape {ShapeID}: {ShapeText}",
+                diagramShape.VisioId,
+                diagramShape.ShapeText);
+
+            if (!diagramShape.HasChildren())
+            {
+                this.logger.LogDebug("No children.");
+                var newCorners = diagramShape.Corners;
+                newCorners.BottomSide = newCorners.TopSide - this.settings.UltimateShapeHeight;
+                newCorners.RightSide = newCorners.LeftSide + this.settings.UltimateShapeWidth;
+                if (!diagramShape.Corners.Equals(newCorners))
+                {
+                    this.logger.LogDebug(
+                        "New size for shape: {Corners}",
+                        newCorners);
+                }
+
+                diagramShape.Corners = newCorners;
+
+                return;
+            }
+
+            this.logger.LogDebug("Adjusting children.");
+            foreach (var shape in diagramShape.Children)
+            {
+                this.AdjustDiagram(shape);
+
+                // space above
+                if (shape.ShapeAbove != null)
+                {
+                    var desiredSpace = shape.HasChildren()
+                                           ? this.settings.VisioHorizontalSpacer
+                                           : this.settings.VisioVerticalSpacer;
+
+                    var movement = desiredSpace - (shape.ShapeAbove.Corners.BottomSide - shape.Corners.TopSide);
+
+                    if (movement != 0)
+                    {
+                        this.logger.LogDebug(
+                            "Shape above {ShapeID}: {ShapeText}",
+                            shape.ShapeAbove.VisioId,
+                            shape.ShapeAbove.ShapeText);
+
+                        this.MoveForSpacer(
+                            movement,
+                            shape.ShapeAbove.MoveUp);
+                    }
+                }
+
+                // space below
+                if (shape.ShapeBelow != null)
+                {
+                    var desiredSpace = shape.HasChildren()
+                                           ? this.settings.VisioHorizontalSpacer
+                                           : this.settings.VisioVerticalSpacer;
+
+                    var movement = desiredSpace - (shape.Corners.BottomSide - shape.ShapeBelow.Corners.TopSide);
+                    if (movement != 0)
+                    {
+                        this.logger.LogDebug(
+                            "Shape below {ShapeID}: {ShapeText}",
+                            shape.ShapeBelow.VisioId,
+                            shape.ShapeBelow.ShapeText);
+
+                        this.MoveForSpacer(
+                            movement,
+                            shape.ShapeBelow.MoveDown);
+                    }
+                }
+
+                // space left
+                if (shape.ShapeToLeft != null)
+                {
+                    var movement = this.settings.VisioHorizontalSpacer - (shape.Corners.LeftSide - shape.ShapeToLeft.Corners.RightSide);
+
+                    if (movement != 0)
+                    {
+                        this.logger.LogDebug(
+                            "Shape to left {ShapeID}: {ShapeText}",
+                            shape.ShapeToLeft.VisioId,
+                            shape.ShapeToLeft.ShapeText);
+
+                        this.MoveForSpacer(
+                            movement,
+                            shape.ShapeToLeft.MoveLeft);
+                    }
+                }
+
+                // space right
+                if (shape.ShapeToRight != null)
+                {
+                    var movement = this.settings.VisioHorizontalSpacer - (shape.ShapeToRight.Corners.LeftSide - shape.Corners.RightSide);
+
+                    if (movement != 0)
+                    {
+                        this.logger.LogDebug(
+                            "Shape to right {ShapeID}: {ShapeText}",
+                            shape.ShapeToRight.VisioId,
+                            shape.ShapeToRight.ShapeText);
+
+                        this.MoveForSpacer(
+                            movement,
+                            shape.ShapeToRight.MoveRight);
+                    }
+                }
+            }
+
+            // if we moved the shapes at the end, let's just go over again to confirm all good.
+            var changed = this.ShrinkToChildren(diagramShape);
+            changed = this.AlignTop(diagramShape) || changed;
+
+            if (changed)
+            {
+                this.logger.LogDebug(
+                    "Processing again {ShapeID}: {ShapeText}",
+                    diagramShape.VisioId,
+                    diagramShape.ShapeText);
+                this.AdjustDiagram(diagramShape);
+            }
+        }
+
+        private bool AlignTop(DiagramShape diagramShape)
+        {
+            if (!diagramShape.HasChildren())
+            {
+                return false;
+            }
+
+            var changed = false;
+
+            // find far left side (assume non-ragged side).
+            var children = diagramShape.Children;
+            var leftSide = children.Select(shape => shape.Corners.LeftSide).Min();
+            var bottomOrdered = children.Where(shape => shape.Corners.LeftSide.Equals(leftSide));
+
+            foreach (var shape in bottomOrdered)
+            {
+                var nextShape = shape.ShapeToRight;
+                while (nextShape != null)
+                {
+                    var offset = shape.Corners.TopSide - nextShape.Corners.TopSide;
+                    if (offset != 0)
+                    {
+                        nextShape.MoveUp(offset);
+                        changed = true;
+                        this.logger.LogDebug(
+                            "Aligning shape {ShapeID}: {ShapeText} by {Offset}",
+                            nextShape.VisioId,
+                            nextShape.ShapeText,
+                            offset);
+                    }
+
+                    nextShape = nextShape.ShapeToRight;
+                }
+            }
+
+            return changed;
+        }
+
+        /// <summary>
+        ///     Move a shape for a spacer.
+        /// </summary>
+        /// <param name="currentSpace">Current space.</param>
+        /// <param name="desiredSpace">Desired space.</param>
+        /// <param name="movementAction">Action for movement.</param>
+        private void MoveForSpacer(double movement, Action<double> movementAction)
+        {
+            this.logger.LogDebug(
+                "{Action} by {Movement}",
+                movementAction.Method,
+                movement);
+            if (movement != 0)
+            {
+                movementAction(movement);
+            }
+        }
+
+        /// <summary>
+        ///     Shrink shape to size of internal shapes.
+        /// </summary>
+        /// <param name="diagramShape">Shape to be resized.</param>
+        /// <returns>Was the diagram changed.</returns>
+        private bool ShrinkToChildren(DiagramShape diagramShape)
+        {
+            if (!diagramShape.HasChildren())
+            {
+                return false;
+            }
+
+            var newCorners = diagramShape.Corners;
+            var children = diagramShape.Children;
+
+            // left side
+            var leftSide = children.Select(shape => shape.Corners.LeftSide).Min();
+            newCorners.LeftSide = leftSide - this.settings.LeftPadding;
+
+            // right side
+            var rightSide = children.Select(shape => shape.Corners.RightSide).Max();
+            newCorners.RightSide = rightSide + this.settings.RightPadding;
+
+            // bottom side
+            var bottomSide = children.Select(shape => shape.Corners.BottomSide).Min();
+            newCorners.BottomSide = bottomSide - this.settings.BottomPadding;
+
+            // top side
+            var topSide = children.Select(shape => shape.Corners.TopSide).Max();
+            newCorners.TopSide = topSide + this.settings.TopPadding;
+
+            var result = !diagramShape.Corners.Equals(newCorners);
+            diagramShape.Corners = newCorners;
+
+            if (result)
+            {
+                this.logger.LogDebug(
+                    "Adjusting shape {ShapeID}: {ShapeText}",
+                    diagramShape.VisioId,
+                    diagramShape.ShapeText);
+                this.logger.LogDebug(
+                    "New size for shape: {Corners}",
+                    newCorners);
+            }
+
+            return result;
         }
     }
 }

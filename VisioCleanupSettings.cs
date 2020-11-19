@@ -13,6 +13,36 @@ namespace VisioCleanup
     public class VisioCleanupSettings
     {
         /// <summary>
+        ///     Gets or sets bottom padding.
+        /// </summary>
+        public double BottomPadding { get; set; }
+
+        /// <summary>
+        ///     Gets or sets left padding.
+        /// </summary>
+        public double LeftPadding { get; set; }
+
+        /// <summary>
+        ///     Gets or sets right padding.
+        /// </summary>
+        public double RightPadding { get; set; }
+
+        /// <summary>
+        ///     Gets or sets top padding.
+        /// </summary>
+        public double TopPadding { get; set; }
+
+        /// <summary>
+        ///     Gets or sets ultimate shape height.
+        /// </summary>
+        public double UltimateShapeHeight { get; set; }
+
+        /// <summary>
+        ///     Gets or sets ultimate shape width.
+        /// </summary>
+        public double UltimateShapeWidth { get; set; }
+
+        /// <summary>
         ///     Gets or sets Visio Height Field.
         /// </summary>
         public string? VisioHeightField { get; set; }

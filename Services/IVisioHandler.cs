@@ -39,7 +39,7 @@ namespace VisioCleanup.Services
         /// </summary>
         /// <param name="shapeId">Shape ID of the parent shape.</param>
         /// <returns>array of shape ids for children.</returns>
-        Task<IEnumerable<int>> GetChildren(int shapeId);
+        Task<IEnumerable<int>> GetChildrenAsync(int shapeId);
 
         /// <summary>
         ///     Obtains the current shape text for a shape.
@@ -60,6 +60,10 @@ namespace VisioCleanup.Services
         /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
         Task ReDrawShapesAsync(DiagramShape diagramShape);
 
+        /// <summary>
+        ///     Return an array of visio ids that have been selected.
+        /// </summary>
+        /// <returns>Array of visio ids.</returns>
         int[] Selection();
 
         /// <summary>
@@ -117,7 +121,7 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<int>> GetChildren(int shapeId)
+        public async Task<IEnumerable<int>> GetChildrenAsync(int shapeId)
         {
             var shapeIDs = new List<int>();
 
@@ -219,6 +223,8 @@ namespace VisioCleanup.Services
                                         diagramShape.Corners.BottomSide + shape.Cells[this.settings.VisioLocPinYField]
                                             .Result[this.settings.VisioUnits];
 
+                                    shape.Text = diagramShape.ShapeText;
+
                                     var newCorners = this.CalculateCorners(diagramShape.VisioId);
 
                                     diagramShape.Corners = newCorners;
@@ -228,6 +234,12 @@ namespace VisioCleanup.Services
             }
         }
 
+        /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
+        /// <exception cref="T:System.OverflowException">
+        ///     The array is multidimensional and contains more than
+        ///     <see cref="F:System.Int32.MaxValue" /> elements.
+        /// </exception>
         public int[] Selection()
         {
             if (this.visioApplication is null)
@@ -238,7 +250,7 @@ namespace VisioCleanup.Services
             var selection = this.visioApplication.ActiveWindow.Selection;
 
             selection.GetIDs(out Array ids);
-            List<int> listShapeIds = new List<int>(ids.Length);
+            var listShapeIds = new List<int>(ids.Length);
 
             foreach (var id in ids)
             {
