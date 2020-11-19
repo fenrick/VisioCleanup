@@ -190,7 +190,7 @@ namespace VisioCleanup.Objects
         }
 
         /// <summary>
-        /// Does this shape have children.
+        ///     Does this shape have children.
         /// </summary>
         /// <returns>true if at least one.</returns>
         internal bool HasChildren()

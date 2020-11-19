@@ -270,7 +270,8 @@ namespace VisioCleanup.Services
                 // space left
                 if (shape.ShapeToLeft != null)
                 {
-                    var movement = this.settings.VisioHorizontalSpacer - (shape.Corners.LeftSide - shape.ShapeToLeft.Corners.RightSide);
+                    var movement = this.settings.VisioHorizontalSpacer
+                                   - (shape.Corners.LeftSide - shape.ShapeToLeft.Corners.RightSide);
 
                     if (movement != 0)
                     {
@@ -288,7 +289,8 @@ namespace VisioCleanup.Services
                 // space right
                 if (shape.ShapeToRight != null)
                 {
-                    var movement = this.settings.VisioHorizontalSpacer - (shape.ShapeToRight.Corners.LeftSide - shape.Corners.RightSide);
+                    var movement = this.settings.VisioHorizontalSpacer
+                                   - (shape.ShapeToRight.Corners.LeftSide - shape.Corners.RightSide);
 
                     if (movement != 0)
                     {
