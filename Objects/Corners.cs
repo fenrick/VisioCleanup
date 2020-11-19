@@ -5,31 +5,75 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+
 namespace VisioCleanup.Objects
 {
     /// <summary>
     ///     Corners of a visio shape.
     /// </summary>
-    internal struct Corners
+    internal struct Corners : IEquatable<Corners>
     {
+        private double leftSide;
+
+        private double rightSide;
+
+        private double bottomSide;
+
+        private double topSide;
+
         /// <summary>
         ///     Gets or sets left side of the shape.
         /// </summary>
-        public double LeftSide { get; set; }
+        public double LeftSide
+        {
+            get => this.leftSide;
+            set => this.leftSide = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+        }
 
         /// <summary>
         ///     Gets or sets right side of the shape.
         /// </summary>
-        public double RightSide { get; set; }
+        public double RightSide
+        {
+            get => this.rightSide;
+            set => this.rightSide = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+        }
 
         /// <summary>
         ///     Gets or sets bottom of the shape.
         /// </summary>
-        public double BottomSide { get; set; }
+        public double BottomSide
+        {
+            get => this.bottomSide;
+            set => this.bottomSide = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+        }
 
         /// <summary>
         ///     Gets or sets top of the shape.
         /// </summary>
-        public double TopSide { get; set; }
+        public double TopSide
+        {
+            get => this.topSide;
+            set => this.topSide = Math.Round(value, 1, MidpointRounding.AwayFromZero);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Corners corners && this.Equals(corners);
+        }
+
+        public bool Equals(Corners other)
+        {
+            return this.LeftSide.Equals(other.LeftSide) &&
+                   this.RightSide.Equals(other.RightSide) &&
+                   this.BottomSide.Equals(other.BottomSide) &&
+                   this.TopSide.Equals(other.TopSide);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(this.LeftSide, this.RightSide, this.BottomSide, this.TopSide);
+        }
     }
 }
