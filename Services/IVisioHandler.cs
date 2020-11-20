@@ -139,7 +139,8 @@ namespace VisioCleanup.Services
             // var tasks = new List<Task>();
             foreach (var child in selection)
             {
-                if (!(child is Shape childShape))
+                var childShape = child as Shape;
+                if (childShape == null)
                 {
                     continue;
                 }
@@ -152,8 +153,9 @@ namespace VisioCleanup.Services
                                 (short)VisSpatialRelationCodes.visSpatialContainedIn,
                                 0,
                                 (short)VisSpatialRelationFlags.visSpatialFrontToBack];
+                            var primaryItemShapeId = parentSelection.PrimaryItem.ID;
 
-                            if (parentShape.Equals(parentSelection.PrimaryItem))
+                            if (shapeId.Equals(primaryItemShapeId))
                             {
                                 shapeIDs.Add(childShape.ID);
                             }
