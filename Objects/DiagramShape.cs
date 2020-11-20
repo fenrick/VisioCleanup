@@ -167,8 +167,6 @@ namespace VisioCleanup.Objects
         {
             // add to array
             this.Children.Add(childShape);
-
-            this.FindNeighbours();
         }
 
         /// <inheritdoc />
@@ -187,6 +185,84 @@ namespace VisioCleanup.Objects
         public override int GetHashCode()
         {
             return HashCode.Combine(this.VisioId);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"{this.VisioId}: {this.ShapeText}";
+        }
+
+        /// <summary>
+        ///  Map all neighbour shapes within tolerance of 10.
+        /// </summary>
+        internal void FindNeighbours()
+        {
+            // reset all shapes.
+            var children = this.Children;
+            foreach (var shape in children)
+            {
+                shape.ShapeAbove = null;
+                shape.ShapeBelow = null;
+                shape.ShapeToLeft = null;
+                shape.ShapeToRight = null;
+            }
+
+            var lines = children.OrderBy(shape => shape.Corners.LeftSide).Select(shape => shape.Corners.LeftSide);
+            foreach (var line in lines.Distinct())
+            {
+                var bottomOrdered = children.Where(shape => shape.Corners.LeftSide.Equals(line))
+                    .OrderBy(shape => shape.Corners.BottomSide);
+                DiagramShape? currentShape = null;
+
+                foreach (var shape in bottomOrdered)
+                {
+                    switch (currentShape)
+                    {
+                        case not null when currentShape.Corners.BottomSide.Equals(shape.Corners.BottomSide):
+                            // overlap!
+                            throw new NotImplementedException("No idea what to do yet with this!");
+                        case not null when !(currentShape.Corners.BottomSide < shape.Corners.BottomSide):
+                            continue;
+                        case not null:
+                            shape.ShapeBelow = currentShape;
+
+                            currentShape = shape;
+                            break;
+                        default:
+                            currentShape = shape;
+                            break;
+                    }
+                }
+            }
+
+            lines = children.OrderBy(shape => shape.Corners.TopSide).Select(shape => shape.Corners.TopSide);
+            foreach (var line in lines.Distinct())
+            {
+                var bottomOrdered = children.Where(shape => shape.Corners.TopSide.Equals(line))
+                    .OrderBy(shape => shape.Corners.LeftSide);
+                DiagramShape? currentShape = null;
+
+                foreach (var shape in bottomOrdered)
+                {
+                    switch (currentShape)
+                    {
+                        case not null when currentShape.Corners.LeftSide.Equals(shape.Corners.LeftSide):
+                            // overlap!
+                            throw new NotImplementedException("No idea what to do yet with this!");
+                        case not null when !(currentShape.Corners.LeftSide < shape.Corners.LeftSide):
+                            continue;
+                        case not null when shape.Corners.LeftSide - currentShape.Corners.RightSide < 10:
+                            shape.ShapeToLeft = currentShape;
+
+                            currentShape = shape;
+                            break;
+                        default:
+                            currentShape = shape;
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -263,75 +339,6 @@ namespace VisioCleanup.Objects
             foreach (var child in this.Children)
             {
                 child.MoveUp(movement);
-            }
-        }
-
-        private void FindNeighbours()
-        {
-            // reset all shapes.
-            var children = this.Children;
-            foreach (var shape in children)
-            {
-                shape.ShapeAbove = null;
-                shape.ShapeBelow = null;
-                shape.ShapeToLeft = null;
-                shape.ShapeToRight = null;
-            }
-
-            var lines = children.OrderBy(shape => shape.Corners.LeftSide).Select(shape => shape.Corners.LeftSide);
-            foreach (var line in lines.Distinct())
-            {
-                var bottomOrdered = children.Where(shape => shape.Corners.LeftSide.Equals(line))
-                    .OrderBy(shape => shape.Corners.BottomSide);
-                DiagramShape? currentShape = null;
-
-                foreach (var shape in bottomOrdered)
-                {
-                    switch (currentShape)
-                    {
-                        case not null when currentShape.Corners.BottomSide.Equals(shape.Corners.BottomSide):
-                            // overlap!
-                            throw new NotImplementedException("No idea what to do yet with this!");
-                        case not null when !(currentShape.Corners.BottomSide < shape.Corners.BottomSide):
-                            continue;
-                        case not null:
-                            shape.ShapeBelow = currentShape;
-
-                            currentShape = shape;
-                            break;
-                        default:
-                            currentShape = shape;
-                            break;
-                    }
-                }
-            }
-
-            lines = children.OrderBy(shape => shape.Corners.BottomSide).Select(shape => shape.Corners.BottomSide);
-            foreach (var line in lines.Distinct())
-            {
-                var bottomOrdered = children.Where(shape => shape.Corners.BottomSide.Equals(line))
-                    .OrderBy(shape => shape.Corners.LeftSide);
-                DiagramShape? currentShape = null;
-
-                foreach (var shape in bottomOrdered)
-                {
-                    switch (currentShape)
-                    {
-                        case not null when currentShape.Corners.LeftSide.Equals(shape.Corners.LeftSide):
-                            // overlap!
-                            throw new NotImplementedException("No idea what to do yet with this!");
-                        case not null when !(currentShape.Corners.LeftSide < shape.Corners.LeftSide):
-                            continue;
-                        case not null:
-                            shape.ShapeToLeft = currentShape;
-
-                            currentShape = shape;
-                            break;
-                        default:
-                            currentShape = shape;
-                            break;
-                    }
-                }
             }
         }
     }

@@ -123,7 +123,11 @@ namespace VisioCleanup.Services
                                                                       };
                                         childShape.AddChildShape(secondaryChildShape);
                                     }
+
+                                    childShape.FindNeighbours();
                                 }
+
+                                parentShape.FindNeighbours();
                             }
                             else
                             {
@@ -164,7 +168,11 @@ namespace VisioCleanup.Services
                                                                       };
                                         childShape.AddChildShape(secondaryChildShape);
                                     }
+
+                                    childShape.FindNeighbours();
                                 }
+
+                                parentShape.FindNeighbours();
                             }
 
                             this.logger.LogDebug("Adjusting spacing.");
@@ -316,7 +324,8 @@ namespace VisioCleanup.Services
                     "Processing again {ShapeID}: {ShapeText}",
                     diagramShape.VisioId,
                     diagramShape.ShapeText);
-                this.AdjustDiagram(diagramShape);
+
+                // this.AdjustDiagram(diagramShape);
             }
         }
 
@@ -328,24 +337,78 @@ namespace VisioCleanup.Services
             }
 
             var changed = false;
-
-            // find far left side (assume non-ragged side).
             var children = diagramShape.Children;
-            var leftSide = children.Select(shape => shape.Corners.LeftSide).Min();
-            var bottomOrdered = children.Where(shape => shape.Corners.LeftSide.Equals(leftSide));
 
-            foreach (var shape in bottomOrdered)
+            foreach (var child in children)
             {
-                var nextShape = shape.ShapeToRight;
+                // align up
+                var nextShape = child.ShapeAbove;
                 while (nextShape != null)
                 {
-                    var offset = shape.Corners.TopSide - nextShape.Corners.TopSide;
+                    var offset = child.Corners.LeftSide - nextShape.Corners.LeftSide;
+                    if (offset != 0)
+                    {
+                        nextShape.MoveRight(offset);
+                        changed = true;
+                        this.logger.LogDebug(
+                            "Moving right {ShapeID}: {ShapeText} by {Offset}",
+                            nextShape.VisioId,
+                            nextShape.ShapeText,
+                            offset);
+                    }
+
+                    nextShape = nextShape.ShapeAbove;
+                }
+
+                // align down
+                nextShape = child.ShapeBelow;
+                while (nextShape != null)
+                {
+                    var offset = child.Corners.LeftSide - nextShape.Corners.LeftSide;
+                    if (offset != 0)
+                    {
+                        nextShape.MoveRight(offset);
+                        changed = true;
+                        this.logger.LogDebug(
+                            "Moving right {ShapeID}: {ShapeText} by {Offset}",
+                            nextShape.VisioId,
+                            nextShape.ShapeText,
+                            offset);
+                    }
+
+                    nextShape = nextShape.ShapeBelow;
+                }
+
+                // align left
+                nextShape = child.ShapeToLeft;
+                while (nextShape != null)
+                {
+                    var offset = child.Corners.TopSide - nextShape.Corners.TopSide;
                     if (offset != 0)
                     {
                         nextShape.MoveUp(offset);
                         changed = true;
                         this.logger.LogDebug(
-                            "Aligning shape {ShapeID}: {ShapeText} by {Offset}",
+                            "Moving up {ShapeID}: {ShapeText} by {Offset}",
+                            nextShape.VisioId,
+                            nextShape.ShapeText,
+                            offset);
+                    }
+
+                    nextShape = nextShape.ShapeToLeft;
+                }
+
+                // align right
+                nextShape = child.ShapeToRight;
+                while (nextShape != null)
+                {
+                    var offset = child.Corners.TopSide - nextShape.Corners.TopSide;
+                    if (offset != 0)
+                    {
+                        nextShape.MoveUp(offset);
+                        changed = true;
+                        this.logger.LogDebug(
+                            "Moving up {ShapeID}: {ShapeText} by {Offset}",
                             nextShape.VisioId,
                             nextShape.ShapeText,
                             offset);
@@ -361,8 +424,7 @@ namespace VisioCleanup.Services
         /// <summary>
         ///     Move a shape for a spacer.
         /// </summary>
-        /// <param name="currentSpace">Current space.</param>
-        /// <param name="desiredSpace">Desired space.</param>
+        /// <param name="movement">how far are we moving.</param>
         /// <param name="movementAction">Action for movement.</param>
         private void MoveForSpacer(double movement, Action<double> movementAction)
         {
