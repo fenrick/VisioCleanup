@@ -31,49 +31,49 @@ namespace VisioCleanup.Services
             // CLSIDFromProgIDEx doesn't exist.
             try
             {
-                CLSIDFromProgIDEx(
-                    progId,
-                    out classId);
+                CLSIDFromProgIDEx(progId, out classId);
             }
             catch (Exception)
             {
-                CLSIDFromProgID(
-                    progId,
-                    out classId);
+                CLSIDFromProgID(progId, out classId);
             }
 
-            GetActiveObject(
-                ref classId,
-                IntPtr.Zero,
-                out var obj);
+            GetActiveObject(ref classId, IntPtr.Zero, out var obj);
             return obj;
         }
 
-        [DllImport(
-            "ole32.dll",
-            PreserveSig = false)]
+        /// <summary>
+        /// Release com object properly.
+        /// </summary>
+        /// <param name="obj">Object.</param>
+        [SupportedOSPlatform("windows")]
+        internal static void ReleaseObject(object? obj)
+        {
+            // Do not catch an exception from this.
+            // You may want to remove these guards depending on
+            // what you think the semantics should be.
+            if (obj != null && System.Runtime.InteropServices.Marshal.IsComObject(obj))
+            {
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
+            }
+        }
+
+        [DllImport("ole32.dll", PreserveSig = false)]
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
         [SecurityCritical] // auto-generated
         private static extern void CLSIDFromProgID([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
 
-        [DllImport(
-            "ole32.dll",
-            PreserveSig = false)]
+        [DllImport("ole32.dll", PreserveSig = false)]
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
         [SecurityCritical] // auto-generated
         private static extern void CLSIDFromProgIDEx([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
 
-        [DllImport(
-            "oleaut32.dll",
-            PreserveSig = false)]
+        [DllImport("oleaut32.dll", PreserveSig = false)]
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
         [SecurityCritical] // auto-generated
-        private static extern void GetActiveObject(
-            ref Guid rclsid,
-            IntPtr reserved,
-            [MarshalAs(UnmanagedType.Interface)] out object ppunk);
+        private static extern void GetActiveObject(ref Guid rclsid, IntPtr reserved, [MarshalAs(UnmanagedType.Interface)] out object ppunk);
     }
 }
