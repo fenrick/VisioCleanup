@@ -96,38 +96,9 @@ namespace VisioCleanup.Services
                                                   };
 
                                 this.logger.LogDebug("Processing children.");
-                                var childShapeIds = await this.visioHandler.GetChildrenAsync(masterShapeId)
-                                                        .ConfigureAwait(false);
-                                foreach (var childId in childShapeIds)
-                                {
-                                    // add to parent
-                                    var childShape = new DiagramShape(childId)
-                                                         {
-                                                             ShapeText = this.visioHandler.GetShapeText(childId),
-                                                             Corners = this.visioHandler.CalculateCorners(childId),
-                                                             ShapeType = ShapeType.Existing,
-                                                         };
-                                    parentShape.AddChildShape(childShape);
 
-                                    // add children of child
-                                    var secondaryChildShapesIds =
-                                        await this.visioHandler.GetChildrenAsync(childId).ConfigureAwait(false);
-                                    foreach (var secondaryChildId in secondaryChildShapesIds)
-                                    {
-                                        var secondaryChildShape = new DiagramShape(secondaryChildId)
-                                                                      {
-                                                                          ShapeText =
-                                                                              this.visioHandler.GetShapeText(
-                                                                                  secondaryChildId),
-                                                                          Corners = this.visioHandler.CalculateCorners(
-                                                                              secondaryChildId),
-                                                                          ShapeType = ShapeType.Existing,
-                                                                      };
-                                        childShape.AddChildShape(secondaryChildShape);
-                                    }
-
-                                    childShape.FindNeighbours();
-                                }
+                                // process children until no more
+                                await this.ProcessChildrenAsync(parentShape).ConfigureAwait(false);
 
                                 parentShape.FindNeighbours();
                             }
@@ -155,21 +126,7 @@ namespace VisioCleanup.Services
                                                          };
                                     parentShape.AddChildShape(childShape);
 
-                                    // add children of child
-                                    var secondaryChildShapesIds =
-                                        await this.visioHandler.GetChildrenAsync(childId).ConfigureAwait(false);
-                                    foreach (var secondaryChildId in secondaryChildShapesIds)
-                                    {
-                                        var secondaryChildShape = new DiagramShape(secondaryChildId)
-                                                                      {
-                                                                          ShapeText = this.visioHandler.GetShapeText(
-                                                                              secondaryChildId),
-                                                                          Corners = this.visioHandler.CalculateCorners(
-                                                                              secondaryChildId),
-                                                                          ShapeType = ShapeType.Existing,
-                                                                      };
-                                        childShape.AddChildShape(secondaryChildShape);
-                                    }
+                                    await this.ProcessChildrenAsync(childShape).ConfigureAwait(false);
 
                                     childShape.FindNeighbours();
                                 }
@@ -372,6 +329,27 @@ namespace VisioCleanup.Services
             if (movement != 0)
             {
                 movementAction(movement);
+            }
+        }
+
+        private async Task ProcessChildrenAsync(DiagramShape parentShape)
+        {
+            // find children
+            var childShapeIds = await this.visioHandler.GetChildrenAsync(parentShape.VisioId).ConfigureAwait(false);
+            foreach (var childId in childShapeIds)
+            {
+                // add to parent
+                var childShape = new DiagramShape(childId)
+                                     {
+                                         ShapeText = this.visioHandler.GetShapeText(childId),
+                                         Corners = this.visioHandler.CalculateCorners(childId),
+                                         ShapeType = ShapeType.Existing,
+                                     };
+                parentShape.AddChildShape(childShape);
+
+                await this.ProcessChildrenAsync(childShape).ConfigureAwait(false);
+
+                childShape.FindNeighbours();
             }
         }
 
