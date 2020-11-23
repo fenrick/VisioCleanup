@@ -98,91 +98,118 @@ namespace VisioCleanup.Services
         /// <inheritdoc />
         public Corners CalculateCorners(int shapeId)
         {
-            var corners = default(Corners);
+            Shape? shape = null;
+            try
+            {
+                var corners = default(Corners);
 
-            var shape = this.GetShape(shapeId);
+                shape = this.GetShape(shapeId);
 
-            corners.LeftSide = shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits]
-                               - shape.Cells[this.settings.VisioLocPinXField].Result[this.settings.VisioUnits];
-            corners.BottomSide = shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits]
-                                 - shape.Cells[this.settings.VisioLocPinYField].Result[this.settings.VisioUnits];
+                corners.LeftSide = shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits]
+                                   - shape.Cells[this.settings.VisioLocPinXField].Result[this.settings.VisioUnits];
+                corners.BottomSide = shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits]
+                                     - shape.Cells[this.settings.VisioLocPinYField].Result[this.settings.VisioUnits];
 
-            corners.RightSide = corners.LeftSide
-                                + shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits];
-            corners.TopSide = corners.BottomSide
-                              + shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits];
+                corners.RightSide = corners.LeftSide + shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits];
+                corners.TopSide = corners.BottomSide + shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits];
 
-            return corners;
+                return corners;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(shape);
+            }
         }
 
         /// <inheritdoc />
         public void Close()
         {
+            Marshal.ReleaseObject(this.visioApplication);
         }
 
         /// <inheritdoc />
         public async Task<IEnumerable<int>> GetChildrenAsync(int shapeId)
         {
-            var shapeIDs = new List<int>();
-
-            var parentShape = this.GetShape(shapeId);
-
-            var selection = parentShape.SpatialNeighbors[
-                (short)VisSpatialRelationCodes.visSpatialContain,
-                0,
-                (short)(VisSpatialRelationFlags.visSpatialBackToFront
-                        & VisSpatialRelationFlags.visSpatialIncludeContainerShapes)];
-
-            this.logger.LogDebug(
-                "Potential child shapes found: {CountOfSelection}",
-                selection.Count);
-
-            foreach (var child in selection)
+            Shape? parentShape = null;
+            Selection? selection = null;
+            try
             {
-                if (child is Shape childShape)
+                var shapeIDs = new List<int>();
+
+                parentShape = this.GetShape(shapeId);
+
+                var relation = (short)VisSpatialRelationCodes.visSpatialContain;
+                var flags = (short)VisSpatialRelationFlags.visSpatialBackToFront;
+                selection = parentShape.SpatialNeighbors[relation, 0, flags];
+
+                this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", selection.Count);
+
+                selection.GetIDs(out Array selectionIDs);
+                foreach (int shapeID in selectionIDs)
                 {
                     await Task.Run(
                         () =>
                             {
-                                // check that immediate parent is the supplied shape.
-                                var parentSelection = childShape.SpatialNeighbors[
-                                    (short)VisSpatialRelationCodes.visSpatialContainedIn,
-                                    0,
-                                    (short)(VisSpatialRelationFlags.visSpatialFrontToBack
-                                            & VisSpatialRelationFlags.visSpatialIncludeContainerShapes)];
-                                if (parentSelection.Count > 0)
-                                {
-                                    var primaryItemShapeId = parentSelection.PrimaryItem.ID;
 
-                                    if (shapeId.Equals(primaryItemShapeId))
+                                // check that immediate parent is the supplied shape.
+                                relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
+                                flags = (short)VisSpatialRelationFlags.visSpatialFrontToBack;
+                                Shape? childShape = null;
+                                Selection? parentSelection = null;
+                                try
+                                {
+                                    childShape = this.GetShape(shapeID);
+                                    parentSelection = childShape.SpatialNeighbors[relation, 0, flags];
+                                    if (parentSelection.Count > 0)
                                     {
-                                        shapeIDs.Add(childShape.ID);
+                                        var primaryItemShapeId = parentSelection.PrimaryItem.ID;
+
+                                        if (shapeId.Equals(primaryItemShapeId))
+                                        {
+                                            shapeIDs.Add(childShape.ID);
+                                        }
                                     }
                                 }
+                                finally
+                                {
+                                    Marshal.ReleaseObject(childShape);
+                                    Marshal.ReleaseObject(parentSelection);
+                                }
                             }).ConfigureAwait(false);
+
                 }
+
+                this.logger.LogDebug("Final child shapes found: {CountOfShapeIDs}", shapeIDs.Count);
+
+                return shapeIDs.ToArray();
             }
-
-            this.logger.LogDebug(
-                "Final child shapes found: {CountOfShapeIDs}",
-                shapeIDs.Count);
-
-            return shapeIDs.ToArray();
+            finally
+            {
+                Marshal.ReleaseObject(parentShape);
+                Marshal.ReleaseObject(selection);
+            }
         }
 
         /// <inheritdoc />
         public string GetShapeText(int shapeId)
         {
-            var shape = this.GetShape(shapeId);
-            return shape.Text;
+            Shape? shape = null;
+            try
+            {
+                shape = this.GetShape(shapeId);
+                return shape.Text;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(shape);
+            }
         }
 
         /// <inheritdoc />
         public void Open()
         {
             this.logger.LogDebug("Opening connection to visio.");
-            this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application
-                                    ?? throw new InvalidOperationException();
+            this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application ?? throw new InvalidOperationException();
         }
 
         /// <inheritdoc />
@@ -193,99 +220,96 @@ namespace VisioCleanup.Services
                 await this.ReDrawShapesAsync(childDiagramShape).ConfigureAwait(false);
             }
 
-            switch (diagramShape.ShapeType)
-            {
-                case ShapeType.Existing:
+            await Task.Run(
+                () =>
                     {
-                        await Task.Run(
-                            () =>
+                        switch (diagramShape.ShapeType)
+                        {
+                            case ShapeType.NewShape:
                                 {
-                                    var shape = this.GetShape(diagramShape.VisioId);
+                                    // todo: find master shape
 
-                                    // width = right - left
-                                    var currentWidth = shape.Cells[this.settings.VisioWidthField]
-                                        .Result[this.settings.VisioUnits];
-                                    var newWidth = diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide;
-                                    if (!currentWidth.Equals(newWidth))
+                                    // todo: drop on page
+
+                                    // todo: update diagramShape with details of VisioId
+
+                                    // execute standard movement code.
+                                    goto case ShapeType.Existing;
+                                }
+
+                            case ShapeType.Existing:
+                                {
+                                    Shape? shape = null;
+                                    try
                                     {
-                                        this.logger.LogDebug(
-                                            "Changing width: {Shape} - {OldValue},{NewValue}",
-                                            diagramShape,
-                                            currentWidth,
-                                            newWidth);
-                                        shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits] =
-                                            newWidth;
+                                        shape = this.GetShape(diagramShape.VisioId);
+
+                                        // width = right - left
+                                        var currentWidth = Math.Round(
+                                            shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
+                                        var newWidth = diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide;
+                                        if (!currentWidth.Equals(newWidth))
+                                        {
+                                            this.logger.LogDebug("Changing width: {Shape} - {OldValue},{NewValue}", diagramShape, currentWidth, newWidth);
+                                            shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits] = newWidth;
+                                        }
+
+                                        // height = top - bottom
+                                        var currentHeight = Math.Round(
+                                            shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
+                                        var newHeight = diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide;
+                                        if (!currentHeight.Equals(newHeight))
+                                        {
+                                            this.logger.LogDebug("Changing height: {Shape} - {OldValue},{NewValue}", diagramShape, currentHeight, newHeight);
+                                            shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits] = newHeight;
+                                        }
+
+                                        // pinX = left + locPinX
+                                        var currentPinX = Math.Round(shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
+                                        var newPinX = diagramShape.Corners.LeftSide + Math.Round(
+                                                          shape.Cells[this.settings.VisioLocPinXField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
+                                        if (!currentPinX.Equals(newPinX))
+                                        {
+                                            this.logger.LogDebug("Changing PinX: {Shape} - {OldValue},{NewValue}", diagramShape, currentPinX, newPinX);
+                                            shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits] = newPinX;
+                                        }
+
+                                        // pinY = bottom + locPinY
+                                        var currentPinY = Math.Round(shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
+                                        var newPinY = diagramShape.Corners.BottomSide + Math.Round(
+                                                          shape.Cells[this.settings.VisioLocPinYField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
+                                        if (!currentPinY.Equals(newPinY))
+                                        {
+                                            this.logger.LogDebug("Changing PinY: {Shape} - {OldValue},{NewValue}", diagramShape, currentPinY, newPinY);
+                                            shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits] = newPinY;
+                                        }
+
+                                        // shape text
+                                        if (!shape.Text.Equals(diagramShape.ShapeText))
+                                        {
+                                            shape.Text = diagramShape.ShapeText;
+                                        }
+
+                                        var newCorners = this.CalculateCorners(diagramShape.VisioId);
+
+                                        if (!newCorners.Equals(diagramShape.Corners))
+                                        {
+                                            this.ReDrawShapesAsync(diagramShape).ConfigureAwait(false);
+                                        }
+                                        else
+                                        {
+                                            diagramShape.Corners = newCorners;
+                                        }
+                                    }
+                                    finally
+                                    {
+                                        Marshal.ReleaseObject(shape);
                                     }
 
-                                    // height = top - bottom
-                                    var currentHeight = shape.Cells[this.settings.VisioHeightField]
-                                        .Result[this.settings.VisioUnits];
-                                    var newHeight = diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide;
-                                    if (!currentHeight.Equals(newHeight))
-                                    {
-                                        this.logger.LogDebug(
-                                            "Changing height: {Shape} - {OldValue},{NewValue}",
-                                            diagramShape,
-                                            currentHeight,
-                                            newHeight);
-                                        shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits] =
-                                            newHeight;
-                                    }
-
-                                    // pinX = left + locPinX
-                                    var currentPinX = shape.Cells[this.settings.VisioPinXField]
-                                        .Result[this.settings.VisioUnits];
-                                    var newPinX = diagramShape.Corners.LeftSide + shape
-                                                      .Cells[this.settings.VisioLocPinXField]
-                                                      .Result[this.settings.VisioUnits];
-                                    if (!currentPinX.Equals(newPinX))
-                                    {
-                                        this.logger.LogDebug(
-                                            "Changing PinX: {Shape} - {OldValue},{NewValue}",
-                                            diagramShape,
-                                            currentPinX,
-                                            newPinX);
-                                        shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits] =
-                                            newPinX;
-                                    }
-
-                                    // pinY = bottom + locPinY
-                                    var currentPinY = shape.Cells[this.settings.VisioPinYField]
-                                        .Result[this.settings.VisioUnits];
-                                    var newPinY = diagramShape.Corners.BottomSide + shape
-                                                      .Cells[this.settings.VisioLocPinYField]
-                                                      .Result[this.settings.VisioUnits];
-                                    if (!currentPinY.Equals(newPinY))
-                                    {
-                                        this.logger.LogDebug(
-                                            "Changing PinY: {Shape} - {OldValue},{NewValue}",
-                                            diagramShape,
-                                            currentPinY,
-                                            newPinY);
-                                        shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits] =
-                                            newPinY;
-                                    }
-
-                                    // shape text
-                                    if (!shape.Text.Equals(diagramShape.ShapeText))
-                                    {
-                                        shape.Text = diagramShape.ShapeText;
-                                    }
-
-                                    var newCorners = this.CalculateCorners(diagramShape.VisioId);
-
-                                    if (!newCorners.Equals(diagramShape.Corners))
-                                    {
-                                        this.ReDrawShapesAsync(diagramShape).ConfigureAwait(false);
-                                    }
-                                    else
-                                    {
-                                        diagramShape.Corners = newCorners;
-                                    }
-                                }).ConfigureAwait(false);
-                        break;
-                    }
-            }
+                                    break;
+                                }
+                        }
+                    }).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -301,17 +325,31 @@ namespace VisioCleanup.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            var selection = this.visioApplication.ActiveWindow.Selection;
-
-            selection.GetIDs(out Array ids);
-            var listShapeIds = new List<int>(ids.Length);
-
-            foreach (var id in ids)
+            Window? activeWindow = null;
+            Selection? selection = null;
+            try
             {
-                listShapeIds.Add((int)id);
-            }
+                var listShapeIds = new List<int>();
+                activeWindow = this.visioApplication.ActiveWindow;
+                if (activeWindow is not null)
+                {
+                    selection = activeWindow.Selection;
 
-            return listShapeIds.ToArray();
+                    selection.GetIDs(out Array ids);
+
+                    foreach (var id in ids)
+                    {
+                        listShapeIds.Add((int)id);
+                    }
+                }
+
+                return listShapeIds.ToArray();
+            }
+            finally
+            {
+                Marshal.ReleaseObject(activeWindow);
+                Marshal.ReleaseObject(selection);
+            }
         }
 
         /// <exception cref="InvalidOperationException">System not initialised.</exception>
@@ -323,10 +361,20 @@ namespace VisioCleanup.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            var selection = this.visioApplication.ActiveWindow.Selection;
-            Shape primaryItem = selection.PrimaryItem;
+            Selection? selection = null;
+            Shape? primaryItem = null;
+            try
+            {
+                selection = this.visioApplication.ActiveWindow.Selection;
+                primaryItem = selection.PrimaryItem;
 
-            return primaryItem.ID;
+                return primaryItem.ID;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(selection);
+                Marshal.ReleaseObject(primaryItem);
+            }
         }
 
         private Shape GetShape(int shapeId)
@@ -336,9 +384,17 @@ namespace VisioCleanup.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            var activePage = this.visioApplication.ActivePage;
-            var shape = activePage.Shapes.ItemFromID[shapeId];
-            return shape;
+            Page? activePage = null;
+            try
+            {
+                activePage = this.visioApplication.ActivePage;
+                var shape = activePage.Shapes.ItemFromID[shapeId];
+                return shape;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(activePage);
+            }
         }
     }
 }

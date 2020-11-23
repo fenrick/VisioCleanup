@@ -78,8 +78,7 @@ namespace VisioCleanup.Services
 
                             var selection = this.visioHandler.Selection();
 
-                            // TODO: handle multiple layers of shapes.
-                            // TODO: handle visio having selection ie import from XLS.
+                            // TODO: handle visio having no selection ie import from XLS.
                             DiagramShape parentShape;
                             if (selection.Length == 1)
                             {
