@@ -213,7 +213,7 @@ namespace VisioCleanup.Objects
             var lines = children.OrderBy(shape => shape.Corners.LeftSide).Select(shape => shape.Corners.LeftSide);
             foreach (var line in lines.Distinct())
             {
-                var bottomOrdered = children.Where(shape => shape.Corners.LeftSide.Equals(line))
+                var bottomOrdered = children.Where(shape => Math.Round(shape.Corners.LeftSide).Equals(Math.Round(line)))
                     .OrderBy(shape => shape.Corners.BottomSide);
                 DiagramShape? currentShape = null;
 
@@ -241,7 +241,7 @@ namespace VisioCleanup.Objects
             lines = children.OrderBy(shape => shape.Corners.TopSide).Select(shape => shape.Corners.TopSide);
             foreach (var line in lines.Distinct())
             {
-                var bottomOrdered = children.Where(shape => shape.Corners.TopSide.Equals(line))
+                var bottomOrdered = children.Where(shape => Math.Round(shape.Corners.TopSide).Equals(Math.Round(line)))
                     .OrderBy(shape => shape.Corners.LeftSide);
                 DiagramShape? currentShape = null;
 
