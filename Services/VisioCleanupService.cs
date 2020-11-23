@@ -78,6 +78,8 @@ namespace VisioCleanup.Services
 
                             var selection = this.visioHandler.Selection();
 
+                            // TODO: handle multiple layers of shapes.
+                            // TODO: handle visio having selection ie import from XLS.
                             DiagramShape parentShape;
                             if (selection.Length == 1)
                             {
@@ -204,19 +206,16 @@ namespace VisioCleanup.Services
         /// <param name="diagramShape">Shape being adjusted.</param>
         private void AdjustDiagram(DiagramShape diagramShape)
         {
-            this.logger.LogDebug(
-                "Adjusting shape {ShapeID}: {ShapeText}",
-                diagramShape.VisioId,
-                diagramShape.ShapeText);
-
             if (!diagramShape.HasChildren())
             {
-                this.logger.LogDebug("No children.");
                 var newCorners = diagramShape.Corners;
                 newCorners.BottomSide = newCorners.TopSide - this.settings.UltimateShapeHeight;
                 newCorners.RightSide = newCorners.LeftSide + this.settings.UltimateShapeWidth;
                 if (!diagramShape.Corners.Equals(newCorners))
                 {
+                    this.logger.LogDebug(
+                        "Adjusting shape {Shape}",
+                        diagramShape);
                     this.logger.LogDebug(
                         "New size for shape: {Corners}",
                         newCorners);
@@ -227,32 +226,11 @@ namespace VisioCleanup.Services
                 return;
             }
 
-            this.logger.LogDebug("Adjusting children.");
+            var changed = false;
+
             foreach (var shape in diagramShape.Children)
             {
                 this.AdjustDiagram(shape);
-
-                // space above
-                if (shape.ShapeAbove != null)
-                {
-                    var desiredSpace = shape.HasChildren()
-                                           ? this.settings.VisioHorizontalSpacer
-                                           : this.settings.VisioVerticalSpacer;
-
-                    var movement = desiredSpace - (shape.ShapeAbove.Corners.BottomSide - shape.Corners.TopSide);
-
-                    if (movement != 0)
-                    {
-                        this.logger.LogDebug(
-                            "Shape above {ShapeID}: {ShapeText}",
-                            shape.ShapeAbove.VisioId,
-                            shape.ShapeAbove.ShapeText);
-
-                        this.MoveForSpacer(
-                            movement,
-                            shape.ShapeAbove.MoveUp);
-                    }
-                }
 
                 // space below
                 if (shape.ShapeBelow != null)
@@ -265,32 +243,14 @@ namespace VisioCleanup.Services
                     if (movement != 0)
                     {
                         this.logger.LogDebug(
-                            "Shape below {ShapeID}: {ShapeText}",
-                            shape.ShapeBelow.VisioId,
-                            shape.ShapeBelow.ShapeText);
+                            "Adjusting shape {Shape}",
+                            shape.ShapeBelow);
 
                         this.MoveForSpacer(
                             movement,
                             shape.ShapeBelow.MoveDown);
-                    }
-                }
 
-                // space left
-                if (shape.ShapeToLeft != null)
-                {
-                    var movement = this.settings.VisioHorizontalSpacer
-                                   - (shape.Corners.LeftSide - shape.ShapeToLeft.Corners.RightSide);
-
-                    if (movement != 0)
-                    {
-                        this.logger.LogDebug(
-                            "Shape to left {ShapeID}: {ShapeText}",
-                            shape.ShapeToLeft.VisioId,
-                            shape.ShapeToLeft.ShapeText);
-
-                        this.MoveForSpacer(
-                            movement,
-                            shape.ShapeToLeft.MoveLeft);
+                        changed = true;
                     }
                 }
 
@@ -303,29 +263,29 @@ namespace VisioCleanup.Services
                     if (movement != 0)
                     {
                         this.logger.LogDebug(
-                            "Shape to right {ShapeID}: {ShapeText}",
-                            shape.ShapeToRight.VisioId,
-                            shape.ShapeToRight.ShapeText);
+                            "Adjusting shape {Shape}",
+                            shape.ShapeToRight);
 
                         this.MoveForSpacer(
                             movement,
                             shape.ShapeToRight.MoveRight);
+
+                        changed = true;
                     }
                 }
             }
 
             // if we moved the shapes at the end, let's just go over again to confirm all good.
-            var changed = this.ShrinkToChildren(diagramShape);
+            changed = this.ShrinkToChildren(diagramShape) || changed;
             changed = this.AlignTop(diagramShape) || changed;
 
             if (changed)
             {
                 this.logger.LogDebug(
-                    "Processing again {ShapeID}: {ShapeText}",
-                    diagramShape.VisioId,
-                    diagramShape.ShapeText);
+                    "Processing again {Shape}",
+                    diagramShape);
 
-                // this.AdjustDiagram(diagramShape);
+                this.AdjustDiagram(diagramShape);
             }
         }
 
@@ -351,9 +311,10 @@ namespace VisioCleanup.Services
                         nextShape.MoveRight(offset);
                         changed = true;
                         this.logger.LogDebug(
-                            "Moving right {ShapeID}: {ShapeText} by {Offset}",
-                            nextShape.VisioId,
-                            nextShape.ShapeText,
+                            "Adjusting shape {Shape}",
+                            nextShape);
+                        this.logger.LogDebug(
+                            "Moving right by {Offset}",
                             offset);
                     }
 
@@ -370,9 +331,10 @@ namespace VisioCleanup.Services
                         nextShape.MoveRight(offset);
                         changed = true;
                         this.logger.LogDebug(
-                            "Moving right {ShapeID}: {ShapeText} by {Offset}",
-                            nextShape.VisioId,
-                            nextShape.ShapeText,
+                            "Adjusting shape {Shape}",
+                            nextShape);
+                        this.logger.LogDebug(
+                            "Moving right by {Offset}",
                             offset);
                     }
 
@@ -389,9 +351,10 @@ namespace VisioCleanup.Services
                         nextShape.MoveUp(offset);
                         changed = true;
                         this.logger.LogDebug(
-                            "Moving up {ShapeID}: {ShapeText} by {Offset}",
-                            nextShape.VisioId,
-                            nextShape.ShapeText,
+                            "Adjusting shape {Shape}",
+                            nextShape);
+                        this.logger.LogDebug(
+                            "Moving up by {Offset}",
                             offset);
                     }
 
@@ -408,9 +371,10 @@ namespace VisioCleanup.Services
                         nextShape.MoveUp(offset);
                         changed = true;
                         this.logger.LogDebug(
-                            "Moving up {ShapeID}: {ShapeText} by {Offset}",
-                            nextShape.VisioId,
-                            nextShape.ShapeText,
+                            "Adjusting shape {Shape}",
+                            nextShape);
+                        this.logger.LogDebug(
+                            "Moving right up {Offset}",
                             offset);
                     }
 
@@ -475,9 +439,8 @@ namespace VisioCleanup.Services
             if (result)
             {
                 this.logger.LogDebug(
-                    "Adjusting shape {ShapeID}: {ShapeText}",
-                    diagramShape.VisioId,
-                    diagramShape.ShapeText);
+                    "Adjusting shape {Shape}",
+                    diagramShape);
                 this.logger.LogDebug(
                     "New size for shape: {Corners}",
                     newCorners);

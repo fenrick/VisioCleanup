@@ -194,7 +194,7 @@ namespace VisioCleanup.Objects
         }
 
         /// <summary>
-        ///  Map all neighbour shapes within tolerance of 10.
+        ///     Map all neighbour shapes within tolerance of 10.
         /// </summary>
         internal void FindNeighbours()
         {
@@ -207,6 +207,8 @@ namespace VisioCleanup.Objects
                 shape.ShapeToLeft = null;
                 shape.ShapeToRight = null;
             }
+
+            const double Tolerance = 10;
 
             var lines = children.OrderBy(shape => shape.Corners.LeftSide).Select(shape => shape.Corners.LeftSide);
             foreach (var line in lines.Distinct())
@@ -224,7 +226,7 @@ namespace VisioCleanup.Objects
                             throw new NotImplementedException("No idea what to do yet with this!");
                         case not null when !(currentShape.Corners.BottomSide < shape.Corners.BottomSide):
                             continue;
-                        case not null:
+                        case not null when shape.Corners.BottomSide - currentShape.Corners.TopSide < Tolerance:
                             shape.ShapeBelow = currentShape;
 
                             currentShape = shape;
@@ -252,7 +254,7 @@ namespace VisioCleanup.Objects
                             throw new NotImplementedException("No idea what to do yet with this!");
                         case not null when !(currentShape.Corners.LeftSide < shape.Corners.LeftSide):
                             continue;
-                        case not null when shape.Corners.LeftSide - currentShape.Corners.RightSide < 10:
+                        case not null when shape.Corners.LeftSide - currentShape.Corners.RightSide < Tolerance:
                             shape.ShapeToLeft = currentShape;
 
                             currentShape = shape;
