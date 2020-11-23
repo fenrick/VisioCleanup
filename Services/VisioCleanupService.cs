@@ -233,45 +233,56 @@ namespace VisioCleanup.Services
                 this.AdjustDiagram(shape);
 
                 // space below
-                if (shape.ShapeBelow != null)
+                var nextShape = shape;
+                while (nextShape != null && nextShape.ShapeBelow != null)
                 {
-                    var desiredSpace = shape.HasChildren()
+                    var desiredSpace = nextShape.HasChildren()
                                            ? this.settings.VisioHorizontalSpacer
                                            : this.settings.VisioVerticalSpacer;
 
-                    var movement = desiredSpace - (shape.Corners.BottomSide - shape.ShapeBelow.Corners.TopSide);
+                    var movement = desiredSpace - (nextShape.Corners.BottomSide - nextShape.ShapeBelow.Corners.TopSide);
+
                     if (movement != 0)
                     {
                         this.logger.LogDebug(
                             "Adjusting shape {Shape}",
-                            shape.ShapeBelow);
+                            nextShape.ShapeBelow);
 
                         this.MoveForSpacer(
                             movement,
-                            shape.ShapeBelow.MoveDown);
+                            nextShape.ShapeBelow.MoveDown);
 
                         changed = true;
                     }
+
+                    nextShape = nextShape.ShapeBelow;
                 }
 
-                // space right
-                if (shape.ShapeToRight != null)
+                // space to right
+                nextShape = shape;
+                while (nextShape != null && nextShape.ShapeToRight != null)
                 {
-                    var movement = this.settings.VisioHorizontalSpacer
-                                   - (shape.ShapeToRight.Corners.LeftSide - shape.Corners.RightSide);
+                    var desiredSpace = nextShape.HasChildren()
+                                           ? this.settings.VisioHorizontalSpacer
+                                           : this.settings.VisioVerticalSpacer;
+
+                    var movement = desiredSpace
+                                   - (nextShape.ShapeToRight.Corners.LeftSide - nextShape.Corners.RightSide);
 
                     if (movement != 0)
                     {
                         this.logger.LogDebug(
                             "Adjusting shape {Shape}",
-                            shape.ShapeToRight);
+                            nextShape.ShapeToRight);
 
                         this.MoveForSpacer(
                             movement,
-                            shape.ShapeToRight.MoveRight);
+                            nextShape.ShapeToRight.MoveRight);
 
                         changed = true;
                     }
+
+                    nextShape = nextShape.ShapeToRight;
                 }
             }
 
@@ -297,29 +308,11 @@ namespace VisioCleanup.Services
             }
 
             var changed = false;
-            var children = diagramShape.Children;
+            var children = diagramShape.Children.OrderBy(shape => shape.Corners.LeftSide);
 
             foreach (var child in children)
             {
-                // align up
-                var nextShape = child.ShapeAbove;
-                while (nextShape != null)
-                {
-                    var offset = child.Corners.LeftSide - nextShape.Corners.LeftSide;
-                    if (offset != 0)
-                    {
-                        nextShape.MoveRight(offset);
-                        changed = true;
-                        this.logger.LogDebug(
-                            "Adjusting shape {Shape}",
-                            nextShape);
-                        this.logger.LogDebug(
-                            "Moving right by {Offset}",
-                            offset);
-                    }
-
-                    nextShape = nextShape.ShapeAbove;
-                }
+                DiagramShape? nextShape;
 
                 // align down
                 nextShape = child.ShapeBelow;
@@ -339,26 +332,6 @@ namespace VisioCleanup.Services
                     }
 
                     nextShape = nextShape.ShapeBelow;
-                }
-
-                // align left
-                nextShape = child.ShapeToLeft;
-                while (nextShape != null)
-                {
-                    var offset = child.Corners.TopSide - nextShape.Corners.TopSide;
-                    if (offset != 0)
-                    {
-                        nextShape.MoveUp(offset);
-                        changed = true;
-                        this.logger.LogDebug(
-                            "Adjusting shape {Shape}",
-                            nextShape);
-                        this.logger.LogDebug(
-                            "Moving up by {Offset}",
-                            offset);
-                    }
-
-                    nextShape = nextShape.ShapeToLeft;
                 }
 
                 // align right
@@ -393,7 +366,7 @@ namespace VisioCleanup.Services
         private void MoveForSpacer(double movement, Action<double> movementAction)
         {
             this.logger.LogDebug(
-                "{Action} by {Movement}",
+                "{@Action} by {Movement}",
                 movementAction.Method,
                 movement);
             if (movement != 0)
