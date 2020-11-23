@@ -31,7 +31,7 @@ namespace VisioCleanup.Objects
             set =>
                 this.leftSide = Math.Round(
                     value,
-                    1,
+                    3,
                     MidpointRounding.AwayFromZero);
         }
 
@@ -44,7 +44,7 @@ namespace VisioCleanup.Objects
             set =>
                 this.rightSide = Math.Round(
                     value,
-                    1,
+                    3,
                     MidpointRounding.AwayFromZero);
         }
 
@@ -57,7 +57,7 @@ namespace VisioCleanup.Objects
             set =>
                 this.bottomSide = Math.Round(
                     value,
-                    1,
+                    3,
                     MidpointRounding.AwayFromZero);
         }
 
@@ -70,7 +70,7 @@ namespace VisioCleanup.Objects
             set =>
                 this.topSide = Math.Round(
                     value,
-                    1,
+                    3,
                     MidpointRounding.AwayFromZero);
         }
 
