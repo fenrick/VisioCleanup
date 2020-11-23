@@ -197,55 +197,10 @@ namespace VisioCleanup.Services
                                 {
                                     var shape = this.GetShape(diagramShape.VisioId);
 
-                                    var currentWidth = Math.Round(
-                                        shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits],
-                                        3,
-                                        MidpointRounding.AwayFromZero);
-                                    var currentHeight = Math.Round(
-                                        shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits],
-                                        3,
-                                        MidpointRounding.AwayFromZero);
-                                    var currentPinX = Math.Round(
-                                        shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits],
-                                        3,
-                                        MidpointRounding.AwayFromZero);
-                                    var currentPinY = Math.Round(
-                                        shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits],
-                                        3,
-                                        MidpointRounding.AwayFromZero);
-
-                                    /*
-                                                         calculate values
-                                                        left + locPinX = pinX
-                                                        bottom + locPinY = pinY
-                                                        right - left = width
-                                                        top - bottom = height
-                                                        */
-                                    var newWidth = Math.Round(
-                                        diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide,
-                                        3,
-                                        MidpointRounding.AwayFromZero);
-                                    var newHeight = Math.Round(
-                                        diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide,
-                                        3,
-                                        MidpointRounding.AwayFromZero);
-                                    var newPinX = Math.Round(
-                                        diagramShape.Corners.LeftSide + Math.Round(
-                                            shape.Cells[this.settings.VisioLocPinXField]
-                                                .Result[this.settings.VisioUnits],
-                                            3,
-                                            MidpointRounding.AwayFromZero),
-                                        3,
-                                        MidpointRounding.AwayFromZero);
-                                    var newPinY = Math.Round(
-                                        diagramShape.Corners.BottomSide + Math.Round(
-                                            shape.Cells[this.settings.VisioLocPinYField]
-                                                .Result[this.settings.VisioUnits],
-                                            3,
-                                            MidpointRounding.AwayFromZero),
-                                        3,
-                                        MidpointRounding.AwayFromZero);
-
+                                    // width = right - left
+                                    var currentWidth = shape.Cells[this.settings.VisioWidthField]
+                                        .Result[this.settings.VisioUnits];
+                                    var newWidth = diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide;
                                     if (!currentWidth.Equals(newWidth))
                                     {
                                         this.logger.LogDebug(
@@ -257,6 +212,10 @@ namespace VisioCleanup.Services
                                             newWidth;
                                     }
 
+                                    // height = top - bottom
+                                    var currentHeight = shape.Cells[this.settings.VisioHeightField]
+                                        .Result[this.settings.VisioUnits];
+                                    var newHeight = diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide;
                                     if (!currentHeight.Equals(newHeight))
                                     {
                                         this.logger.LogDebug(
@@ -268,6 +227,12 @@ namespace VisioCleanup.Services
                                             newHeight;
                                     }
 
+                                    // pinX = left + locPinX
+                                    var currentPinX = shape.Cells[this.settings.VisioPinXField]
+                                        .Result[this.settings.VisioUnits];
+                                    var newPinX = diagramShape.Corners.LeftSide + shape
+                                                      .Cells[this.settings.VisioLocPinXField]
+                                                      .Result[this.settings.VisioUnits];
                                     if (!currentPinX.Equals(newPinX))
                                     {
                                         this.logger.LogDebug(
@@ -279,6 +244,12 @@ namespace VisioCleanup.Services
                                             newPinX;
                                     }
 
+                                    // pinY = bottom + locPinY
+                                    var currentPinY = shape.Cells[this.settings.VisioPinYField]
+                                        .Result[this.settings.VisioUnits];
+                                    var newPinY = diagramShape.Corners.BottomSide + shape
+                                                      .Cells[this.settings.VisioLocPinYField]
+                                                      .Result[this.settings.VisioUnits];
                                     if (!currentPinY.Equals(newPinY))
                                     {
                                         this.logger.LogDebug(
@@ -290,6 +261,7 @@ namespace VisioCleanup.Services
                                             newPinY;
                                     }
 
+                                    // shape text
                                     if (!shape.Text.Equals(diagramShape.ShapeText))
                                     {
                                         shape.Text = diagramShape.ShapeText;
@@ -297,7 +269,14 @@ namespace VisioCleanup.Services
 
                                     var newCorners = this.CalculateCorners(diagramShape.VisioId);
 
-                                    diagramShape.Corners = newCorners;
+                                    if (!newCorners.Equals(diagramShape.Corners))
+                                    {
+                                        this.ReDrawShapesAsync(diagramShape).ConfigureAwait(false);
+                                    }
+                                    else
+                                    {
+                                        diagramShape.Corners = newCorners;
+                                    }
                                 }).ConfigureAwait(false);
                         break;
                     }
