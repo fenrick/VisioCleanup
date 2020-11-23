@@ -130,7 +130,8 @@ namespace VisioCleanup.Services
             var selection = parentShape.SpatialNeighbors[
                 (short)VisSpatialRelationCodes.visSpatialContain,
                 0,
-                (short)VisSpatialRelationFlags.visSpatialBackToFront];
+                (short)(VisSpatialRelationFlags.visSpatialBackToFront
+                        & VisSpatialRelationFlags.visSpatialIncludeContainerShapes)];
 
             this.logger.LogDebug(
                 "Potential child shapes found: {CountOfSelection}",
@@ -147,12 +148,16 @@ namespace VisioCleanup.Services
                                 var parentSelection = childShape.SpatialNeighbors[
                                     (short)VisSpatialRelationCodes.visSpatialContainedIn,
                                     0,
-                                    (short)VisSpatialRelationFlags.visSpatialFrontToBack];
-                                var primaryItemShapeId = parentSelection.PrimaryItem.ID;
-
-                                if (shapeId.Equals(primaryItemShapeId))
+                                    (short)(VisSpatialRelationFlags.visSpatialFrontToBack
+                                            & VisSpatialRelationFlags.visSpatialIncludeContainerShapes)];
+                                if (parentSelection.Count > 0)
                                 {
-                                    shapeIDs.Add(childShape.ID);
+                                    var primaryItemShapeId = parentSelection.PrimaryItem.ID;
+
+                                    if (shapeId.Equals(primaryItemShapeId))
+                                    {
+                                        shapeIDs.Add(childShape.ID);
+                                    }
                                 }
                             }).ConfigureAwait(false);
                 }
