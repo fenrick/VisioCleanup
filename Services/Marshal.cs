@@ -43,7 +43,7 @@ namespace VisioCleanup.Services
         }
 
         /// <summary>
-        /// Release com object properly.
+        ///     Release com object properly.
         /// </summary>
         /// <param name="obj">Object.</param>
         [SupportedOSPlatform("windows")]
