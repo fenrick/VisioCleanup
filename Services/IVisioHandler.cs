@@ -150,7 +150,6 @@ namespace VisioCleanup.Services
                     await Task.Run(
                         () =>
                             {
-
                                 // check that immediate parent is the supplied shape.
                                 relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
                                 flags = (short)VisSpatialRelationFlags.visSpatialFrontToBack;
@@ -176,7 +175,6 @@ namespace VisioCleanup.Services
                                     Marshal.ReleaseObject(parentSelection);
                                 }
                             }).ConfigureAwait(false);
-
                 }
 
                 this.logger.LogDebug("Final child shapes found: {CountOfShapeIDs}", shapeIDs.Count);
