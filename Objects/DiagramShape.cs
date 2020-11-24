@@ -198,6 +198,11 @@ namespace VisioCleanup.Objects
         /// </summary>
         internal void FindNeighbours()
         {
+            if (!this.HasChildren())
+            {
+                return;
+            }
+
             // reset all shapes.
             var children = this.Children;
             foreach (var shape in children)
@@ -208,13 +213,12 @@ namespace VisioCleanup.Objects
                 shape.ShapeToRight = null;
             }
 
-            const double Tolerance = 10;
+            const double Tolerance = 5;
 
             var lines = children.OrderBy(shape => shape.Corners.LeftSide).Select(shape => shape.Corners.LeftSide);
             foreach (var line in lines.Distinct())
             {
-                var bottomOrdered = children.Where(shape => Math.Round(shape.Corners.LeftSide).Equals(Math.Round(line)))
-                    .OrderBy(shape => shape.Corners.BottomSide);
+                var bottomOrdered = children.Where(shape => Math.Abs(shape.Corners.LeftSide - line) < Tolerance).OrderBy(shape => shape.Corners.BottomSide);
                 DiagramShape? currentShape = null;
 
                 foreach (var shape in bottomOrdered)
@@ -226,7 +230,7 @@ namespace VisioCleanup.Objects
                             throw new NotImplementedException("No idea what to do yet with this!");
                         case not null when !(currentShape.Corners.BottomSide < shape.Corners.BottomSide):
                             continue;
-                        case not null when shape.Corners.BottomSide - currentShape.Corners.TopSide < Tolerance:
+                        case not null when shape.Corners.BottomSide - currentShape.Corners.TopSide < (Tolerance * 2):
                             shape.ShapeBelow = currentShape;
 
                             currentShape = shape;
@@ -241,8 +245,7 @@ namespace VisioCleanup.Objects
             lines = children.OrderBy(shape => shape.Corners.TopSide).Select(shape => shape.Corners.TopSide);
             foreach (var line in lines.Distinct())
             {
-                var bottomOrdered = children.Where(shape => Math.Round(shape.Corners.TopSide).Equals(Math.Round(line)))
-                    .OrderBy(shape => shape.Corners.LeftSide);
+                var bottomOrdered = children.Where(shape => Math.Abs(shape.Corners.TopSide - line) < Tolerance).OrderBy(shape => shape.Corners.LeftSide);
                 DiagramShape? currentShape = null;
 
                 foreach (var shape in bottomOrdered)
@@ -254,7 +257,7 @@ namespace VisioCleanup.Objects
                             throw new NotImplementedException("No idea what to do yet with this!");
                         case not null when !(currentShape.Corners.LeftSide < shape.Corners.LeftSide):
                             continue;
-                        case not null when shape.Corners.LeftSide - currentShape.Corners.RightSide < Tolerance:
+                        case not null when shape.Corners.LeftSide - currentShape.Corners.RightSide < (Tolerance * 2):
                             shape.ShapeToLeft = currentShape;
 
                             currentShape = shape;

@@ -64,9 +64,9 @@ namespace VisioCleanup.Services
         /// <exception cref="T:System.Threading.Tasks.TaskCanceledException">The task has been cancelled.</exception>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            this.logger.LogDebug("Starting Visio Cleanup Service");
+            this.logger.LogInformation("Starting Visio Cleanup Service");
 
-            stoppingToken.Register(() => { this.logger.LogDebug("Stopping Visio Cleanup Service."); });
+            stoppingToken.Register(() => { this.logger.LogInformation("Stopping Visio Cleanup Service."); });
 
             await Task.Run(
                 async () =>
@@ -78,7 +78,6 @@ namespace VisioCleanup.Services
 
                             var selection = this.visioHandler.Selection();
 
-                            // TODO: handle visio having no selection ie import from XLS.
                             DiagramShape parentShape;
                             if (selection.Length == 1)
                             {
@@ -86,7 +85,7 @@ namespace VisioCleanup.Services
                                 var masterShapeId = this.visioHandler.SelectionPrimaryItem();
 
                                 // assemble processing structure
-                                this.logger.LogDebug("Processing parent shape.");
+                                this.logger.LogInformation("Processing parent shape.");
                                 parentShape = new DiagramShape(masterShapeId)
                                                   {
                                                       ShapeText = this.visioHandler.GetShapeText(masterShapeId),
@@ -94,25 +93,19 @@ namespace VisioCleanup.Services
                                                       ShapeType = ShapeType.Existing,
                                                   };
 
-                                this.logger.LogDebug("Processing children.");
+                                this.logger.LogInformation("Processing children.");
 
                                 // process children until no more
                                 await this.ProcessChildrenAsync(parentShape).ConfigureAwait(false);
 
                                 parentShape.FindNeighbours();
                             }
-                            else
                             {
                                 // create a fake master.
-                                this.logger.LogDebug("Creating a fake master for selection.");
-                                parentShape = new DiagramShape(0)
-                                                  {
-                                                      ShapeText = "FAKE",
-                                                      Corners = default,
-                                                      ShapeType = ShapeType.FakeShape,
-                                                  };
+                                this.logger.LogInformation("Creating a fake master for selection.");
+                                parentShape = new DiagramShape(0) { ShapeText = "FAKE", Corners = default, ShapeType = ShapeType.FakeShape };
 
-                                this.logger.LogDebug("Adding selection as children");
+                                this.logger.LogInformation("Adding selection as children");
 
                                 foreach (var childId in selection)
                                 {
@@ -133,25 +126,23 @@ namespace VisioCleanup.Services
                                 parentShape.FindNeighbours();
                             }
 
-                            this.logger.LogDebug("Adjusting spacing.");
+                            this.logger.LogInformation("Moving and adjusting.");
 
                             // adjust spacing
                             this.AdjustDiagram(parentShape);
 
-                            this.logger.LogDebug("Redraw shapes.");
+                            this.logger.LogInformation("Redraw shapes.");
 
                             await this.visioHandler.ReDrawShapesAsync(parentShape).ConfigureAwait(false);
                         }
                         catch (Exception e)
                         {
-                            this.logger.LogError(
-                                e,
-                                "Error processing");
+                            this.logger.LogError(e, "Error processing");
                         }
-                    },
-                stoppingToken).ConfigureAwait(false);
+                    }, stoppingToken).ConfigureAwait(false);
 
-            this.logger.LogDebug("Completed processing Visio Cleanup.");
+            this.logger.LogInformation("Completed processing Visio Cleanup.");
+            this.visioHandler.Close();
 
             this.appLifetime.StopApplication();
         }
@@ -169,12 +160,8 @@ namespace VisioCleanup.Services
                 newCorners.RightSide = newCorners.LeftSide + this.settings.UltimateShapeWidth;
                 if (!diagramShape.Corners.Equals(newCorners))
                 {
-                    this.logger.LogDebug(
-                        "Adjusting shape {Shape}",
-                        diagramShape);
-                    this.logger.LogDebug(
-                        "New size for shape: {Corners}",
-                        newCorners);
+                    this.logger.LogDebug("Adjusting shape {Shape}", diagramShape);
+                    this.logger.LogDebug("New size for shape: {Corners}", newCorners);
                 }
 
                 diagramShape.Corners = newCorners;
@@ -192,21 +179,15 @@ namespace VisioCleanup.Services
                 var nextShape = shape;
                 while (nextShape != null && nextShape.ShapeBelow != null)
                 {
-                    var desiredSpace = nextShape.HasChildren()
-                                           ? this.settings.VisioHorizontalSpacer
-                                           : this.settings.VisioVerticalSpacer;
+                    var desiredSpace = nextShape.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer;
 
                     var movement = desiredSpace - (nextShape.Corners.BottomSide - nextShape.ShapeBelow.Corners.TopSide);
 
                     if (movement != 0)
                     {
-                        this.logger.LogDebug(
-                            "Adjusting shape {Shape}",
-                            nextShape.ShapeBelow);
+                        this.logger.LogDebug("Adjusting shape {Shape}", nextShape.ShapeBelow);
 
-                        this.MoveForSpacer(
-                            movement,
-                            nextShape.ShapeBelow.MoveDown);
+                        this.MoveForSpacer(movement, nextShape.ShapeBelow.MoveDown);
 
                         changed = true;
                     }
@@ -218,22 +199,15 @@ namespace VisioCleanup.Services
                 nextShape = shape;
                 while (nextShape != null && nextShape.ShapeToRight != null)
                 {
-                    var desiredSpace = nextShape.HasChildren()
-                                           ? this.settings.VisioHorizontalSpacer
-                                           : this.settings.VisioVerticalSpacer;
+                    var desiredSpace = nextShape.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer;
 
-                    var movement = desiredSpace
-                                   - (nextShape.ShapeToRight.Corners.LeftSide - nextShape.Corners.RightSide);
+                    var movement = desiredSpace - (nextShape.ShapeToRight.Corners.LeftSide - nextShape.Corners.RightSide);
 
                     if (movement != 0)
                     {
-                        this.logger.LogDebug(
-                            "Adjusting shape {Shape}",
-                            nextShape.ShapeToRight);
+                        this.logger.LogDebug("Adjusting shape {Shape}", nextShape.ShapeToRight);
 
-                        this.MoveForSpacer(
-                            movement,
-                            nextShape.ShapeToRight.MoveRight);
+                        this.MoveForSpacer(movement, nextShape.ShapeToRight.MoveRight);
 
                         changed = true;
                     }
@@ -248,9 +222,9 @@ namespace VisioCleanup.Services
 
             if (changed)
             {
-                this.logger.LogDebug(
-                    "Processing again {Shape}",
-                    diagramShape);
+                //Task.Run(() => { this.visioHandler.ReDrawShapesAsync(diagramShape); });
+
+                this.logger.LogDebug("Processing again {Shape}", diagramShape);
 
                 this.AdjustDiagram(diagramShape);
             }
@@ -279,12 +253,8 @@ namespace VisioCleanup.Services
                     {
                         nextShape.MoveRight(offset);
                         changed = true;
-                        this.logger.LogDebug(
-                            "Adjusting shape {Shape}",
-                            nextShape);
-                        this.logger.LogDebug(
-                            "Moving right by {Offset}",
-                            offset);
+                        this.logger.LogDebug("Adjusting shape {Shape}", nextShape);
+                        this.logger.LogDebug("Moving right by {Offset}", offset);
                     }
 
                     nextShape = nextShape.ShapeBelow;
@@ -299,12 +269,8 @@ namespace VisioCleanup.Services
                     {
                         nextShape.MoveUp(offset);
                         changed = true;
-                        this.logger.LogDebug(
-                            "Adjusting shape {Shape}",
-                            nextShape);
-                        this.logger.LogDebug(
-                            "Moving right up {Offset}",
-                            offset);
+                        this.logger.LogDebug("Adjusting shape {Shape}", nextShape);
+                        this.logger.LogDebug("Moving right up {Offset}", offset);
                     }
 
                     nextShape = nextShape.ShapeToRight;
@@ -321,10 +287,7 @@ namespace VisioCleanup.Services
         /// <param name="movementAction">Action for movement.</param>
         private void MoveForSpacer(double movement, Action<double> movementAction)
         {
-            this.logger.LogDebug(
-                "{@Action} by {Movement}",
-                movementAction.Method,
-                movement);
+            this.logger.LogDebug("{@Action} by {Movement}", movementAction.Method, movement);
             if (movement != 0)
             {
                 movementAction(movement);
@@ -337,18 +300,22 @@ namespace VisioCleanup.Services
             var childShapeIds = await this.visioHandler.GetChildrenAsync(parentShape.VisioId).ConfigureAwait(false);
             foreach (var childId in childShapeIds)
             {
-                // add to parent
-                var childShape = new DiagramShape(childId)
-                                     {
-                                         ShapeText = this.visioHandler.GetShapeText(childId),
-                                         Corners = this.visioHandler.CalculateCorners(childId),
-                                         ShapeType = ShapeType.Existing,
-                                     };
-                parentShape.AddChildShape(childShape);
+                await Task.Run(
+                    async () =>
+                        {
+                            // add to parent
+                            var childShape = new DiagramShape(childId)
+                                                 {
+                                                     ShapeText = this.visioHandler.GetShapeText(childId),
+                                                     Corners = this.visioHandler.CalculateCorners(childId),
+                                                     ShapeType = ShapeType.Existing,
+                                                 };
+                            parentShape.AddChildShape(childShape);
 
-                await this.ProcessChildrenAsync(childShape).ConfigureAwait(false);
+                            await this.ProcessChildrenAsync(childShape).ConfigureAwait(false);
 
-                childShape.FindNeighbours();
+                            childShape.FindNeighbours();
+                        }).ConfigureAwait(false);
             }
         }
 
@@ -388,12 +355,8 @@ namespace VisioCleanup.Services
 
             if (result)
             {
-                this.logger.LogDebug(
-                    "Adjusting shape {Shape}",
-                    diagramShape);
-                this.logger.LogDebug(
-                    "New size for shape: {Corners}",
-                    newCorners);
+                this.logger.LogDebug("Adjusting shape {Shape}", diagramShape);
+                this.logger.LogDebug("New size for shape: {Corners}", newCorners);
             }
 
             return result;
