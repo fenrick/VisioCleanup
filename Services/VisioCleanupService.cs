@@ -222,8 +222,7 @@ namespace VisioCleanup.Services
 
             if (changed)
             {
-                //Task.Run(() => { this.visioHandler.ReDrawShapesAsync(diagramShape); });
-
+                // Task.Run(() => { this.visioHandler.ReDrawShapesAsync(diagramShape); });
                 this.logger.LogDebug("Processing again {Shape}", diagramShape);
 
                 this.AdjustDiagram(diagramShape);

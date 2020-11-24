@@ -230,7 +230,7 @@ namespace VisioCleanup.Objects
                             throw new NotImplementedException("No idea what to do yet with this!");
                         case not null when !(currentShape.Corners.BottomSide < shape.Corners.BottomSide):
                             continue;
-                        case not null when shape.Corners.BottomSide - currentShape.Corners.TopSide < (Tolerance * 2):
+                        case not null when shape.Corners.BottomSide - currentShape.Corners.TopSide < Tolerance * 2:
                             shape.ShapeBelow = currentShape;
 
                             currentShape = shape;
@@ -257,7 +257,7 @@ namespace VisioCleanup.Objects
                             throw new NotImplementedException("No idea what to do yet with this!");
                         case not null when !(currentShape.Corners.LeftSide < shape.Corners.LeftSide):
                             continue;
-                        case not null when shape.Corners.LeftSide - currentShape.Corners.RightSide < (Tolerance * 2):
+                        case not null when shape.Corners.LeftSide - currentShape.Corners.RightSide < Tolerance * 2:
                             shape.ShapeToLeft = currentShape;
 
                             currentShape = shape;

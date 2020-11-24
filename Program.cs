@@ -49,9 +49,7 @@ namespace VisioCleanup
 
                         var logger = loggerConfiguration.CreateLogger();
 
-                        logging.AddSerilog(
-                            logger,
-                            true);
+                        logging.AddSerilog(logger, true);
                     }).ConfigureServices(
                 (hostingContext, services) =>
                     {
