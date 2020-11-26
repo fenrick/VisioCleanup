@@ -9,6 +9,7 @@ namespace VisioCleanup.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
@@ -34,12 +35,16 @@ namespace VisioCleanup.Services
         /// </summary>
         void Close();
 
+        void CreateDocument();
+
         /// <summary>
         ///     Return an array of shapeIDs for children of the supplied shape id.
         /// </summary>
         /// <param name="shapeId">Shape ID of the parent shape.</param>
         /// <returns>array of shape ids for children.</returns>
         Task<IEnumerable<int>> GetChildrenAsync(int shapeId);
+
+        Corners GetPageSize();
 
         /// <summary>
         ///     Obtains the current shape text for a shape.
@@ -127,6 +132,11 @@ namespace VisioCleanup.Services
             Marshal.ReleaseObject(this.visioApplication);
         }
 
+        public void CreateDocument()
+        {
+            this.visioApplication.Documents.Add(string.Empty);
+        }
+
         /// <inheritdoc />
         public async Task<IEnumerable<int>> GetChildrenAsync(int shapeId)
         {
@@ -185,6 +195,40 @@ namespace VisioCleanup.Services
             {
                 Marshal.ReleaseObject(parentShape);
                 Marshal.ReleaseObject(selection);
+            }
+        }
+
+        public Corners GetPageSize()
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            Shape? pageSheet = null;
+            try
+            {
+                var corners = default(Corners);
+
+                pageSheet = this.visioApplication.ActivePage.PageSheet;
+
+                var pageWidth = pageSheet.Cells["PageWidth"].Result[this.settings.VisioUnits];
+                var pageHeight = pageSheet.Cells["PageHeight"].Result[this.settings.VisioUnits];
+                var pageLeftMargin = pageSheet.Cells["PageLeftMargin"].Result[this.settings.VisioUnits];
+                var pageTopMargin = pageSheet.Cells["PageTopMargin"].Result[this.settings.VisioUnits];
+                var pageRightMargin = pageSheet.Cells["PageRightMargin"].Result[this.settings.VisioUnits];
+                var pageBottomMargin = pageSheet.Cells["PageBottomMargin"].Result[this.settings.VisioUnits];
+
+                corners.LeftSide = pageLeftMargin;
+                corners.BottomSide = pageBottomMargin;
+                corners.RightSide = pageWidth - (pageLeftMargin + pageRightMargin);
+                corners.TopSide = pageHeight - (pageTopMargin + pageBottomMargin);
+
+                return corners;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(pageSheet);
             }
         }
 
