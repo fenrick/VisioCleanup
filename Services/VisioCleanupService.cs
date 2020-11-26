@@ -133,6 +133,10 @@ namespace VisioCleanup.Services
                             }
                             else
                             {
+                                // create diagram
+                                this.visioHandler.CreateDocument();
+                                var page = this.visioHandler.GetPageSize();
+
                                 // open excel handler
                                 this.excelHandler.Open();
 
