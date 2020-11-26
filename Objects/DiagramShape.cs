@@ -44,6 +44,8 @@ namespace VisioCleanup.Objects
         /// </summary>
         public Corners Corners { get; set; }
 
+        public DiagramShape? ParentShape { get; set; }
+
         /// <summary>
         ///     Gets or sets the shape text.
         /// </summary>
@@ -57,7 +59,7 @@ namespace VisioCleanup.Objects
         /// <summary>
         ///     Gets visio shape ID.
         /// </summary>
-        public int VisioId { get; }
+        public int VisioId { get; set; }
 
         /// <summary>
         ///     Gets or sets the shape above.
@@ -167,6 +169,7 @@ namespace VisioCleanup.Objects
         {
             // add to array
             this.Children.Add(childShape);
+            childShape.ParentShape = this;
         }
 
         /// <inheritdoc />
@@ -187,10 +190,31 @@ namespace VisioCleanup.Objects
             return HashCode.Combine(this.VisioId);
         }
 
+        public bool HasParent()
+        {
+            return this.ParentShape is not null;
+        }
+
         /// <inheritdoc />
         public override string ToString()
         {
             return $"{this.VisioId}: {this.ShapeText}";
+        }
+
+        public int TotalChildrenCount()
+        {
+            if (!this.HasChildren())
+            {
+                return 1;
+            }
+
+            var counter = 0;
+            foreach (var child in this.Children)
+            {
+                counter += child.TotalChildrenCount();
+            }
+
+            return counter;
         }
 
         /// <summary>
