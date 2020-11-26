@@ -285,7 +285,7 @@ namespace VisioCleanup.Services
                 {
                     var desiredSpace = nextShape.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer;
 
-                    var movement = desiredSpace - (nextShape.Corners.BottomSide - nextShape.ShapeBelow.Corners.TopSide);
+                    var movement = desiredSpace - Math.Round(nextShape.Corners.BottomSide - nextShape.ShapeBelow.Corners.TopSide, 3, MidpointRounding.AwayFromZero);
 
                     if (movement != 0)
                     {
@@ -305,7 +305,7 @@ namespace VisioCleanup.Services
                 {
                     var desiredSpace = nextShape.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer;
 
-                    var movement = desiredSpace - (nextShape.ShapeToRight.Corners.LeftSide - nextShape.Corners.RightSide);
+                    var movement = desiredSpace - Math.Round(nextShape.ShapeToRight.Corners.LeftSide - nextShape.Corners.RightSide, 3, MidpointRounding.AwayFromZero);
 
                     if (movement != 0)
                     {
@@ -351,7 +351,7 @@ namespace VisioCleanup.Services
                 nextShape = child.ShapeBelow;
                 while (nextShape != null)
                 {
-                    var offset = child.Corners.LeftSide - nextShape.Corners.LeftSide;
+                    var offset = Math.Round(child.Corners.LeftSide - nextShape.Corners.LeftSide, 3, MidpointRounding.AwayFromZero);
                     if (offset != 0)
                     {
                         this.logger.LogDebug("Adjusting {FromShape} to shape {ToShape}", child, nextShape);
@@ -367,7 +367,7 @@ namespace VisioCleanup.Services
                 nextShape = child.ShapeToRight;
                 while (nextShape != null)
                 {
-                    var offset = child.Corners.TopSide - nextShape.Corners.TopSide;
+                    var offset = Math.Round(child.Corners.TopSide - nextShape.Corners.TopSide, 3, MidpointRounding.AwayFromZero);
                     if (offset != 0)
                     {
                         this.logger.LogDebug("Adjusting {FromShape} to shape {ToShape}", child, nextShape);
@@ -439,19 +439,19 @@ namespace VisioCleanup.Services
 
             // left side
             var leftSide = children.Select(shape => shape.Corners.LeftSide).Min();
-            newCorners.LeftSide = leftSide - this.settings.LeftPadding;
+            newCorners.LeftSide = Math.Round(leftSide - this.settings.LeftPadding, 3, MidpointRounding.AwayFromZero);
 
             // right side
             var rightSide = children.Select(shape => shape.Corners.RightSide).Max();
-            newCorners.RightSide = rightSide + this.settings.RightPadding;
+            newCorners.RightSide = Math.Round(rightSide + this.settings.RightPadding, 3, MidpointRounding.AwayFromZero);
 
             // bottom side
             var bottomSide = children.Select(shape => shape.Corners.BottomSide).Min();
-            newCorners.BottomSide = bottomSide - this.settings.BottomPadding;
+            newCorners.BottomSide = Math.Round(bottomSide - this.settings.BottomPadding, 3, MidpointRounding.AwayFromZero);
 
             // top side
             var topSide = children.Select(shape => shape.Corners.TopSide).Max();
-            newCorners.TopSide = topSide + this.settings.TopPadding;
+            newCorners.TopSide = Math.Round(topSide + this.settings.TopPadding, 3, MidpointRounding.AwayFromZero);
 
             var result = !diagramShape.Corners.Equals(newCorners);
             diagramShape.Corners = newCorners;
