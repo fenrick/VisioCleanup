@@ -300,7 +300,7 @@ namespace VisioCleanup.Services
                                         // width = right - left
                                         var currentWidth = Math.Round(
                                             shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
-                                        var newWidth = diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide;
+                                        var newWidth = Math.Round(diagramShape.Corners.RightSide - diagramShape.Corners.LeftSide, 3, MidpointRounding.AwayFromZero);
                                         if (!currentWidth.Equals(newWidth))
                                         {
                                             this.logger.LogDebug("Changing width: {Shape} - {OldValue},{NewValue}", diagramShape, currentWidth, newWidth);
@@ -310,7 +310,7 @@ namespace VisioCleanup.Services
                                         // height = top - bottom
                                         var currentHeight = Math.Round(
                                             shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
-                                        var newHeight = diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide;
+                                        var newHeight = Math.Round(diagramShape.Corners.TopSide - diagramShape.Corners.BottomSide, 3, MidpointRounding.AwayFromZero);
                                         if (!currentHeight.Equals(newHeight))
                                         {
                                             this.logger.LogDebug("Changing height: {Shape} - {OldValue},{NewValue}", diagramShape, currentHeight, newHeight);
@@ -319,8 +319,11 @@ namespace VisioCleanup.Services
 
                                         // pinX = left + locPinX
                                         var currentPinX = Math.Round(shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
-                                        var newPinX = diagramShape.Corners.LeftSide + Math.Round(
-                                                          shape.Cells[this.settings.VisioLocPinXField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
+                                        var newPinX = Math.Round(
+                                            diagramShape.Corners.LeftSide + Math.Round(
+                                                shape.Cells[this.settings.VisioLocPinXField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero), 3,
+                                            MidpointRounding.AwayFromZero);
+
                                         if (!currentPinX.Equals(newPinX))
                                         {
                                             this.logger.LogDebug("Changing PinX: {Shape} - {OldValue},{NewValue}", diagramShape, currentPinX, newPinX);
@@ -329,8 +332,11 @@ namespace VisioCleanup.Services
 
                                         // pinY = bottom + locPinY
                                         var currentPinY = Math.Round(shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
-                                        var newPinY = diagramShape.Corners.BottomSide + Math.Round(
-                                                          shape.Cells[this.settings.VisioLocPinYField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero);
+                                        var newPinY = Math.Round(
+                                            diagramShape.Corners.BottomSide + Math.Round(
+                                                shape.Cells[this.settings.VisioLocPinYField].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero), 3,
+                                            MidpointRounding.AwayFromZero);
+
                                         if (!currentPinY.Equals(newPinY))
                                         {
                                             this.logger.LogDebug("Changing PinY: {Shape} - {OldValue},{NewValue}", diagramShape, currentPinY, newPinY);
