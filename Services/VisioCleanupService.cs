@@ -216,7 +216,8 @@ namespace VisioCleanup.Services
                 if (parentShape.HasParent())
                 {
                     lineLength = (int)Math.Round(Math.Sqrt(sortedChildren.Length));
-                } else
+                }
+                else
                 {
                     lineLength = 1;
                 }
@@ -238,9 +239,9 @@ namespace VisioCleanup.Services
                     }
 
                     // find to left
-                    if (linePosition + 1 <= (lineLength - 1))
+                    if (linePosition + 1 <= lineLength - 1)
                     {
-                        var positionToLeft = (lineNumber * lineLength) + (linePosition + 1);
+                        var positionToLeft = lineNumber * lineLength + linePosition + 1;
                         if (sortedChildren.Length > positionToLeft)
                         {
                             var leftChild = sortedChildren[positionToLeft];
