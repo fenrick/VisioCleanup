@@ -25,6 +25,8 @@ namespace VisioCleanup.Services
     {
         private readonly IHostApplicationLifetime appLifetime;
 
+        private readonly IExcelHandler excelHandler;
+
         private readonly ILogger<VisioCleanupService> logger;
 
         private readonly VisioCleanupSettings settings;
@@ -37,16 +39,19 @@ namespace VisioCleanup.Services
         /// <param name="settings">External settings.</param>
         /// <param name="logger">Logging.</param>
         /// <param name="visioHandler">Visio Handler.</param>
+        /// <param name="excelHandler">Excel Handler.</param>
         /// <param name="appLifetime">Host application lifetime.</param>
         public VisioCleanupService(
             IOptions<VisioCleanupSettings> settings,
             ILogger<VisioCleanupService> logger,
             IVisioHandler visioHandler,
+            IExcelHandler excelHandler,
             IHostApplicationLifetime appLifetime)
         {
             this.settings = settings.Value;
             this.logger = logger;
             this.visioHandler = visioHandler;
+            this.excelHandler = excelHandler;
             this.appLifetime = appLifetime;
         }
 
@@ -100,6 +105,7 @@ namespace VisioCleanup.Services
 
                                 parentShape.FindNeighbours();
                             }
+                            else if (selection.Length > 1)
                             {
                                 // create a fake master.
                                 this.logger.LogInformation("Creating a fake master for selection.");
@@ -125,6 +131,33 @@ namespace VisioCleanup.Services
 
                                 parentShape.FindNeighbours();
                             }
+                            else
+                            {
+                                // open excel handler
+                                this.excelHandler.Open();
+
+                                var results = this.excelHandler.RetrieveRecords();
+                                var shapeCounter = 0;
+
+                                // do we need a fake parent?
+                                if (results.Count > 1)
+                                {
+                                    // fake parent
+                                    parentShape = new DiagramShape(shapeCounter++) { ShapeText = "FAKE", Corners = default, ShapeType = ShapeType.FakeShape };
+                                }
+                                else
+                                {
+                                    results = results.First();
+
+                                    // single record
+                                    parentShape = new DiagramShape(shapeCounter++) { ShapeText = results.Value, ShapeType = ShapeType.NewShape };
+                                }
+
+                                ProcessTreeChildren(results, ref shapeCounter, parentShape);
+
+                                // close excel
+                                this.excelHandler.Close();
+                            }
 
                             this.logger.LogInformation("Moving and adjusting.");
 
@@ -145,6 +178,21 @@ namespace VisioCleanup.Services
             this.visioHandler.Close();
 
             this.appLifetime.StopApplication();
+        }
+
+        private static void ProcessTreeChildren(MyTree<string> results, ref int shapeCounter, DiagramShape parentShape)
+        {
+            foreach (var result in results)
+            {
+                var childShape = new DiagramShape(shapeCounter++) { ShapeText = result.Value, ShapeType = ShapeType.NewShape };
+
+                parentShape.AddChildShape(childShape);
+
+                if (result.Count > 0)
+                {
+                    ProcessTreeChildren(result, ref shapeCounter, childShape);
+                }
+            }
         }
 
         /// <summary>

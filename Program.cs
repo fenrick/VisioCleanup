@@ -53,10 +53,8 @@ namespace VisioCleanup
                     }).ConfigureServices(
                 (hostingContext, services) =>
                     {
-                        services
-                            .Configure<VisioCleanupSettings>(
-                                hostingContext.Configuration.GetSection("VisioCleanupSettings"))
-                            .AddSingleton<IVisioHandler, VisioHandlerService>().AddHostedService<VisioCleanupService>();
+                        services.Configure<VisioCleanupSettings>(hostingContext.Configuration.GetSection("VisioCleanupSettings"))
+                            .AddSingleton<IVisioHandler, VisioHandlerService>().AddSingleton<IExcelHandler, ExcelHandlerService>().AddHostedService<VisioCleanupService>();
                     });
         }
     }
