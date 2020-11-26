@@ -56,6 +56,8 @@ namespace VisioCleanup.Services
             {
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
             }
+
+            GC.Collect();
         }
 
         [DllImport("ole32.dll", PreserveSig = false)]
