@@ -162,6 +162,13 @@ namespace VisioCleanup.Services
                                 }
 
                                 ProcessTreeChildren(results, ref shapeCounter, parentShape);
+
+                                this.AdjustDiagram(parentShape);
+
+                                var moveLeft = Math.Round(parentShape.Corners.LeftSide - page.LeftSide, 3, MidpointRounding.AwayFromZero);
+                                var moveTop = Math.Round(page.TopSide - parentShape.Corners.TopSide, 3, MidpointRounding.AwayFromZero);
+                                parentShape.MoveLeft(moveLeft);
+                                parentShape.MoveUp(moveTop);
                             }
 
                             this.logger.LogInformation("Moving and adjusting.");
