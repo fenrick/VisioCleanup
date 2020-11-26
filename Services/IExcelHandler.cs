@@ -156,7 +156,6 @@ namespace VisioCleanup.Services
             {
                 Marshal.ReleaseObject(worksheet);
                 Marshal.ReleaseObject(dataTable);
-                System.GC.Collect();
             }
 
             return root;
