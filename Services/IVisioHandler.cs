@@ -206,8 +206,16 @@ namespace VisioCleanup.Services
         /// <inheritdoc />
         public void Open()
         {
-            this.logger.LogDebug("Opening connection to visio.");
-            this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application ?? throw new InvalidOperationException();
+            try
+            {
+                this.logger.LogDebug("Opening connection to visio.");
+                this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application ?? throw new InvalidOperationException();
+            }
+            catch (COMException e)
+            {
+                this.logger.LogDebug("Visio not running, time to open it.");
+                this.visioApplication = new Application();
+            }
         }
 
         /// <inheritdoc />
