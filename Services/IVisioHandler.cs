@@ -44,7 +44,7 @@ namespace VisioCleanup.Services
         /// <returns>array of shape ids for children.</returns>
         Task<IEnumerable<int>> GetChildrenAsync(int shapeId);
 
-        Corners GetPageSize();
+        Corners GetPageSize(double headerHeight, double sidepanelWidth);
 
         /// <summary>
         ///     Obtains the current shape text for a shape.
@@ -135,6 +135,7 @@ namespace VisioCleanup.Services
         public void CreateDocument()
         {
             this.visioApplication.Documents.Add(string.Empty);
+            this.visioApplication.Documents.OpenEx("Basic.vss", (short)VisOpenSaveArgs.visOpenDocked);
         }
 
         /// <inheritdoc />
@@ -198,7 +199,7 @@ namespace VisioCleanup.Services
             }
         }
 
-        public Corners GetPageSize()
+        public Corners GetPageSize(double headerHeight, double sidepanelWidth)
         {
             if (this.visioApplication is null)
             {
@@ -221,8 +222,8 @@ namespace VisioCleanup.Services
 
                 corners.LeftSide = pageLeftMargin;
                 corners.BottomSide = pageBottomMargin;
-                corners.RightSide = pageWidth - (pageLeftMargin + pageRightMargin);
-                corners.TopSide = pageHeight - (pageTopMargin + pageBottomMargin);
+                corners.RightSide = pageWidth - (pageLeftMargin + pageRightMargin + sidepanelWidth);
+                corners.TopSide = pageHeight - (pageTopMargin + pageBottomMargin + headerHeight);
 
                 return corners;
             }
@@ -278,10 +279,12 @@ namespace VisioCleanup.Services
                             case ShapeType.NewShape:
                                 {
                                     // todo: find master shape
+                                    var stencil = this.visioApplication.Documents["Basic.vss"];
+                                    var shape = this.visioApplication.ActivePage.Drop(stencil.Masters["Rounded Rectangle"], 1, 1);
 
-                                    // todo: drop on page
-
-                                    // todo: update diagramShape with details of VisioId
+                                    diagramShape.VisioId = shape.ID;
+                                    diagramShape.ShapeType = ShapeType.Existing;
+                                    shape.SendToBack();
 
                                     // execute standard movement code.
                                     goto case ShapeType.Existing;

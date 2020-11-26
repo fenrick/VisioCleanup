@@ -135,12 +135,16 @@ namespace VisioCleanup.Services
                             {
                                 // create diagram
                                 this.visioHandler.CreateDocument();
-                                var page = this.visioHandler.GetPageSize();
+                                var page = this.visioHandler.GetPageSize(15, 0);
 
                                 // open excel handler
                                 this.excelHandler.Open();
 
                                 var results = this.excelHandler.RetrieveRecords();
+
+                                // close excel
+                                this.excelHandler.Close();
+
                                 var shapeCounter = 0;
 
                                 // do we need a fake parent?
@@ -158,9 +162,6 @@ namespace VisioCleanup.Services
                                 }
 
                                 ProcessTreeChildren(results, ref shapeCounter, parentShape);
-
-                                // close excel
-                                this.excelHandler.Close();
                             }
 
                             this.logger.LogInformation("Moving and adjusting.");
@@ -186,6 +187,7 @@ namespace VisioCleanup.Services
 
         private static void ProcessTreeChildren(MyTree<string> results, ref int shapeCounter, DiagramShape parentShape)
         {
+            // loop children
             foreach (var result in results)
             {
                 var childShape = new DiagramShape(shapeCounter++) { ShapeText = result.Value, ShapeType = ShapeType.NewShape };
@@ -195,6 +197,49 @@ namespace VisioCleanup.Services
                 if (result.Count > 0)
                 {
                     ProcessTreeChildren(result, ref shapeCounter, childShape);
+                }
+            }
+
+            // sort children
+            if (parentShape.HasChildren())
+            {
+                var sortedChildren = parentShape.Children.OrderByDescending(shape => shape.TotalChildrenCount()).ToArray();
+
+                int lineLength;
+                if (parentShape.HasParent())
+                {
+                    lineLength = (int)Math.Round(Math.Sqrt(sortedChildren.Length));
+                } else
+                {
+                    lineLength = 1;
+                }
+
+                for (var i = 0; i < sortedChildren.Length; i++)
+                {
+                    var child = sortedChildren[i];
+
+                    // line number & position
+                    var lineNumber = (int)Math.Truncate((double)(i / lineLength));
+                    var linePosition = i % lineLength;
+
+                    // find below
+                    var positionBelow = (lineNumber + 1) * lineLength + linePosition;
+                    if (sortedChildren.Length > positionBelow)
+                    {
+                        var belowChild = sortedChildren[positionBelow];
+                        child.ShapeBelow = belowChild;
+                    }
+
+                    // find to left
+                    if (linePosition + 1 <= (lineLength - 1))
+                    {
+                        var positionToLeft = (lineNumber * lineLength) + (linePosition + 1);
+                        if (sortedChildren.Length > positionToLeft)
+                        {
+                            var leftChild = sortedChildren[positionToLeft];
+                            child.ShapeToRight = leftChild;
+                        }
+                    }
                 }
             }
         }
@@ -237,7 +282,7 @@ namespace VisioCleanup.Services
 
                     if (movement != 0)
                     {
-                        this.logger.LogDebug("Adjusting shape {Shape}", nextShape.ShapeBelow);
+                        this.logger.LogDebug("Adjusting {FromShape} to shape {ToShape}", nextShape, nextShape.ShapeBelow);
 
                         this.MoveForSpacer(movement, nextShape.ShapeBelow.MoveDown);
 
@@ -257,7 +302,7 @@ namespace VisioCleanup.Services
 
                     if (movement != 0)
                     {
-                        this.logger.LogDebug("Adjusting shape {Shape}", nextShape.ShapeToRight);
+                        this.logger.LogDebug("Adjusting {FromShape} to shape {ToShape}", nextShape, nextShape.ShapeToRight);
 
                         this.MoveForSpacer(movement, nextShape.ShapeToRight.MoveRight);
 
@@ -302,10 +347,10 @@ namespace VisioCleanup.Services
                     var offset = child.Corners.LeftSide - nextShape.Corners.LeftSide;
                     if (offset != 0)
                     {
+                        this.logger.LogDebug("Adjusting {FromShape} to shape {ToShape}", child, nextShape);
+                        this.logger.LogDebug("Moving right by {Offset}", offset);
                         nextShape.MoveRight(offset);
                         changed = true;
-                        this.logger.LogDebug("Adjusting shape {Shape}", nextShape);
-                        this.logger.LogDebug("Moving right by {Offset}", offset);
                     }
 
                     nextShape = nextShape.ShapeBelow;
@@ -318,10 +363,10 @@ namespace VisioCleanup.Services
                     var offset = child.Corners.TopSide - nextShape.Corners.TopSide;
                     if (offset != 0)
                     {
+                        this.logger.LogDebug("Adjusting {FromShape} to shape {ToShape}", child, nextShape);
+                        this.logger.LogDebug("Moving up {Offset}", offset);
                         nextShape.MoveUp(offset);
                         changed = true;
-                        this.logger.LogDebug("Adjusting shape {Shape}", nextShape);
-                        this.logger.LogDebug("Moving right up {Offset}", offset);
                     }
 
                     nextShape = nextShape.ShapeToRight;

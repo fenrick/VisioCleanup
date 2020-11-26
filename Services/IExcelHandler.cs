@@ -117,7 +117,7 @@ namespace VisioCleanup.Services
                 try
                 {
                     rows = dataTable.DataBodyRange.Rows;
-                    for (var rowIndex = 1; rowIndex < rows.Count; rowIndex++)
+                    for (var rowIndex = 1; rowIndex <= rows.Count; rowIndex++)
                     {
                         Range? cells = null;
                         Dictionary<int, string> rowResults = new Dictionary<int, string>();
