@@ -226,7 +226,13 @@ namespace VisioCleanup.Services
                         // shape to left
                         var spacer = shape.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer;
                         var topSide = Math.Round(diagramShape.Corners.TopSide - this.settings.TopPadding, 3, MidpointRounding.AwayFromZero);
-                        var leftSide = Math.Round(shape.ShapeToLeft.Corners.RightSide + spacer, 3, MidpointRounding.AwayFromZero);
+                        var shapeToLeft = shape.ShapeToLeft;
+                        if (shapeToLeft is null)
+                        {
+                            throw new InvalidOperationException("THis shouldn't happen!");
+                        }
+
+                        var leftSide = Math.Round(shapeToLeft.Corners.RightSide + spacer, 3, MidpointRounding.AwayFromZero);
 
                         if (!(shape.Corners.TopSide.Equals(topSide) && shape.Corners.LeftSide.Equals(leftSide)))
                         {
@@ -244,7 +250,13 @@ namespace VisioCleanup.Services
                     {
                         // nothing to left
                         var spacer = shape.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer;
-                        var topSide = Math.Round(shape.ShapeAbove.Corners.BottomSide - spacer, 3, MidpointRounding.AwayFromZero);
+                        var shapeAbove = shape.ShapeAbove;
+                        if (shapeAbove is null)
+                        {
+                            throw new InvalidOperationException("THis shouldn't happen!");
+                        }
+
+                        var topSide = Math.Round(shapeAbove.Corners.BottomSide - spacer, 3, MidpointRounding.AwayFromZero);
                         var leftSide = Math.Round(diagramShape.Corners.LeftSide + this.settings.LeftPadding, 3, MidpointRounding.AwayFromZero);
 
                         if (!(shape.Corners.TopSide.Equals(topSide) && shape.Corners.LeftSide.Equals(leftSide)))
@@ -259,8 +271,20 @@ namespace VisioCleanup.Services
                     {
                         // shape to left
                         var horizontalSpacer = shape.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer;
-                        var topSide = Math.Round(shape.ShapeAbove.Corners.BottomSide - horizontalSpacer, 3, MidpointRounding.AwayFromZero);
-                        var leftSide = Math.Round(shape.ShapeToLeft.Corners.RightSide + horizontalSpacer, 3, MidpointRounding.AwayFromZero);
+                        var shapeAbove = shape.ShapeAbove;
+                        if (shapeAbove is null)
+                        {
+                            throw new InvalidOperationException("THis shouldn't happen!");
+                        }
+
+                        var shapeToLeft = shape.ShapeToLeft;
+                        if (shapeToLeft is null)
+                        {
+                            throw new InvalidOperationException("THis shouldn't happen!");
+                        }
+
+                        var topSide = Math.Round(shapeAbove.Corners.BottomSide - horizontalSpacer, 3, MidpointRounding.AwayFromZero);
+                        var leftSide = Math.Round(shapeToLeft.Corners.RightSide + horizontalSpacer, 3, MidpointRounding.AwayFromZero);
 
                         if (!(shape.Corners.TopSide.Equals(topSide) && shape.Corners.LeftSide.Equals(leftSide)))
                         {
@@ -281,10 +305,11 @@ namespace VisioCleanup.Services
             foreach (var shape in diagramShape.Children)
             {
                 // resize to taller of neighbour
-                if (shape.ShapeToLeft is not null)
+                var shapeToLeft = shape.ShapeToLeft;
+                if (shapeToLeft is not null)
                 {
                     var myHeight = diagramShape.Corners.Height();
-                    var neighbourHeight = Math.Round(shape.ShapeToLeft.Corners.TopSide - shape.ShapeToLeft.Corners.BottomSide, 3, MidpointRounding.AwayFromZero);
+                    var neighbourHeight = Math.Round(shapeToLeft.Corners.TopSide - shapeToLeft.Corners.BottomSide, 3, MidpointRounding.AwayFromZero);
 
                     if (myHeight < neighbourHeight)
                     {
@@ -302,10 +327,11 @@ namespace VisioCleanup.Services
                     }
                 }
 
-                if (shape.ShapeToRight is not null)
+                var shapeToRight = shape.ShapeToRight;
+                if (shapeToRight is not null)
                 {
                     var myHeight = diagramShape.Corners.Height();
-                    var neighbourHeight = Math.Round(shape.ShapeToRight.Corners.TopSide - shape.ShapeToRight.Corners.BottomSide, 3, MidpointRounding.AwayFromZero);
+                    var neighbourHeight = Math.Round(shapeToRight.Corners.TopSide - shapeToRight.Corners.BottomSide, 3, MidpointRounding.AwayFromZero);
 
                     if (myHeight < neighbourHeight)
                     {
@@ -333,19 +359,25 @@ namespace VisioCleanup.Services
             if (diagramShape.LineLength > 0 && diagramShape.HasChildren())
             {
                 // check right side of shape
-                if (diagramShape.Corners.RightSide >= maxRightSide && diagramShape.Corners.LeftSide < maxRightSide - this.settings.UltimateShapeWidth)
+                if (diagramShape.Corners.RightSide >= maxRightSide)
                 {
-                    if (diagramShape.LineLength > 1)
+                    if (diagramShape.Corners.LeftSide < maxRightSide - this.settings.UltimateShapeWidth)
                     {
-                        this.logger.LogDebug("To far over: {Shape}", diagramShape);
-
-                        if (diagramShape.ParentShape.Children.Count > diagramShape.ParentShape.LineLength)
+                        if (diagramShape.LineLength > 1)
                         {
-                            diagramShape.ParentShape.LineLength = diagramShape.ParentShape.Children.Count;
-                        }
+                            this.logger.LogDebug("To far over: {Shape}", diagramShape);
 
-                        this.RealignShapes(diagramShape, maxRightSide);
-                        return true;
+                            if (diagramShape.ParentShape != null)
+                            {
+                                if (diagramShape.ParentShape.Children.Count > diagramShape.ParentShape.LineLength)
+                                {
+                                    diagramShape.ParentShape.LineLength = diagramShape.ParentShape.Children.Count;
+                                }
+                            }
+
+                            this.RealignShapes(diagramShape, maxRightSide);
+                            return true;
+                        }
                     }
                 }
 
@@ -401,13 +433,18 @@ namespace VisioCleanup.Services
             }
 
             var childCounter = 0;
-            SortedList<int, DiagramShape> sortedChildren = new SortedList<int, DiagramShape>(parentShape.Children.Count);
+            var sortedChildren = new SortedList<int, DiagramShape>(parentShape.Children.Count);
             var children = parentShape.Children;
 
             // var childLineStart;
             // var currentChild;
-            var topChild = children.Where(shape => shape.Corners.TopSide == children.Max(innerShape => innerShape.Corners.TopSide)).OrderBy(shape => shape.Corners.LeftSide)
-                .First();
+            var shapes = children.Where(
+                shape =>
+                    {
+                        var max = children.Max(innerShape => innerShape.Corners.TopSide);
+                        return shape.Corners.TopSide.Equals(max);
+                    }).OrderBy(shape => shape.Corners.LeftSide);
+            var topChild = shapes.First();
             var childLineStart = topChild;
             var currentChild = topChild;
             do
@@ -450,7 +487,8 @@ namespace VisioCleanup.Services
                 return;
             }
 
-            var sortedChildren = parentShape.Children.OrderByDescending(shape => shape.TotalChildrenCount()).ToList();
+            var shapes = parentShape.Children.OrderByDescending(shape => shape.TotalChildrenCount());
+            var sortedChildren = shapes.ToList();
 
             parentShape.Children.Clear();
             parentShape.Children.AddRange(sortedChildren);
@@ -466,7 +504,7 @@ namespace VisioCleanup.Services
                 var child = sortedChildren[i];
 
                 // line number & position
-                var lineNumber = (int)Math.Truncate((double)(i / lineLength));
+                var lineNumber = (int)Math.Truncate(i / (double)lineLength);
                 var linePosition = i % lineLength;
 
                 // find below
@@ -507,7 +545,7 @@ namespace VisioCleanup.Services
                 shape.IncreasedHeight = false;
             }
 
-            List<List<DiagramShape>> lines = new List<List<DiagramShape>>();
+            var lines = new List<List<DiagramShape>>();
             var lineWidth = maxLineSize - diagramShape.Corners.LeftSide;
             double lineLength = 0;
             var currentLine = 0;
