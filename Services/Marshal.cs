@@ -46,6 +46,7 @@ namespace VisioCleanup.Services
         ///     Release com object properly.
         /// </summary>
         /// <param name="obj">Object.</param>
+        /// <exception cref="T:System.NullReferenceException"><paramref name="o" /> is <see langword="null" />.</exception>
         [SupportedOSPlatform("windows")]
         internal static void ReleaseObject(object? obj)
         {

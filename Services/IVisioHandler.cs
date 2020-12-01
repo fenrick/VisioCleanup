@@ -147,6 +147,7 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         public void CreateDocument()
         {
             if (this.visioApplication is null)
@@ -159,6 +160,10 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.AggregateException">
+        ///     The exception that contains all the individual exceptions thrown on all
+        ///     threads.
+        /// </exception>
         public IEnumerable<int> GetChildren(int parentShapeId)
         {
             Shape? parentShape = null;
@@ -176,7 +181,7 @@ namespace VisioCleanup.Services
                 this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", selection.Count);
 
                 selection.GetIDs(out var selectionIDs);
-                List<int> selections = new List<int>();
+                var selections = new List<int>();
                 foreach (var d in selectionIDs)
                 {
                     selections.Add((int)d);
@@ -223,6 +228,7 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         public Corners GetPageSize(double headerHeight, double sidepanelWidth)
         {
             if (this.visioApplication is null)
@@ -246,8 +252,10 @@ namespace VisioCleanup.Services
 
                 corners.LeftSide = pageLeftMargin;
                 corners.BottomSide = pageBottomMargin;
-                corners.RightSide = pageWidth - (pageLeftMargin + pageRightMargin + sidepanelWidth);
-                corners.TopSide = pageHeight - (pageTopMargin + pageBottomMargin + headerHeight);
+                var horizontalMargins = pageLeftMargin + pageRightMargin;
+                corners.RightSide = pageWidth - (horizontalMargins + sidepanelWidth);
+                var verticalMargins = pageTopMargin + pageBottomMargin;
+                corners.TopSide = pageHeight - (verticalMargins + headerHeight);
 
                 return corners;
             }
@@ -288,6 +296,7 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         public void ReDrawShapes(DiagramShape diagramShape)
         {
             foreach (var childDiagramShape in diagramShape.Children)
@@ -393,10 +402,6 @@ namespace VisioCleanup.Services
 
         /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
-        /// <exception cref="T:System.OverflowException">
-        ///     The array is multidimensional and contains more than
-        ///     <see cref="F:System.Int32.MaxValue" /> elements.
-        /// </exception>
         public int[] Selection()
         {
             if (this.visioApplication is null)
@@ -415,6 +420,11 @@ namespace VisioCleanup.Services
                     selection = activeWindow.Selection;
 
                     selection.GetIDs(out var ids);
+
+                    if (ids is null)
+                    {
+                        return listShapeIds.ToArray();
+                    }
 
                     foreach (var id in ids)
                     {
@@ -457,8 +467,14 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         public void VisualChanges(bool visualChanges)
         {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
             this.visioApplication.ShowChanges = visualChanges;
             this.visioApplication.ScreenUpdating = (short)(visualChanges ? 1 : 0);
         }
@@ -467,19 +483,19 @@ namespace VisioCleanup.Services
         {
             // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
             var srcStream = new short[items.Length * 3];
-            var formula_objects = new object[items.Length];
+            var formulaObjects = new object[items.Length];
             for (var i = 0; i < items.Length; i++)
             {
                 var item = items[i];
                 srcStream[i * 3 + 0] = (short)item["section"];
                 srcStream[i * 3 + 1] = (short)item["row"];
                 srcStream[i * 3 + 2] = (short)item["cell"];
-                formula_objects[i] = item["formula"];
+                formulaObjects[i] = item["formula"];
             }
 
             // EXECUTE THE REQUEST
             short flags = 0;
-            shape.SetFormulas(srcStream, formula_objects, flags);
+            shape.SetFormulas(srcStream, formulaObjects, flags);
         }
 
         private Shape GetShape(int shapeId)
