@@ -82,5 +82,15 @@ namespace VisioCleanup.Objects
         {
             return $"Top: {this.TopSide}, Right: {this.RightSide}, Bottom: {this.BottomSide}, Left: {this.LeftSide}";
         }
+
+        public double Width()
+        {
+            return Math.Round(this.RightSide - this.LeftSide, 3, MidpointRounding.AwayFromZero);
+        }
+
+        public double Height()
+        {
+            return Math.Round(this.TopSide - this.BottomSide, 3, MidpointRounding.AwayFromZero);
+        }
     }
 }
