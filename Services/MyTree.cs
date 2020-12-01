@@ -10,13 +10,13 @@ namespace VisioCleanup.Services
     using System.Collections.Generic;
 
     /// <summary>
-    ///  Tree structure.
+    ///     Tree structure.
     /// </summary>
     /// <typeparam name="TValue">Object in tree.</typeparam>
     public class MyTree<TValue> : HashSet<MyTree<TValue>>
     {
         /// <summary>
-        ///  Gets or sets value.
+        ///     Gets or sets value.
         /// </summary>
         public TValue Value { get; set; } = default!;
     }

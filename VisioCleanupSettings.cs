@@ -18,6 +18,11 @@ namespace VisioCleanup
         public double BottomPadding { get; set; }
 
         /// <summary>
+        ///     Gets or sets Excel Header Format.
+        /// </summary>
+        public string? ExcelHeaderFormat { get; set; }
+
+        /// <summary>
         ///     Gets or sets left padding.
         /// </summary>
         public double LeftPadding { get; set; }
@@ -86,10 +91,5 @@ namespace VisioCleanup
         ///     Gets or sets Visio Width field.
         /// </summary>
         public string? VisioWidthField { get; set; }
-
-        /// <summary>
-        /// Gets or sets Excel Header Format.
-        /// </summary>
-        public string? ExcelHeaderFormat {get;set;}
     }
 }
