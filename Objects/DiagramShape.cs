@@ -39,11 +39,16 @@ namespace VisioCleanup.Objects
         /// </summary>
         public List<DiagramShape> Children { get; }
 
+        public bool JuggledChildren {get;set;}
+
         /// <summary>
         ///     Gets or sets the corner structure.
         /// </summary>
         public Corners Corners { get; set; }
 
+        /// <summary>
+        /// Gets or sets the parent shape.
+        /// </summary>
         public DiagramShape? ParentShape { get; set; }
 
         /// <summary>
@@ -64,7 +69,7 @@ namespace VisioCleanup.Objects
         /// <summary>
         ///     Gets or sets the shape above.
         /// </summary>
-        internal DiagramShape? ShapeAbove
+        public DiagramShape? ShapeAbove
         {
             get => this.shapeAbove;
             set
@@ -114,7 +119,7 @@ namespace VisioCleanup.Objects
         /// <summary>
         ///     Gets or sets the shape to the left.
         /// </summary>
-        internal DiagramShape? ShapeToLeft
+        public DiagramShape? ShapeToLeft
         {
             get => this.shapeToLeft;
             set
@@ -160,6 +165,10 @@ namespace VisioCleanup.Objects
                 }
             }
         }
+
+        public bool IncreasedHeight { get; set; }
+
+        public int LineLength { get; set; }
 
         /// <summary>
         ///     Add child shape to parent.

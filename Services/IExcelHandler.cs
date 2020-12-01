@@ -32,6 +32,10 @@ namespace VisioCleanup.Services
         /// </summary>
         void Open();
 
+        /// <summary>
+        ///     Retrieve records from excel.
+        /// </summary>
+        /// <returns>Tree of results.</returns>
         MyTree<string> RetrieveRecords();
     }
 
@@ -64,12 +68,15 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">Excel must be running.</exception>
         public void Open()
         {
             this.logger.LogDebug("Opening connection to excel.");
-            this.excelApplication = Marshal.GetActiveObject("Excel.Application") as Application ?? throw new InvalidOperationException();
+            this.excelApplication = Marshal.GetActiveObject("Excel.Application") as Application ?? throw new InvalidOperationException("Excel must be running.");
         }
 
+        /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         public MyTree<string> RetrieveRecords()
         {
             if (this.excelApplication == null)
@@ -77,104 +84,80 @@ namespace VisioCleanup.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            SortedList<int, int> columnMapping = new SortedList<int, int>();
-            MyTree<string> root = new MyTree<string> { Value = "ROOT" };
-            Worksheet? worksheet = null;
-            ListObject? dataTable = null;
-            try
+            var dataTable = this.excelApplication.ActiveSheet.ListObjects[1];
+            var root = new MyTree<string> { Value = "ROOT" };
+
+            // find headers
+            SortedList<int, int> columnMapping = this.FindHeaders(dataTable);
+
+            // process rows
+            Range rows = dataTable.DataBodyRange.Rows;
+            for (var rowIndex = 1; rowIndex <= rows.Count; rowIndex++)
             {
-                worksheet = this.excelApplication.ActiveSheet;
-                dataTable = worksheet.ListObjects[1];
+                var rowResults = GenerateRow(rows, rowIndex, columnMapping);
 
-                // find headers
-                Range? headerRowRange = null;
-                try
-                {
-                    headerRowRange = dataTable.HeaderRowRange;
-                    foreach (Range cell in headerRowRange)
-                    {
-                        switch (cell.Value)
-                        {
-                            case "L0":
-                                columnMapping.Add(1, cell.Column);
-                                break;
-                            case "L1":
-                                columnMapping.Add(2, cell.Column);
-                                break;
-                            case "L2":
-                                columnMapping.Add(3, cell.Column);
-                                break;
-                        }
-                    }
-                }
-                finally
-                {
-                    Marshal.ReleaseObject(headerRowRange);
-                }
-
-                // process rows
-                Range? rows = null;
-                try
-                {
-                    rows = dataTable.DataBodyRange.Rows;
-                    for (var rowIndex = 1; rowIndex <= rows.Count; rowIndex++)
-                    {
-                        Range? cells = null;
-                        Dictionary<int, string> rowResults = new Dictionary<int, string>();
-                        try
-                        {
-                            cells = rows[rowIndex];
-
-                            // process cells
-                            for (var cellIndex = 1; cellIndex <= columnMapping.Count; cellIndex++)
-                            {
-                                var column = columnMapping[cellIndex];
-
-                                foreach (Range columnCells in cells.Columns)
-                                {
-                                    if (columnCells.Column == column)
-                                    {
-                                        rowResults.Add(cellIndex, columnCells.Value);
-                                    }
-                                }
-                            }
-                        }
-                        finally
-                        {
-                            Marshal.ReleaseObject(cells);
-                        }
-
-                        this.PopulateTree(root, rowResults, 1);
-                    }
-                }
-                finally
-                {
-                    Marshal.ReleaseObject(rows);
-                }
-            }
-            finally
-            {
-                Marshal.ReleaseObject(worksheet);
-                Marshal.ReleaseObject(dataTable);
+                this.PopulateTree(root, rowResults, 1);
             }
 
             return root;
         }
 
-        private void PopulateTree(MyTree<string> parent, Dictionary<int, string> rowResults, int level)
+        private static Dictionary<int, string> GenerateRow(Range rows, int rowIndex, IReadOnlyDictionary<int, int> columnMapping)
         {
-            var results = parent.Where(tree => tree.Value.Equals(rowResults[level]));
-            MyTree<string> node;
-            if (!results.Any())
+            Range? cells = null;
+            try
             {
-                // no matching results
-                MyTree<string> subTree = new MyTree<string> { Value = rowResults[level] };
-                parent.Add(subTree);
-                node = subTree;
+                var rowResults = new Dictionary<int, string>();
+                cells = rows[rowIndex];
+                for (var cellIndex = 1; cellIndex <= columnMapping.Count; cellIndex++)
+                {
+                    foreach (var columnCells in cells.Columns.Cast<Range>().Where(columnCells => columnCells.Column == columnMapping[cellIndex]))
+                    {
+                        rowResults.Add(cellIndex, columnCells.Value);
+                    }
+                }
+
+                return rowResults;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(cells);
+            }
+        }
+
+        private SortedList<int, int> FindHeaders(ListObject dataTable)
+        {
+            var columnMapping = new SortedList<int, int>();
+            var level = 0;
+            do
+            {
+                var fieldName = string.Format(this.settings.ExcelHeaderFormat ?? "{0}", level);
+
+                level++;
+                foreach (var cell in dataTable.HeaderRowRange.Cast<Range>().Where(cell => cell.Value.Equals(fieldName)))
+                {
+                    columnMapping.Add(level, cell.Column);
+                }
+            }
+            while (columnMapping.ContainsKey(level));
+
+            return columnMapping;
+        }
+
+        private void PopulateTree(MyTree<string> parent, IReadOnlyDictionary<int, string> rowResults, int level)
+        {
+            var results = parent.Where(tree => tree.Value.Equals(rowResults[level])).ToList();
+            MyTree<string> node;
+            if (results.Count > 0)
+            {
+                node = results[0];
             }
             else
             {
-                node = results.First();
+                // no matching results
+                var subTree = new MyTree<string> { Value = rowResults[level] };
+                parent.Add(subTree);
+                node = subTree;
             }
 
             var newLevel = level + 1;
@@ -183,10 +166,5 @@ namespace VisioCleanup.Services
                 this.PopulateTree(node, rowResults, level + 1);
             }
         }
-    }
-
-    public class MyTree<V> : HashSet<MyTree<V>>
-    {
-        public V Value { get; set; }
     }
 }

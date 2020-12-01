@@ -86,5 +86,10 @@ namespace VisioCleanup
         ///     Gets or sets Visio Width field.
         /// </summary>
         public string? VisioWidthField { get; set; }
+
+        /// <summary>
+        /// Gets or sets Excel Header Format.
+        /// </summary>
+        public string? ExcelHeaderFormat {get;set;}
     }
 }
