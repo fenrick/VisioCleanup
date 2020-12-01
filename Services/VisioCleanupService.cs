@@ -333,7 +333,7 @@ namespace VisioCleanup.Services
             if (diagramShape.LineLength > 0 && diagramShape.HasChildren())
             {
                 // check right side of shape
-                if (diagramShape.Corners.RightSide >= maxRightSide && diagramShape.Corners.LeftSide < (maxRightSide - this.settings.UltimateShapeWidth))
+                if (diagramShape.Corners.RightSide >= maxRightSide && diagramShape.Corners.LeftSide < maxRightSide - this.settings.UltimateShapeWidth)
                 {
                     if (diagramShape.LineLength > 1)
                     {

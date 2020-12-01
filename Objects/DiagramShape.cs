@@ -39,32 +39,21 @@ namespace VisioCleanup.Objects
         /// </summary>
         public List<DiagramShape> Children { get; }
 
-        public bool JuggledChildren {get;set;}
-
         /// <summary>
         ///     Gets or sets the corner structure.
         /// </summary>
         public Corners Corners { get; set; }
 
+        public bool IncreasedHeight { get; set; }
+
+        public bool JuggledChildren { get; set; }
+
+        public int LineLength { get; set; }
+
         /// <summary>
-        /// Gets or sets the parent shape.
+        ///     Gets or sets the parent shape.
         /// </summary>
         public DiagramShape? ParentShape { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the shape text.
-        /// </summary>
-        public string? ShapeText { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the shape type.
-        /// </summary>
-        public ShapeType ShapeType { get; set; }
-
-        /// <summary>
-        ///     Gets visio shape ID.
-        /// </summary>
-        public int VisioId { get; set; }
 
         /// <summary>
         ///     Gets or sets the shape above.
@@ -92,29 +81,9 @@ namespace VisioCleanup.Objects
         }
 
         /// <summary>
-        ///     Gets or sets the shape below.
+        ///     Gets or sets the shape text.
         /// </summary>
-        internal DiagramShape? ShapeBelow
-        {
-            get => this.shapeBelow;
-            set
-            {
-                this.shapeBelow = value;
-                if (value == null)
-                {
-                    return;
-                }
-
-                if (value.ShapeAbove == null)
-                {
-                    value.ShapeAbove = this;
-                }
-                else if (!value.ShapeAbove.Equals(this))
-                {
-                    value.ShapeAbove = this;
-                }
-            }
-        }
+        public string? ShapeText { get; set; }
 
         /// <summary>
         ///     Gets or sets the shape to the left.
@@ -137,6 +106,41 @@ namespace VisioCleanup.Objects
                 else if (!value.ShapeToRight.Equals(this))
                 {
                     value.ShapeToRight = this;
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the shape type.
+        /// </summary>
+        public ShapeType ShapeType { get; set; }
+
+        /// <summary>
+        ///     Gets visio shape ID.
+        /// </summary>
+        public int VisioId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the shape below.
+        /// </summary>
+        internal DiagramShape? ShapeBelow
+        {
+            get => this.shapeBelow;
+            set
+            {
+                this.shapeBelow = value;
+                if (value == null)
+                {
+                    return;
+                }
+
+                if (value.ShapeAbove == null)
+                {
+                    value.ShapeAbove = this;
+                }
+                else if (!value.ShapeAbove.Equals(this))
+                {
+                    value.ShapeAbove = this;
                 }
             }
         }
@@ -165,10 +169,6 @@ namespace VisioCleanup.Objects
                 }
             }
         }
-
-        public bool IncreasedHeight { get; set; }
-
-        public int LineLength { get; set; }
 
         /// <summary>
         ///     Add child shape to parent.
