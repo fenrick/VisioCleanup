@@ -35,10 +35,12 @@ namespace VisioCleanup.Services
         /// </summary>
         void Close();
 
-        /// <summary>
-        ///     Create a new visio document.
-        /// </summary>
-        void CreateDocument();
+        /*
+                /// <summary>
+                ///     Create a new visio document.
+                /// </summary>
+                void CreateDocument();
+        */
 
         /// <summary>
         ///     Return an array of shapeIDs for children of the supplied shape id.
@@ -51,9 +53,9 @@ namespace VisioCleanup.Services
         ///     Get size of the page.
         /// </summary>
         /// <param name="headerHeight">Header size.</param>
-        /// <param name="sidepanelWidth">Sidepanel size.</param>
+        /// <param name="sidePanelWidth">Side panel size.</param>
         /// <returns>Corners size.</returns>
-        Corners GetPageSize(double headerHeight, double sidepanelWidth);
+        Corners GetPageSize(double headerHeight, double sidePanelWidth);
 
         /// <summary>
         ///     Obtains the current shape text for a shape.
@@ -79,11 +81,13 @@ namespace VisioCleanup.Services
         /// <returns>Array of visio ids.</returns>
         int[] Selection();
 
-        /// <summary>
-        ///     Returns primary item of the current selection.
-        /// </summary>
-        /// <returns>shape id of primary item.</returns>
-        int SelectionPrimaryItem();
+        /*
+                /// <summary>
+                ///     Returns primary item of the current selection.
+                /// </summary>
+                /// <returns>shape id of primary item.</returns>
+                int SelectionPrimaryItem();
+        */
 
         /// <summary>
         ///     Change visio updating diagram.
@@ -115,6 +119,7 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public Corners CalculateCorners(int shapeId)
         {
             Shape? shape = null;
@@ -141,29 +146,34 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.NullReferenceException">Visio application is <see langword="null" />.</exception>
         public void Close()
         {
             Marshal.ReleaseObject(this.visioApplication);
         }
 
-        /// <inheritdoc />
-        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
-        public void CreateDocument()
-        {
-            if (this.visioApplication is null)
-            {
-                throw new InvalidOperationException("System not initialised.");
-            }
-
-            this.visioApplication.Documents.Add(string.Empty);
-            this.visioApplication.Documents.OpenEx("Basic.vss", (short)VisOpenSaveArgs.visOpenDocked);
-        }
+        /*
+                /// <inheritdoc />
+                /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
+                public void CreateDocument()
+                {
+                    if (this.visioApplication is null)
+                    {
+                        throw new InvalidOperationException("System not initialised.");
+                    }
+        
+                    this.visioApplication.Documents.Add(string.Empty);
+                    this.visioApplication.Documents.OpenEx("Basic.vss", (short)VisOpenSaveArgs.visOpenDocked);
+                }
+        */
 
         /// <inheritdoc />
         /// <exception cref="T:System.AggregateException">
         ///     The exception that contains all the individual exceptions thrown on all
         ///     threads.
         /// </exception>
+        /// TODO: Needs to be refactored.
+        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public IEnumerable<int> GetChildren(int parentShapeId)
         {
             Shape? parentShape = null;
@@ -181,7 +191,13 @@ namespace VisioCleanup.Services
                 this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", selection.Count);
 
                 selection.GetIDs(out var selectionIDs);
+
                 var selections = new List<int>();
+                if (selectionIDs is null)
+                {
+                    return selections;
+                }
+
                 foreach (var d in selectionIDs)
                 {
                     selections.Add((int)d);
@@ -229,7 +245,9 @@ namespace VisioCleanup.Services
 
         /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
-        public Corners GetPageSize(double headerHeight, double sidepanelWidth)
+        /// TODO: needs refactoring
+        /// <exception cref="T:System.NullReferenceException">page sheet is <see langword="null" />.</exception>
+        public Corners GetPageSize(double headerHeight, double sidePanelWidth)
         {
             if (this.visioApplication is null)
             {
@@ -253,7 +271,7 @@ namespace VisioCleanup.Services
                 corners.LeftSide = pageLeftMargin;
                 corners.BottomSide = pageBottomMargin;
                 var horizontalMargins = pageLeftMargin + pageRightMargin;
-                corners.RightSide = pageWidth - (horizontalMargins + sidepanelWidth);
+                corners.RightSide = pageWidth - (horizontalMargins + sidePanelWidth);
                 var verticalMargins = pageTopMargin + pageBottomMargin;
                 corners.TopSide = pageHeight - (verticalMargins + headerHeight);
 
@@ -266,6 +284,7 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public string GetShapeText(int shapeId)
         {
             Shape? shape = null;
@@ -297,6 +316,8 @@ namespace VisioCleanup.Services
 
         /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
+        /// TODO: needs refactoring
+        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public void ReDrawShapes(DiagramShape diagramShape)
         {
             foreach (var childDiagramShape in diagramShape.Children)
@@ -321,7 +342,7 @@ namespace VisioCleanup.Services
                         }
 
                         var stencil = this.visioApplication.Documents["Basic.vss"];
-                        var shape = this.visioApplication.ActivePage.Drop(stencil.Masters["Rounded Rectangle"], newPinX, newPinY);
+                        var shape = this.visioApplication.ActivePage.Drop(stencil.Masters["Rectangle"], newPinX, newPinY);
 
                         diagramShape.VisioId = shape.ID;
                         diagramShape.ShapeType = ShapeType.Existing;
@@ -402,6 +423,8 @@ namespace VisioCleanup.Services
 
         /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
+        /// TODO: needs refactoring.
+        /// <exception cref="T:System.NullReferenceException">Visio object is <see langword="null" />.</exception>
         public int[] Selection()
         {
             if (this.visioApplication is null)
@@ -441,30 +464,32 @@ namespace VisioCleanup.Services
             }
         }
 
-        /// <exception cref="InvalidOperationException">System not initialised.</exception>
-        /// <inheritdoc />
-        public int SelectionPrimaryItem()
-        {
-            if (this.visioApplication is null)
-            {
-                throw new InvalidOperationException("System not initialised.");
-            }
-
-            Selection? selection = null;
-            Shape? primaryItem = null;
-            try
-            {
-                selection = this.visioApplication.ActiveWindow.Selection;
-                primaryItem = selection.PrimaryItem;
-
-                return primaryItem.ID;
-            }
-            finally
-            {
-                Marshal.ReleaseObject(selection);
-                Marshal.ReleaseObject(primaryItem);
-            }
-        }
+        /*
+                /// <exception cref="InvalidOperationException">System not initialised.</exception>
+                /// <inheritdoc />
+                public int SelectionPrimaryItem()
+                {
+                    if (this.visioApplication is null)
+                    {
+                        throw new InvalidOperationException("System not initialised.");
+                    }
+        
+                    Selection? selection = null;
+                    Shape? primaryItem = null;
+                    try
+                    {
+                        selection = this.visioApplication.ActiveWindow.Selection;
+                        primaryItem = selection.PrimaryItem;
+        
+                        return primaryItem.ID;
+                    }
+                    finally
+                    {
+                        Marshal.ReleaseObject(selection);
+                        Marshal.ReleaseObject(primaryItem);
+                    }
+                }
+        */
 
         /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
@@ -487,9 +512,9 @@ namespace VisioCleanup.Services
             for (var i = 0; i < items.Length; i++)
             {
                 var item = items[i];
-                srcStream[i * 3 + 0] = (short)item["section"];
-                srcStream[i * 3 + 1] = (short)item["row"];
-                srcStream[i * 3 + 2] = (short)item["cell"];
+                srcStream[(i * 3) + 0] = (short)item["section"];
+                srcStream[(i * 3) + 1] = (short)item["row"];
+                srcStream[(i * 3) + 2] = (short)item["cell"];
                 formulaObjects[i] = item["formula"];
             }
 

@@ -62,6 +62,7 @@ namespace VisioCleanup.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.NullReferenceException">excel application is <see langword="null" />.</exception>
         public void Close()
         {
             Marshal.ReleaseObject(this.excelApplication);
