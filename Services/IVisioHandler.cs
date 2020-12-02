@@ -325,99 +325,28 @@ namespace VisioCleanup.Services
                 this.ReDrawShapes(childDiagramShape);
             }
 
-            var newWidth = diagramShape.Corners.Width();
-            var newHeight = diagramShape.Corners.Height();
-            var newLocPinX = Math.Round(newWidth * 0.5, 3, MidpointRounding.AwayFromZero);
-            var newLocPinY = Math.Round(newHeight * 0.5, 3, MidpointRounding.AwayFromZero);
-            var newPinX = Math.Round(diagramShape.Corners.LeftSide + newLocPinX, 3, MidpointRounding.AwayFromZero);
-            var newPinY = Math.Round(diagramShape.Corners.BottomSide + newLocPinY, 3, MidpointRounding.AwayFromZero);
-
             switch (diagramShape.ShapeType)
             {
                 case ShapeType.NewShape:
-                    {
-                        if (this.visioApplication is null)
-                        {
-                            throw new InvalidOperationException("System not initialised.");
-                        }
-
-                        var stencil = this.visioApplication.Documents["Basic.vss"];
-                        var shape = this.visioApplication.ActivePage.Drop(stencil.Masters["Rectangle"], newPinX, newPinY);
-
-                        diagramShape.VisioId = shape.ID;
-                        diagramShape.ShapeType = ShapeType.Existing;
-                        shape.SendToBack();
-
-                        // execute standard movement code.
-                        goto case ShapeType.Existing;
-                    }
-
+                    this.DropShape(diagramShape);
+                    goto case ShapeType.Existing;
                 case ShapeType.Existing:
+                    Shape? shape = null;
+                    try
                     {
-                        Shape? shape = null;
-                        try
-                        {
-                            shape = this.GetShape(diagramShape.VisioId);
-
-                            var items = new[]
-                                            {
-                                                new Dictionary<string, object>
-                                                    {
-                                                        { "section", (short)VisSectionIndices.visSectionObject },
-                                                        { "row", (short)VisRowIndices.visRowXFormOut },
-                                                        { "cell", (short)VisCellIndices.visXFormWidth },
-                                                        { "formula", $"{newWidth} {this.settings.VisioUnits}" },
-                                                    },
-                                                new Dictionary<string, object>
-                                                    {
-                                                        { "section", (short)VisSectionIndices.visSectionObject },
-                                                        { "row", (short)VisRowIndices.visRowXFormOut },
-                                                        { "cell", (short)VisCellIndices.visXFormHeight },
-                                                        { "formula", $"{newHeight} {this.settings.VisioUnits}" },
-                                                    },
-                                                new Dictionary<string, object>
-                                                    {
-                                                        { "section", (short)VisSectionIndices.visSectionObject },
-                                                        { "row", (short)VisRowIndices.visRowXFormOut },
-                                                        { "cell", (short)VisCellIndices.visXFormPinX },
-                                                        { "formula", $"{newPinX} {this.settings.VisioUnits}" },
-                                                    },
-                                                new Dictionary<string, object>
-                                                    {
-                                                        { "section", (short)VisSectionIndices.visSectionObject },
-                                                        { "row", (short)VisRowIndices.visRowXFormOut },
-                                                        { "cell", (short)VisCellIndices.visXFormPinY },
-                                                        { "formula", $"{newPinY} {this.settings.VisioUnits}" },
-                                                    },
-                                            };
-
-                            // apply results
-                            ChangeShape(items, shape);
-
-                            // shape text
-                            if (!shape.Text.Equals(diagramShape.ShapeText))
-                            {
-                                shape.Text = diagramShape.ShapeText;
-                            }
-
-                            var newCorners = this.CalculateCorners(diagramShape.VisioId);
-
-                            if (!newCorners.Equals(diagramShape.Corners))
-                            {
-                                this.ReDrawShapes(diagramShape);
-                            }
-                            else
-                            {
-                                diagramShape.Corners = newCorners;
-                            }
-                        }
-                        finally
-                        {
-                            Marshal.ReleaseObject(shape);
-                        }
-
-                        break;
+                        shape = this.GetShape(diagramShape.VisioId);
+                        ChangeShape(this.visioChanges(diagramShape), shape);
+                        shape.Text = diagramShape.ShapeText;
+                        diagramShape.Corners = this.CalculateCorners(diagramShape.VisioId);
                     }
+                    finally
+                    {
+                        Marshal.ReleaseObject(shape);
+                    }
+
+                    break;
+                case ShapeType.FakeShape:
+                    break;
             }
         }
 
@@ -523,6 +452,26 @@ namespace VisioCleanup.Services
             shape.SetFormulas(srcStream, formulaObjects, flags);
         }
 
+        private void DropShape(DiagramShape diagramShape)
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            var newLocPinX = Math.Round(diagramShape.Corners.Width() * 0.5, 3, MidpointRounding.AwayFromZero);
+            var newLocPinY = Math.Round(diagramShape.Corners.Height() * 0.5, 3, MidpointRounding.AwayFromZero);
+            var newPinX = Math.Round(diagramShape.Corners.LeftSide + newLocPinX, 3, MidpointRounding.AwayFromZero);
+            var newPinY = Math.Round(diagramShape.Corners.BottomSide + newLocPinY, 3, MidpointRounding.AwayFromZero);
+
+            var stencil = this.visioApplication.Documents["Basic.vss"];
+            var shape = this.visioApplication.ActivePage.Drop(stencil.Masters["Rectangle"], newPinX, newPinY);
+
+            diagramShape.VisioId = shape.ID;
+            diagramShape.ShapeType = ShapeType.Existing;
+            shape.SendToBack();
+        }
+
         private Shape GetShape(int shapeId)
         {
             if (this.visioApplication is null)
@@ -541,6 +490,46 @@ namespace VisioCleanup.Services
             {
                 Marshal.ReleaseObject(activePage);
             }
+        }
+
+        private Dictionary<string, object>[] visioChanges(DiagramShape diagramShape)
+        {
+            var newLocPinX = Math.Round(diagramShape.Corners.Width() * 0.5, 3, MidpointRounding.AwayFromZero);
+            var newLocPinY = Math.Round(diagramShape.Corners.Height() * 0.5, 3, MidpointRounding.AwayFromZero);
+            var newPinX = Math.Round(diagramShape.Corners.LeftSide + newLocPinX, 3, MidpointRounding.AwayFromZero);
+            var newPinY = Math.Round(diagramShape.Corners.BottomSide + newLocPinY, 3, MidpointRounding.AwayFromZero);
+
+            return new[]
+                       {
+                           new Dictionary<string, object>
+                               {
+                                   { "section", (short)VisSectionIndices.visSectionObject },
+                                   { "row", (short)VisRowIndices.visRowXFormOut },
+                                   { "cell", (short)VisCellIndices.visXFormWidth },
+                                   { "formula", $"{diagramShape.Corners.Width()} {this.settings.VisioUnits}" },
+                               },
+                           new Dictionary<string, object>
+                               {
+                                   { "section", (short)VisSectionIndices.visSectionObject },
+                                   { "row", (short)VisRowIndices.visRowXFormOut },
+                                   { "cell", (short)VisCellIndices.visXFormHeight },
+                                   { "formula", $"{diagramShape.Corners.Height()} {this.settings.VisioUnits}" },
+                               },
+                           new Dictionary<string, object>
+                               {
+                                   { "section", (short)VisSectionIndices.visSectionObject },
+                                   { "row", (short)VisRowIndices.visRowXFormOut },
+                                   { "cell", (short)VisCellIndices.visXFormPinX },
+                                   { "formula", $"{newPinX} {this.settings.VisioUnits}" },
+                               },
+                           new Dictionary<string, object>
+                               {
+                                   { "section", (short)VisSectionIndices.visSectionObject },
+                                   { "row", (short)VisRowIndices.visRowXFormOut },
+                                   { "cell", (short)VisCellIndices.visXFormPinY },
+                                   { "formula", $"{newPinY} {this.settings.VisioUnits}" },
+                               },
+                       };
         }
     }
 }
