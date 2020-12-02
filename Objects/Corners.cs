@@ -83,11 +83,19 @@ namespace VisioCleanup.Objects
             return $"Top: {this.TopSide}, Right: {this.RightSide}, Bottom: {this.BottomSide}, Left: {this.LeftSide}";
         }
 
+        /// <summary>
+        ///     Calculate width of shape.
+        /// </summary>
+        /// <returns>Double representing width.</returns>
         public double Width()
         {
             return Math.Round(this.RightSide - this.LeftSide, 3, MidpointRounding.AwayFromZero);
         }
 
+        /// <summary>
+        ///     Calculate height of shape.
+        /// </summary>
+        /// <returns>Double representing height.</returns>
         public double Height()
         {
             return Math.Round(this.TopSide - this.BottomSide, 3, MidpointRounding.AwayFromZero);

@@ -46,14 +46,14 @@ namespace VisioCleanup.Services
         ///     Release com object properly.
         /// </summary>
         /// <param name="obj">Object.</param>
-        /// <exception cref="T:System.NullReferenceException"><paramref name="o" /> is <see langword="null" />.</exception>
+        /// <exception cref="T:System.NullReferenceException"><paramref name="obj" /> is <see langword="null" />.</exception>
         [SupportedOSPlatform("windows")]
         internal static void ReleaseObject(object? obj)
         {
             // Do not catch an exception from this.
             // You may want to remove these guards depending on
             // what you think the semantics should be.
-            if (obj != null && System.Runtime.InteropServices.Marshal.IsComObject(obj))
+            if ((obj != null) && System.Runtime.InteropServices.Marshal.IsComObject(obj))
             {
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
             }

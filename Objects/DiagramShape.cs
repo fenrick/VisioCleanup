@@ -44,16 +44,15 @@ namespace VisioCleanup.Objects
         /// </summary>
         public Corners Corners { get; set; }
 
+        /// <summary>
+        ///     Gets or sets a value indicating whether the height has been increased.
+        /// </summary>
         public bool IncreasedHeight { get; set; }
 
-        public bool JuggledChildren { get; set; }
-
-        public int LineLength { get; set; }
-
         /// <summary>
-        ///     Gets or sets the parent shape.
+        ///     Gets or sets the number of shapes per line.
         /// </summary>
-        public DiagramShape? ParentShape { get; set; }
+        public int LineLength { get; set; }
 
         /// <summary>
         ///     Gets or sets the shape above.
@@ -116,7 +115,7 @@ namespace VisioCleanup.Objects
         public ShapeType ShapeType { get; set; }
 
         /// <summary>
-        ///     Gets visio shape ID.
+        ///     Gets or sets the visio shape ID.
         /// </summary>
         public int VisioId { get; set; }
 
@@ -178,7 +177,6 @@ namespace VisioCleanup.Objects
         {
             // add to array
             this.Children.Add(childShape);
-            childShape.ParentShape = this;
         }
 
         /// <inheritdoc />
@@ -190,19 +188,22 @@ namespace VisioCleanup.Objects
         /// <inheritdoc />
         public bool Equals(DiagramShape? other)
         {
-            return other != null && this.VisioId == other.VisioId;
+            return (other != null) && (this.VisioId == other.VisioId);
         }
 
         /// <inheritdoc />
         public override int GetHashCode()
         {
+            // ReSharper disable once NonReadonlyMemberInGetHashCode
             return HashCode.Combine(this.VisioId);
         }
 
-        public bool HasParent()
-        {
-            return this.ParentShape is not null;
-        }
+        /*
+                public bool HasParent()
+                {
+                    return this.ParentShape is not null;
+                }
+        */
 
         /// <inheritdoc />
         public override string ToString()
@@ -210,6 +211,10 @@ namespace VisioCleanup.Objects
             return $"{this.VisioId}: {this.ShapeText}";
         }
 
+        /// <summary>
+        ///     Calculate # of total children.
+        /// </summary>
+        /// <returns>count of children, iterating.</returns>
         public int TotalChildrenCount()
         {
             if (!this.HasChildren())
@@ -228,7 +233,9 @@ namespace VisioCleanup.Objects
 
         /// <summary>
         ///     Map all neighbour shapes within tolerance of 10.
+        ///     TODO: Rationalise this method.
         /// </summary>
+        /// <exception cref="NotImplementedException">No idea what to do yet with this.</exception>
         internal void FindNeighbours()
         {
             if (!this.HasChildren())
@@ -251,7 +258,13 @@ namespace VisioCleanup.Objects
             var lines = children.OrderBy(shape => shape.Corners.LeftSide).Select(shape => shape.Corners.LeftSide);
             foreach (var line in lines.Distinct())
             {
-                var diagramShapes = children.Where(shape => Math.Abs(shape.Corners.LeftSide - line) < Tolerance);
+                bool AbsoluteShapeSize(DiagramShape shape)
+                {
+                    var side = shape.Corners.LeftSide - line;
+                    return Math.Abs(side) < Tolerance;
+                }
+
+                var diagramShapes = children.Where(AbsoluteShapeSize);
                 var bottomOrdered = diagramShapes.OrderBy(shape => shape.Corners.BottomSide);
                 DiagramShape? currentShape = null;
 
@@ -264,7 +277,7 @@ namespace VisioCleanup.Objects
                             throw new NotImplementedException("No idea what to do yet with this!");
                         case not null when !(currentShape.Corners.BottomSide < shape.Corners.BottomSide):
                             continue;
-                        case not null when shape.Corners.BottomSide - currentShape.Corners.TopSide < Tolerance * 2:
+                        case not null when (shape.Corners.BottomSide - currentShape.Corners.TopSide) < (Tolerance * 2):
                             shape.ShapeBelow = currentShape;
 
                             currentShape = shape;
@@ -279,7 +292,13 @@ namespace VisioCleanup.Objects
             lines = children.OrderBy(shape => shape.Corners.TopSide).Select(shape => shape.Corners.TopSide);
             foreach (var line in lines.Distinct())
             {
-                var diagramShapes = children.Where(shape => Math.Abs(shape.Corners.TopSide - line) < Tolerance);
+                bool AbsoluteShapeSize(DiagramShape shape)
+                {
+                    var side = shape.Corners.TopSide - line;
+                    return Math.Abs(side) < Tolerance;
+                }
+
+                var diagramShapes = children.Where(AbsoluteShapeSize);
                 var bottomOrdered = diagramShapes.OrderBy(shape => shape.Corners.LeftSide);
                 DiagramShape? currentShape = null;
 
@@ -292,7 +311,7 @@ namespace VisioCleanup.Objects
                             throw new NotImplementedException("No idea what to do yet with this!");
                         case not null when !(currentShape.Corners.LeftSide < shape.Corners.LeftSide):
                             continue;
-                        case not null when shape.Corners.LeftSide - currentShape.Corners.RightSide < Tolerance * 2:
+                        case not null when (shape.Corners.LeftSide - currentShape.Corners.RightSide) < (Tolerance * 2):
                             shape.ShapeToLeft = currentShape;
 
                             currentShape = shape;
@@ -314,22 +333,24 @@ namespace VisioCleanup.Objects
             return this.Children.Count > 0;
         }
 
-        /// <summary>
-        ///     Move shape down.
-        /// </summary>
-        /// <param name="movement">Amount to move shape.</param>
-        internal void MoveDown(double movement)
-        {
-            var currentCorners = this.Corners;
-            currentCorners.TopSide -= movement;
-            currentCorners.BottomSide -= movement;
-            this.Corners = currentCorners;
-
-            foreach (var child in this.Children)
-            {
-                child.MoveDown(movement);
-            }
-        }
+        /*
+                /// <summary>
+                ///     Move shape down.
+                /// </summary>
+                /// <param name="movement">Amount to move shape.</param>
+                internal void MoveDown(double movement)
+                {
+                    var currentCorners = this.Corners;
+                    currentCorners.TopSide -= movement;
+                    currentCorners.BottomSide -= movement;
+                    this.Corners = currentCorners;
+        
+                    foreach (var child in this.Children)
+                    {
+                        child.MoveDown(movement);
+                    }
+                }
+        */
 
         /// <summary>
         ///     Move shape left.
@@ -348,22 +369,24 @@ namespace VisioCleanup.Objects
             }
         }
 
-        /// <summary>
-        ///     Move shape right.
-        /// </summary>
-        /// <param name="movement">Amount to move shape.</param>
-        internal void MoveRight(double movement)
-        {
-            var currentCorners = this.Corners;
-            currentCorners.LeftSide += movement;
-            currentCorners.RightSide += movement;
-            this.Corners = currentCorners;
-
-            foreach (var child in this.Children)
-            {
-                child.MoveRight(movement);
-            }
-        }
+        /*
+                /// <summary>
+                ///     Move shape right.
+                /// </summary>
+                /// <param name="movement">Amount to move shape.</param>
+                internal void MoveRight(double movement)
+                {
+                    var currentCorners = this.Corners;
+                    currentCorners.LeftSide += movement;
+                    currentCorners.RightSide += movement;
+                    this.Corners = currentCorners;
+        
+                    foreach (var child in this.Children)
+                    {
+                        child.MoveRight(movement);
+                    }
+                }
+        */
 
         /// <summary>
         ///     Move shape up.
