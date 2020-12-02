@@ -179,6 +179,19 @@ namespace VisioCleanup.Objects
             this.Children.Add(childShape);
         }
 
+        public void ClearNeighbours()
+        {
+            // reset all shapes.
+            foreach (var shape in this.Children)
+            {
+                shape.ShapeAbove = null;
+                shape.ShapeBelow = null;
+                shape.ShapeToLeft = null;
+                shape.ShapeToRight = null;
+                shape.IncreasedHeight = false;
+            }
+        }
+
         /// <inheritdoc />
         public override bool Equals(object? obj)
         {
@@ -198,6 +211,64 @@ namespace VisioCleanup.Objects
             return HashCode.Combine(this.VisioId);
         }
 
+        /// <summary>
+        ///     Sort child shapes by layout.
+        /// </summary>
+        /// <exception cref="T:System.ArgumentNullException">key is <see langword="null" />.</exception>
+        public void SortChildrenByNeighbour()
+        {
+            var childCounter = 0;
+            var sortedChildren = new SortedList<int, DiagramShape>(this.Children.Count);
+            var children = this.Children;
+
+            var shapes = children.Where(
+                shape =>
+                    {
+                        var max = children.Max(innerShape => innerShape.Corners.TopSide);
+                        return shape.Corners.TopSide.Equals(max);
+                    }).OrderBy(shape => shape.Corners.LeftSide);
+            var topChild = shapes.First();
+            var childLineStart = topChild;
+            DiagramShape currentChild = topChild;
+            do
+            {
+                sortedChildren.Add(childCounter++, currentChild);
+                while (currentChild.ShapeToRight is not null)
+                {
+                    currentChild = currentChild.ShapeToRight;
+                    sortedChildren.Add(childCounter++, currentChild);
+                }
+
+                if (childLineStart.ShapeBelow is not null)
+                {
+                    childLineStart = childLineStart.ShapeBelow;
+                    currentChild = childLineStart;
+                }
+                else
+                {
+                    childLineStart = null;
+                }
+            }
+            while (childLineStart is not null);
+
+            this.Children.Clear();
+            this.Children.AddRange(sortedChildren.Values);
+        }
+
+        /// <summary>
+        ///     Sort child shapes by size.
+        /// </summary>
+        public void SortChildrenBySize()
+        {
+            var shapes = this.Children.OrderByDescending(shape => shape.TotalChildrenCount());
+            var sortedChildren = shapes.ToList();
+
+            this.Children.Clear();
+            this.Children.AddRange(sortedChildren);
+
+            this.LineLength = (int)Math.Round(this.Children.Count / 2D, 0, MidpointRounding.ToPositiveInfinity);
+        }
+
         /*
                 public bool HasParent()
                 {
@@ -209,26 +280,6 @@ namespace VisioCleanup.Objects
         public override string ToString()
         {
             return $"{this.VisioId}: {this.ShapeText}";
-        }
-
-        /// <summary>
-        ///     Calculate # of total children.
-        /// </summary>
-        /// <returns>count of children, iterating.</returns>
-        public int TotalChildrenCount()
-        {
-            if (!this.HasChildren())
-            {
-                return 1;
-            }
-
-            var counter = 0;
-            foreach (var child in this.Children)
-            {
-                counter += child.TotalChildrenCount();
-            }
-
-            return counter;
         }
 
         /// <summary>
@@ -245,13 +296,7 @@ namespace VisioCleanup.Objects
 
             // reset all shapes.
             var children = this.Children;
-            foreach (var shape in children)
-            {
-                shape.ShapeAbove = null;
-                shape.ShapeBelow = null;
-                shape.ShapeToLeft = null;
-                shape.ShapeToRight = null;
-            }
+            this.ClearNeighbours();
 
             const double Tolerance = 5;
 
@@ -403,6 +448,26 @@ namespace VisioCleanup.Objects
             {
                 child.MoveUp(movement);
             }
+        }
+
+        /// <summary>
+        ///     Calculate # of total children.
+        /// </summary>
+        /// <returns>count of children, iterating.</returns>
+        private int TotalChildrenCount()
+        {
+            if (!this.HasChildren())
+            {
+                return 1;
+            }
+
+            var counter = 0;
+            foreach (var child in this.Children)
+            {
+                counter += child.TotalChildrenCount();
+            }
+
+            return counter;
         }
     }
 }
