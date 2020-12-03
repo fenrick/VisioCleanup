@@ -28,13 +28,6 @@ namespace VisioCleanup.Services
         /// </summary>
         void Close();
 
-        /*
-                /// <summary>
-                ///     Create a new visio document.
-                /// </summary>
-                void CreateDocument();
-        */
-
         /// <summary>
         ///     Return an array of shapeIDs for children of the supplied shape id.
         /// </summary>
@@ -73,14 +66,6 @@ namespace VisioCleanup.Services
         /// </summary>
         /// <returns>Array of visio ids.</returns>
         int[] Selection();
-
-        /*
-                /// <summary>
-                ///     Returns primary item of the current selection.
-                /// </summary>
-                /// <returns>shape id of primary item.</returns>
-                int SelectionPrimaryItem();
-        */
 
         /// <summary>
         ///     Change visio updating diagram.

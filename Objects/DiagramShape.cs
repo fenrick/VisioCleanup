@@ -378,25 +378,6 @@ namespace VisioCleanup.Objects
             return this.Children.Count > 0;
         }
 
-        /*
-                /// <summary>
-                ///     Move shape down.
-                /// </summary>
-                /// <param name="movement">Amount to move shape.</param>
-                internal void MoveDown(double movement)
-                {
-                    var currentCorners = this.Corners;
-                    currentCorners.TopSide -= movement;
-                    currentCorners.BottomSide -= movement;
-                    this.Corners = currentCorners;
-        
-                    foreach (var child in this.Children)
-                    {
-                        child.MoveDown(movement);
-                    }
-                }
-        */
-
         /// <summary>
         ///     Move shape left.
         /// </summary>
@@ -413,25 +394,6 @@ namespace VisioCleanup.Objects
                 child.MoveLeft(movement);
             }
         }
-
-        /*
-                /// <summary>
-                ///     Move shape right.
-                /// </summary>
-                /// <param name="movement">Amount to move shape.</param>
-                internal void MoveRight(double movement)
-                {
-                    var currentCorners = this.Corners;
-                    currentCorners.LeftSide += movement;
-                    currentCorners.RightSide += movement;
-                    this.Corners = currentCorners;
-        
-                    foreach (var child in this.Children)
-                    {
-                        child.MoveRight(movement);
-                    }
-                }
-        */
 
         /// <summary>
         ///     Move shape up.

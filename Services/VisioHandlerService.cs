@@ -75,21 +75,6 @@ namespace VisioCleanup.Services
             Marshal.ReleaseObject(this.visioApplication);
         }
 
-        /*
-                /// <inheritdoc />
-                /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
-                public void CreateDocument()
-                {
-                    if (this.visioApplication is null)
-                    {
-                        throw new InvalidOperationException("System not initialised.");
-                    }
-        
-                    this.visioApplication.Documents.Add(string.Empty);
-                    this.visioApplication.Documents.OpenEx("Basic.vss", (short)VisOpenSaveArgs.visOpenDocked);
-                }
-        */
-
         /// <inheritdoc />
         /// <exception cref="T:System.AggregateException">
         ///     The exception that contains all the individual exceptions thrown on all
@@ -315,33 +300,6 @@ namespace VisioCleanup.Services
                 Marshal.ReleaseObject(selection);
             }
         }
-
-        /*
-                /// <exception cref="InvalidOperationException">System not initialised.</exception>
-                /// <inheritdoc />
-                public int SelectionPrimaryItem()
-                {
-                    if (this.visioApplication is null)
-                    {
-                        throw new InvalidOperationException("System not initialised.");
-                    }
-        
-                    Selection? selection = null;
-                    Shape? primaryItem = null;
-                    try
-                    {
-                        selection = this.visioApplication.ActiveWindow.Selection;
-                        primaryItem = selection.PrimaryItem;
-        
-                        return primaryItem.ID;
-                    }
-                    finally
-                    {
-                        Marshal.ReleaseObject(selection);
-                        Marshal.ReleaseObject(primaryItem);
-                    }
-                }
-        */
 
         /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
