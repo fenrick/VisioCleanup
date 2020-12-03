@@ -135,14 +135,16 @@ namespace VisioCleanup.Services
                             {
                                 childShape = this.GetShape(childShapeId);
                                 parentSelection = childShape.SpatialNeighbors[relation, 0, flags];
-                                if (parentSelection.Count > 0)
+                                if (parentSelection.Count <= 0)
                                 {
-                                    var primaryItemShapeId = parentSelection.PrimaryItem.ID;
+                                    return;
+                                }
 
-                                    if (parentShapeId.Equals(primaryItemShapeId))
-                                    {
-                                        shapeIDs.Add(childShape.ID);
-                                    }
+                                var primaryItemShapeId = parentSelection.PrimaryItem.ID;
+
+                                if (parentShapeId.Equals(primaryItemShapeId))
+                                {
+                                    shapeIDs.Add(childShape.ID);
                                 }
                             }
                             finally
