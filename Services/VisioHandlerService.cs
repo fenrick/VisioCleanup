@@ -258,7 +258,7 @@ namespace VisioCleanup.Services
                     try
                     {
                         shape = this.GetShape(diagramShape.VisioId);
-                        ChangeShape(this.visioChanges(diagramShape), shape);
+                        ChangeShape(this.VisioChanges(diagramShape), shape);
                         shape.Text = diagramShape.ShapeText;
                         diagramShape.Corners = this.CalculateCorners(diagramShape.VisioId);
                     }
@@ -416,7 +416,7 @@ namespace VisioCleanup.Services
             }
         }
 
-        private Dictionary<string, object>[] visioChanges(DiagramShape diagramShape)
+        private Dictionary<string, object>[] VisioChanges(DiagramShape diagramShape)
         {
             var newLocPinX = Math.Round(diagramShape.Corners.Width() * 0.5, 3, MidpointRounding.AwayFromZero);
             var newLocPinY = Math.Round(diagramShape.Corners.Height() * 0.5, 3, MidpointRounding.AwayFromZero);
