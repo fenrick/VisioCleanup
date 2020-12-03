@@ -63,7 +63,7 @@ namespace VisioCleanup.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            var dataTable = this.excelApplication.ActiveSheet.ListObjects[1];
+            dynamic dataTable = this.excelApplication.ActiveSheet.ListObjects[1];
             var root = new MyTree<string> { Value = "ROOT" };
 
             // find headers
