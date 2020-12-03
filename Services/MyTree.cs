@@ -16,8 +16,8 @@ namespace VisioCleanup.Services
     public class MyTree<TValue> : HashSet<MyTree<TValue>>
     {
         /// <summary>
-        ///     Gets or sets value.
+        ///     Gets value.
         /// </summary>
-        public TValue Value { get; set; } = default!;
+        public TValue Value { get; init; } = default!;
     }
 }
