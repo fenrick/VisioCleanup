@@ -311,7 +311,7 @@ namespace VisioCleanup.Services
             }
 
             this.visioApplication.ShowChanges = visualChanges;
-            this.visioApplication.ScreenUpdating = (short)(visualChanges ? 1 : 0);
+            this.visioApplication.ScreenUpdating = visualChanges ? 1 : 0;
         }
 
         private static void ChangeShape(IReadOnlyList<Dictionary<string, object>> items, IVShape shape)
