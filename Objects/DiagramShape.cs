@@ -456,18 +456,7 @@ namespace VisioCleanup.Objects
         /// <returns>count of children, iterating.</returns>
         private int TotalChildrenCount()
         {
-            if (!this.HasChildren())
-            {
-                return 1;
-            }
-
-            var counter = 0;
-            foreach (var child in this.Children)
-            {
-                counter += child.TotalChildrenCount();
-            }
-
-            return counter;
+            return !this.HasChildren() ? 1 : this.Children.Sum(child => child.TotalChildrenCount());
         }
     }
 }
