@@ -180,7 +180,7 @@ namespace VisioCleanup.Objects
         }
 
         /// <summary>
-        /// Remove all records of shape neighbours.
+        ///     Remove all records of shape neighbours.
         /// </summary>
         public void ClearNeighbours()
         {
