@@ -9,6 +9,7 @@ namespace VisioCleanup.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
@@ -120,10 +121,7 @@ namespace VisioCleanup.Services
                     return selections;
                 }
 
-                foreach (var d in selectionIDs)
-                {
-                    selections.Add((int)d);
-                }
+                selections.AddRange(selectionIDs.Cast<int>());
 
                 Parallel.ForEach(
                     selections, childShapeId =>
