@@ -247,6 +247,7 @@ namespace VisioCleanup.Services
                 this.ReDrawShapes(childDiagramShape);
             }
 
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (diagramShape.ShapeType)
             {
                 case ShapeType.NewShape:
@@ -268,6 +269,7 @@ namespace VisioCleanup.Services
 
                     break;
                 case ShapeType.FakeShape:
+                    // we don't draw this!
                     break;
             }
         }
