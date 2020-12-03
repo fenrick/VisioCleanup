@@ -179,6 +179,9 @@ namespace VisioCleanup.Objects
             this.Children.Add(childShape);
         }
 
+        /// <summary>
+        /// Remove all records of shape neighbours.
+        /// </summary>
         public void ClearNeighbours()
         {
             // reset all shapes.
