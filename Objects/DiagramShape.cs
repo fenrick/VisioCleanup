@@ -80,9 +80,9 @@ namespace VisioCleanup.Objects
         }
 
         /// <summary>
-        ///     Gets or sets the shape text.
+        ///     Gets the shape text.
         /// </summary>
-        public string? ShapeText { get; set; }
+        public string? ShapeText { get; init; }
 
         /// <summary>
         ///     Gets or sets the shape to the left.
