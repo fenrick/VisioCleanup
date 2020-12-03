@@ -291,22 +291,21 @@ namespace VisioCleanup.Services
             {
                 var listShapeIds = new List<int>();
                 activeWindow = this.visioApplication.ActiveWindow;
-                if (activeWindow is not null)
+                if (activeWindow is null)
                 {
-                    selection = activeWindow.Selection;
-
-                    selection.GetIDs(out var ids);
-
-                    if (ids is null)
-                    {
-                        return listShapeIds.ToArray();
-                    }
-
-                    foreach (var id in ids)
-                    {
-                        listShapeIds.Add((int)id);
-                    }
+                    return listShapeIds.ToArray();
                 }
+
+                selection = activeWindow.Selection;
+
+                selection.GetIDs(out var ids);
+
+                if (ids is null)
+                {
+                    return listShapeIds.ToArray();
+                }
+
+                listShapeIds.AddRange(ids.Cast<int>());
 
                 return listShapeIds.ToArray();
             }
