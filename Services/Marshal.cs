@@ -33,7 +33,9 @@ namespace VisioCleanup.Services
             {
                 CLSIDFromProgIDEx(progId, out classId);
             }
-            catch (Exception)
+
+            // ReSharper disable once CatchAllClause
+            catch
             {
                 CLSIDFromProgID(progId, out classId);
             }
