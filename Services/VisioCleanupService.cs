@@ -452,11 +452,13 @@ namespace VisioCleanup.Services
             }
 
             // sort children
-            if (diagramShape.HasChildren())
+            if (!diagramShape.HasChildren())
             {
-                diagramShape.SortChildrenBySize();
-                RealignShapes(diagramShape);
+                return;
             }
+
+            diagramShape.SortChildrenBySize();
+            RealignShapes(diagramShape);
         }
 
         // TODO: Needs refactoring
