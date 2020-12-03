@@ -39,23 +39,26 @@ namespace VisioCleanup
         /// <returns>The <see cref="IHostBuilder" />.</returns>
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args).ConfigureLogging(
-                (hostingContext, logging) =>
-                    {
-                        logging.ClearProviders();
-
-                        var loggerConfiguration = new LoggerConfiguration();
-                        loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
-
-                        var logger = loggerConfiguration.CreateLogger();
-
-                        logging.AddSerilog(logger, true);
-                    }).ConfigureServices(
+            return Host.CreateDefaultBuilder(args).ConfigureLogging((hostingContext, logging) => { SerilogConfiguration(logging, hostingContext); }).ConfigureServices(
                 (hostingContext, services) =>
                     {
-                        services.Configure<VisioCleanupSettings>(hostingContext.Configuration.GetSection("VisioCleanupSettings"))
-                            .AddSingleton<IVisioHandler, VisioHandlerService>().AddSingleton<IExcelHandler, ExcelHandlerService>().AddHostedService<VisioCleanupService>();
+                        services.Configure<VisioCleanupSettings>(hostingContext.Configuration.GetSection("VisioCleanupSettings"));
+                        services.AddSingleton<IVisioHandler, VisioHandlerService>();
+                        services.AddSingleton<IExcelHandler, ExcelHandlerService>();
+                        services.AddHostedService<VisioCleanupService>();
                     });
+        }
+
+        private static void SerilogConfiguration(ILoggingBuilder logging, HostBuilderContext hostingContext)
+        {
+            logging.ClearProviders();
+
+            var loggerConfiguration = new LoggerConfiguration();
+            loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
+
+            var logger = loggerConfiguration.CreateLogger();
+
+            logging.AddSerilog(logger, true);
         }
     }
 }
