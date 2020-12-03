@@ -357,12 +357,12 @@ namespace VisioCleanup.Services
             this.visioApplication.ScreenUpdating = (short)(visualChanges ? 1 : 0);
         }
 
-        private static void ChangeShape(Dictionary<string, object>[] items, Shape shape)
+        private static void ChangeShape(IReadOnlyList<Dictionary<string, object>> items, IVShape shape)
         {
             // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
-            var srcStream = new short[items.Length * 3];
-            var formulaObjects = new object[items.Length];
-            for (var i = 0; i < items.Length; i++)
+            var srcStream = new short[items.Count * 3];
+            var formulaObjects = new object[items.Count];
+            for (var i = 0; i < items.Count; i++)
             {
                 var item = items[i];
                 srcStream[(i * 3) + 0] = (short)item["section"];
