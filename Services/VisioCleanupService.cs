@@ -232,7 +232,7 @@ namespace VisioCleanup.Services
             var changed = false;
 
             // loop through children.
-            foreach (var _ in diagramShape.Children.Where(shape => this.AdjustDiagram(shape, maxRightSide)))
+            foreach (var _ in diagramShape.Children.Where(_ => this.AdjustDiagram(_, maxRightSide)))
             {
                 changed = true;
             }
