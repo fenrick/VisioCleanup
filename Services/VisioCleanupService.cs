@@ -167,7 +167,8 @@ namespace VisioCleanup.Services
                         }
 
                         return Task.CompletedTask;
-                    }, stoppingToken).ConfigureAwait(false);
+                    },
+                stoppingToken).ConfigureAwait(false);
 
             this.logger.LogInformation("Completed processing Visio Cleanup.");
             this.visioHandler.Close();
