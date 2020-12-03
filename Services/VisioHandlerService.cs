@@ -372,8 +372,8 @@ namespace VisioCleanup.Services
             }
 
             // EXECUTE THE REQUEST
-            short flags = 0;
-            shape.SetFormulas(srcStream, formulaObjects, flags);
+            const short Flags = 0;
+            shape.SetFormulas(srcStream, formulaObjects, Flags);
         }
 
         private void DropShape(DiagramShape diagramShape)
