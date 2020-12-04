@@ -22,6 +22,8 @@ namespace VisioCleanup
         /// </summary>
         public string? ExcelHeaderFormat { get; set; }
 
+        public double HeaderHeight { get; set; }
+
         /// <summary>
         ///     Gets or sets left padding.
         /// </summary>
@@ -31,6 +33,8 @@ namespace VisioCleanup
         ///     Gets or sets right padding.
         /// </summary>
         public double RightPadding { get; set; }
+
+        public double SidePanelWidth { get; set; }
 
         /// <summary>
         ///     Gets or sets top padding.
