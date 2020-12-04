@@ -120,7 +120,7 @@ namespace VisioCleanup.Services
                             {
                                 // create diagram
                                 // this.visioHandler.CreateDocument();
-                                var page = this.visioHandler.GetPageSize(15, 0);
+                                var page = this.visioHandler.GetPageSize(this.settings.HeaderHeight, this.settings.SidePanelWidth);
 
                                 // open excel handler
                                 this.excelHandler.Open();
