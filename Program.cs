@@ -15,7 +15,6 @@ namespace VisioCleanup
 
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
 
     using Serilog;
 
@@ -39,7 +38,9 @@ namespace VisioCleanup
         /// <returns>The <see cref="IHostBuilder" />.</returns>
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args).ConfigureLogging((hostingContext, logging) => { SerilogConfiguration(logging, hostingContext); }).ConfigureServices(
+            var hostBuilder = Host.CreateDefaultBuilder(args);
+            hostBuilder.UseSerilog((hostingContext, _, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+            hostBuilder.ConfigureServices(
                 (hostingContext, services) =>
                     {
                         services.Configure<VisioCleanupSettings>(hostingContext.Configuration.GetSection("VisioCleanupSettings"));
@@ -47,18 +48,7 @@ namespace VisioCleanup
                         services.AddSingleton<IExcelHandler, ExcelHandlerService>();
                         services.AddHostedService<VisioCleanupService>();
                     });
-        }
-
-        private static void SerilogConfiguration(ILoggingBuilder logging, HostBuilderContext hostingContext)
-        {
-            logging.ClearProviders();
-
-            var loggerConfiguration = new LoggerConfiguration();
-            loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
-
-            var logger = loggerConfiguration.CreateLogger();
-
-            logging.AddSerilog(logger, true);
+            return hostBuilder;
         }
     }
 }
