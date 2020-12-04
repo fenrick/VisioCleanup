@@ -109,7 +109,8 @@ namespace VisioCleanup.Services
                 selections.AddRange(selectionIDs.Cast<int>());
 
                 Parallel.ForEach(
-                    selections, childShapeId =>
+                    selections,
+                    childShapeId =>
                         {
                             // check that immediate parent is the supplied shape.
                             relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
