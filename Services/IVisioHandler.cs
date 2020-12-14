@@ -8,6 +8,7 @@
 namespace VisioCleanup.Services
 {
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     using VisioCleanup.Objects;
 
@@ -41,7 +42,7 @@ namespace VisioCleanup.Services
         /// <param name="headerHeight">Header size.</param>
         /// <param name="sidePanelWidth">Side panel size.</param>
         /// <returns>Corners size.</returns>
-        Corners GetPageSize(double headerHeight, double sidePanelWidth);
+        Corners GetPageSize(int headerHeight, int sidePanelWidth);
 
         /// <summary>
         ///     Obtains the current shape text for a shape.
@@ -56,16 +57,16 @@ namespace VisioCleanup.Services
         void Open();
 
         /// <summary>
-        ///     Find shapes in visio diagram and change their location and size to match diagramShapes.
-        /// </summary>
-        /// <param name="diagramShape">Internal structure for modelling visio shapes.</param>
-        void ReDrawShapes(DiagramShape diagramShape);
-
-        /// <summary>
         ///     Return an array of visio ids that have been selected.
         /// </summary>
         /// <returns>Array of visio ids.</returns>
         int[] Selection();
+
+        /// <summary>
+        ///     Find shapes in visio diagram and change their location and size to match diagramShapes.
+        /// </summary>
+        /// <param name="diagramShape">Internal structure for modelling visio shapes.</param>
+        Task UpdateVisio(DiagramShape diagramShape);
 
         /// <summary>
         ///     Change visio updating diagram.

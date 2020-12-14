@@ -37,7 +37,33 @@ namespace VisioCleanup.Objects
             this.logger = Log.ForContext<DiagramShape>();
             this.VisioId = visioId;
             this.Children = new List<DiagramShape>();
+            this.Corners = new Corners
+                               {
+                                   TopSide = UltimateShapeHeight, LeftSide = 0, RightSide = UltimateShapeWidth, BottomSide = 0,
+                               };
         }
+
+        public static int BottomPadding { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the horizontal spacer.
+        /// </summary>
+        public static int HorizontalSpacer { get; set; }
+
+        public static int LeftPadding { get; set; }
+
+        public static int RightPadding { get; set; }
+
+        public static int TopPadding { get; set; }
+
+        public static int UltimateShapeHeight { get; set; }
+
+        public static int UltimateShapeWidth { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the vertical spacer.
+        /// </summary>
+        public static int VerticalSpacer { get; set; }
 
         /// <summary>
         ///     Gets child shapes.
@@ -121,6 +147,10 @@ namespace VisioCleanup.Objects
         /// </summary>
         public ShapeType ShapeType { get; set; }
 
+        public string? SortValue { get; set; }
+
+        public string? Stencil { get; set; }
+
         /// <summary>
         ///     Gets or sets the visio shape ID.
         /// </summary>
@@ -148,6 +178,9 @@ namespace VisioCleanup.Objects
                 {
                     value.ShapeToLeft = this;
                 }
+
+                // Move surrounding shapes
+                this.MoveSurroundingShapes();
             }
         }
 
@@ -173,6 +206,9 @@ namespace VisioCleanup.Objects
                 {
                     value.ShapeAbove = this;
                 }
+
+                // Move surrounding shapes
+                this.MoveSurroundingShapes();
             }
         }
 
@@ -182,9 +218,18 @@ namespace VisioCleanup.Objects
         /// <param name="childShape">New child shape of this shape.</param>
         public void AddChildShape(DiagramShape childShape)
         {
+            if (!this.Children.Contains(childShape))
+            {
+                this.Children.Add(childShape);
+            }
+
             // add to array
-            this.Children.Add(childShape);
             childShape.ParentShape = this;
+
+            // foreach (var child in this.Children)
+            // {
+            // child.MoveSurroundingShapes();
+            // }
         }
 
         /// <inheritdoc />
@@ -246,74 +291,116 @@ namespace VisioCleanup.Objects
             }
             while (childLineStart is not null);
 
-            this.Children.Clear();
-            this.Children.AddRange(sortedChildren.Values);
+            foreach (var child in this.Children.ToArray())
+            {
+                this.RemoveChildShape(child);
+            }
+
+            foreach (var child in sortedChildren.Values)
+            {
+                this.AddChildShape(child);
+            }
         }
 
         /// <summary>
         ///     Sort child shapes by size.
         /// </summary>
-        public void SortChildrenBySize()
+        /// <param name="sortMethod"></param>
+        public void SortChildrenBySize(Func<DiagramShape, object> sortMethod)
         {
-            var shapes = this.Children.OrderByDescending(shape => shape.TotalChildrenCount());
-            var sortedChildren = shapes.ToList();
+            var shapes = this.Children.OrderBy(shape => sortMethod(shape)).ToList();
 
-            this.Children.Clear();
-            this.Children.AddRange(sortedChildren);
+            foreach (var child in this.Children.ToArray())
+            {
+                this.RemoveChildShape(child);
+            }
 
-            this.LineLength = (int)Math.Round(this.Children.Count / 2D, 0, MidpointRounding.ToPositiveInfinity);
+            foreach (var child in shapes)
+            {
+                this.AddChildShape(child);
+            }
         }
 
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"{this.VisioId.ToString()}: {this.ShapeText}";
+            return $"{this.VisioId}: {this.ShapeText}";
         }
 
-        internal bool AlignToLeftAndAbove(double spacer)
+        internal static bool Align(DiagramShape diagramShape)
         {
-            // shape to left
-            var leftShape = this.ShapeToLeft;
-            var aboveShape = this.ShapeAbove;
+            bool changed;
+            var defaultSpacer = diagramShape.HasChildren() ? HorizontalSpacer : VerticalSpacer;
+            DiagramShape? aboveShape;
+            int? verticalSpacer;
+            DiagramShape? leftShape;
+            int? horizontalSpacer;
+            switch (diagramShape.ShapeAbove)
+            {
+                case null:
+                    switch (diagramShape.ShapeToLeft)
+                    {
+                        case null:
+                            aboveShape = diagramShape.ParentShape;
+                            verticalSpacer = (0 - diagramShape.ParentShape?.Corners.Height()) + TopPadding;
+                            leftShape = diagramShape.ParentShape;
+                            horizontalSpacer = (0 - diagramShape.ParentShape?.Corners.Width()) + LeftPadding;
+                            break;
+                        default:
+                            aboveShape = diagramShape.ShapeToLeft;
+                            verticalSpacer = 0 - diagramShape.ShapeToLeft.Corners.Height();
+                            leftShape = diagramShape.ShapeToLeft;
+                            horizontalSpacer = defaultSpacer;
+                            break;
+                    }
+
+                    break;
+                default:
+                    switch (diagramShape.ShapeToLeft)
+                    {
+                        case null:
+                            aboveShape = diagramShape.ShapeAbove;
+                            verticalSpacer = defaultSpacer;
+                            leftShape = diagramShape.ShapeAbove;
+                            horizontalSpacer = 0 - diagramShape.ShapeAbove.Corners.Width();
+                            break;
+                        default:
+                            aboveShape = diagramShape.ShapeAbove;
+                            verticalSpacer = defaultSpacer;
+                            leftShape = diagramShape.ShapeToLeft;
+                            horizontalSpacer = defaultSpacer;
+                            break;
+                    }
+
+                    break;
+            }
+
+            return diagramShape.AlignShape(aboveShape, verticalSpacer, leftShape, horizontalSpacer);
+        }
+
+        internal bool AlignShape(DiagramShape? aboveShape, int? verticalSpacer, DiagramShape? leftShape, int? horizontalSpacer)
+        {
+            // remove nulls
             if (aboveShape is null || leftShape is null)
             {
+                return false;
                 throw new InvalidOperationException("This shouldn't happen!");
             }
 
-            var topSide = Math.Round(aboveShape.Corners.BottomSide - spacer, 3, MidpointRounding.AwayFromZero);
-            var leftSide = Math.Round(leftShape.Corners.RightSide + spacer, 3, MidpointRounding.AwayFromZero);
-
-            return this.MoveToPosition(topSide, leftSide);
-        }
-
-        internal bool AlignToLeftShape(double spacer)
-        {
-            // shape to left
-            if (this.ShapeToLeft is null)
+            if (verticalSpacer is null || horizontalSpacer is null)
             {
+                return false;
                 throw new InvalidOperationException("This shouldn't happen!");
             }
 
-            var shapeToLeftCorners = this.ShapeToLeft.Corners;
-            var topSide = Math.Round(shapeToLeftCorners.TopSide, 3, MidpointRounding.AwayFromZero);
-            var leftSide = Math.Round(shapeToLeftCorners.RightSide + spacer, 3, MidpointRounding.AwayFromZero);
+            // calculate placement
+            var topSide = (int)(aboveShape.Corners.BottomSide - verticalSpacer);
+            var leftSide = (int)(leftShape.Corners.RightSide + horizontalSpacer);
 
-            return this.MoveToPosition(topSide, leftSide);
-        }
+            // move shape
+            var changed = this.MoveToPosition(topSide, leftSide);
 
-        internal bool AlignToShapeAbove(double spacer)
-        {
-            // nothing to left
-            if (this.ShapeAbove is null)
-            {
-                throw new InvalidOperationException("This shouldn't happen!");
-            }
-
-            var shapeAboveCorners = this.ShapeAbove.Corners;
-            var topSide = Math.Round(shapeAboveCorners.BottomSide - spacer, 3, MidpointRounding.AwayFromZero);
-            var leftSide = Math.Round(shapeAboveCorners.LeftSide, 3, MidpointRounding.AwayFromZero);
-
-            return this.MoveToPosition(topSide, leftSide);
+            return changed;
         }
 
         /// <summary>
@@ -412,7 +499,12 @@ namespace VisioCleanup.Objects
             return this.Children.Count > 0;
         }
 
-        internal bool ManualChangeHeight(double newHeight)
+        internal bool HasParent()
+        {
+            return this.ParentShape != null;
+        }
+
+        internal bool ManualChangeHeight(int newHeight)
         {
             var myHeight = this.Corners.Height();
             if (!(myHeight < newHeight))
@@ -421,7 +513,7 @@ namespace VisioCleanup.Objects
             }
 
             var corners = this.Corners;
-            corners.BottomSide = Math.Round(corners.TopSide - newHeight, 3, MidpointRounding.AwayFromZero);
+            corners.BottomSide = corners.TopSide - newHeight;
 
             if (this.Corners.Equals(corners))
             {
@@ -433,21 +525,6 @@ namespace VisioCleanup.Objects
             this.Corners = corners;
             this.IncreasedHeight = true;
             return true;
-        }
-
-        internal bool PlaceInCorner(double topPadding, double leftPadding)
-        {
-            if (this.ParentShape == null)
-            {
-                return false;
-            }
-
-            // nothing to left
-            var parentShapeCorners = this.ParentShape.Corners;
-            var topSide = Math.Round(parentShapeCorners.TopSide - topPadding, 3, MidpointRounding.AwayFromZero);
-            var leftSide = Math.Round(parentShapeCorners.LeftSide + leftPadding, 3, MidpointRounding.AwayFromZero);
-
-            return this.MoveToPosition(topSide, leftSide);
         }
 
         internal void RealignShapes()
@@ -478,155 +555,49 @@ namespace VisioCleanup.Objects
                     child.ShapeBelow = belowChild;
                 }
 
-                // find to left
+                // find to right
                 var nextLinePosition = linePosition + 1;
                 if (nextLinePosition > (lineLength - 1))
                 {
                     continue;
                 }
 
-                var positionToLeft = (lineNumber * lineLength) + nextLinePosition;
-                if (sortedChildren.Count <= positionToLeft)
+                var positionToRight = (lineNumber * lineLength) + nextLinePosition;
+                if (sortedChildren.Count <= positionToRight)
                 {
                     continue;
                 }
 
-                var leftChild = sortedChildren[positionToLeft];
-                child.ShapeToRight = leftChild;
+                var rightChild = sortedChildren[positionToRight];
+                child.ShapeToRight = rightChild;
             }
-        }
-
-        internal bool ShapesTooLong(double maxRightSide, double ultimateShapeWidth, double internalPadding, Func<DiagramShape, double> spacer)
-        {
-            // do we know the line length?
-            if (this.LineLength <= 0)
-            {
-                return false;
-            }
-
-            if (!this.HasChildren())
-            {
-                return false;
-            }
-
-            // check right side of shape
-            if (!(this.Corners.RightSide >= maxRightSide))
-            {
-                return false;
-            }
-
-            var maxRightSideMinusOneShape = maxRightSide - ultimateShapeWidth;
-            if (!(this.Corners.LeftSide < maxRightSideMinusOneShape))
-            {
-                return false;
-            }
-
-            if (this.LineLength <= 1)
-            {
-                return false;
-            }
-
-            this.logger.Debug("To far over: {Shape}", this);
-
-            // fit shape inside page
-            this.RealignShapes(maxRightSide, internalPadding, spacer);
-
-            // reset children to default representation.
-            foreach (var child in this.Children.Where(child => child.HasChildren()))
-            {
-                child.LineLength = (int)Math.Round(child.Children.Count / 2D, 0, MidpointRounding.ToPositiveInfinity);
-                this.RealignShapes();
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        ///     Remove all records of shape neighbours.
-        /// </summary>
-        private void ClearNeighbours()
-        {
-            // reset all shapes.
-            foreach (var shape in this.Children)
-            {
-                shape.ShapeAbove = null;
-                shape.ShapeBelow = null;
-                shape.ShapeToLeft = null;
-                shape.ShapeToRight = null;
-                shape.IncreasedHeight = false;
-            }
-        }
-
-        /// <summary>
-        ///     Move a shape for a spacer.
-        /// </summary>
-        /// <param name="movement">how far are we moving.</param>
-        /// <param name="movementAction">Action for movement.</param>
-        private void ExecuteMovement(double movement, Action<double> movementAction)
-        {
-            this.logger.Debug("{@Action} by {Movement}", movementAction.Method, movement);
-            if (movement != 0)
-            {
-                movementAction(movement);
-            }
-        }
-
-        /// <summary>
-        ///     Move shape left.
-        /// </summary>
-        /// <param name="movement">Amount to move shape.</param>
-        private void MoveLeft(double movement)
-        {
-            var currentCorners = this.Corners;
-            currentCorners.LeftSide -= movement;
-            currentCorners.RightSide -= movement;
-            this.Corners = currentCorners;
 
             foreach (var child in this.Children)
             {
-                child.MoveLeft(movement);
+                if (child.HasChildren())
+                {
+                    var defaultLineLength = (int)Math.Round(child.Children.Count / 2D, 0, MidpointRounding.ToPositiveInfinity);
+                    if (child.LineLength < defaultLineLength)
+                    {
+                        child.LineLength = defaultLineLength;
+                        child.RealignShapes();
+                    }
+                }
             }
-        }
 
-        private bool MoveToPosition(double topSide, double leftSide)
-        {
-            if (this.Corners.TopSide.Equals(topSide) && this.Corners.LeftSide.Equals(leftSide))
-            {
-                return false;
-            }
-
-            this.logger.Debug("Moving: {Shape}", this);
-
-            // move left
-            this.ExecuteMovement(this.Corners.LeftSide - leftSide, this.MoveLeft);
-
-            // move up
-            this.ExecuteMovement(topSide - this.Corners.TopSide, this.MoveUp);
-            this.logger.Debug("New position: {Corners}", this.Corners.ToString());
-            return true;
-        }
-
-        /// <summary>
-        ///     Move shape up.
-        /// </summary>
-        /// <param name="movement">Amount to move shape.</param>
-        private void MoveUp(double movement)
-        {
-            var currentCorners = this.Corners;
-            currentCorners.TopSide += movement;
-            currentCorners.BottomSide += movement;
-            this.Corners = currentCorners;
-
-            foreach (var child in this.Children)
-            {
-                child.MoveUp(movement);
-            }
+            this.ResizeShape();
         }
 
         // TODO: Needs refactoring
-        private void RealignShapes(double maxLineSize, double internalPadding, Func<DiagramShape, double> spacer)
+        internal void RealignShapes(int maxWidth)
         {
             if (!this.HasChildren())
+            {
+                return;
+            }
+            
+            this.ResizeShape();
+            if (this.Corners.Width() <= maxWidth)
             {
                 return;
             }
@@ -635,20 +606,22 @@ namespace VisioCleanup.Objects
             this.ClearNeighbours();
 
             var lines = new List<List<DiagramShape>>();
-            var padding = this.Corners.LeftSide + internalPadding;
-            var lineWidth = maxLineSize - padding;
-            double lineLength = 0;
+            var padding = this.Corners.LeftSide + LeftPadding + RightPadding;
+            var lineWidth = maxWidth - padding;
+            var lineLength = 0;
             var currentLine = 0;
             var currentPosition = 0;
             lines.Insert(currentLine, new List<DiagramShape>());
 
             foreach (var child in this.Children)
             {
-                var shapeWidth = child.Corners.Width() + spacer(child);
+                child.ResizeShape();
+                var shapeWidth = child.Corners.Width() + (child.HasChildren() ? HorizontalSpacer : VerticalSpacer);
 
                 if (child.Corners.Width() > lineWidth)
                 {
-                    lineWidth = shapeWidth + 1;
+                    child.RealignShapes(lineWidth);
+                    child.ResizeShape();
                 }
 
                 var nextLineLength = lineLength + shapeWidth;
@@ -691,25 +664,261 @@ namespace VisioCleanup.Objects
                 currentPosition++;
             }
 
-            this.LineLength = lines[0].Count;
-
-            var numberOfLines = this.Children.Count / (double)this.LineLength;
-            if (numberOfLines >= 2)
+            this.LineLength = 0;
+            // set line length to max size.
+            foreach (var line in lines)
             {
-                return;
+                if (line.Count > this.LineLength)
+                {
+                    this.LineLength = line.Count;
+                }
             }
 
-            this.LineLength = (int)Math.Round(this.Children.Count / 2D, 0, MidpointRounding.ToPositiveInfinity);
-            this.RealignShapes();
+            // ensure all children are multi-lined.
+            foreach (var child in this.Children)
+            {
+                if (child.HasChildren())
+                {
+                    var defaultLineLength = (int)Math.Round(child.Children.Count / 2D, 0, MidpointRounding.ToPositiveInfinity);
+                    if (child.LineLength > defaultLineLength)
+                    {
+                        child.LineLength = defaultLineLength;
+                        child.RealignShapes();
+                    }
+                }
+            }
+
+            this.ResizeShape();
+
+            if (this.Corners.Width() > maxWidth)
+            {
+                this.RealignShapes(maxWidth);
+            }
+        }
+
+        internal bool ShapesTooLong(int maxRightSide)
+        {
+            // do we know the line length?
+            if (this.LineLength <= 0)
+            {
+                return false;
+            }
+
+            if (!this.HasChildren())
+            {
+                return false;
+            }
+
+            // check right side of shape
+            if (!(this.Corners.RightSide >= maxRightSide))
+            {
+                return false;
+            }
+
+            var maxRightSideMinusOneShape = maxRightSide - UltimateShapeWidth;
+            if (!(this.Corners.LeftSide < maxRightSideMinusOneShape))
+            {
+                return false;
+            }
+
+            var newMaxWidth = maxRightSide - this.Corners.LeftSide;
+
+            this.logger.Debug("To far over ({CurrentWidth} vs {NewMaxWidth}) : {Shape}", (double)this.Corners.Width() / 1000, (double)newMaxWidth / 1000, this);
+
+            // fit shape inside page
+            this.RealignShapes(newMaxWidth);
+
+            this.logger.Debug("New width {CurrentWidth} : {Shape}", (double)this.Corners.Width() / 1000, this);
+
+            // reset children to default representation.
+            foreach (var child in this.Children.Where(child => child.HasChildren()))
+            {
+                child.RealignShapes(newMaxWidth);
+            }
+
+            return true;
         }
 
         /// <summary>
         ///     Calculate # of total children.
         /// </summary>
         /// <returns>count of children, iterating.</returns>
-        private int TotalChildrenCount()
+        internal int TotalChildrenCount()
         {
             return !this.HasChildren() ? 1 : this.Children.Sum(child => child.TotalChildrenCount());
+        }
+
+        /// <summary>
+        ///     Remove all records of shape neighbours.
+        /// </summary>
+        private void ClearNeighbours()
+        {
+            // reset all shapes.
+            foreach (var shape in this.Children)
+            {
+                shape.ShapeBelow = null;
+                shape.ShapeAbove = null;
+                shape.ShapeToRight = null;
+                shape.ShapeToLeft = null;
+                shape.IncreasedHeight = false;
+            }
+        }
+
+        private bool MoveSurroundingShapes()
+        {
+            var changed = false;
+
+            // move this shape.
+            double defaultSpacer;
+            changed = Align(this);
+
+            // establish surrounding shapes
+            var surrounds = new[] { this.ShapeToLeft, this.ShapeToRight, this.ShapeAbove, this.ShapeBelow };
+
+            // move surrounding shapes
+            foreach (var surround in surrounds)
+            {
+                if (surround is null)
+                {
+                    continue;
+                }
+
+                changed |= Align(surround);
+            }
+
+            // confirm parent is the right size.
+            var parentShape = this.ParentShape;
+            if (parentShape != null)
+            {
+                changed |= parentShape.ResizeShape();
+            }
+
+            return changed;
+        }
+
+        private bool MoveToPosition(int topSide, int leftSide)
+        {
+            if (this.Corners.TopSide.Equals(topSide) && this.Corners.LeftSide.Equals(leftSide))
+            {
+                return false;
+            }
+
+            this.logger.Debug("Moving: {Shape}", this);
+
+            // execute movement
+            var leftMovement = this.Corners.LeftSide - leftSide;
+            var topMovement = topSide - this.Corners.TopSide;
+
+            // move left
+            this.logger.Debug("Left by {Movement}", (double)leftMovement / 1000);
+            var currentCorners = this.Corners;
+            currentCorners.LeftSide -= leftMovement;
+            currentCorners.RightSide -= leftMovement;
+            this.Corners = currentCorners;
+
+            // move up
+            this.logger.Debug("Up by {Movement}", (double)topMovement / 1000);
+            currentCorners = this.Corners;
+            currentCorners.TopSide += topMovement;
+            currentCorners.BottomSide += topMovement;
+            this.Corners = currentCorners;
+
+            this.logger.Debug("New position: {Corners}", this.Corners.ToString());
+
+            // move children
+            foreach (var child in this.Children)
+            {
+                var childTopSide = topMovement + child.Corners.TopSide;
+                var childLeftSide = child.Corners.LeftSide - leftMovement;
+
+                child.MoveToPosition(childTopSide, childLeftSide);
+            }
+
+            return true;
+        }
+
+        private void RemoveChildShape(DiagramShape child)
+        {
+            if (this.Children.Contains(child))
+            {
+                this.Children.Remove(child);
+            }
+
+            if ((child.ParentShape != null) && child.ParentShape.Equals(this))
+            {
+                child.ParentShape = null;
+            }
+
+            child.ClearNeighbours();
+
+            foreach (var remainingChildren in this.Children)
+            {
+                remainingChildren.MoveSurroundingShapes();
+            }
+        }
+
+        private bool ResizeShape()
+        {
+            if (this.IncreasedHeight)
+            {
+                return false;
+            }
+
+            Corners newCorners;
+            if (this.HasChildren())
+            {
+                newCorners = this.Corners;
+                var children = this.Children;
+
+                var minLeft = int.MaxValue;
+                var maxRight = int.MinValue;
+                var minBottom = int.MaxValue;
+                var maxTop = int.MinValue;
+
+                foreach (var child in children)
+                {
+                    var shapeCorners = child.Corners;
+                    maxTop = shapeCorners.TopSide > maxTop ? shapeCorners.TopSide : maxTop;
+                    minBottom = shapeCorners.BottomSide < minBottom ? shapeCorners.BottomSide : minBottom;
+                    maxRight = shapeCorners.RightSide > maxRight ? shapeCorners.RightSide : maxRight;
+                    minLeft = shapeCorners.LeftSide < minLeft ? shapeCorners.LeftSide : minLeft;
+                }
+
+                var leftSide = minLeft - LeftPadding;
+                var rightSide = maxRight + RightPadding;
+                var newWidth = rightSide - leftSide;
+
+                if (rightSide < leftSide)
+                {
+                    throw new InvalidOperationException("This can't happen!");
+                }
+
+                var bottomSide = minBottom - BottomPadding;
+                var topSide = maxTop + TopPadding;
+                var newHeight = topSide - bottomSide;
+
+                newCorners.BottomSide = newCorners.TopSide - newHeight;
+                newCorners.RightSide = newCorners.LeftSide + newWidth;
+            }
+            else
+            {
+                newCorners = this.Corners;
+                newCorners.BottomSide = newCorners.TopSide - UltimateShapeHeight;
+                newCorners.RightSide = newCorners.LeftSide + UltimateShapeWidth;
+            }
+
+            if (this.Corners.Equals(newCorners))
+            {
+                return false;
+            }
+
+            this.logger.Debug("Resizing: {Shape}", this);
+            this.logger.Debug("New size for shape: {Corners}", newCorners.ToString());
+            this.Corners = newCorners;
+
+            this.ParentShape?.ResizeShape();
+
+            return true;
         }
     }
 }

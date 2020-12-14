@@ -7,17 +7,29 @@
 
 namespace VisioCleanup.Services
 {
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
 
     /// <summary>
     ///     Tree structure.
     /// </summary>
     /// <typeparam name="TValue">Object in tree.</typeparam>
-    public class MyTree<TValue> : HashSet<MyTree<TValue>>
+#pragma warning disable 8714
+    public class MyTree<TValue> : ConcurrentDictionary<TValue, MyTree<TValue>>
+#pragma warning restore 8714
     {
         /// <summary>
-        ///     Gets value.
+        ///     Gets or ses the shape text.
         /// </summary>
-        public TValue Value { get; init; } = default!;
+        public string? ShapeText { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the shape type.
+        /// </summary>
+        public string? ShapeType { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a sort value.
+        /// </summary>
+        public string? SortValue { get; set; }
     }
 }

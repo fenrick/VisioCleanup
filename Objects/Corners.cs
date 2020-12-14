@@ -14,49 +14,25 @@ namespace VisioCleanup.Objects
     /// </summary>
     internal struct Corners : IEquatable<Corners>
     {
-        private double leftSide;
-
-        private double rightSide;
-
-        private double bottomSide;
-
-        private double topSide;
-
         /// <summary>
         ///     Gets or sets left side of the shape.
         /// </summary>
-        public double LeftSide
-        {
-            get => this.leftSide;
-            set => this.leftSide = Math.Round(value, 3, MidpointRounding.AwayFromZero);
-        }
+        public int LeftSide { get; set; }
 
         /// <summary>
         ///     Gets or sets right side of the shape.
         /// </summary>
-        public double RightSide
-        {
-            get => this.rightSide;
-            set => this.rightSide = Math.Round(value, 3, MidpointRounding.AwayFromZero);
-        }
+        public int RightSide { get; set; }
 
         /// <summary>
         ///     Gets or sets bottom of the shape.
         /// </summary>
-        public double BottomSide
-        {
-            get => this.bottomSide;
-            set => this.bottomSide = Math.Round(value, 3, MidpointRounding.AwayFromZero);
-        }
+        public int BottomSide { get; set; }
 
         /// <summary>
         ///     Gets or sets top of the shape.
         /// </summary>
-        public double TopSide
-        {
-            get => this.topSide;
-            set => this.topSide = Math.Round(value, 3, MidpointRounding.AwayFromZero);
-        }
+        public int TopSide { get; set; }
 
         /// <inheritdoc />
         public override bool Equals(object? obj)
@@ -80,25 +56,25 @@ namespace VisioCleanup.Objects
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"Top: {this.TopSide}, Right: {this.RightSide}, Bottom: {this.BottomSide}, Left: {this.LeftSide}";
+            return $"Top: {(double)this.TopSide / 1000}, Right: {(double)this.RightSide / 1000}, Bottom: {(double)this.BottomSide / 1000}, Left: {(double)this.LeftSide / 1000}";
         }
 
         /// <summary>
         ///     Calculate width of shape.
         /// </summary>
         /// <returns>Double representing width.</returns>
-        public double Width()
+        public int Width()
         {
-            return Math.Round(this.RightSide - this.LeftSide, 3, MidpointRounding.AwayFromZero);
+            return this.RightSide - this.LeftSide;
         }
 
         /// <summary>
         ///     Calculate height of shape.
         /// </summary>
         /// <returns>Double representing height.</returns>
-        public double Height()
+        public int Height()
         {
-            return Math.Round(this.TopSide - this.BottomSide, 3, MidpointRounding.AwayFromZero);
+            return this.TopSide - this.BottomSide;
         }
     }
 }

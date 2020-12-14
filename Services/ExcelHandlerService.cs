@@ -15,6 +15,8 @@ namespace VisioCleanup.Services
     using Microsoft.Extensions.Options;
     using Microsoft.Office.Interop.Excel;
 
+    using VisioCleanup.Objects;
+
     using Range = Microsoft.Office.Interop.Excel.Range;
 
     /// <summary>
@@ -56,94 +58,121 @@ namespace VisioCleanup.Services
 
         /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
-        public MyTree<string> RetrieveRecords()
+        public Dictionary<string, DiagramShape> RetrieveRecords()
         {
             if (this.excelApplication == null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            dynamic dataTable = this.excelApplication.ActiveSheet.ListObjects[1];
-            var root = new MyTree<string> { Value = "ROOT" };
-
-            // find headers
-            SortedList<int, int> columnMapping = this.FindHeaders(dataTable);
-
-            // process rows
-            Range rows = dataTable.DataBodyRange.Rows;
-            for (var rowIndex = 1; rowIndex <= rows.Count; rowIndex++)
-            {
-                var rowResults = GenerateRow(rows, rowIndex, columnMapping);
-
-                this.PopulateTree(root, rowResults, 1);
-            }
-
-            return root;
-        }
-
-        private static Dictionary<int, string> GenerateRow(Range rows, int rowIndex, IReadOnlyDictionary<int, int> columnMapping)
-        {
-            Range? cells = null;
+            dynamic? dataTable = null;
             try
             {
-                var rowResults = new Dictionary<int, string>();
-                cells = rows[rowIndex];
-                for (var cellIndex = 1; cellIndex <= columnMapping.Count; cellIndex++)
+                dataTable = this.excelApplication.ActiveSheet.ListObjects[1];
+                var allShapes = new Dictionary<string, DiagramShape>();
+                var shapeCounter = 1;
+
+                // find headers
+                SortedList<int, Dictionary<FieldType, int>> columnMapping = this.FindHeaders(dataTable);
+
+                // process rows
+                Range rows = dataTable.DataBodyRange.Rows;
+                this.logger.LogDebug("getting values");
+                object[,] data = rows.Value;
+                foreach (var rowNumber in Enumerable.Range(1, data.GetLength(0)))
                 {
-                    foreach (var columnCells in cells.Columns.Cast<Range>().Where(columnCells => columnCells.Column == columnMapping[cellIndex]))
+                    var rowResults = new Dictionary<int, Dictionary<FieldType, string>>();
+                    foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
                     {
-                        rowResults.Add(cellIndex, columnCells.Value);
+                        var values = new Dictionary<FieldType, string>();
+
+                        foreach (var mapping in columnMapping[cellIndex])
+                        {
+                            var dataValue = data.GetValue(rowNumber, mapping.Value);
+                            values[mapping.Key] = dataValue as string;
+                        }
+
+                        rowResults.Add(cellIndex, values);
+                    }
+
+                    DiagramShape? previousShape = null;
+                    foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
+                    {
+                        var rowResult = rowResults[cellIndex];
+
+                        var shapeType = rowResult.ContainsKey(FieldType.Shape) ? rowResult[FieldType.Shape] : null;
+                        var sortValue = rowResult.ContainsKey(FieldType.Sort) ? rowResult[FieldType.Sort] : null;
+                        var shapeText = rowResult.ContainsKey(FieldType.Primary) ? rowResult[FieldType.Primary] : null;
+
+                        if (!allShapes.ContainsKey(shapeText!))
+                        {
+                            this.logger.LogDebug("Creating shape for: {ShapeText}", shapeText);
+                            allShapes.Add(
+                                shapeText,
+                                new DiagramShape(shapeCounter++)
+                                    {
+                                        ShapeText = shapeText, ShapeType = ShapeType.NewShape, SortValue = sortValue, Stencil = shapeType,
+                                    });
+                        }
+
+                        var shape = allShapes[shapeText];
+
+                        previousShape?.AddChildShape(shape);
+
+                        previousShape = shape;
                     }
                 }
 
-                return rowResults;
+                return allShapes;
             }
             finally
             {
-                Marshal.ReleaseObject(cells);
+                Marshal.ReleaseObject(dataTable);
+                GC.Collect();
             }
         }
 
-        private SortedList<int, int> FindHeaders(ListObject dataTable)
+        private SortedList<int, Dictionary<FieldType, int>> FindHeaders(ListObject dataTable)
         {
-            var columnMapping = new SortedList<int, int>();
+            var columnMapping = new SortedList<int, Dictionary<FieldType, int>>();
             var level = 0;
+            object[,] header = dataTable.HeaderRowRange.Value;
             do
             {
-                var fieldName = string.Format(this.settings.ExcelHeaderFormat ?? "{0}", level);
+                var mappings = new Dictionary<FieldType, int>();
+                var fieldName = string.Format(this.settings.ExcelFieldLabelFormat ?? "{0}", level);
+                var sortFieldName = string.Format(this.settings.ExcelSortFieldLabelFormat ?? "{0} Sort", level);
+                var shapeFieldName = string.Format(this.settings.ExcelShapeTypeLabelFormat ?? "{0} Shape", level);
 
                 level++;
-                foreach (var cell in dataTable.HeaderRowRange.Cast<Range>().Where(cell => cell.Value.Equals(fieldName)))
+                for (var i = 1; i <= header.GetLength(1); i++)
                 {
-                    columnMapping.Add(level, cell.Column);
+                    var value = header.GetValue(1, i);
+
+                    if ((value != null) && value.Equals(fieldName))
+                    {
+                        mappings[FieldType.Primary] = i;
+                    }
+
+                    if ((value != null) && value.Equals(sortFieldName))
+                    {
+                        mappings[FieldType.Sort] = i;
+                    }
+
+                    if ((value != null) && value.Equals(shapeFieldName))
+                    {
+                        mappings[FieldType.Shape] = i;
+                    }
+                }
+
+                if (mappings.ContainsKey(FieldType.Primary))
+                {
+                    columnMapping.Add(level, mappings);
                 }
             }
             while (columnMapping.ContainsKey(level));
 
             return columnMapping;
-        }
-
-        private void PopulateTree(MyTree<string> parent, IReadOnlyDictionary<int, string> rowResults, int level)
-        {
-            var results = parent.Where(tree => tree.Value.Equals(rowResults[level])).ToList();
-            MyTree<string> node;
-            if (results.Count > 0)
-            {
-                node = results[0];
-            }
-            else
-            {
-                // no matching results
-                var subTree = new MyTree<string> { Value = rowResults[level] };
-                parent.Add(subTree);
-                node = subTree;
-            }
-
-            var newLevel = level + 1;
-            if (newLevel <= rowResults.Count)
-            {
-                this.PopulateTree(node, rowResults, level + 1);
-            }
         }
     }
 }
