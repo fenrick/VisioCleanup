@@ -7,6 +7,10 @@
 
 namespace VisioCleanup.Services
 {
+    using System.Collections.Generic;
+
+    using VisioCleanup.Objects;
+
     /// <summary>
     ///     Interface for excel handler.
     /// </summary>
@@ -26,6 +30,6 @@ namespace VisioCleanup.Services
         ///     Retrieve records from excel.
         /// </summary>
         /// <returns>Tree of results.</returns>
-        MyTree<string> RetrieveRecords();
+        Dictionary<string, DiagramShape> RetrieveRecords();
     }
 }

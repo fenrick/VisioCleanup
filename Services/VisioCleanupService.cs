@@ -80,6 +80,16 @@ namespace VisioCleanup.Services
                     {
                         try
                         {
+                            // setup DiagramShape
+                            DiagramShape.HorizontalSpacer = this.settings.VisioHorizontalSpacer;
+                            DiagramShape.VerticalSpacer = this.settings.VisioVerticalSpacer;
+                            DiagramShape.TopPadding = this.settings.TopPadding;
+                            DiagramShape.LeftPadding = this.settings.LeftPadding;
+                            DiagramShape.RightPadding = this.settings.RightPadding;
+                            DiagramShape.BottomPadding = this.settings.BottomPadding;
+                            DiagramShape.UltimateShapeWidth = this.settings.UltimateShapeWidth;
+                            DiagramShape.UltimateShapeHeight = this.settings.UltimateShapeHeight;
+
                             // open
                             this.visioHandler.Open();
 
@@ -91,7 +101,7 @@ namespace VisioCleanup.Services
                                 // create a fake master.
                                 var page = this.visioHandler.GetPageSize(15, 0);
                                 this.logger.LogInformation("Creating a fake master for selection.");
-                                parentShape = new DiagramShape(0) { ShapeText = "FAKE", Corners = page, ShapeType = ShapeType.FakeShape };
+                                parentShape = new DiagramShape(0) { ShapeText = "FAKE", Corners = default, ShapeType = ShapeType.FakeShape };
 
                                 this.logger.LogInformation("Adding selection as children");
 
@@ -113,7 +123,7 @@ namespace VisioCleanup.Services
 
                                 parentShape.FindNeighbours();
 
-                                _ = this.ResizeShape(parentShape);
+                                this.SizeFakeShape(parentShape);
                             }
                             else
                             {
@@ -126,7 +136,9 @@ namespace VisioCleanup.Services
 
                                 var results = this.excelHandler.RetrieveRecords();
 
-                                if (results.Count < 1)
+                                this.logger.LogInformation("Data loaded from Excel.");
+
+                                if (!results.Any())
                                 {
                                     return Task.CompletedTask;
                                 }
@@ -134,29 +146,42 @@ namespace VisioCleanup.Services
                                 // close excel
                                 this.excelHandler.Close();
 
-                                var shapeCounter = 0;
+                                // excel leaves 0 unassigned.
 
                                 // fake diagramShape
-                                parentShape = new DiagramShape(shapeCounter++) { ShapeText = "FAKE", Corners = page, ShapeType = ShapeType.FakeShape, LineLength = 1 };
+                                parentShape = new DiagramShape(0) { ShapeText = "FAKE", Corners = page, ShapeType = ShapeType.FakeShape, LineLength = 1 };
+                                foreach (var shape in results.Where(kvp => !kvp.Value.HasParent()).Select(kvp => kvp.Value))
+                                {
+                                    parentShape.AddChildShape(shape);
+                                }
 
-                                this.ProcessTreeChildren(results, ref shapeCounter, parentShape);
+                                this.logger.LogInformation("Initial shape mapping.");
+                                this.ProcessExcelChildren(parentShape);
+                                parentShape.Corners = page;
+                                parentShape.LineLength = 1;
                             }
 
                             this.logger.LogInformation("Moving and adjusting.");
                             var maxRightSide = parentShape.Corners.RightSide;
 
                             // adjust spacing
-                            while (this.AdjustDiagram(parentShape, maxRightSide))
-                            {
-                            }
+                            var counter = 1;
+                            //while (this.AdjustDiagram(parentShape, maxRightSide))
+                            //{
+                            //    this.logger.LogDebug("Moving and adjusting: {Counter}", counter++);
+                            //}
 
                             this.logger.LogInformation("Redraw shapes.");
 
-                            this.visioHandler.VisualChanges(false);
-
-                            this.visioHandler.ReDrawShapes(parentShape);
-
-                            this.visioHandler.VisualChanges(true);
+                            try
+                            {
+                                this.visioHandler.VisualChanges(false);
+                                this.visioHandler.UpdateVisio(parentShape).Wait();
+                            }
+                            finally
+                            {
+                                this.visioHandler.VisualChanges(true);
+                            }
                         }
 
                         // ReSharper disable once CatchAllClause
@@ -181,12 +206,12 @@ namespace VisioCleanup.Services
         /// <param name="diagramShape">Shape being adjusted.</param>
         /// <param name="maxRightSide">Max right side.</param>
         /// TODO: Needs refactoring
-        private bool AdjustDiagram(DiagramShape diagramShape, double maxRightSide)
+        private bool AdjustDiagram(DiagramShape diagramShape, int maxRightSide)
         {
             var changed = false;
 
-            // loop through children.
-            foreach (var _ in diagramShape.Children.Where(_ => this.AdjustDiagram(_, maxRightSide)))
+            // depth first resizing - bulk action to simplify processing.
+            foreach (var child in diagramShape.Children.Where(child => this.ResizeShape(diagramShape)))
             {
                 changed = true;
             }
@@ -196,30 +221,27 @@ namespace VisioCleanup.Services
                 return true;
             }
 
-            // confirm size of shape.
-            if (this.ResizeShape(diagramShape))
+            // loop through children.
+            foreach (var child in diagramShape.Children.Where(child => this.AdjustDiagram(child, maxRightSide)))
             {
-                // loop again
+                changed = true;
+            }
+
+            DiagramShape.Align(diagramShape);
+
+            if (changed)
+            {
                 return true;
             }
 
-            // place children within parentShape
-            foreach (var child in diagramShape.Children)
+            // resize to taller of neighbour
+            var shapeToRight = diagramShape.ShapeToRight;
+            var shapeToLeft = diagramShape.ShapeToLeft;
+            if (shapeToLeft is not null)
             {
-                if (child.ShapeAbove is null)
-                {
-                    // nothing above
-                    changed = changed || child.ShapeToLeft is null
-                                  ? child.PlaceInCorner(this.settings.TopPadding, this.settings.LeftPadding)
-                                  : child.AlignToLeftShape(child.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer);
-                }
-                else
-                {
-                    // shape above
-                    changed = changed || child.ShapeToLeft is null
-                                  ? child.AlignToShapeAbove(child.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer)
-                                  : child.AlignToLeftAndAbove(child.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer);
-                }
+                var heightToLeft = shapeToLeft.Corners.TopSide - shapeToLeft.Corners.BottomSide;
+
+                changed = diagramShape.ManualChangeHeight(heightToLeft);
             }
 
             if (changed)
@@ -227,33 +249,26 @@ namespace VisioCleanup.Services
                 return true;
             }
 
-            foreach (var shape in diagramShape.Children)
+            if (shapeToRight is not null)
             {
-                // resize to taller of neighbour
-                var shapeToRight = shape.ShapeToRight;
-                var shapeToLeft = shape.ShapeToLeft;
-                if (shapeToLeft is not null)
-                {
-                    var heightToLeft = Math.Round(shapeToLeft.Corners.TopSide - shapeToLeft.Corners.BottomSide, 3, MidpointRounding.AwayFromZero);
+                var heightToRight = shapeToRight.Corners.TopSide - shapeToRight.Corners.BottomSide;
 
-                    changed = changed || shape.ManualChangeHeight(heightToLeft);
-                }
-
-                if (shapeToRight is null)
-                {
-                    continue;
-                }
-
-                var heightToRight = Math.Round(shapeToRight.Corners.TopSide - shapeToRight.Corners.BottomSide, 3, MidpointRounding.AwayFromZero);
-
-                changed = changed || shape.ManualChangeHeight(heightToRight);
+                changed = diagramShape.ManualChangeHeight(heightToRight);
             }
 
-            return changed || diagramShape.ShapesTooLong(
-                       maxRightSide,
-                       this.settings.UltimateShapeWidth,
-                       this.settings.LeftPadding + this.settings.RightPadding,
-                       shape => shape.HasChildren() ? this.settings.VisioHorizontalSpacer : this.settings.VisioVerticalSpacer);
+            if (changed)
+            {
+                return true;
+            }
+
+            changed = diagramShape.ShapesTooLong(maxRightSide);
+
+            if (changed)
+            {
+                return true;
+            }
+
+            return changed;
         }
 
         // TODO: Needs refactoring
@@ -261,21 +276,23 @@ namespace VisioCleanup.Services
         {
             // find children
             var childShapeIds = this.visioHandler.GetChildren(parentShape.VisioId);
-            foreach (var childId in childShapeIds)
-            {
-                // add to diagramShape
-                var childShape = new DiagramShape(childId)
-                                     {
-                                         ShapeText = this.visioHandler.GetShapeText(childId),
-                                         Corners = this.visioHandler.CalculateCorners(childId),
-                                         ShapeType = ShapeType.Existing,
-                                     };
-                parentShape.AddChildShape(childShape);
+            Parallel.ForEach(
+                childShapeIds,
+                childId =>
+                    {
+                        // add to diagramShape
+                        var childShape = new DiagramShape(childId)
+                                             {
+                                                 ShapeText = this.visioHandler.GetShapeText(childId),
+                                                 Corners = this.visioHandler.CalculateCorners(childId),
+                                                 ShapeType = ShapeType.Existing,
+                                             };
+                        parentShape.AddChildShape(childShape);
 
-                this.ProcessChildren(childShape);
+                        this.ProcessChildren(childShape);
 
-                childShape.FindNeighbours();
-            }
+                        parentShape.FindNeighbours();
+                    });
 
             if (parentShape.HasChildren())
             {
@@ -284,30 +301,45 @@ namespace VisioCleanup.Services
         }
 
         // TODO: Needs refactoring
-        private void ProcessTreeChildren(MyTree<string> results, ref int shapeCounter, DiagramShape diagramShape)
+        private void ProcessExcelChildren(DiagramShape diagramShape)
         {
-            // loop children
-            foreach (var result in results)
-            {
-                var childShape = new DiagramShape(shapeCounter++) { ShapeText = result.Value, ShapeType = ShapeType.NewShape };
-
-                diagramShape.AddChildShape(childShape);
-
-                // children
-                if (result.Count > 0)
-                {
-                    this.ProcessTreeChildren(result, ref shapeCounter, childShape);
-                }
-            }
-
             // sort children
             if (!diagramShape.HasChildren())
             {
                 return;
             }
 
-            diagramShape.SortChildrenBySize();
-            diagramShape.RealignShapes();
+            diagramShape.SortChildrenBySize(
+                shape =>
+                    {
+                        if (shape.SortValue is null)
+                        {
+                            return 0 - shape.TotalChildrenCount();
+                        }
+
+                        return shape.SortValue;
+                    });
+
+            diagramShape.LineLength = (int)Math.Round(diagramShape.Children.Count / 2D, 0, MidpointRounding.ToPositiveInfinity);
+            if (diagramShape.ParentShape is not null)
+            {
+                // size to parent's internal width with spacing.
+                var lineWidth = diagramShape.ParentShape.Corners.Width() - (this.settings.LeftPadding + this.settings.RightPadding);
+                diagramShape.RealignShapes(lineWidth);
+            }
+            else
+            {
+                // size to internal width (spacing is already taken into account)
+                var lineWidth = diagramShape.Corners.Width();
+                diagramShape.RealignShapes();
+                diagramShape.RealignShapes(lineWidth);
+            }
+
+            // loop children
+            foreach (var child in diagramShape.Children)
+            {
+                this.ProcessExcelChildren(child);
+            }
         }
 
         private bool ResizeShape(DiagramShape diagramShape)
@@ -331,14 +363,14 @@ namespace VisioCleanup.Services
                 var topSide = children.Select(shape => shape.Corners.TopSide).Max() + this.settings.TopPadding;
                 var newHeight = topSide - bottomSide;
 
-                newCorners.BottomSide = Math.Round(newCorners.TopSide - newHeight, 3, MidpointRounding.AwayFromZero);
-                newCorners.RightSide = Math.Round(newCorners.LeftSide + newWidth, 3, MidpointRounding.AwayFromZero);
+                newCorners.BottomSide = newCorners.TopSide - newHeight;
+                newCorners.RightSide = newCorners.LeftSide + newWidth;
             }
             else
             {
                 newCorners = diagramShape.Corners;
-                newCorners.BottomSide = Math.Round(newCorners.TopSide - this.settings.UltimateShapeHeight, 3, MidpointRounding.AwayFromZero);
-                newCorners.RightSide = Math.Round(newCorners.LeftSide + this.settings.UltimateShapeWidth, 3, MidpointRounding.AwayFromZero);
+                newCorners.BottomSide = newCorners.TopSide - this.settings.UltimateShapeHeight;
+                newCorners.RightSide = newCorners.LeftSide + this.settings.UltimateShapeWidth;
             }
 
             if (diagramShape.Corners.Equals(newCorners))
@@ -350,6 +382,37 @@ namespace VisioCleanup.Services
             this.logger.LogDebug("New size for shape: {Corners}", newCorners.ToString());
             diagramShape.Corners = newCorners;
             return true;
+        }
+
+        private void SizeFakeShape(DiagramShape diagramShape)
+        {
+            if (!diagramShape.HasChildren())
+            {
+                return;
+            }
+
+            var newCorners = diagramShape.Corners;
+            var children = diagramShape.Children;
+
+            var leftSide = children.Select(shape => shape.Corners.LeftSide).Min() - this.settings.LeftPadding;
+            var rightSide = children.Select(shape => shape.Corners.RightSide).Max() + this.settings.RightPadding;
+
+            var bottomSide = children.Select(shape => shape.Corners.BottomSide).Min() - this.settings.BottomPadding;
+            var topSide = children.Select(shape => shape.Corners.TopSide).Max() + this.settings.TopPadding;
+
+            newCorners.BottomSide = bottomSide;
+            newCorners.TopSide = topSide;
+            newCorners.RightSide = rightSide;
+            newCorners.LeftSide = leftSide;
+
+            if (diagramShape.Corners.Equals(newCorners))
+            {
+                return;
+            }
+
+            this.logger.LogDebug("Resizing: {Shape}", diagramShape);
+            this.logger.LogDebug("New size for shape: {Corners}", newCorners.ToString());
+            diagramShape.Corners = newCorners;
         }
     }
 }

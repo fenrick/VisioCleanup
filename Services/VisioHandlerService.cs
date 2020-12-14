@@ -26,6 +26,8 @@ namespace VisioCleanup.Services
 
         private readonly VisioCleanupSettings settings;
 
+        private List<Task>? tasks;
+
         private Application? visioApplication;
 
         /// <summary>
@@ -52,13 +54,25 @@ namespace VisioCleanup.Services
 
                 shape = this.GetShape(shapeId);
 
-                corners.LeftSide = shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits]
-                                   - shape.Cells[this.settings.VisioLocPinXField].Result[this.settings.VisioUnits];
-                corners.BottomSide = shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits]
-                                     - shape.Cells[this.settings.VisioLocPinYField].Result[this.settings.VisioUnits];
+                corners.LeftSide = (int)(Math.Round(
+                                             shape.Cells[this.settings.VisioPinXField].Result[this.settings.VisioUnits]
+                                             - shape.Cells[this.settings.VisioLocPinXField].Result[this.settings.VisioUnits],
+                                             3,
+                                             MidpointRounding.AwayFromZero) * 1000);
+                corners.BottomSide = (int)(Math.Round(
+                                               shape.Cells[this.settings.VisioPinYField].Result[this.settings.VisioUnits]
+                                               - shape.Cells[this.settings.VisioLocPinYField].Result[this.settings.VisioUnits],
+                                               3,
+                                               MidpointRounding.AwayFromZero) * 1000);
 
-                corners.RightSide = corners.LeftSide + shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits];
-                corners.TopSide = corners.BottomSide + shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits];
+                corners.RightSide = (int)(Math.Round(
+                                              corners.LeftSide + shape.Cells[this.settings.VisioWidthField].Result[this.settings.VisioUnits],
+                                              3,
+                                              MidpointRounding.AwayFromZero) * 1000);
+                corners.TopSide = (int)(Math.Round(
+                                            corners.BottomSide + shape.Cells[this.settings.VisioHeightField].Result[this.settings.VisioUnits],
+                                            3,
+                                            MidpointRounding.AwayFromZero) * 1000);
 
                 return corners;
             }
@@ -98,51 +112,34 @@ namespace VisioCleanup.Services
 
                 this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", selection.Count);
 
-                selection.GetIDs(out var selectionIDs);
-
-                var selections = new List<int>();
-                if (selectionIDs is null)
+                // selection.GetIDs(out var selectionIDs);
+                if (selection.Count == 0)
                 {
-                    return selections;
+                    return shapeIDs;
                 }
 
-                selections.AddRange(selectionIDs.Cast<int>());
+                foreach (Shape shape in selection)
+                {
+                    // check that immediate parent is the supplied shape.
+                    relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
+                    flags = (short)VisSpatialRelationFlags.visSpatialFrontToBack;
+                    Selection parentSelection = shape.SpatialNeighbors[relation, 0, flags];
+                    if (parentSelection.Count <= 0)
+                    {
+                        continue;
+                    }
 
-                Parallel.ForEach(
-                    selections,
-                    childShapeId =>
-                        {
-                            // check that immediate parent is the supplied shape.
-                            relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
-                            flags = (short)VisSpatialRelationFlags.visSpatialFrontToBack;
-                            Shape? childShape = null;
-                            Selection? parentSelection = null;
-                            try
-                            {
-                                childShape = this.GetShape(childShapeId);
-                                parentSelection = childShape.SpatialNeighbors[relation, 0, flags];
-                                if (parentSelection.Count <= 0)
-                                {
-                                    return;
-                                }
+                    var primaryItemShapeId = parentSelection.PrimaryItem.ID;
 
-                                var primaryItemShapeId = parentSelection.PrimaryItem.ID;
-
-                                if (parentShapeId.Equals(primaryItemShapeId))
-                                {
-                                    shapeIDs.Add(childShape.ID);
-                                }
-                            }
-                            finally
-                            {
-                                Marshal.ReleaseObject(childShape);
-                                Marshal.ReleaseObject(parentSelection);
-                            }
-                        });
+                    if (parentShapeId.Equals(primaryItemShapeId))
+                    {
+                        shapeIDs.Add(shape.ID);
+                    }
+                }
 
                 this.logger.LogDebug("Final child shapes found: {CountOfShapeIDs}", shapeIDs.Count);
 
-                return shapeIDs.ToArray();
+                return shapeIDs;
             }
             finally
             {
@@ -155,7 +152,7 @@ namespace VisioCleanup.Services
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         /// TODO: needs refactoring
         /// <exception cref="T:System.NullReferenceException">page sheet is <see langword="null" />.</exception>
-        public Corners GetPageSize(double headerHeight, double sidePanelWidth)
+        public Corners GetPageSize(int headerHeight, int sidePanelWidth)
         {
             if (this.visioApplication is null)
             {
@@ -169,12 +166,12 @@ namespace VisioCleanup.Services
 
                 pageSheet = this.visioApplication.ActivePage.PageSheet;
 
-                var pageWidth = pageSheet.Cells["PageWidth"].Result[this.settings.VisioUnits];
-                var pageHeight = pageSheet.Cells["PageHeight"].Result[this.settings.VisioUnits];
-                var pageLeftMargin = pageSheet.Cells["PageLeftMargin"].Result[this.settings.VisioUnits];
-                var pageTopMargin = pageSheet.Cells["PageTopMargin"].Result[this.settings.VisioUnits];
-                var pageRightMargin = pageSheet.Cells["PageRightMargin"].Result[this.settings.VisioUnits];
-                var pageBottomMargin = pageSheet.Cells["PageBottomMargin"].Result[this.settings.VisioUnits];
+                var pageWidth = (int)(Math.Round(pageSheet.Cells["PageWidth"].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero) * 1000);
+                var pageHeight = (int)(Math.Round(pageSheet.Cells["PageHeight"].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero) * 1000);
+                var pageLeftMargin = (int)(Math.Round(pageSheet.Cells["PageLeftMargin"].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero) * 1000);
+                var pageTopMargin = (int)(Math.Round(pageSheet.Cells["PageTopMargin"].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero) * 1000);
+                var pageRightMargin = (int)(Math.Round(pageSheet.Cells["PageRightMargin"].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero) * 1000);
+                var pageBottomMargin = (int)(Math.Round(pageSheet.Cells["PageBottomMargin"].Result[this.settings.VisioUnits], 3, MidpointRounding.AwayFromZero) * 1000);
 
                 corners.LeftSide = pageLeftMargin;
                 corners.BottomSide = pageBottomMargin;
@@ -224,44 +221,6 @@ namespace VisioCleanup.Services
 
         /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
-        /// TODO: needs refactoring
-        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
-        public void ReDrawShapes(DiagramShape diagramShape)
-        {
-            foreach (var childDiagramShape in diagramShape.Children)
-            {
-                this.ReDrawShapes(childDiagramShape);
-            }
-
-            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-            switch (diagramShape.ShapeType)
-            {
-                case ShapeType.NewShape:
-                    this.DropShape(diagramShape);
-                    goto case ShapeType.Existing;
-                case ShapeType.Existing:
-                    Shape? shape = null;
-                    try
-                    {
-                        shape = this.GetShape(diagramShape.VisioId);
-                        ChangeShape(this.VisioChanges(diagramShape), shape);
-                        shape.Text = diagramShape.ShapeText;
-                        diagramShape.Corners = this.CalculateCorners(diagramShape.VisioId);
-                    }
-                    finally
-                    {
-                        Marshal.ReleaseObject(shape);
-                    }
-
-                    break;
-                case ShapeType.FakeShape:
-                    // we don't draw this!
-                    break;
-            }
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         /// TODO: needs refactoring.
         /// <exception cref="T:System.NullReferenceException">Visio object is <see langword="null" />.</exception>
         public int[] Selection()
@@ -304,6 +263,23 @@ namespace VisioCleanup.Services
 
         /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
+        /// TODO: needs refactoring
+        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
+        public async Task UpdateVisio(DiagramShape diagramShape)
+        {
+            this.tasks = new List<Task>();
+
+            this.UpdateVisioInternal(diagramShape);
+            foreach (var task in this.tasks)
+            {
+                task.Start();
+            }
+
+            await Task.WhenAll(this.tasks);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         public void VisualChanges(bool visualChanges)
         {
             if (this.visioApplication is null)
@@ -312,11 +288,20 @@ namespace VisioCleanup.Services
             }
 
             this.visioApplication.ShowChanges = visualChanges;
+            this.visioApplication.UndoEnabled = visualChanges;
             this.visioApplication.ScreenUpdating = visualChanges ? 1 : 0;
         }
 
-        private static void ChangeShape(IReadOnlyList<Dictionary<string, object>> items, IVShape shape)
+        private void ChangeShape(IReadOnlyList<Dictionary<string, object>> items, IVShape shape)
         {
+            if (items.Count == 0)
+            {
+                this.logger.LogDebug("No changes found.");
+                return;
+            }
+
+            this.logger.LogDebug("Updating shape.");
+
             // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
             var srcStream = new short[items.Count * 3];
             var formulaObjects = new object[items.Count];
@@ -334,24 +319,32 @@ namespace VisioCleanup.Services
             shape.SetFormulas(srcStream, formulaObjects, Flags);
         }
 
-        private void DropShape(DiagramShape diagramShape)
+        private Shape DropShape(DiagramShape diagramShape)
         {
             if (this.visioApplication is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            var newLocPinX = Math.Round(diagramShape.Corners.Width() * 0.5, 3, MidpointRounding.AwayFromZero);
-            var newLocPinY = Math.Round(diagramShape.Corners.Height() * 0.5, 3, MidpointRounding.AwayFromZero);
-            var newPinX = Math.Round(diagramShape.Corners.LeftSide + newLocPinX, 3, MidpointRounding.AwayFromZero);
-            var newPinY = Math.Round(diagramShape.Corners.BottomSide + newLocPinY, 3, MidpointRounding.AwayFromZero);
+            double newLocPinX = (diagramShape.Corners.Width() * 0.5) / 1000;
+            double newLocPinY = (diagramShape.Corners.Height() * 0.5) / 1000;
+            double newPinX = (diagramShape.Corners.LeftSide + newLocPinX) / 1000;
+            double newPinY = (diagramShape.Corners.BottomSide + newLocPinY) / 1000;
 
             var stencil = this.visioApplication.Documents["Basic.vss"];
-            var shape = this.visioApplication.ActivePage.Drop(stencil.Masters["Rectangle"], newPinX, newPinY);
+            var stencilName = "Ellipse";
+
+            if (diagramShape.Stencil is not null)
+            {
+                stencilName = diagramShape.Stencil;
+            }
+
+            var shape = this.visioApplication.ActivePage.Drop(stencil.Masters[stencilName], newPinX, newPinY);
 
             diagramShape.VisioId = shape.ID;
             diagramShape.ShapeType = ShapeType.Existing;
             shape.SendToBack();
+            return shape;
         }
 
         private Shape GetShape(int shapeId)
@@ -374,44 +367,89 @@ namespace VisioCleanup.Services
             }
         }
 
+        private void UpdateVisioInternal(DiagramShape diagramShape)
+        {
+            foreach (var childDiagramShape in diagramShape.Children)
+            {
+                this.UpdateVisioInternal(childDiagramShape);
+            }
+
+            var task = new Task(
+                () =>
+                    {
+                        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+                        Shape? shape = null;
+                        switch (diagramShape.ShapeType)
+                        {
+                            case ShapeType.NewShape:
+                                this.logger.LogDebug("Dropping new shape: {Shape}", diagramShape);
+                                shape = this.DropShape(diagramShape);
+                                goto case ShapeType.Existing;
+                            case ShapeType.Existing:
+                                this.logger.LogDebug("Checking shape: {Shape}", diagramShape);
+                                shape ??= this.GetShape(diagramShape.VisioId);
+
+                                this.ChangeShape(this.VisioChanges(diagramShape), shape);
+                                shape.Text = diagramShape.ShapeText;
+
+                                // diagramShape.Corners = this.CalculateCorners(diagramShape.VisioId);
+                                break;
+                            case ShapeType.FakeShape:
+                                // we don't draw this!
+                                this.logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
+                                break;
+                        }
+                    });
+
+            this.tasks.Add(task);
+        }
+
         private Dictionary<string, object>[] VisioChanges(DiagramShape diagramShape)
         {
-            var newLocPinX = Math.Round(diagramShape.Corners.Width() * 0.5, 3, MidpointRounding.AwayFromZero);
-            var newLocPinY = Math.Round(diagramShape.Corners.Height() * 0.5, 3, MidpointRounding.AwayFromZero);
-            var newPinX = Math.Round(diagramShape.Corners.LeftSide + newLocPinX, 3, MidpointRounding.AwayFromZero);
-            var newPinY = Math.Round(diagramShape.Corners.BottomSide + newLocPinY, 3, MidpointRounding.AwayFromZero);
+            double newLocPinX = ((double) diagramShape.Corners.Width() * 0.5) / 1000;
+            double newLocPinY = ((double) diagramShape.Corners.Height() * 0.5) / 1000;
+            double newPinX = ((double) diagramShape.Corners.LeftSide + newLocPinX) / 1000;
+            double newPinY = ((double) diagramShape.Corners.BottomSide + newLocPinY) / 1000;
+            
+            var visioChanges = new List<Dictionary<string, object>>();
 
-            return new[]
-                       {
-                           new Dictionary<string, object>
-                               {
-                                   { "section", (short)VisSectionIndices.visSectionObject },
-                                   { "row", (short)VisRowIndices.visRowXFormOut },
-                                   { "cell", (short)VisCellIndices.visXFormWidth },
-                                   { "formula", $"{diagramShape.Corners.Width()} {this.settings.VisioUnits}" },
-                               },
-                           new Dictionary<string, object>
-                               {
-                                   { "section", (short)VisSectionIndices.visSectionObject },
-                                   { "row", (short)VisRowIndices.visRowXFormOut },
-                                   { "cell", (short)VisCellIndices.visXFormHeight },
-                                   { "formula", $"{diagramShape.Corners.Height()} {this.settings.VisioUnits}" },
-                               },
-                           new Dictionary<string, object>
-                               {
-                                   { "section", (short)VisSectionIndices.visSectionObject },
-                                   { "row", (short)VisRowIndices.visRowXFormOut },
-                                   { "cell", (short)VisCellIndices.visXFormPinX },
-                                   { "formula", $"{newPinX} {this.settings.VisioUnits}" },
-                               },
-                           new Dictionary<string, object>
-                               {
-                                   { "section", (short)VisSectionIndices.visSectionObject },
-                                   { "row", (short)VisRowIndices.visRowXFormOut },
-                                   { "cell", (short)VisCellIndices.visXFormPinY },
-                                   { "formula", $"{newPinY} {this.settings.VisioUnits}" },
-                               },
-                       };
+            double width = (double) diagramShape.Corners.Width() / 1000;
+            double height = (double) diagramShape.Corners.Height() / 1000;
+            
+            visioChanges.Add(
+                new Dictionary<string, object>
+                    {
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormWidth },
+                        { "formula", $"{width} {this.settings.VisioUnits}" },
+                    });
+            visioChanges.Add(
+                new Dictionary<string, object>
+                    {
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormHeight },
+                        { "formula", $"{height} {this.settings.VisioUnits}" },
+                    });
+            visioChanges.Add(
+                new Dictionary<string, object>
+                    {
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormPinX },
+                        { "formula", $"{newPinX} {this.settings.VisioUnits}" },
+                    });
+            visioChanges.Add(
+                new Dictionary<string, object>
+                    {
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormPinY },
+                        { "formula", $"{newPinY} {this.settings.VisioUnits}" },
+                    });
+            
+            return visioChanges.ToArray();
         }
     }
 }

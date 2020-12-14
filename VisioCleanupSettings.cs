@@ -15,41 +15,45 @@ namespace VisioCleanup
         /// <summary>
         ///     Gets or sets bottom padding.
         /// </summary>
-        public double BottomPadding { get; set; }
+        public int BottomPadding { get; set; }
 
         /// <summary>
         ///     Gets or sets Excel Header Format.
         /// </summary>
-        public string? ExcelHeaderFormat { get; set; }
+        public string? ExcelFieldLabelFormat { get; set; }
 
-        public double HeaderHeight { get; set; }
+        public string? ExcelShapeTypeLabelFormat { get; set; }
+
+        public string? ExcelSortFieldLabelFormat { get; set; }
+
+        public int HeaderHeight { get; set; }
 
         /// <summary>
         ///     Gets or sets left padding.
         /// </summary>
-        public double LeftPadding { get; set; }
+        public int LeftPadding { get; set; }
 
         /// <summary>
         ///     Gets or sets right padding.
         /// </summary>
-        public double RightPadding { get; set; }
+        public int RightPadding { get; set; }
 
-        public double SidePanelWidth { get; set; }
+        public int SidePanelWidth { get; set; }
 
         /// <summary>
         ///     Gets or sets top padding.
         /// </summary>
-        public double TopPadding { get; set; }
+        public int TopPadding { get; set; }
 
         /// <summary>
         ///     Gets or sets ultimate shape height.
         /// </summary>
-        public double UltimateShapeHeight { get; set; }
+        public int UltimateShapeHeight { get; set; }
 
         /// <summary>
         ///     Gets or sets ultimate shape width.
         /// </summary>
-        public double UltimateShapeWidth { get; set; }
+        public int UltimateShapeWidth { get; set; }
 
         /// <summary>
         ///     Gets or sets Visio Height Field.
@@ -59,7 +63,7 @@ namespace VisioCleanup
         /// <summary>
         ///     Gets or sets Visio Horizontal Spacer.
         /// </summary>
-        public double VisioHorizontalSpacer { get; set; }
+        public int VisioHorizontalSpacer { get; set; }
 
         /// <summary>
         ///     Gets or sets Visio LocPinX Field.
@@ -89,7 +93,7 @@ namespace VisioCleanup
         /// <summary>
         ///     Gets or sets Visio Vertical Spacer.
         /// </summary>
-        public double VisioVerticalSpacer { get; set; }
+        public int VisioVerticalSpacer { get; set; }
 
         /// <summary>
         ///     Gets or sets Visio Width field.
