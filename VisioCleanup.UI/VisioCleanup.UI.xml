@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VisioCleanup.UI</name>
+    </assembly>
+    <members>
+        <member name="T:VisioCleanup.UI.Forms.MainForm">
+            <summary>Main application form.</summary>
+        </member>
+        <member name="F:VisioCleanup.UI.Forms.MainForm.appConfig">
+            <summary>The app config.</summary>
+        </member>
+        <member name="F:VisioCleanup.UI.Forms.MainForm.logger">
+            <summary>The logger.</summary>
+        </member>
+        <member name="M:VisioCleanup.UI.Forms.MainForm.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.UI.Forms.MainForm},Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
+            <summary>Initialises a new instance of the <see cref="T:VisioCleanup.UI.Forms.MainForm" /> class.</summary>
+            <param name="logger">The logger.</param>
+            <param name="options">The app config.</param>
+        </member>
+        <member name="M:VisioCleanup.UI.Forms.MainForm.Button1_Click(System.Object,System.EventArgs)">
+            <summary>TODO The button 1_ click.</summary>
+            <param name="sender">TODO The sender.</param>
+            <param name="e">TODO The e.</param>
+        </member>
+        <member name="T:VisioCleanup.UI.Program">
+            <summary>Main execution point.</summary>
+        </member>
+        <member name="M:VisioCleanup.UI.Program.Main(System.String[])">
+            <summary>The main entry point for the application.</summary>
+            <param name="args">Arguments.</param>
+        </member>
+        <member name="M:VisioCleanup.UI.Program.ConfigureSerilog(Microsoft.Extensions.Hosting.HostBuilderContext,Serilog.LoggerConfiguration)">
+            <summary>TODO The configure serilog.</summary>
+            <param name="hostBuilderContext">TODO The host builder context.</param>
+            <param name="loggerConfiguration">TODO The logger configuration.</param>
+        </member>
+        <member name="M:VisioCleanup.UI.Program.ConfigureServices(Microsoft.Extensions.Hosting.HostBuilderContext,Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>The configure services.</summary>
+            <param name="hostBuilderContext">The host builder context.</param>
+            <param name="serviceCollection">The service collection.</param>
+        </member>
+    </members>
+</doc>
