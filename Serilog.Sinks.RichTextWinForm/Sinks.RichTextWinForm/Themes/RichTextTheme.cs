@@ -15,8 +15,12 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
     /// <summary>The class for styled rich text output.</summary>
     public class RichTextTheme
     {
+        /// <summary>Gets collection of valid styles.</summary>
+        /// <value>Collection of valid styles.</value>
+        private readonly IReadOnlyDictionary<RichTextThemeStyle, ThemeColours> styles;
+
         /// <summary>Initialises a new instance of the <see cref="RichTextTheme" /> class.</summary>
-        /// <param name="styles"><see cref="Styles" /> to apply within the theme.</param>
+        /// <param name="styles">Styles to apply within the theme.</param>
         /// <exception cref="System.ArgumentNullException">When <paramref name="styles" /> is null.</exception>
         public RichTextTheme(IReadOnlyDictionary<RichTextThemeStyle, ThemeColours> styles)
         {
@@ -25,28 +29,12 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
                 throw new ArgumentNullException(nameof(styles));
             }
 
-            this.Styles = styles.ToDictionary(kv => kv.Key, kv => kv.Value);
+            this.styles = styles.ToDictionary(kv => kv.Key, kv => kv.Value);
         }
-
-        /// <summary>Gets a theme based on the Serilog "literate" sink.</summary>
-        /// <value>A theme based on the Serilog "literate" sink.</value>
-        public static RichTextTheme Default { get; } = RichTextThemes.Default;
-
-        /// <summary>Gets no styling applied.</summary>
-        /// <value>No styling applied.</value>
-        public static RichTextTheme None { get; } = new EmptyRichTextTheme();
-
-        /// <summary>Gets collection of valid styles.</summary>
-        /// <value>Collection of valid styles.</value>
-        public IReadOnlyDictionary<RichTextThemeStyle, ThemeColours> Styles { get; }
-
-        /// <summary>Gets the number of characters written by the <see cref="RichTextTheme.Reset" /> method.</summary>
-        /// <value>The number of characters written by the <see cref="RichTextTheme.Reset" /> method.</value>
-        protected int ResetCharCount { get; }
 
         /// <summary><see cref="Reset" /> the <paramref name="output" /> to un-styled colors.</summary>
         /// <param name="output">Output destination.</param>
-        public void Reset(RichTextBox output)
+        public static void Reset(RichTextBox output)
         {
             if (output is null)
             {
@@ -57,18 +45,24 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
             output.SelectionBackColor = output.BackColor;
         }
 
+        internal StyleReset Apply(RichTextBox output, RichTextThemeStyle style)
+        {
+            this.Set(output, style);
+
+            return new StyleReset(output);
+        }
+
         /// <summary>Begin a span of text in the specified <paramref name="style" /> .</summary>
         /// <param name="output">Output destination.</param>
         /// <param name="style">Style to apply.</param>
-        /// <returns>The number of characters written to <paramref name="output" /> .</returns>
-        public int Set(RichTextBox output, RichTextThemeStyle style)
+        private void Set(RichTextBox output, RichTextThemeStyle style)
         {
             if (output is null)
             {
                 throw new ArgumentNullException(nameof(output));
             }
 
-            if (this.Styles.TryGetValue(style, out var wcts))
+            if (this.styles.TryGetValue(style, out var wcts))
             {
                 if (wcts.Foreground.HasValue)
                 {
@@ -80,16 +74,6 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
                     output.SelectionBackColor = wcts.Background.Value;
                 }
             }
-
-            return 0;
-        }
-
-        internal StyleReset Apply(RichTextBox output, RichTextThemeStyle style, ref int invisibleCharacterCount)
-        {
-            invisibleCharacterCount += this.Set(output, style);
-            invisibleCharacterCount += this.ResetCharCount;
-
-            return new StyleReset(this, output);
         }
     }
 }

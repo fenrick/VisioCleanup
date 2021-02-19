@@ -39,7 +39,7 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is ThemeColours colours && this.Equals(colours);
         }

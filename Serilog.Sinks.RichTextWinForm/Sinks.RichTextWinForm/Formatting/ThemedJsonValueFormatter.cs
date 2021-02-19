@@ -20,25 +20,17 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
     {
         private readonly ThemedDisplayValueFormatter displayFormatter;
 
-        private readonly IFormatProvider formatProvider;
-
         public ThemedJsonValueFormatter(RichTextTheme theme, IFormatProvider formatProvider)
             : base(theme)
         {
             this.displayFormatter = new ThemedDisplayValueFormatter(theme, formatProvider);
-            this.formatProvider = formatProvider;
-        }
-
-        public override ThemedValueFormatter SwitchTheme(RichTextTheme theme)
-        {
-            return new ThemedJsonValueFormatter(theme, this.formatProvider);
         }
 
         protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
         {
             var count = 0;
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("{");
             }
@@ -48,7 +40,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             {
                 if (delim.Length != 0)
                 {
-                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                     {
                         state.Output.AppendText(delim);
                     }
@@ -58,14 +50,14 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 var style = element.Key.Value == null ? RichTextThemeStyle.Null : element.Key.Value is string ? RichTextThemeStyle.String : RichTextThemeStyle.Scalar;
 
-                using (this.ApplyStyle(state.Output, style, ref count))
+                using (this.ApplyStyle(state.Output, style))
                 {
                     using StringWriter buffer = new();
                     JsonValueFormatter.WriteQuotedJsonString((element.Key.Value ?? "null").ToString(), buffer);
                     state.Output.AppendText(buffer.ToString());
                 }
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
                     state.Output.AppendText(": ");
                 }
@@ -73,7 +65,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                 count += this.Visit(state.Nest(), element.Value);
             }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("}");
             }
@@ -106,27 +98,27 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             var count = 0;
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("[");
             }
 
             var delim = string.Empty;
-            for (var index = 0; index < sequence.Elements.Count; ++index)
+            foreach (var t in sequence.Elements)
             {
                 if (delim.Length != 0)
                 {
-                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                     {
                         state.Output.AppendText(delim);
                     }
                 }
 
                 delim = ", ";
-                this.Visit(state.Nest(), sequence.Elements[index]);
+                this.Visit(state.Nest(), t);
             }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("]");
             }
@@ -138,17 +130,17 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
         {
             var count = 0;
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("{");
             }
 
             var delim = string.Empty;
-            for (var index = 0; index < structure.Properties.Count; ++index)
+            foreach (var logEventProperty in structure.Properties)
             {
                 if (delim.Length != 0)
                 {
-                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                     {
                         state.Output.AppendText(delim);
                     }
@@ -156,16 +148,16 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 delim = ", ";
 
-                var property = structure.Properties[index];
+                var property = logEventProperty;
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name))
                 {
                     using StringWriter buffer = new();
                     JsonValueFormatter.WriteQuotedJsonString(property.Name, buffer);
                     state.Output.AppendText(buffer.ToString());
                 }
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
                     state.Output.AppendText(": ");
                 }
@@ -175,24 +167,24 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             if (structure.TypeTag != null)
             {
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
                     state.Output.AppendText(delim);
                 }
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name))
                 {
                     using StringWriter buffer = new();
                     JsonValueFormatter.WriteQuotedJsonString("$type", buffer);
                     state.Output.AppendText(buffer.ToString());
                 }
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
                     state.Output.AppendText(": ");
                 }
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.String, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.String))
                 {
                     using StringWriter buffer = new();
                     JsonValueFormatter.WriteQuotedJsonString(structure.TypeTag, buffer);
@@ -200,7 +192,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                 }
             }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("}");
             }
@@ -213,121 +205,122 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             var value = scalar.Value;
             var count = 0;
 
-            if (value == null)
+            switch (value)
             {
-                using (this.ApplyStyle(output, RichTextThemeStyle.Null, ref count))
-                {
-                    output.AppendText("null");
-                }
-
-                return count;
-            }
-
-            if (value is string str)
-            {
-                using (this.ApplyStyle(output, RichTextThemeStyle.String, ref count))
-                {
-                    using StringWriter buffer = new();
-                    JsonValueFormatter.WriteQuotedJsonString(str, buffer);
-                    output.AppendText(buffer.ToString());
-                }
-
-                return count;
-            }
-
-            if (value is ValueType)
-            {
-                if (value is int || value is uint || value is long || value is ulong || value is decimal || value is byte || value is sbyte || value is short || value is ushort)
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Number, ref count))
+                case null:
                     {
-                        output.AppendText(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Null))
+                        {
+                            output.AppendText("null");
+                        }
+
+                        return count;
                     }
 
-                    return count;
-                }
-
-                if (value is double d)
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Number, ref count))
+                case string str:
                     {
-                        if (double.IsNaN(d) || double.IsInfinity(d))
+                        using (this.ApplyStyle(output, RichTextThemeStyle.String))
                         {
                             using StringWriter buffer = new();
-                            JsonValueFormatter.WriteQuotedJsonString(d.ToString(CultureInfo.InvariantCulture), buffer);
+                            JsonValueFormatter.WriteQuotedJsonString(str, buffer);
                             output.AppendText(buffer.ToString());
                         }
-                        else
+
+                        return count;
+                    }
+
+                case ValueType when value is int || value is uint || value is long || value is ulong || value is decimal || value is byte || value is sbyte || value is short
+                                    || value is ushort:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {
+                            output.AppendText(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+                        }
+
+                        return count;
+                    }
+
+                case double d:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+                        {
+                            if (double.IsNaN(d) || double.IsInfinity(d))
+                            {
+                                using StringWriter buffer = new();
+                                JsonValueFormatter.WriteQuotedJsonString(d.ToString(CultureInfo.InvariantCulture), buffer);
+                                output.AppendText(buffer.ToString());
+                                return count;
+                            }
+
                             output.AppendText(d.ToString("R", CultureInfo.InvariantCulture));
+                            return count;
                         }
                     }
 
-                    return count;
-                }
-
-                if (value is float f)
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Number, ref count))
+                case float f:
                     {
-                        if (double.IsNaN(f) || double.IsInfinity(f))
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+                        {
+                            if (double.IsNaN(f) || double.IsInfinity(f))
+                            {
+                                using StringWriter buffer = new();
+                                JsonValueFormatter.WriteQuotedJsonString(f.ToString(CultureInfo.InvariantCulture), buffer);
+                                output.AppendText(buffer.ToString());
+                                return count;
+                            }
+
+                            output.AppendText(f.ToString("R", CultureInfo.InvariantCulture));
+
+                            return count;
+                        }
+                    }
+
+                case bool b:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
+                        {
+                            output.AppendText(b ? "true" : "false");
+                        }
+
+                        return count;
+                    }
+
+                case char ch:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                         {
                             using StringWriter buffer = new();
-                            JsonValueFormatter.WriteQuotedJsonString(f.ToString(CultureInfo.InvariantCulture), buffer);
+                            JsonValueFormatter.WriteQuotedJsonString(ch.ToString(), buffer);
                             output.AppendText(buffer.ToString());
                         }
-                        else
+
+                        return count;
+                    }
+
+                case ValueType when value is DateTime || value is DateTimeOffset:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                         {
-                            output.AppendText(f.ToString("R", CultureInfo.InvariantCulture));
+                            output.AppendText("\"");
+                            output.AppendText(((IFormattable)value).ToString("O", CultureInfo.InvariantCulture));
+                            output.AppendText("\"");
                         }
+
+                        return count;
                     }
 
-                    return count;
-                }
-
-                if (value is bool b)
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Boolean, ref count))
+                default:
                     {
-                        output.AppendText(b ? "true" : "false");
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
+                        {
+                            using StringWriter buffer = new();
+                            JsonValueFormatter.WriteQuotedJsonString(value.ToString(), buffer);
+                            output.AppendText(buffer.ToString());
+                        }
+
+                        return count;
                     }
-
-                    return count;
-                }
-
-                if (value is char ch)
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Scalar, ref count))
-                    {
-                        using StringWriter buffer = new();
-                        JsonValueFormatter.WriteQuotedJsonString(ch.ToString(), buffer);
-                        output.AppendText(buffer.ToString());
-                    }
-
-                    return count;
-                }
-
-                if (value is DateTime || value is DateTimeOffset)
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Scalar, ref count))
-                    {
-                        output.AppendText("\"");
-                        output.AppendText(((IFormattable)value).ToString("O", CultureInfo.InvariantCulture));
-                        output.AppendText("\"");
-                    }
-
-                    return count;
-                }
             }
-
-            using (this.ApplyStyle(output, RichTextThemeStyle.Scalar, ref count))
-            {
-                using StringWriter buffer = new();
-                JsonValueFormatter.WriteQuotedJsonString(value.ToString(), buffer);
-                output.AppendText(buffer.ToString());
-            }
-
-            return count;
         }
     }
 }

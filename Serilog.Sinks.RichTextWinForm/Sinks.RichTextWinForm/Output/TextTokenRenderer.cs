@@ -26,8 +26,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
 
         public override void Render(LogEvent logEvent, RichTextBox output)
         {
-            var characterCount = 0;
-            using (this.theme.Apply(output, RichTextThemeStyle.TertiaryText, ref characterCount))
+            using (this.theme.Apply(output, RichTextThemeStyle.TertiaryText))
             {
                 output.AppendText(this.text);
             }

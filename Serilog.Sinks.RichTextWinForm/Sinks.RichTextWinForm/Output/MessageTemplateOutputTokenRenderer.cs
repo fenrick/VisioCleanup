@@ -20,32 +20,34 @@ namespace Serilog.Sinks.RichTextWinForm.Output
     {
         private readonly ThemedMessageTemplateRenderer renderer;
 
-        private readonly RichTextTheme theme;
-
-        private readonly PropertyToken token;
-
         public MessageTemplateOutputTokenRenderer(RichTextTheme theme, PropertyToken token, IFormatProvider formatProvider)
         {
-            this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
-            this.token = token ?? throw new ArgumentNullException(nameof(token));
             bool isLiteral = false, isJson = false;
 
             if (token.Format != null)
             {
-                for (var i = 0; i < token.Format.Length; ++i)
+                foreach (var t in token.Format)
                 {
-                    if (token.Format[i] == 'l')
+                    if (t == 'l')
                     {
                         isLiteral = true;
                     }
-                    else if (token.Format[i] == 'j')
+                    else if (t == 'j')
                     {
                         isJson = true;
                     }
                 }
             }
 
-            var valueFormatter = isJson ? (ThemedValueFormatter)new ThemedJsonValueFormatter(theme, formatProvider) : new ThemedDisplayValueFormatter(theme, formatProvider);
+            ThemedValueFormatter valueFormatter;
+            if (isJson)
+            {
+                valueFormatter = new ThemedJsonValueFormatter(theme, formatProvider);
+            }
+            else
+            {
+                valueFormatter = new ThemedDisplayValueFormatter(theme, formatProvider);
+            }
 
             this.renderer = new ThemedMessageTemplateRenderer(theme, valueFormatter, isLiteral);
         }

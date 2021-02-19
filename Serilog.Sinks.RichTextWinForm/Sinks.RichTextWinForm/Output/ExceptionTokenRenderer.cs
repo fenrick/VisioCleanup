@@ -33,12 +33,11 @@ namespace Serilog.Sinks.RichTextWinForm.Output
             }
 
             var lines = new StringReader(logEvent.Exception.ToString());
-            string nextLine;
+            string? nextLine;
             while ((nextLine = lines.ReadLine()) != null)
             {
                 var style = nextLine.StartsWith(StackFrameLinePrefix) ? RichTextThemeStyle.SecondaryText : RichTextThemeStyle.Text;
-                var characterCount = 0;
-                using (this.theme.Apply(output, style, ref characterCount))
+                using (this.theme.Apply(output, style))
                 {
                     output.AppendText(nextLine);
                 }

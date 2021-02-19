@@ -12,14 +12,14 @@ namespace VisioCleanup.Core.Models.Config
     {
         /// <summary>Gets or sets the field label format.</summary>
         /// <value>The field label format.</value>
-        public string FieldLabelFormat { get; set; }
+        public string? FieldLabelFormat { get; set; }
 
         /// <summary>Gets or sets the shape type label format.</summary>
         /// <value>The shape type label format.</value>
-        public string ShapeTypeLabelFormat { get; set; }
+        public string? ShapeTypeLabelFormat { get; set; }
 
         /// <summary>Gets or sets the sort field label format.</summary>
         /// <value>The sort field label format.</value>
-        public string SortFieldLabelFormat { get; set; }
+        public string? SortFieldLabelFormat { get; set; }
     }
 }

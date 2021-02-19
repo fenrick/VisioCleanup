@@ -30,93 +30,91 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             var value = scalar.Value;
             var count = 0;
 
-            if (value is null)
+            switch (value)
             {
-                using (this.ApplyStyle(output, RichTextThemeStyle.Null, ref count))
-                {
-                    output.AppendText("null");
-                }
+                case null:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Null))
+                        {
+                            output.AppendText("null");
+                        }
 
-                return count;
+                        return count;
+                    }
+
+                case string str:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.String))
+                        {
+                            if (format != "l")
+                            {
+                                using StringWriter buffer = new();
+                                JsonValueFormatter.WriteQuotedJsonString(str, buffer);
+                                output.AppendText(buffer.ToString());
+
+                                return count;
+                            }
+
+                            output.AppendText(str);
+
+                            return count;
+                        }
+                    }
+
+                case ValueType when value is int || value is uint || value is long || value is ulong || value is decimal || value is byte || value is sbyte || value is short
+                                    || value is ushort || value is float || value is double:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+                        {
+                            using StringWriter buffer = new();
+                            scalar.Render(buffer, format, this.formatProvider);
+                            output.AppendText(buffer.ToString());
+                        }
+
+                        return count;
+                    }
+
+                case bool b:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
+                        {
+                            output.AppendText(b.ToString());
+                        }
+
+                        return count;
+                    }
+
+                case char ch:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
+                        {
+                            output.AppendText("\'");
+                            output.AppendText(ch.ToString());
+                            output.AppendText("\'");
+                        }
+
+                        return count;
+                    }
+
+                default:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
+                        {
+                            using StringWriter buffer = new();
+                            scalar.Render(buffer, format, this.formatProvider);
+                            output.AppendText(buffer.ToString());
+                        }
+
+                        return count;
+                    }
             }
-
-            if (value is string str)
-            {
-                using (this.ApplyStyle(output, RichTextThemeStyle.String, ref count))
-                {
-                    if (format != "l")
-                    {
-                        using StringWriter buffer = new();
-                        JsonValueFormatter.WriteQuotedJsonString(str, buffer);
-                        output.AppendText(buffer.ToString());
-                    }
-                    else
-                    {
-                        output.AppendText(str);
-                    }
-                }
-
-                return count;
-            }
-
-            if (value is ValueType)
-            {
-                if (value is int || value is uint || value is long || value is ulong || value is decimal || value is byte || value is sbyte || value is short || value is ushort
-                    || value is float || value is double)
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Number, ref count))
-                    {
-                        using StringWriter buffer = new();
-                        scalar.Render(buffer, format, this.formatProvider);
-                        output.AppendText(buffer.ToString());
-                    }
-
-                    return count;
-                }
-
-                if (value is bool b)
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Boolean, ref count))
-                    {
-                        output.AppendText(b.ToString());
-                    }
-
-                    return count;
-                }
-
-                if (value is char ch)
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Scalar, ref count))
-                    {
-                        output.AppendText("\'");
-                        output.AppendText(ch.ToString());
-                        output.AppendText("\'");
-                    }
-
-                    return count;
-                }
-            }
-
-            using (this.ApplyStyle(output, RichTextThemeStyle.Scalar, ref count))
-            {
-                using StringWriter buffer = new();
-                scalar.Render(buffer, format, this.formatProvider);
-                output.AppendText(buffer.ToString());
-            }
-
-            return count;
-        }
-
-        public override ThemedValueFormatter SwitchTheme(RichTextTheme theme)
-        {
-            return new ThemedDisplayValueFormatter(theme, this.formatProvider);
         }
 
         protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
         {
             var count = 0;
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("{");
             }
@@ -126,7 +124,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             {
                 if (delim.Length != 0)
                 {
-                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                     {
                         state.Output.AppendText(delim);
                     }
@@ -134,17 +132,17 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 delim = ", ";
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
                     state.Output.AppendText("[");
                 }
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.String, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.String))
                 {
                     count += this.Visit(state.Nest(), element.Key);
                 }
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
                     state.Output.AppendText("]=");
                 }
@@ -152,7 +150,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                 count += this.Visit(state.Nest(), element.Value);
             }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("}");
             }
@@ -179,27 +177,27 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             var count = 0;
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("[");
             }
 
             var delim = string.Empty;
-            for (var index = 0; index < sequence.Elements.Count; ++index)
+            foreach (var t in sequence.Elements)
             {
                 if (delim.Length != 0)
                 {
-                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                     {
                         state.Output.AppendText(delim);
                     }
                 }
 
                 delim = ", ";
-                this.Visit(state, sequence.Elements[index]);
+                this.Visit(state, t);
             }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("]");
             }
@@ -213,7 +211,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             if (structure.TypeTag != null)
             {
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name))
                 {
                     state.Output.AppendText(structure.TypeTag);
                 }
@@ -221,17 +219,17 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                 state.Output.AppendText(" ");
             }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("{");
             }
 
             var delim = string.Empty;
-            for (var index = 0; index < structure.Properties.Count; ++index)
+            foreach (var logEventProperty in structure.Properties)
             {
                 if (delim.Length != 0)
                 {
-                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                     {
                         state.Output.AppendText(delim);
                     }
@@ -239,14 +237,14 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 delim = ", ";
 
-                var property = structure.Properties[index];
+                var property = logEventProperty;
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name))
                 {
                     state.Output.AppendText(property.Name);
                 }
 
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
                     state.Output.AppendText("=");
                 }
@@ -254,7 +252,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                 count += this.Visit(state.Nest(), property.Value);
             }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText, ref count))
+            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
                 state.Output.AppendText("}");
             }

@@ -17,12 +17,6 @@ namespace VisioCleanup.UI.Forms
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        private Button layoutVisioDiagram;
-
-        private Button processExcelDataSet;
-
-        private RichTextBox logTextBox;
-
         /// <summary>
         ///  Clean up any resources being used.
         /// </summary>
@@ -50,10 +44,10 @@ namespace VisioCleanup.UI.Forms
             System.Windows.Forms.SplitContainer logSplitContainer;
             System.Windows.Forms.SplitContainer controlSplitContainer;
             this.controlsFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.logTextBox = new System.Windows.Forms.RichTextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.parametersTab = new System.Windows.Forms.TabPage();
             this.dataSetTab = new System.Windows.Forms.TabPage();
+            this.logTextBox = new System.Windows.Forms.RichTextBox();
             processExcelDataSet = new System.Windows.Forms.Button();
             layoutVisioDiagram = new System.Windows.Forms.Button();
             logSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -143,18 +137,6 @@ namespace VisioCleanup.UI.Forms
             this.controlsFlowPanel.Size = new System.Drawing.Size(169, 220);
             this.controlsFlowPanel.TabIndex = 0;
             // 
-            // logTextBox
-            // 
-            this.logTextBox.BackColor = System.Drawing.SystemColors.Desktop;
-            this.logTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logTextBox.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.logTextBox.Location = new System.Drawing.Point(12, 12);
-            this.logTextBox.Margin = new System.Windows.Forms.Padding(0);
-            this.logTextBox.Name = "logTextBox";
-            this.logTextBox.Size = new System.Drawing.Size(776, 202);
-            this.logTextBox.TabIndex = 0;
-            this.logTextBox.Text = "";
-            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.parametersTab);
@@ -186,6 +168,18 @@ namespace VisioCleanup.UI.Forms
             this.dataSetTab.Text = "Current Data Set";
             this.dataSetTab.UseVisualStyleBackColor = true;
             // 
+            // logTextBox
+            // 
+            this.logTextBox.BackColor = System.Drawing.SystemColors.Desktop;
+            this.logTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.logTextBox.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.logTextBox.Location = new System.Drawing.Point(12, 12);
+            this.logTextBox.Margin = new System.Windows.Forms.Padding(0);
+            this.logTextBox.Name = "logTextBox";
+            this.logTextBox.Size = new System.Drawing.Size(776, 202);
+            this.logTextBox.TabIndex = 0;
+            this.logTextBox.Text = "";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -208,9 +202,8 @@ namespace VisioCleanup.UI.Forms
         }
 
         #endregion
-
-        private SplitContainer logSplitContainer;
-        private SplitContainer controlSplitContainer;
+        
+        private RichTextBox logTextBox;
         private FlowLayoutPanel controlsFlowPanel;
         private TabControl tabControl1;
         private TabPage parametersTab;
