@@ -11,9 +11,7 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
     using System.ComponentModel;
 
     /// <summary>Elements styled by a console theme.</summary>
-#pragma warning disable CA1027
     public enum RichTextThemeStyle
-#pragma warning restore CA1027
     {
         /// <summary>Prominent text, generally content within an event's message.</summary>
         Text,
