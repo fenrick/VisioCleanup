@@ -34,6 +34,7 @@
         <PackageReference Include="Microsoft.CodeAnalysis" Version="3.9.0-3.final" />
         <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.26">
         <PackageReference Include="GCop.All.Common" Version="2.7.0-rc.6" />
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
