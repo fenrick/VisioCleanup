@@ -13,7 +13,7 @@ namespace VisioCleanup.UI.Forms
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
-    using Serilog;
+    using Serilog.Sinks.RichTextWinForm;
 
     using VisioCleanup.Core.Models.Config;
 

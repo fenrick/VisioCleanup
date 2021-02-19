@@ -5,7 +5,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog
+namespace Serilog.Sinks.RichTextWinForm
 {
     using System;
     using System.Collections.Generic;
