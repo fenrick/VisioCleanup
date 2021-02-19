@@ -5,7 +5,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.TextWriter
+namespace Serilog.Sinks.RichTextWinForm.TextWriter
 {
     using System;
     using System.Globalization;
