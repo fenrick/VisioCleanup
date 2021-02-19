@@ -23,9 +23,7 @@ namespace Serilog.Sinks.RichTextWinForm.Rendering
                 case "u":
                     return value.ToUpperInvariant();
                 case "w":
-#pragma warning disable CA1308 // Normalize strings to uppercase
                     return value.ToLowerInvariant();
-#pragma warning restore CA1308 // Normalize strings to uppercase
                 default:
                     return value;
             }
