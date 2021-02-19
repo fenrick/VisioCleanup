@@ -38,16 +38,16 @@ namespace VisioCleanup.UI
             host.Run();
         }
 
-        /// <summary>TODO The configure serilog.</summary>
-        /// <param name="hostBuilderContext">TODO The host builder context.</param>
-        /// <param name="loggerConfiguration">TODO The logger configuration.</param>
+        /// <summary>Configure Serilog.</summary>
+        /// <param name="hostBuilderContext">The host builder context.</param>
+        /// <param name="loggerConfiguration">The logger configuration.</param>
         private static void ConfigureSerilog(HostBuilderContext hostBuilderContext, LoggerConfiguration loggerConfiguration)
         {
             loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration);
             loggerConfiguration.WriteTo.RichTextWinForm();
         }
 
-        /// <summary>The configure services.</summary>
+        /// <summary>Configure services.</summary>
         /// <param name="hostBuilderContext">The host builder context.</param>
         /// <param name="serviceCollection">The service collection.</param>
         private static void ConfigureServices(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection)
