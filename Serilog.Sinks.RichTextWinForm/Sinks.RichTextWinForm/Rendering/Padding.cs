@@ -14,11 +14,11 @@ namespace Serilog.Sinks.RichTextWinForm.Rendering
 
     internal static class Padding
     {
-        private static readonly char[] paddingChars = new string(' ', 80).ToCharArray();
+        private static readonly char[] PaddingChars = new string(' ', 80).ToCharArray();
 
         /// <summary>
-        /// Writes the provided <paramref name="value" /> to the output, applying direction-based padding when
-        /// <paramref name="alignment" /> is provided.
+        ///     Writes the provided <paramref name="value" /> to the output, applying direction-based padding when
+        ///     <paramref name="alignment" /> is provided.
         /// </summary>
         /// <param name="output">Output object to write result.</param>
         /// <param name="value">Provided value.</param>
@@ -38,10 +38,10 @@ namespace Serilog.Sinks.RichTextWinForm.Rendering
                 output.AppendText(value);
             }
 
-            if (pad <= paddingChars.Length)
+            if (pad <= PaddingChars.Length)
             {
                 using StringWriter buffer = new();
-                buffer.Write(paddingChars, 0, pad);
+                buffer.Write(PaddingChars, 0, pad);
                 output.AppendText(buffer.ToString());
             }
             else

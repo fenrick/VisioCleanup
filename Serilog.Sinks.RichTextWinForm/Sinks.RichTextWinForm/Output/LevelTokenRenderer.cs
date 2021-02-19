@@ -18,7 +18,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
 
     internal class LevelTokenRenderer : OutputTemplateTokenRenderer
     {
-        private static readonly Dictionary<LogEventLevel, RichTextThemeStyle> levels = new()
+        private static readonly Dictionary<LogEventLevel, RichTextThemeStyle> Levels = new()
                                                                                            {
                                                                                                { LogEventLevel.Verbose, RichTextThemeStyle.LevelVerbose },
                                                                                                { LogEventLevel.Debug, RichTextThemeStyle.LevelDebug },
@@ -38,20 +38,15 @@ namespace Serilog.Sinks.RichTextWinForm.Output
             this.levelToken = levelToken;
         }
 
-        protected LevelTokenRenderer()
-        {
-        }
-
         public override void Render(LogEvent logEvent, RichTextBox output)
         {
             var moniker = LevelOutputFormat.GetLevelMoniker(logEvent.Level, this.levelToken.Format);
-            if (!levels.TryGetValue(logEvent.Level, out var levelStyle))
+            if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))
             {
                 levelStyle = RichTextThemeStyle.Invalid;
             }
 
-            var characterCount = 0;
-            using (this.theme.Apply(output, levelStyle, ref characterCount))
+            using (this.theme.Apply(output, levelStyle))
             {
                 Padding.Apply(output, moniker, this.levelToken.Alignment);
             }

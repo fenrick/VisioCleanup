@@ -29,13 +29,15 @@ namespace VisioCleanup.UI
         [STAThread]
         public static void Main(string[] args)
         {
-            var hostBuilder = Host.CreateDefaultBuilder(args);
-            hostBuilder.UseSerilog(ConfigureSerilog);
-            hostBuilder.ConfigureServices(ConfigureServices);
-            hostBuilder.UseWindowsFormsLifetime<MainForm>();
+            Host.CreateDefaultBuilder(args).UseSerilog(ConfigureSerilog).ConfigureServices(ConfigureApplicationServices).UseWindowsFormsLifetime<MainForm>().Build().Run();
+        }
 
-            using var host = hostBuilder.Build();
-            host.Run();
+        /// <summary>Configure services.</summary>
+        /// <param name="hostBuilderContext">The host builder context.</param>
+        /// <param name="serviceCollection">The service collection.</param>
+        private static void ConfigureApplicationServices(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddVisioCleanupCore(hostBuilderContext.Configuration).AddForms();
         }
 
         /// <summary>Configure Serilog.</summary>
@@ -43,17 +45,7 @@ namespace VisioCleanup.UI
         /// <param name="loggerConfiguration">The logger configuration.</param>
         private static void ConfigureSerilog(HostBuilderContext hostBuilderContext, LoggerConfiguration loggerConfiguration)
         {
-            loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration);
-            loggerConfiguration.WriteTo.RichTextWinForm();
-        }
-
-        /// <summary>Configure services.</summary>
-        /// <param name="hostBuilderContext">The host builder context.</param>
-        /// <param name="serviceCollection">The service collection.</param>
-        private static void ConfigureServices(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddVisioCleanupCore(hostBuilderContext.Configuration);
-            serviceCollection.AddForms();
+            loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration).WriteTo.RichTextWinForm();
         }
     }
 }

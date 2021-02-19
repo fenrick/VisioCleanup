@@ -12,22 +12,22 @@ namespace VisioCleanup.Core.Models.Config
     {
         /// <summary>Gets or sets the defaults.</summary>
         /// <value>The defaults.</value>
-        public DefaultsConfig Defaults { get; set; }
+        public DefaultsConfig? Defaults { get; set; }
 
         /// <summary>Gets or sets the excel.</summary>
         /// <value>The excel.</value>
-        public ExcelConfig Excel { get; set; }
+        public ExcelConfig? Excel { get; set; }
 
         /// <summary>Gets or sets the padding.</summary>
         /// <value>The padding.</value>
-        public PaddingConfig Padding { get; set; }
+        public PaddingConfig? Padding { get; set; }
 
         /// <summary>Gets or sets the page.</summary>
         /// <value>The page.</value>
-        public PageConfig Page { get; set; }
+        public PageConfig? Page { get; set; }
 
         /// <summary>Gets or sets the visio fields.</summary>
         /// <value>The visio fields.</value>
-        public VisioFieldsConfig VisioFields { get; set; }
+        public VisioFieldsConfig? VisioFields { get; set; }
     }
 }

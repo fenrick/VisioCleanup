@@ -42,8 +42,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
                 return;
             }
 
-            var characterCount = 0;
-            using (this.theme.Apply(output, RichTextThemeStyle.SecondaryText, ref characterCount))
+            using (this.theme.Apply(output, RichTextThemeStyle.SecondaryText))
             {
                 using StringWriter writer = new();
 

@@ -20,31 +20,25 @@ namespace Serilog.Sinks.RichTextWinForm.Output
     {
         private readonly MessageTemplate outputTemplate;
 
-        private readonly RichTextTheme theme;
-
-        private readonly PropertyToken token;
-
         private readonly ThemedValueFormatter valueFormatter;
 
         public PropertiesTokenRenderer(RichTextTheme theme, PropertyToken token, MessageTemplate outputTemplate, IFormatProvider formatProvider)
         {
             this.outputTemplate = outputTemplate;
-            this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
-            this.token = token ?? throw new ArgumentNullException(nameof(token));
             var isJson = false;
 
             if (token.Format != null)
             {
-                for (var i = 0; i < token.Format.Length; ++i)
+                foreach (var c in token.Format)
                 {
-                    if (token.Format[i] == 'j')
+                    if (c == 'j')
                     {
                         isJson = true;
                     }
                 }
             }
 
-            this.valueFormatter = isJson ? (ThemedValueFormatter)new ThemedJsonValueFormatter(theme, formatProvider) : new ThemedDisplayValueFormatter(theme, formatProvider);
+            this.valueFormatter = isJson ? new ThemedJsonValueFormatter(theme, formatProvider) : new ThemedDisplayValueFormatter(theme, formatProvider);
         }
 
         public override void Render(LogEvent logEvent, RichTextBox output)
@@ -55,7 +49,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
 
             var value = new StructureValue(included);
 
-            this.valueFormatter.Format(value, output, null);
+            this.valueFormatter.Format(value, output, string.Empty);
         }
 
         private static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)

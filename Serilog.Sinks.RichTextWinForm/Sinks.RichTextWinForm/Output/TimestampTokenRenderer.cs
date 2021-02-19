@@ -38,8 +38,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
             // that custom format providers are supported properly.
             var sv = new ScalarValue(logEvent.Timestamp);
 
-            var characterCount = 0;
-            using (this.theme.Apply(output, RichTextThemeStyle.SecondaryText, ref characterCount))
+            using (this.theme.Apply(output, RichTextThemeStyle.SecondaryText))
             {
                 if (this.token.Alignment is null)
                 {

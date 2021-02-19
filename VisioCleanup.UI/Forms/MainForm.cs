@@ -42,10 +42,10 @@ namespace VisioCleanup.UI.Forms
             RichTextWinFormSink.AddRichTextBox(this.logTextBox);
         }
 
-        /// <summary>TODO The button 1_ click.</summary>
-        /// <param name="sender">TODO The sender.</param>
-        /// <param name="e">TODO The e.</param>
-        private void ProcessExcelDataSet_Click(object sender, EventArgs e)
+        /// <summary>Activate the processing of Excel data set.</summary>
+        /// <param name="sender">The <paramref name="sender"/>.</param>
+        /// <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
+        private void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
         {
             this.logger.LogDebug("woot!");
         }

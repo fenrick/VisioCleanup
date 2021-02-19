@@ -24,13 +24,13 @@ namespace Serilog
         /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
         /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
         /// <param name="outputTemplate">
-        /// A message template describing the format used to write to the sink. The default is
-        /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
+        ///     A message template describing the format used to write to the sink. The default is
+        ///     "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
         /// </param>
         /// <param name="theme">The richTextTheme to apply to the styled output.</param>
         /// <param name="restrictedToMinimumLevel">
-        /// The minimum level for events passed through the sink. Ignored when
-        /// <paramref name="levelSwitch" /> is specified.
+        ///     The minimum level for events passed through the sink. Ignored when
+        ///     <paramref name="levelSwitch" /> is specified.
         /// </param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="levelSwitch">A <see langword="switch" /> allowing the pass-through minimum level to be changed at runtime.</param>
@@ -40,10 +40,10 @@ namespace Serilog
         public static LoggerConfiguration RichTextWinForm(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             string outputTemplate = DefaultOutputTemplate,
-            RichTextTheme theme = null,
+            RichTextTheme? theme = null,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            IFormatProvider formatProvider = null,
-            LoggingLevelSwitch levelSwitch = null)
+            IFormatProvider? formatProvider = null,
+            LoggingLevelSwitch? levelSwitch = null)
         {
             if (loggerSinkConfiguration is null)
             {
@@ -55,11 +55,21 @@ namespace Serilog
                 throw new ArgumentNullException(nameof(outputTemplate));
             }
 
+            if (formatProvider is null)
+            {
+                throw new ArgumentNullException(nameof(formatProvider));
+            }
+
+            if (levelSwitch is null)
+            {
+                throw new ArgumentNullException(nameof(levelSwitch));
+            }
+
             var appliedTheme = theme ?? RichTextThemes.Default;
 
             var formatter = new OutputTemplateRenderer(appliedTheme, outputTemplate, formatProvider);
 
-            return loggerSinkConfiguration.Sink(new RichTextWinFormSink(appliedTheme, formatter), restrictedToMinimumLevel, levelSwitch);
+            return loggerSinkConfiguration.Sink(new RichTextWinFormSink(formatter), restrictedToMinimumLevel, levelSwitch);
         }
     }
 }

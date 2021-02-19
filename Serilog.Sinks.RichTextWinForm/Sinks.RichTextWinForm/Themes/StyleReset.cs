@@ -12,19 +12,16 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
 
     internal struct StyleReset : IDisposable
     {
-        private readonly RichTextTheme theme;
-
         private readonly RichTextBox output;
 
-        public StyleReset(RichTextTheme theme, RichTextBox output)
+        public StyleReset(RichTextBox output)
         {
-            this.theme = theme;
             this.output = output;
         }
 
         public void Dispose()
         {
-            this.theme.Reset(this.output);
+            RichTextTheme.Reset(this.output);
         }
     }
 }

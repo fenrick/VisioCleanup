@@ -23,16 +23,14 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
         }
 
-        public int Format(LogEventPropertyValue value, RichTextBox output, string format, bool literalTopLevel = false)
+        public void Format(LogEventPropertyValue value, RichTextBox output, string format, bool literalTopLevel = false)
         {
-            return this.Visit(new ThemedValueFormatterState { Output = output, Format = format, IsTopLevel = literalTopLevel }, value);
+            this.Visit(new ThemedValueFormatterState { Output = output, Format = format, IsTopLevel = literalTopLevel }, value);
         }
 
-        public abstract ThemedValueFormatter SwitchTheme(RichTextTheme theme);
-
-        protected StyleReset ApplyStyle(RichTextBox output, RichTextThemeStyle style, ref int invisibleCharacterCount)
+        protected StyleReset ApplyStyle(RichTextBox output, RichTextThemeStyle style)
         {
-            return this.theme.Apply(output, style, ref invisibleCharacterCount);
+            return this.theme.Apply(output, style);
         }
     }
 }
