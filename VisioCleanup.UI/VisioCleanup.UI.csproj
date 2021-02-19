@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net5.0-windows7</TargetFramework>
+        <TargetFramework>net5.0-windows</TargetFramework>
         <RootNamespace>VisioCleanup.UI</RootNamespace>
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -13,6 +13,7 @@
         <Authors>Jolyon Suthers</Authors>
         <UseWindowsForms>true</UseWindowsForms>
         <LangVersion>default</LangVersion>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -26,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <AdditionalFiles Include="stylecop.json" />
+      <AdditionalFiles Include="stylecop.json" />
     </ItemGroup>
 
     <ItemGroup>

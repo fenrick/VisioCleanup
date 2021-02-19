@@ -10,10 +10,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E2AE5274-3542-4A5D-852D-CAC2256EA36A}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		Settings.StyleCop = Settings.StyleCop
+		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.RichTextWinForm", "Serilog.Sinks.RichTextWinForm\Serilog.Sinks.RichTextWinForm.csproj", "{14BEB63F-8876-469C-A4F3-17AF445169DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.RichTextWinForm", "Serilog.Sinks.RichTextWinForm\Serilog.Sinks.RichTextWinForm.csproj", "{14BEB63F-8876-469C-A4F3-17AF445169DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
