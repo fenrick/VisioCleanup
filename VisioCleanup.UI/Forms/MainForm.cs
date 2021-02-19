@@ -27,7 +27,7 @@ namespace VisioCleanup.UI.Forms
         private readonly ILogger<MainForm> logger;
 
         /// <summary>Initialises a new instance of the <see cref="MainForm" /> class.</summary>
-        /// <param name="logger">The logger.</param>
+        /// <param name="logger">The <paramref name="logger"/>.</param>
         /// <param name="options">The app config.</param>
         public MainForm(ILogger<MainForm> logger, IOptions<AppConfig> options)
         {
