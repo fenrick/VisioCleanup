@@ -8,6 +8,8 @@
 namespace VisioCleanup.Core.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.InteropServices;
 
     using Microsoft.Extensions.Logging;
@@ -38,6 +40,7 @@ namespace VisioCleanup.Core.Services
         {
             this.logger.LogDebug("Releasing visio application.");
             Marshal.ReleaseObject(this.visioApplication);
+            this.visioApplication = null;
         }
 
         /// <inheritdoc />
@@ -52,6 +55,47 @@ namespace VisioCleanup.Core.Services
             {
                 this.logger.LogDebug("Visio not running, time to open it.");
                 this.visioApplication = new Application();
+            }
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
+        /// <exception cref="T:System.NullReferenceException">Visio object is <see langword="null" />.</exception>
+        public int[] Selection()
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            Window? activeWindow = null;
+            Selection? selection = null;
+            try
+            {
+                var listShapeIds = new List<int>();
+                activeWindow = this.visioApplication.ActiveWindow;
+                if (activeWindow is null)
+                {
+                    return listShapeIds.ToArray();
+                }
+
+                selection = activeWindow.Selection;
+
+                selection.GetIDs(out var ids);
+
+                if (ids is null)
+                {
+                    return listShapeIds.ToArray();
+                }
+
+                listShapeIds.AddRange(ids.Cast<int>());
+
+                return listShapeIds.ToArray();
+            }
+            finally
+            {
+                Marshal.ReleaseObject(activeWindow);
+                Marshal.ReleaseObject(selection);
             }
         }
     }

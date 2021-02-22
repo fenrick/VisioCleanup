@@ -21,5 +21,11 @@ namespace VisioCleanup.Core.Contracts
         ///     Open visio session.
         /// </summary>
         void Open();
+
+        /// <summary>
+        ///     Return an array of visio ids that have been selected.
+        /// </summary>
+        /// <returns>Array of visio ids.</returns>
+        int[] Selection();
     }
 }
