@@ -14,6 +14,7 @@ namespace VisioCleanup.Core.Services
     using Microsoft.Extensions.Options;
 
     using VisioCleanup.Core.Contracts;
+    using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
 
     /// <summary>The visio service.</summary>
@@ -45,6 +46,9 @@ namespace VisioCleanup.Core.Services
                     {
                         try
                         {
+                            // setup DiagramShape
+                            DiagramShape.AppConfig = this.appConfig;
+
                             this.visioApplication.Open();
 
                             var selection = this.visioApplication.Selection();
