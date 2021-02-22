@@ -133,8 +133,8 @@
         </member>
         <member name="M:VisioCleanup.Core.ServiceCollectionExtensions.AddVisioCleanupCore(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>The add visio cleanup core.</summary>
-            <param name="serviceCollection">The service collection.</param>
-            <param name="configuration">The configuration.</param>
+            <param name="serviceCollection">The <paramref name="serviceCollection"/>.</param>
+            <param name="configuration">The <paramref name="configuration"/>.</param>
             <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> .</returns>
         </member>
         <member name="T:VisioCleanup.Core.Services.ExcelService">
