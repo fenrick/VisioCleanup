@@ -32,7 +32,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
                 return;
             }
 
-            var lines = new StringReader(logEvent.Exception.ToString());
+            StringReader lines = new(logEvent.Exception.ToString());
             string? nextLine;
             while ((nextLine = lines.ReadLine()) != null)
             {
