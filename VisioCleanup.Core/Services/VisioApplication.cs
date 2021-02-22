@@ -163,11 +163,11 @@ namespace VisioCleanup.Core.Services
             Selection? selection = null;
             try
             {
-                var listShapeIds = new List<int>();
+                var listVisioIds = new List<int>();
                 activeWindow = this.visioApplication.ActiveWindow;
                 if (activeWindow is null)
                 {
-                    return listShapeIds.ToArray();
+                    return listVisioIds.ToArray();
                 }
 
                 selection = activeWindow.Selection;
@@ -176,12 +176,12 @@ namespace VisioCleanup.Core.Services
 
                 if (ids is null)
                 {
-                    return listShapeIds.ToArray();
+                    return listVisioIds.ToArray();
                 }
 
-                listShapeIds.AddRange(ids.Cast<int>());
+                listVisioIds.AddRange(ids.Cast<int>());
 
-                return listShapeIds.ToArray();
+                return listVisioIds.ToArray();
             }
             finally
             {
