@@ -82,6 +82,67 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.AggregateException">
+        ///     The exception that contains all the individual exceptions thrown on all
+        ///     threads.
+        /// </exception>
+        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
+        public IEnumerable<int> GetChildren(int visioId)
+        {
+            Shape? parentShape = null;
+            Selection? selection = null;
+            var childrenIds = new List<int>();
+            try
+            {
+                parentShape = this.GetShape(visioId);
+
+                var relation = (short)VisSpatialRelationCodes.visSpatialContain;
+                var flags = (short)VisSpatialRelationFlags.visSpatialBackToFront;
+                selection = parentShape.SpatialNeighbors[relation, 0, flags];
+
+                this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", selection.Count);
+
+                // selection.GetIDs(out var selectionIDs);
+                if (selection.Count == 0)
+                {
+                    return childrenIds;
+                }
+
+                foreach (Shape shape in selection)
+                {
+                    // check that immediate parent is the supplied shape.
+                    relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
+                    flags = (short)VisSpatialRelationFlags.visSpatialFrontToBack;
+                    Selection parentSelection = shape.SpatialNeighbors[relation, 0, flags];
+                    if (parentSelection.Count <= 0)
+                    {
+                        continue;
+                    }
+
+                    var primaryItemVisioId = parentSelection.PrimaryItem.ID;
+
+                    if (visioId.Equals(primaryItemVisioId))
+                    {
+                        childrenIds.Add(shape.ID);
+                    }
+                }
+
+                this.logger.LogDebug("Final child shapes found: {CountOfVisioIDs}", childrenIds.Count);
+            }
+            catch (COMException e)
+            {
+                this.logger.LogError("COM Exception: {Exception}", e);
+            }
+            finally
+            {
+                Marshal.ReleaseObject(parentShape);
+                Marshal.ReleaseObject(selection);
+            }
+
+            return childrenIds;
+        }
+
+        /// <inheritdoc />
         /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         /// <exception cref="T:System.NullReferenceException">page sheet is <see langword="null" />.</exception>
         public Corners GetPageSize(int headerHeight, int sidePanelWidth)
