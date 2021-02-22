@@ -65,6 +65,18 @@ namespace VisioCleanup.Core.Services
 
                             this.logger.LogDebug("Create a fake parent shape.");
                             DiagramShape parentShape = new(0) { ShapeText = "FAKE PARENT", Corners = default, ShapeType = ShapeType.FakeShape };
+
+                            this.logger.LogDebug("Adding children to parent.");
+                            foreach (var visioId in selection)
+                            {
+                                DiagramShape childShape = new(visioId)
+                                                              {
+                                                                  ShapeText = this.visioApplication.GetShapeText(visioId),
+                                                                  Corners = this.visioApplication.CalculateCorners(visioId),
+                                                                  ShapeType = ShapeType.Existing,
+                                                              };
+                                parentShape.AddChildShape(childShape);
+                            }
                         }
                         finally
                         {
