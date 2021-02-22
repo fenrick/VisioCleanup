@@ -35,6 +35,28 @@ namespace VisioCleanup.Core.Models
         public int Top { get; set; }
 
         /// <summary>
+        /// Operator for equals.
+        /// </summary>
+        /// <param name="left">Left.</param>
+        /// <param name="right">Right.</param>
+        /// <returns>Are they equals.</returns>
+        public static bool operator ==(Corners left, Corners right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Operator for not equals.
+        /// </summary>
+        /// <param name="left">Left.</param>
+        /// <param name="right">Right.</param>
+        /// <returns>Are they not equals.</returns>
+        public static bool operator !=(Corners left, Corners right)
+        {
+            return !(left == right);
+        }
+
+        /// <summary>
         /// Convert a visio measurement into an easier mathematical model.
         /// </summary>
         /// <param name="measurement">Measurement from visio.</param>
@@ -77,28 +99,6 @@ namespace VisioCleanup.Core.Models
         {
             // ReSharper disable NonReadonlyMemberInGetHashCode
             return HashCode.Combine(this.Left, this.Right, this.Base, this.Top);
-        }
-
-        /// <summary>
-        /// Operator for equals.
-        /// </summary>
-        /// <param name="left">Left.</param>
-        /// <param name="right">Right.</param>
-        /// <returns>Are they equals.</returns>
-        public static bool operator ==(Corners left, Corners right)
-        {
-            return left.Equals(right);
-        }
-
-        /// <summary>
-        /// Operator for not equals.
-        /// </summary>
-        /// <param name="left">Left.</param>
-        /// <param name="right">Right.</param>
-        /// <returns>Are they not equals.</returns>
-        public static bool operator !=(Corners left, Corners right)
-        {
-            return !(left == right);
         }
     }
 }
