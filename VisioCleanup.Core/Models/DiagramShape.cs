@@ -13,6 +13,8 @@ namespace VisioCleanup.Core.Models
     {
         public static AppConfig AppConfig { get; set; }
 
+        public Collection<DiagramShape> Children { get; set; }
+
         /// <summary>
         ///     Gets or sets the corner structure.
         /// </summary>
