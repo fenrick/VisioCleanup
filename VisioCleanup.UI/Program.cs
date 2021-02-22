@@ -45,7 +45,7 @@ namespace VisioCleanup.UI
         /// <param name="loggerConfiguration">The logger configuration.</param>
         private static void ConfigureSerilog(HostBuilderContext hostBuilderContext, LoggerConfiguration loggerConfiguration)
         {
-            loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration).WriteTo.RichTextWinForm();
+            loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration);
         }
     }
 }
