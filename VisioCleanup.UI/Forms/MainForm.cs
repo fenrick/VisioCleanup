@@ -39,6 +39,11 @@ namespace VisioCleanup.UI.Forms
 
             this.logger.LogDebug("Setting log output.");
             RichTextWinFormSink.AddRichTextBox(this.logTextBox);
+
+            this.logger.LogDebug("Binding appConfig to data grid.");
+            this.parametersBindingSource.Add(this.appConfig);
+            this.parametersDataGridView.AutoGenerateColumns = true;
+            this.parametersDataGridView.DataSource = this.parametersBindingSource;
         }
 
         /// <summary>Activate the processing of Excel data set.</summary>

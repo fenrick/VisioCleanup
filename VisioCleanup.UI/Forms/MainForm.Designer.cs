@@ -39,6 +39,7 @@ namespace VisioCleanup.UI.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Button processExcelDataSet;
             System.Windows.Forms.Button layoutVisioDiagram;
             System.Windows.Forms.SplitContainer logSplitContainer;
@@ -46,8 +47,10 @@ namespace VisioCleanup.UI.Forms
             this.controlsFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.parametersTab = new System.Windows.Forms.TabPage();
+            this.parametersDataGridView = new System.Windows.Forms.DataGridView();
             this.dataSetTab = new System.Windows.Forms.TabPage();
             this.logTextBox = new System.Windows.Forms.RichTextBox();
+            this.parametersBindingSource = new System.Windows.Forms.BindingSource(this.components);
             processExcelDataSet = new System.Windows.Forms.Button();
             layoutVisioDiagram = new System.Windows.Forms.Button();
             logSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -62,6 +65,9 @@ namespace VisioCleanup.UI.Forms
             controlSplitContainer.SuspendLayout();
             this.controlsFlowPanel.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.parametersTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.parametersDataGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.parametersBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // processExcelDataSet
@@ -84,6 +90,7 @@ namespace VisioCleanup.UI.Forms
             layoutVisioDiagram.TabIndex = 2;
             layoutVisioDiagram.Text = "Layout Visio Diagram";
             layoutVisioDiagram.UseVisualStyleBackColor = true;
+            layoutVisioDiagram.Click += new System.EventHandler(this.LayoutVisioDiagram_Click);
             // 
             // logSplitContainer
             // 
@@ -150,6 +157,7 @@ namespace VisioCleanup.UI.Forms
             // 
             // parametersTab
             // 
+            this.parametersTab.Controls.Add(this.parametersDataGridView);
             this.parametersTab.Location = new System.Drawing.Point(4, 24);
             this.parametersTab.Name = "parametersTab";
             this.parametersTab.Padding = new System.Windows.Forms.Padding(3);
@@ -157,6 +165,21 @@ namespace VisioCleanup.UI.Forms
             this.parametersTab.TabIndex = 0;
             this.parametersTab.Text = "Parameters";
             this.parametersTab.UseVisualStyleBackColor = true;
+            // 
+            // parametersDataGridView
+            // 
+            this.parametersDataGridView.AllowUserToAddRows = false;
+            this.parametersDataGridView.AllowUserToDeleteRows = false;
+            this.parametersDataGridView.AllowUserToOrderColumns = true;
+            this.parametersDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.parametersDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.parametersDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.parametersDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.parametersDataGridView.Location = new System.Drawing.Point(3, 3);
+            this.parametersDataGridView.Name = "parametersDataGridView";
+            this.parametersDataGridView.RowTemplate.Height = 25;
+            this.parametersDataGridView.Size = new System.Drawing.Size(589, 162);
+            this.parametersDataGridView.TabIndex = 0;
             // 
             // dataSetTab
             // 
@@ -180,6 +203,10 @@ namespace VisioCleanup.UI.Forms
             this.logTextBox.TabIndex = 0;
             this.logTextBox.Text = "";
             // 
+            // parametersBindingSource
+            // 
+            this.parametersBindingSource.AllowNew = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -197,6 +224,9 @@ namespace VisioCleanup.UI.Forms
             controlSplitContainer.ResumeLayout(false);
             this.controlsFlowPanel.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.parametersTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.parametersDataGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.parametersBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -208,5 +238,7 @@ namespace VisioCleanup.UI.Forms
         private TabControl tabControl1;
         private TabPage parametersTab;
         private TabPage dataSetTab;
+        private DataGridView parametersDataGridView;
+        private BindingSource parametersBindingSource;
     }
 }
