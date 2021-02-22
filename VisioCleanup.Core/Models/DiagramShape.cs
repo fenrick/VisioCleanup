@@ -54,5 +54,20 @@ namespace VisioCleanup.Core.Models
         public ShapeType ShapeType { get; set; }
 
         public int VisioId { get; set; }
+
+        /// <summary>
+        ///     Add child shape to parent.
+        /// </summary>
+        /// <param name="childShape">New child shape of this shape.</param>
+        public void AddChildShape(DiagramShape childShape)
+        {
+            if (!this.Children.Contains(childShape))
+            {
+                this.Children.Add(childShape);
+            }
+
+            // add to array
+            childShape.ParentShape = this;
+        }
     }
 }
