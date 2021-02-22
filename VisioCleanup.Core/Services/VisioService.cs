@@ -53,6 +53,13 @@ namespace VisioCleanup.Core.Services
                             this.visioApplication.Open();
 
                             var selection = this.visioApplication.Selection();
+
+                            // confirm one or more items selected.
+                            if (selection.Length == 0)
+                            {
+                                this.logger.LogDebug("No items selected, all loaded!");
+                                return;
+                            }
                         }
                         finally
                         {
