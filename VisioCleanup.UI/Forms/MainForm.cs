@@ -31,10 +31,8 @@ namespace VisioCleanup.UI.Forms
         /// <param name="options">The app config.</param>
         public MainForm(ILogger<MainForm> logger, IOptions<AppConfig> options)
         {
-            if (options == null)
-            {
-                throw new InvalidOperationException("AppConfig can not be null.");
-            }
+            this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             this.appConfig = options.Value;
             this.logger = logger;
