@@ -43,6 +43,33 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
+        public Corners CalculateCorners(int visioId)
+        {
+            Shape? shape = null;
+            try
+            {
+                var corners = default(Corners);
+
+                shape = this.GetShape(visioId);
+
+                corners.Left = Corners.ConvertMeasurement(
+                    shape.Cells[this.appConfig.PinXField].Result[this.appConfig.Units] - shape.Cells[this.appConfig.LocPinXField].Result[this.appConfig.Units]);
+                corners.Base = Corners.ConvertMeasurement(
+                    shape.Cells[this.appConfig.PinYField].Result[this.appConfig.Units] - shape.Cells[this.appConfig.LocPinYField].Result[this.appConfig.Units]);
+
+                corners.Right = Corners.ConvertMeasurement(corners.Left + shape.Cells[this.appConfig.WidthField].Result[this.appConfig.Units]);
+                corners.Top = Corners.ConvertMeasurement(corners.Base + shape.Cells[this.appConfig.HeightField].Result[this.appConfig.Units]);
+
+                return corners;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(shape);
+            }
+        }
+
+        /// <inheritdoc />
         public void Close()
         {
             this.logger.LogDebug("Releasing visio application.");
