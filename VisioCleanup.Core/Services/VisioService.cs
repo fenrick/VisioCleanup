@@ -7,10 +7,27 @@
 
 namespace VisioCleanup.Core.Services
 {
+    using System;
+    using System.Threading.Tasks;
+
+    using Microsoft.Extensions.Logging;
+
     using VisioCleanup.Core.Contracts;
 
     /// <summary>The visio service.</summary>
     public class VisioService : IVisioService
     {
+        private readonly ILogger<VisioService> logger;
+
+        public VisioService(ILogger<VisioService> logger)
+        {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task LayoutDiagram()
+        {
+            this.logger.LogError("Not implemented yet.");
+            throw new NotImplementedException();
+        }
     }
 }
