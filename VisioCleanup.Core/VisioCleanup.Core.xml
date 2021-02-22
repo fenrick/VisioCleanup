@@ -13,118 +13,83 @@
         <member name="T:VisioCleanup.Core.Models.Config.AppConfig">
             <summary>The app config.</summary>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Defaults">
-            <summary>Gets or sets the defaults.</summary>
-            <value>The defaults.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Excel">
-            <summary>Gets or sets the excel.</summary>
-            <value>The excel.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Padding">
-            <summary>Gets or sets the padding.</summary>
-            <value>The padding.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Page">
-            <summary>Gets or sets the page.</summary>
-            <value>The page.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.VisioFields">
-            <summary>Gets or sets the visio fields.</summary>
-            <value>The visio fields.</value>
-        </member>
-        <member name="T:VisioCleanup.Core.Models.Config.DefaultsConfig">
-            <summary>The defaults config.</summary>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.DefaultsConfig.Height">
-            <summary>Gets or sets the height.</summary>
-            <value>The height.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.DefaultsConfig.Width">
-            <summary>Gets or sets the width.</summary>
-            <value>The width.</value>
-        </member>
-        <member name="T:VisioCleanup.Core.Models.Config.ExcelConfig">
-            <summary>The excel config.</summary>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.ExcelConfig.FieldLabelFormat">
-            <summary>Gets or sets the field label format.</summary>
-            <value>The field label format.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.ExcelConfig.ShapeTypeLabelFormat">
-            <summary>Gets or sets the shape type label format.</summary>
-            <value>The shape type label format.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.ExcelConfig.SortFieldLabelFormat">
-            <summary>Gets or sets the sort field label format.</summary>
-            <value>The sort field label format.</value>
-        </member>
-        <member name="T:VisioCleanup.Core.Models.Config.PaddingConfig">
-            <summary>The padding config.</summary>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.PaddingConfig.Bottom">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Bottom">
             <summary>Gets or sets the bottom.</summary>
             <value>The bottom.</value>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.PaddingConfig.HorizontalSpacing">
-            <summary>Gets or sets the horizontal spacing.</summary>
-            <value>The horizontal spacing.</value>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.FieldLabelFormat">
+            <summary>Gets or sets the field label format.</summary>
+            <value>The field label format.</value>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.PaddingConfig.Left">
-            <summary>Gets or sets the left.</summary>
-            <value>The left.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.PaddingConfig.Right">
-            <summary>Gets or sets the right.</summary>
-            <value>The right.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.PaddingConfig.Top">
-            <summary>Gets or sets the top.</summary>
-            <value>The top.</value>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.PaddingConfig.VerticalSpacing">
-            <summary>Gets or sets the vertical spacing.</summary>
-            <value>The vertical spacing.</value>
-        </member>
-        <member name="T:VisioCleanup.Core.Models.Config.PageConfig">
-            <summary>The page config.</summary>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.PageConfig.HeaderHeight">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.HeaderHeight">
             <summary>Gets or sets the header height.</summary>
             <value>The header height.</value>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.PageConfig.SidePanelWidth">
-            <summary>Gets or sets the side panel width.</summary>
-            <value>The side panel width.</value>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Height">
+            <summary>Gets or sets the height.</summary>
+            <value>The height.</value>
         </member>
-        <member name="T:VisioCleanup.Core.Models.Config.VisioFieldsConfig">
-            <summary>The visio fields config.</summary>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Config.VisioFieldsConfig.HeightField">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.HeightField">
             <summary>Gets or sets the height field.</summary>
             <value>The height field.</value>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.VisioFieldsConfig.LocPinXField">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.HorizontalSpacing">
+            <summary>Gets or sets the horizontal spacing.</summary>
+            <value>The horizontal spacing.</value>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Left">
+            <summary>Gets or sets the left.</summary>
+            <value>The left.</value>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.LocPinXField">
             <summary>Gets or sets the loc pin x field.</summary>
             <value>The loc pin x field.</value>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.VisioFieldsConfig.LocPinYField">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.LocPinYField">
             <summary>Gets or sets the loc pin y field.</summary>
             <value>The loc pin y field.</value>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.VisioFieldsConfig.PinXField">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.PinXField">
             <summary>Gets or sets the pin x field.</summary>
             <value>The pin x field.</value>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.VisioFieldsConfig.PinYField">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.PinYField">
             <summary>Gets or sets the pin y field.</summary>
             <value>The pin y field.</value>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.VisioFieldsConfig.Units">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Right">
+            <summary>Gets or sets the right.</summary>
+            <value>The right.</value>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.ShapeTypeLabelFormat">
+            <summary>Gets or sets the shape type label format.</summary>
+            <value>The shape type label format.</value>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.SidePanelWidth">
+            <summary>Gets or sets the side panel width.</summary>
+            <value>The side panel width.</value>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.SortFieldLabelFormat">
+            <summary>Gets or sets the sort field label format.</summary>
+            <value>The sort field label format.</value>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Top">
+            <summary>Gets or sets the top.</summary>
+            <value>The top.</value>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Units">
             <summary>Gets or sets the units.</summary>
             <value>The units.</value>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.VisioFieldsConfig.WidthField">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.VerticalSpacing">
+            <summary>Gets or sets the vertical spacing.</summary>
+            <value>The vertical spacing.</value>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Width">
+            <summary>Gets or sets the width.</summary>
+            <value>The width.</value>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.WidthField">
             <summary>Gets or sets the width field.</summary>
             <value>The width field.</value>
         </member>

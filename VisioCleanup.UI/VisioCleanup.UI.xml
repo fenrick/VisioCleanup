@@ -14,10 +14,12 @@
         <member name="F:VisioCleanup.UI.Forms.MainForm.logger">
             <summary>The logger.</summary>
         </member>
-        <member name="M:VisioCleanup.UI.Forms.MainForm.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.UI.Forms.MainForm},Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
+        <member name="M:VisioCleanup.UI.Forms.MainForm.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.UI.Forms.MainForm},Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig},VisioCleanup.Core.Contracts.IExcelService,VisioCleanup.Core.Contracts.IVisioService)">
             <summary>Initialises a new instance of the <see cref="T:VisioCleanup.UI.Forms.MainForm" /> class.</summary>
             <param name="logger">The <paramref name="logger"/>.</param>
             <param name="options">The app config.</param>
+            <param name="excelService">The excel service.</param>
+            <param name="visioService">The visio service.</param>
         </member>
         <member name="M:VisioCleanup.UI.Forms.MainForm.ProcessExcelDataSet_Click(System.Object,System.EventArgs)">
             <summary>Activate the processing of Excel data set.</summary>
