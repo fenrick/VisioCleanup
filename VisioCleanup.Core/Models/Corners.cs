@@ -12,7 +12,7 @@ namespace VisioCleanup.Core.Models
     /// <summary>
     ///     Corners of a visio shape.
     /// </summary>
-    public struct Corners
+    public struct Corners : IEquatable<Corners>
     {
         /// <summary>
         ///     Gets or sets left side of the shape.
@@ -52,6 +52,53 @@ namespace VisioCleanup.Core.Models
         public static double ConvertMeasurement(int measurement)
         {
             return (double)measurement / 1000;
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"Top: {ConvertMeasurement(this.Top)}, Right: {ConvertMeasurement(this.Right)}, Base: {ConvertMeasurement(this.Base)}, Left: {ConvertMeasurement(this.Left)}";
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            return obj is Corners corners && this.Equals(corners);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(Corners other)
+        {
+            return this.Left.Equals(other.Left) && this.Right.Equals(other.Right) && this.Base.Equals(other.Base) && this.Top.Equals(other.Top);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            // ReSharper disable NonReadonlyMemberInGetHashCode
+            return HashCode.Combine(this.Left, this.Right, this.Base, this.Top);
+        }
+
+        /// <summary>
+        /// Operator for equals.
+        /// </summary>
+        /// <param name="left">Left.</param>
+        /// <param name="right">Right.</param>
+        /// <returns>Are they equals.</returns>
+        public static bool operator ==(Corners left, Corners right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Operator for not equals.
+        /// </summary>
+        /// <param name="left">Left.</param>
+        /// <param name="right">Right.</param>
+        /// <returns>Are they not equals.</returns>
+        public static bool operator !=(Corners left, Corners right)
+        {
+            return !(left == right);
         }
     }
 }
