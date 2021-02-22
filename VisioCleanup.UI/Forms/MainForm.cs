@@ -56,6 +56,9 @@ namespace VisioCleanup.UI.Forms
             this.parametersDataGridView.DataSource = this.parametersBindingSource;
         }
 
+        /// <summary>Layout the visio diagram.</summary>
+        /// <param name="sender">The <paramref name="sender"/>.</param>
+        /// <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
         private async void LayoutVisioDiagram_Click(object sender, EventArgs e)
         {
             await this.visioService.LayoutDiagram();
