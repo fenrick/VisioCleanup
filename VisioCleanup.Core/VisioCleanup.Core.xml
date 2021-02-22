@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <doc>
     <assembly>
         <name>VisioCleanup.Core</name>
@@ -9,18 +10,52 @@
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IExcelService.ProcessDataSet">
             <summary>
-            Async process excel data set and load into memory.
+                Async process excel data set and load into memory.
             </summary>
             <returns>Async Task.</returns>
+        </member>
+        <member name="T:VisioCleanup.Core.Contracts.IVisioApplication">
+            <summary>
+                Handle creation and management of visio.
+            </summary>
+        </member>
+        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.Close">
+            <summary>
+                Close visio session and shutdown.
+            </summary>
+        </member>
+        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.Open">
+            <summary>
+                Open visio session.
+            </summary>
         </member>
         <member name="T:VisioCleanup.Core.Contracts.IVisioService">
             <summary>The VisioService interface.</summary>
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IVisioService.LayoutDiagram">
             <summary>
-            Layout currently selected diagram.
+                Layout currently selected diagram.
             </summary>
-            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the result of the asynchronous operation.</returns>
+            <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing the result of the asynchronous operation.</returns>
+        </member>
+        <member name="T:VisioCleanup.Core.Marshal">
+            <summary>
+                Implementation of .Net Framework 4.6 System.Runtime.InteropServices.Marshal.GetActiveObject().
+            </summary>
+        </member>
+        <member name="M:VisioCleanup.Core.Marshal.GetActiveObject(System.String)">
+            <summary>
+                Copy of System.Runtime.InteropServices.Marshal.GetActiveObject().
+            </summary>
+            <param name="progId">String program identifier.</param>
+            <returns>Object.</returns>
+        </member>
+        <member name="M:VisioCleanup.Core.Marshal.ReleaseObject(System.Object)">
+            <summary>
+                Release com object properly.
+            </summary>
+            <param name="obj">Object.</param>
+            <exception cref="T:System.NullReferenceException"><paramref name="obj" /> is <see langword="null" />.</exception>
         </member>
         <member name="T:VisioCleanup.Core.Models.Config.AppConfig">
             <summary>The app config.</summary>
@@ -108,32 +143,52 @@
         <member name="T:VisioCleanup.Core.ServiceCollectionExtensions">
             <summary>The service collection extensions.</summary>
         </member>
-        <member name="M:VisioCleanup.Core.ServiceCollectionExtensions.AddVisioCleanupCore(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+        <member
+            name="M:VisioCleanup.Core.ServiceCollectionExtensions.AddVisioCleanupCore(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>The add visio cleanup core.</summary>
-            <param name="serviceCollection">The <paramref name="serviceCollection"/>.</param>
-            <param name="configuration">The <paramref name="configuration"/>.</param>
+            <param name="serviceCollection">The <paramref name="serviceCollection" />.</param>
+            <param name="configuration">The <paramref name="configuration" />.</param>
             <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> .</returns>
         </member>
         <member name="T:VisioCleanup.Core.Services.ExcelService">
             <summary>The excel service.</summary>
         </member>
-        <member name="M:VisioCleanup.Core.Services.ExcelService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.ExcelService})">
+        <member
+            name="M:VisioCleanup.Core.Services.ExcelService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.ExcelService})">
             <summary>
-            Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.ExcelService"/> class.
+                Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.ExcelService" /> class.
             </summary>
             <param name="logger">Logging instance.</param>
         </member>
         <member name="M:VisioCleanup.Core.Services.ExcelService.ProcessDataSet">
             <inheritdoc />
         </member>
+        <member name="T:VisioCleanup.Core.Services.VisioApplication">
+            <inheritdoc />
+        </member>
+        <member
+            name="M:VisioCleanup.Core.Services.VisioApplication.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioApplication})">
+            <summary>
+                Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioApplication" /> class.
+            </summary>
+            <param name="logger">Logging instance.</param>
+        </member>
+        <member name="M:VisioCleanup.Core.Services.VisioApplication.Open">
+            <inheritdoc />
+        </member>
+        <member name="M:VisioCleanup.Core.Services.VisioApplication.Close">
+            <inheritdoc />
+        </member>
         <member name="T:VisioCleanup.Core.Services.VisioService">
             <summary>The visio service.</summary>
         </member>
-        <member name="M:VisioCleanup.Core.Services.VisioService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioService})">
+        <member
+            name="M:VisioCleanup.Core.Services.VisioService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioService},VisioCleanup.Core.Contracts.IVisioApplication)">
             <summary>
-            Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioService"/> class.
+                Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioService" /> class.
             </summary>
             <param name="logger">Logging instance.</param>
+            <param name="visioApplication">Visio application handler.</param>
         </member>
         <member name="M:VisioCleanup.Core.Services.VisioService.LayoutDiagram">
             <inheritdoc />
