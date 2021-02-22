@@ -34,6 +34,7 @@ namespace VisioCleanup.Core.Services
         /// Initialises a new instance of the <see cref="VisioApplication"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
+        /// <param name="options">Application configuration.</param>
         public VisioApplication(ILogger<VisioApplication> logger, IOptions<AppConfig> options)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
