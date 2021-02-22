@@ -36,7 +36,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             }
 
             var delim = string.Empty;
-            foreach (var element in dictionary.Elements)
+            foreach (var (scalarValue, logEventPropertyValue) in dictionary.Elements)
             {
                 if (delim.Length != 0)
                 {
@@ -48,12 +48,12 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 delim = ", ";
 
-                var style = element.Key.Value == null ? RichTextThemeStyle.Null : element.Key.Value is string ? RichTextThemeStyle.String : RichTextThemeStyle.Scalar;
+                var style = scalarValue.Value == null ? RichTextThemeStyle.Null : scalarValue.Value is string ? RichTextThemeStyle.String : RichTextThemeStyle.Scalar;
 
                 using (this.ApplyStyle(state.Output, style))
                 {
                     using StringWriter buffer = new();
-                    JsonValueFormatter.WriteQuotedJsonString((element.Key.Value ?? "null").ToString(), buffer);
+                    JsonValueFormatter.WriteQuotedJsonString((scalarValue.Value ?? "null").ToString(), buffer);
                     state.Output.AppendText(buffer.ToString());
                 }
 
@@ -62,7 +62,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     state.Output.AppendText(": ");
                 }
 
-                count += this.Visit(state.Nest(), element.Value);
+                count += this.Visit(state.Nest(), logEventPropertyValue);
             }
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
@@ -83,10 +83,12 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             // At the top level, for scalar values, use "display" rendering.
             if (state.IsTopLevel)
             {
-                return this.displayFormatter.FormatLiteralValue(scalar, state.Output, state.Format);
+                this.displayFormatter.FormatLiteralValue(scalar, state.Output, state.Format);
+                return 0;
             }
 
-            return this.FormatLiteralValue(scalar, state.Output);
+            this.FormatLiteralValue(scalar, state.Output);
+            return 0;
         }
 
         protected override int VisitSequenceValue(ThemedValueFormatterState state, SequenceValue sequence)
@@ -95,8 +97,6 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             {
                 throw new ArgumentNullException(nameof(sequence));
             }
-
-            var count = 0;
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
@@ -123,7 +123,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                 state.Output.AppendText("]");
             }
 
-            return count;
+            return 0;
         }
 
         protected override int VisitStructureValue(ThemedValueFormatterState state, StructureValue structure)
@@ -200,10 +200,9 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             return count;
         }
 
-        private int FormatLiteralValue(ScalarValue scalar, RichTextBox output)
+        private void FormatLiteralValue(ScalarValue scalar, RichTextBox output)
         {
             var value = scalar.Value;
-            var count = 0;
 
             switch (value)
             {
@@ -214,7 +213,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText("null");
                         }
 
-                        return count;
+                        break;
                     }
 
                 case string str:
@@ -226,7 +225,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText(buffer.ToString());
                         }
 
-                        return count;
+                        break;
                     }
 
                 case ValueType when value is int || value is uint || value is long || value is ulong || value is decimal || value is byte || value is sbyte || value is short
@@ -237,7 +236,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
                         }
 
-                        return count;
+                        break;
                     }
 
                 case double d:
@@ -249,11 +248,11 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                                 using StringWriter buffer = new();
                                 JsonValueFormatter.WriteQuotedJsonString(d.ToString(CultureInfo.InvariantCulture), buffer);
                                 output.AppendText(buffer.ToString());
-                                return count;
+                                break;
                             }
 
                             output.AppendText(d.ToString("R", CultureInfo.InvariantCulture));
-                            return count;
+                            break;
                         }
                     }
 
@@ -266,12 +265,12 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                                 using StringWriter buffer = new();
                                 JsonValueFormatter.WriteQuotedJsonString(f.ToString(CultureInfo.InvariantCulture), buffer);
                                 output.AppendText(buffer.ToString());
-                                return count;
+                                break;
                             }
 
                             output.AppendText(f.ToString("R", CultureInfo.InvariantCulture));
 
-                            return count;
+                            break;
                         }
                     }
 
@@ -282,7 +281,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText(b ? "true" : "false");
                         }
 
-                        return count;
+                        break;
                     }
 
                 case char ch:
@@ -294,7 +293,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText(buffer.ToString());
                         }
 
-                        return count;
+                        break;
                     }
 
                 case ValueType when value is DateTime || value is DateTimeOffset:
@@ -306,7 +305,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText("\"");
                         }
 
-                        return count;
+                        break;
                     }
 
                 default:
@@ -318,7 +317,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText(buffer.ToString());
                         }
 
-                        return count;
+                        break;
                     }
             }
         }

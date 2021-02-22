@@ -29,12 +29,9 @@ namespace Serilog.Sinks.RichTextWinForm.Output
 
             if (token.Format != null)
             {
-                foreach (var c in token.Format)
+                foreach (var dummy in token.Format.Where(c => c == 'j'))
                 {
-                    if (c == 'j')
-                    {
-                        isJson = true;
-                    }
+                    isJson = true;
                 }
             }
 

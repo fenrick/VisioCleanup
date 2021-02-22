@@ -48,7 +48,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
 
                 // If the value is a scalar string, support some additional formats: 'u' for uppercase
                 // and 'w' for lowercase.
-                if (propertyValue is ScalarValue sv && sv.Value is string literalString)
+                if (propertyValue is ScalarValue { Value: string literalString })
                 {
                     var cased = Casing.Format(literalString, this.token.Format);
                     writer.Write(cased);

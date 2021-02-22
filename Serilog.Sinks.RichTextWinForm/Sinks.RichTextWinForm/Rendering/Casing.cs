@@ -18,15 +18,12 @@ namespace Serilog.Sinks.RichTextWinForm.Rendering
         /// <returns>The provided <paramref name="value" /> with formatting applied.</returns>
         public static string Format(string value, string? format = null)
         {
-            switch (format)
-            {
-                case "u":
-                    return value.ToUpperInvariant();
-                case "w":
-                    return value.ToLowerInvariant();
-                default:
-                    return value;
-            }
+            return format switch
+                {
+                    "u" => value.ToUpperInvariant(),
+                    "w" => value.ToLowerInvariant(),
+                    _ => value,
+                };
         }
     }
 }

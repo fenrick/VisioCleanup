@@ -62,17 +62,19 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
                 throw new ArgumentNullException(nameof(output));
             }
 
-            if (this.styles.TryGetValue(style, out var wcts))
+            if (!this.styles.TryGetValue(style, out var wcts))
             {
-                if (wcts.Foreground.HasValue)
-                {
-                    output.SelectionColor = wcts.Foreground.Value;
-                }
+                return;
+            }
 
-                if (wcts.Background.HasValue)
-                {
-                    output.SelectionBackColor = wcts.Background.Value;
-                }
+            if (wcts.Foreground.HasValue)
+            {
+                output.SelectionColor = wcts.Foreground.Value;
+            }
+
+            if (wcts.Background.HasValue)
+            {
+                output.SelectionBackColor = wcts.Background.Value;
             }
         }
     }
