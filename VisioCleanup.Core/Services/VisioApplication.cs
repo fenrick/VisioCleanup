@@ -53,13 +53,17 @@ namespace VisioCleanup.Core.Services
 
                 shape = this.GetShape(visioId);
 
-                corners.Left = Corners.ConvertMeasurement(
-                    shape.Cells[this.appConfig.PinXField].Result[this.appConfig.Units] - shape.Cells[this.appConfig.LocPinXField].Result[this.appConfig.Units]);
-                corners.Base = Corners.ConvertMeasurement(
-                    shape.Cells[this.appConfig.PinYField].Result[this.appConfig.Units] - shape.Cells[this.appConfig.LocPinYField].Result[this.appConfig.Units]);
+                var pinX = shape.Cells[this.appConfig.PinXField].Result[this.appConfig.Units];
+                var locPinX = shape.Cells[this.appConfig.LocPinXField].Result[this.appConfig.Units];
+                var pinY = shape.Cells[this.appConfig.PinYField].Result[this.appConfig.Units];
+                var locPinY = shape.Cells[this.appConfig.LocPinYField].Result[this.appConfig.Units];
+                var width = shape.Cells[this.appConfig.WidthField].Result[this.appConfig.Units];
+                var height = shape.Cells[this.appConfig.HeightField].Result[this.appConfig.Units];
 
-                corners.Right = Corners.ConvertMeasurement(corners.Left + shape.Cells[this.appConfig.WidthField].Result[this.appConfig.Units]);
-                corners.Top = Corners.ConvertMeasurement(corners.Base + shape.Cells[this.appConfig.HeightField].Result[this.appConfig.Units]);
+                corners.Left = Corners.ConvertMeasurement(pinX - locPinX);
+                corners.Base = Corners.ConvertMeasurement(pinY - locPinY);
+                corners.Right = corners.Left + Corners.ConvertMeasurement(width);
+                corners.Top = corners.Base + Corners.ConvertMeasurement(height);
 
                 return corners;
             }
