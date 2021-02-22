@@ -59,7 +59,7 @@ namespace VisioCleanup.UI.Forms
         /// <summary>Layout the visio diagram.</summary>
         /// <param name="sender">The <paramref name="sender"/>.</param>
         /// <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
-        private async void LayoutVisioDiagram_Click(object sender, EventArgs e)
+        private async void LayoutVisioDiagram_Click(object sender, EventArgs eventArgs)
         {
             await this.visioService.LayoutDiagram();
         }
