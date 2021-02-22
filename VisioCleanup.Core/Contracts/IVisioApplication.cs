@@ -15,6 +15,13 @@ namespace VisioCleanup.Core.Contracts
     public interface IVisioApplication
     {
         /// <summary>
+        ///     Calculate the corners of a shape.
+        /// </summary>
+        /// <param name="visioId">Shape ID for the shape.</param>
+        /// <returns>Corners of a shape.</returns>
+        Corners CalculateCorners(int visioId);
+
+        /// <summary>
         ///     Close visio session and shutdown.
         /// </summary>
         void Close();
