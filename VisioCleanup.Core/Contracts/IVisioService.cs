@@ -12,6 +12,10 @@ namespace VisioCleanup.Core.Contracts
     /// <summary>The VisioService interface.</summary>
     public interface IVisioService
     {
+        /// <summary>
+        /// Layout currently selected diagram.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         Task LayoutDiagram();
     }
 }
