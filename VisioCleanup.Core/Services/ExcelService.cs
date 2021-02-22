@@ -23,6 +23,7 @@ namespace VisioCleanup.Core.Services
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
         public async Task ProcessDataSet()
         {
             this.logger.LogError("Not implemented yet.");
