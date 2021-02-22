@@ -19,11 +19,16 @@ namespace VisioCleanup.Core.Services
     {
         private readonly ILogger<ExcelService> logger;
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="ExcelService"/> class.
+        /// </summary>
+        /// <param name="logger">Logging instance.</param>
         public ExcelService(ILogger<ExcelService> logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <inheritdoc />
         public async Task ProcessDataSet()
         {
             this.logger.LogError("Not implemented yet.");

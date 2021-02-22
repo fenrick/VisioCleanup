@@ -19,11 +19,16 @@ namespace VisioCleanup.Core.Services
     {
         private readonly ILogger<VisioService> logger;
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="VisioService"/> class.
+        /// </summary>
+        /// <param name="logger">Logging instance.</param>
         public VisioService(ILogger<VisioService> logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <inheritdoc />
         public async Task LayoutDiagram()
         {
             this.logger.LogError("Not implemented yet.");
