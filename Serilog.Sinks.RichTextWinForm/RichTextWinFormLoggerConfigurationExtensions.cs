@@ -55,16 +55,6 @@ namespace Serilog
                 throw new ArgumentNullException(nameof(outputTemplate));
             }
 
-            if (formatProvider is null)
-            {
-                throw new ArgumentNullException(nameof(formatProvider));
-            }
-
-            if (levelSwitch is null)
-            {
-                throw new ArgumentNullException(nameof(levelSwitch));
-            }
-
             var appliedTheme = theme ?? RichTextThemes.Default;
 
             var formatter = new OutputTemplateRenderer(appliedTheme, outputTemplate, formatProvider);
