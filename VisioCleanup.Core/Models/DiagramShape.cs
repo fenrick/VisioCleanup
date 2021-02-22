@@ -28,11 +28,11 @@ namespace VisioCleanup.Core.Models
             this.Children = new Collection<DiagramShape>();
             this.Corners = new Corners
                                {
-                                   Top = AppConfig.Height, Left = 0, Right = AppConfig.Width, Base = 0,
+                                   Top = AppConfig!.Height, Left = 0, Right = AppConfig!.Width, Base = 0,
                                };
         }
 
-        public static AppConfig AppConfig { get; set; }
+        public static AppConfig? AppConfig { get; set; }
 
         public Collection<DiagramShape> Children { get; set; }
 
@@ -41,7 +41,7 @@ namespace VisioCleanup.Core.Models
         /// </summary>
         public Corners Corners { get; set; }
 
-        public DiagramShape ParentShape { get; set; }
+        public DiagramShape? ParentShape { get; set; }
 
         /// <summary>
         ///     Gets the shape text.
