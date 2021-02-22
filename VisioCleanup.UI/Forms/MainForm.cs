@@ -34,9 +34,10 @@ namespace VisioCleanup.UI.Forms
             this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            this.appConfig = options.Value;
-            this.logger = logger;
+            this.logger.LogDebug("Initialising form components.");
             this.InitializeComponent();
+
+            this.logger.LogDebug("Setting log output.");
             RichTextWinFormSink.AddRichTextBox(this.logTextBox);
         }
 
