@@ -12,5 +12,10 @@ namespace VisioCleanup.Core.Models
     internal class DiagramShape
     {
         public static AppConfig AppConfig { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the corner structure.
+        /// </summary>
+        public Corners Corners { get; set; }
     }
 }
