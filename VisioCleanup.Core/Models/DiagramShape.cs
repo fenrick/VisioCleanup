@@ -27,5 +27,7 @@ namespace VisioCleanup.Core.Models
         ///     Gets or sets the shape type.
         /// </summary>
         public ShapeType ShapeType { get; set; }
+
+        public int VisioId { get; set; }
     }
 }
