@@ -119,6 +119,22 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
+        public string GetShapeText(int visioId)
+        {
+            Shape? shape = null;
+            try
+            {
+                shape = this.GetShape(visioId);
+                return shape.Text;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(shape);
+            }
+        }
+
+        /// <inheritdoc />
         public void Open()
         {
             try

@@ -35,6 +35,13 @@ namespace VisioCleanup.Core.Contracts
         Corners GetPageSize(int headerHeight, int sidePanelWidth);
 
         /// <summary>
+        ///     Obtains the current shape text for a shape.
+        /// </summary>
+        /// <param name="visioId">shape id.</param>
+        /// <returns>shape text.</returns>
+        string GetShapeText(int visioId);
+
+        /// <summary>
         ///     Open visio session.
         /// </summary>
         void Open();
