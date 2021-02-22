@@ -7,8 +7,11 @@
 
 namespace VisioCleanup.Core.Contracts
 {
+    using System.Threading.Tasks;
+
     /// <summary>The ExcelService interface.</summary>
     public interface IExcelService
     {
+        Task ProcessDataSet();
     }
 }

@@ -7,8 +7,11 @@
 
 namespace VisioCleanup.Core.Contracts
 {
+    using System.Threading.Tasks;
+
     /// <summary>The VisioService interface.</summary>
     public interface IVisioService
     {
+        Task LayoutDiagram();
     }
 }

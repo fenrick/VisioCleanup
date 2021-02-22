@@ -8,6 +8,7 @@
 namespace VisioCleanup.UI.Forms
 {
     using System;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
 
     using Microsoft.Extensions.Logging;
@@ -15,6 +16,7 @@ namespace VisioCleanup.UI.Forms
 
     using Serilog.Sinks.RichTextWinForm;
 
+    using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models.Config;
 
     /// <summary>Main application form.</summary>
@@ -23,16 +25,24 @@ namespace VisioCleanup.UI.Forms
         /// <summary>The app config.</summary>
         private readonly AppConfig appConfig;
 
+        private readonly IExcelService excelService;
+
         /// <summary>The logger.</summary>
         private readonly ILogger<MainForm> logger;
+
+        private readonly IVisioService visioService;
 
         /// <summary>Initialises a new instance of the <see cref="MainForm" /> class.</summary>
         /// <param name="logger">The <paramref name="logger"/>.</param>
         /// <param name="options">The app config.</param>
-        public MainForm(ILogger<MainForm> logger, IOptions<AppConfig> options)
+        /// <param name="excelService">The excel service.</param>
+        /// <param name="visioService">The visio service.</param>
+        public MainForm(ILogger<MainForm> logger, IOptions<AppConfig> options, IExcelService excelService, IVisioService visioService)
         {
             this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.excelService = excelService ?? throw new ArgumentNullException(nameof(excelService));
+            this.visioService = visioService ?? throw new ArgumentNullException(nameof(visioService));
 
             this.logger.LogDebug("Initialising form components.");
             this.InitializeComponent();
@@ -46,12 +56,17 @@ namespace VisioCleanup.UI.Forms
             this.parametersDataGridView.DataSource = this.parametersBindingSource;
         }
 
+        private async void LayoutVisioDiagram_Click(object sender, EventArgs e)
+        {
+            await this.visioService.LayoutDiagram();
+        }
+
         /// <summary>Activate the processing of Excel data set.</summary>
         /// <param name="sender">The <paramref name="sender"/>.</param>
         /// <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
-        private void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
+        private async void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
         {
-            this.logger.LogDebug("woot!");
+            await this.excelService.ProcessDataSet();
         }
     }
 }
