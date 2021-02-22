@@ -11,12 +11,16 @@ namespace VisioCleanup.Core.Services
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
 
     using VisioCleanup.Core.Contracts;
+    using VisioCleanup.Core.Models.Config;
 
     /// <summary>The visio service.</summary>
     public class VisioService : IVisioService
     {
+        private readonly AppConfig appConfig;
+
         private readonly ILogger<VisioService> logger;
 
         private readonly IVisioApplication visioApplication;
@@ -26,9 +30,10 @@ namespace VisioCleanup.Core.Services
         /// </summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
-        public VisioService(ILogger<VisioService> logger, IVisioApplication visioApplication)
+        public VisioService(ILogger<VisioService> logger, IVisioApplication visioApplication, IOptions<AppConfig> options)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
             this.visioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
         }
 
