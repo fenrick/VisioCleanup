@@ -8,7 +8,6 @@
 namespace VisioCleanup.UI.Forms
 {
     using System;
-    using System.Threading.Tasks;
     using System.Windows.Forms;
 
     using Microsoft.Extensions.Logging;
