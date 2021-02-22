@@ -22,7 +22,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
 
         private readonly ThemedValueFormatter valueFormatter;
 
-        public PropertiesTokenRenderer(RichTextTheme theme, PropertyToken token, MessageTemplate outputTemplate, IFormatProvider formatProvider)
+        public PropertiesTokenRenderer(RichTextTheme theme, PropertyToken token, MessageTemplate outputTemplate, IFormatProvider? formatProvider)
         {
             this.outputTemplate = outputTemplate;
             var isJson = false;

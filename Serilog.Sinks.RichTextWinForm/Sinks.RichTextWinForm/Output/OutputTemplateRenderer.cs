@@ -28,7 +28,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
         /// <param name="outputTemplate">Template for output.</param>
         /// <param name="formatProvider">Format provider.</param>
         /// <exception cref="ArgumentNullException">No output template.</exception>
-        public OutputTemplateRenderer(RichTextTheme theme, string outputTemplate, IFormatProvider formatProvider)
+        public OutputTemplateRenderer(RichTextTheme theme, string outputTemplate, IFormatProvider? formatProvider)
         {
             if (outputTemplate is null)
             {

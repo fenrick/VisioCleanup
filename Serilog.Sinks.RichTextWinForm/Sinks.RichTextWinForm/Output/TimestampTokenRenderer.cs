@@ -19,13 +19,13 @@ namespace Serilog.Sinks.RichTextWinForm.Output
 
     internal class TimestampTokenRenderer : OutputTemplateTokenRenderer
     {
-        private readonly IFormatProvider formatProvider;
+        private readonly IFormatProvider? formatProvider;
 
         private readonly RichTextTheme theme;
 
         private readonly PropertyToken token;
 
-        public TimestampTokenRenderer(RichTextTheme theme, PropertyToken token, IFormatProvider formatProvider)
+        public TimestampTokenRenderer(RichTextTheme theme, PropertyToken token, IFormatProvider? formatProvider)
         {
             this.theme = theme;
             this.token = token;
