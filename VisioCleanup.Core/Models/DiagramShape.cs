@@ -69,5 +69,11 @@ namespace VisioCleanup.Core.Models
             // add to array
             childShape.ParentShape = this;
         }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"{this.VisioId}: {this.ShapeText}";
+        }
     }
 }

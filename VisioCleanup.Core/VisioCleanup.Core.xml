@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-
 <doc>
     <assembly>
         <name>VisioCleanup.Core</name>
@@ -10,13 +9,13 @@
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IExcelService.ProcessDataSet">
             <summary>
-                Async process excel data set and load into memory.
+            Async process excel data set and load into memory.
             </summary>
             <returns>Async Task.</returns>
         </member>
         <member name="T:VisioCleanup.Core.Contracts.IVisioApplication">
             <summary>
-                Handle creation and management of visio.
+            Handle creation and management of visio.
             </summary>
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.CalculateCorners(System.Int32)">
@@ -62,9 +61,9 @@
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IVisioService.LayoutDiagram">
             <summary>
-                Layout currently selected diagram.
+            Layout currently selected diagram.
             </summary>
-            <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing the result of the asynchronous operation.</returns>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the result of the asynchronous operation.</returns>
         </member>
         <member name="T:VisioCleanup.Core.Marshal">
             <summary>
@@ -195,14 +194,14 @@
         </member>
         <member name="M:VisioCleanup.Core.Models.Corners.ConvertMeasurement(System.Double)">
             <summary>
-                Convert a visio measurement into an easier mathematical model.
+            Convert a visio measurement into an easier mathematical model.
             </summary>
             <param name="measurement">Measurement from visio.</param>
             <returns>Easier internal measurement.</returns>
         </member>
         <member name="M:VisioCleanup.Core.Models.Corners.ConvertMeasurement(System.Int32)">
             <summary>
-                Convert an easier measurement back to visio model.
+            Convert an easier measurement back to visio model.
             </summary>
             <param name="measurement">Easier internal measurement.</param>
             <returns>Measurement for visio.</returns>
@@ -219,19 +218,17 @@
         <member name="M:VisioCleanup.Core.Models.Corners.GetHashCode">
             <inheritdoc />
         </member>
-        <member
-            name="M:VisioCleanup.Core.Models.Corners.op_Equality(VisioCleanup.Core.Models.Corners,VisioCleanup.Core.Models.Corners)">
+        <member name="M:VisioCleanup.Core.Models.Corners.op_Equality(VisioCleanup.Core.Models.Corners,VisioCleanup.Core.Models.Corners)">
             <summary>
-                Operator for equals.
+            Operator for equals.
             </summary>
             <param name="left">Left.</param>
             <param name="right">Right.</param>
             <returns>Are they equals.</returns>
         </member>
-        <member
-            name="M:VisioCleanup.Core.Models.Corners.op_Inequality(VisioCleanup.Core.Models.Corners,VisioCleanup.Core.Models.Corners)">
+        <member name="M:VisioCleanup.Core.Models.Corners.op_Inequality(VisioCleanup.Core.Models.Corners,VisioCleanup.Core.Models.Corners)">
             <summary>
-                Operator for not equals.
+            Operator for not equals.
             </summary>
             <param name="left">Left.</param>
             <param name="right">Right.</param>
@@ -264,6 +261,9 @@
             </summary>
             <param name="childShape">New child shape of this shape.</param>
         </member>
+        <member name="M:VisioCleanup.Core.Models.DiagramShape.ToString">
+            <inheritdoc />
+        </member>
         <member name="T:VisioCleanup.Core.Models.ShapeType">
             <summary>
                 Type of diagram shape.
@@ -287,20 +287,18 @@
         <member name="T:VisioCleanup.Core.ServiceCollectionExtensions">
             <summary>The service collection extensions.</summary>
         </member>
-        <member
-            name="M:VisioCleanup.Core.ServiceCollectionExtensions.AddVisioCleanupCore(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="M:VisioCleanup.Core.ServiceCollectionExtensions.AddVisioCleanupCore(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>The add visio cleanup core.</summary>
-            <param name="serviceCollection">The <paramref name="serviceCollection" />.</param>
-            <param name="configuration">The <paramref name="configuration" />.</param>
+            <param name="serviceCollection">The <paramref name="serviceCollection"/>.</param>
+            <param name="configuration">The <paramref name="configuration"/>.</param>
             <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> .</returns>
         </member>
         <member name="T:VisioCleanup.Core.Services.ExcelService">
             <summary>The excel service.</summary>
         </member>
-        <member
-            name="M:VisioCleanup.Core.Services.ExcelService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.ExcelService})">
+        <member name="M:VisioCleanup.Core.Services.ExcelService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.ExcelService})">
             <summary>
-                Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.ExcelService" /> class.
+            Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.ExcelService"/> class.
             </summary>
             <param name="logger">Logging instance.</param>
         </member>
@@ -310,10 +308,9 @@
         <member name="T:VisioCleanup.Core.Services.VisioApplication">
             <inheritdoc />
         </member>
-        <member
-            name="M:VisioCleanup.Core.Services.VisioApplication.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioApplication},Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
+        <member name="M:VisioCleanup.Core.Services.VisioApplication.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioApplication},Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
             <summary>
-                Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioApplication" /> class.
+            Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioApplication"/> class.
             </summary>
             <param name="logger">Logging instance.</param>
             <param name="options">Application configuration.</param>
@@ -345,10 +342,9 @@
         <member name="T:VisioCleanup.Core.Services.VisioService">
             <summary>The visio service.</summary>
         </member>
-        <member
-            name="M:VisioCleanup.Core.Services.VisioService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioService},VisioCleanup.Core.Contracts.IVisioApplication,Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
+        <member name="M:VisioCleanup.Core.Services.VisioService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioService},VisioCleanup.Core.Contracts.IVisioApplication,Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
             <summary>
-                Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioService" /> class.
+            Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioService"/> class.
             </summary>
             <param name="logger">Logging instance.</param>
             <param name="visioApplication">Visio application handler.</param>
