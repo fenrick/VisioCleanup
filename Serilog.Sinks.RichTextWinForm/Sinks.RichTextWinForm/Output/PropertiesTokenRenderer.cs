@@ -44,7 +44,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
                 .Where(p => !TemplateContainsPropertyName(logEvent.MessageTemplate, p.Key) && !TemplateContainsPropertyName(this.outputTemplate, p.Key))
                 .Select(p => new LogEventProperty(p.Key, p.Value));
 
-            var value = new StructureValue(included);
+            StructureValue value = new(included);
 
             this.valueFormatter.Format(value, output, string.Empty);
         }

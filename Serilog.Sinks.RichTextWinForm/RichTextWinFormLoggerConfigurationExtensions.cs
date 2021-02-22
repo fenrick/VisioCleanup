@@ -57,7 +57,7 @@ namespace Serilog
 
             var appliedTheme = theme ?? RichTextThemes.Default;
 
-            var formatter = new OutputTemplateRenderer(appliedTheme, outputTemplate, formatProvider);
+            OutputTemplateRenderer formatter = new(appliedTheme, outputTemplate, formatProvider);
 
             return loggerSinkConfiguration.Sink(new RichTextWinFormSink(formatter), restrictedToMinimumLevel, levelSwitch);
         }

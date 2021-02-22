@@ -36,7 +36,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
         {
             // We need access to ScalarValue.Render() to avoid this alloc; just ensures
             // that custom format providers are supported properly.
-            var sv = new ScalarValue(logEvent.Timestamp);
+            ScalarValue sv = new(logEvent.Timestamp);
 
             using (this.theme.Apply(output, RichTextThemeStyle.SecondaryText))
             {
