@@ -7,10 +7,26 @@
 
 namespace VisioCleanup.Core.Models
 {
+    using System.Collections.ObjectModel;
+
     using VisioCleanup.Core.Models.Config;
 
     internal class DiagramShape
     {
+        /// <summary>
+        ///     Initialises a new instance of the <see cref="DiagramShape" /> class.
+        /// </summary>
+        /// <param name="visioId">Visio shape ID.</param>
+        public DiagramShape(int visioId)
+        {
+            this.VisioId = visioId;
+            this.Children = new Collection<DiagramShape>();
+            this.Corners = new Corners
+                               {
+                                   Top = AppConfig.Height, Left = 0, Right = AppConfig.Width, Base = 0,
+                               };
+        }
+
         public static AppConfig AppConfig { get; set; }
 
         public Collection<DiagramShape> Children { get; set; }
