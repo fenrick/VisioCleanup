@@ -189,5 +189,25 @@ namespace VisioCleanup.Core.Services
                 Marshal.ReleaseObject(selection);
             }
         }
+
+        private Shape GetShape(int visioId)
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            Page? activePage = null;
+            try
+            {
+                activePage = this.visioApplication.ActivePage;
+                var shape = activePage.Shapes.ItemFromID[visioId];
+                return shape;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(activePage);
+            }
+        }
     }
 }
