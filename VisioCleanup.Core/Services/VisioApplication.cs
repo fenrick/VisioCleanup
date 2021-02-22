@@ -13,15 +13,19 @@ namespace VisioCleanup.Core.Services
     using System.Runtime.InteropServices;
 
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Microsoft.Office.Interop.Visio;
 
     using VisioCleanup.Core.Contracts;
+    using VisioCleanup.Core.Models.Config;
 
     using Marshal = VisioCleanup.Core.Marshal;
 
     /// <inheritdoc />
     public class VisioApplication : IVisioApplication
     {
+        private readonly AppConfig appConfig;
+
         private readonly ILogger<VisioApplication> logger;
 
         private Application? visioApplication;
@@ -30,9 +34,10 @@ namespace VisioCleanup.Core.Services
         /// Initialises a new instance of the <see cref="VisioApplication"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
-        public VisioApplication(ILogger<VisioApplication> logger)
+        public VisioApplication(ILogger<VisioApplication> logger, IOptions<AppConfig> options)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <inheritdoc />
