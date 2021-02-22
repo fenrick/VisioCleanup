@@ -18,6 +18,13 @@
             Handle creation and management of visio.
             </summary>
         </member>
+        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.CalculateCorners(System.Int32)">
+            <summary>
+                Calculate the corners of a shape.
+            </summary>
+            <param name="visioId">Shape ID for the shape.</param>
+            <returns>Corners of a shape.</returns>
+        </member>
         <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.Close">
             <summary>
                 Close visio session and shutdown.
@@ -30,6 +37,13 @@
             <param name="headerHeight">Header size.</param>
             <param name="sidePanelWidth">Side panel size.</param>
             <returns>Corners size.</returns>
+        </member>
+        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.GetShapeText(System.Int32)">
+            <summary>
+                Obtains the current shape text for a shape.
+            </summary>
+            <param name="visioId">shape id.</param>
+            <returns>shape text.</returns>
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.Open">
             <summary>
@@ -213,6 +227,12 @@
                 Gets or sets the shape type.
             </summary>
         </member>
+        <member name="M:VisioCleanup.Core.Models.DiagramShape.AddChildShape(VisioCleanup.Core.Models.DiagramShape)">
+            <summary>
+                Add child shape to parent.
+            </summary>
+            <param name="childShape">New child shape of this shape.</param>
+        </member>
         <member name="T:VisioCleanup.Core.Models.ShapeType">
             <summary>
                 Type of diagram shape.
@@ -264,6 +284,10 @@
             <param name="logger">Logging instance.</param>
             <param name="options">Application configuration.</param>
         </member>
+        <member name="M:VisioCleanup.Core.Services.VisioApplication.CalculateCorners(System.Int32)">
+            <inheritdoc />
+            <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
+        </member>
         <member name="M:VisioCleanup.Core.Services.VisioApplication.Close">
             <inheritdoc />
         </member>
@@ -271,6 +295,10 @@
             <inheritdoc />
             <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
             <exception cref="T:System.NullReferenceException">page sheet is <see langword="null" />.</exception>
+        </member>
+        <member name="M:VisioCleanup.Core.Services.VisioApplication.GetShapeText(System.Int32)">
+            <inheritdoc />
+            <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         </member>
         <member name="M:VisioCleanup.Core.Services.VisioApplication.Open">
             <inheritdoc />
