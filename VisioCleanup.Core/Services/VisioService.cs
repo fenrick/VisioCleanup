@@ -8,6 +8,7 @@
 namespace VisioCleanup.Core.Services
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
@@ -69,13 +70,7 @@ namespace VisioCleanup.Core.Services
                             this.logger.LogDebug("Adding children to parent.");
                             foreach (var visioId in selection)
                             {
-                                DiagramShape childShape = new(visioId)
-                                                              {
-                                                                  ShapeText = this.visioApplication.GetShapeText(visioId),
-                                                                  Corners = this.visioApplication.CalculateCorners(visioId),
-                                                                  ShapeType = ShapeType.Existing,
-                                                              };
-                                parentShape.AddChildShape(childShape);
+                                this.ProcessChildren(parentShape, visioId);
                             }
                         }
                         finally
@@ -83,6 +78,28 @@ namespace VisioCleanup.Core.Services
                             this.visioApplication.Close();
                         }
                     });
+        }
+
+        private void ProcessChildren(DiagramShape parentShape, int visioId)
+        {
+            // process shape
+            DiagramShape childShape = new(visioId)
+                                          {
+                                              ShapeText = this.visioApplication.GetShapeText(visioId),
+                                              Corners = this.visioApplication.CalculateCorners(visioId),
+                                              ShapeType = ShapeType.Existing,
+                                          };
+            parentShape.AddChildShape(childShape);
+
+            // find children
+            var childrenIds = this.visioApplication.GetChildren(visioId).ToList();
+            foreach (var childId in childrenIds)
+            {
+                this.ProcessChildren(childShape, childId);
+            }
+
+            // find neighbours
+            parentShape.FindNeighbours();
         }
     }
 }
