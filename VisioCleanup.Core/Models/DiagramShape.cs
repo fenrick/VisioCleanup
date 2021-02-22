@@ -41,6 +41,8 @@ namespace VisioCleanup.Core.Models
         /// </summary>
         public Corners Corners { get; set; }
 
+        public DiagramShape ParentShape { get; set; }
+
         /// <summary>
         ///     Gets the shape text.
         /// </summary>
