@@ -17,5 +17,15 @@ namespace VisioCleanup.Core.Models
         ///     Gets or sets the corner structure.
         /// </summary>
         public Corners Corners { get; set; }
+
+        /// <summary>
+        ///     Gets the shape text.
+        /// </summary>
+        public string? ShapeText { get; init; }
+
+        /// <summary>
+        ///     Gets or sets the shape type.
+        /// </summary>
+        public ShapeType ShapeType { get; set; }
     }
 }
