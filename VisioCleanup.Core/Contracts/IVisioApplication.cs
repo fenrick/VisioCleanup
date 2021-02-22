@@ -7,6 +7,8 @@
 
 namespace VisioCleanup.Core.Contracts
 {
+    using System.Collections.Generic;
+
     using VisioCleanup.Core.Models;
 
     /// <summary>
@@ -25,6 +27,13 @@ namespace VisioCleanup.Core.Contracts
         ///     Close visio session and shutdown.
         /// </summary>
         void Close();
+
+        /// <summary>
+        ///     Return an array of shapeIDs for children of the supplied shape id.
+        /// </summary>
+        /// <param name="visioId">Shape ID of the parent shape.</param>
+        /// <returns>array of shape ids for children.</returns>
+        IEnumerable<int> GetChildren(int visioId);
 
         /// <summary>
         ///     Get size of the page.
