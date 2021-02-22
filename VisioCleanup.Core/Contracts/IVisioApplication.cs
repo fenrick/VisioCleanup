@@ -7,6 +7,8 @@
 
 namespace VisioCleanup.Core.Contracts
 {
+    using VisioCleanup.Core.Models;
+
     /// <summary>
     /// Handle creation and management of visio.
     /// </summary>
@@ -16,6 +18,14 @@ namespace VisioCleanup.Core.Contracts
         ///     Close visio session and shutdown.
         /// </summary>
         void Close();
+
+        /// <summary>
+        ///     Get size of the page.
+        /// </summary>
+        /// <param name="headerHeight">Header size.</param>
+        /// <param name="sidePanelWidth">Side panel size.</param>
+        /// <returns>Corners size.</returns>
+        Corners GetPageSize(int headerHeight, int sidePanelWidth);
 
         /// <summary>
         ///     Open visio session.

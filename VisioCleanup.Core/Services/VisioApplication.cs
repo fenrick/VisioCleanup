@@ -17,6 +17,7 @@ namespace VisioCleanup.Core.Services
     using Microsoft.Office.Interop.Visio;
 
     using VisioCleanup.Core.Contracts;
+    using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
 
     using Marshal = VisioCleanup.Core.Marshal;
@@ -47,6 +48,47 @@ namespace VisioCleanup.Core.Services
             this.logger.LogDebug("Releasing visio application.");
             Marshal.ReleaseObject(this.visioApplication);
             this.visioApplication = null;
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
+        /// <exception cref="T:System.NullReferenceException">page sheet is <see langword="null" />.</exception>
+        public Corners GetPageSize(int headerHeight, int sidePanelWidth)
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            Shape? pageSheet = null;
+            try
+            {
+                var corners = default(Corners);
+
+                pageSheet = this.visioApplication.ActivePage.PageSheet;
+
+                var pageWidth = pageSheet.Cells["PageWidth"].Result[this.appConfig.Units];
+                var pageHeight = pageSheet.Cells["PageHeight"].Result[this.appConfig.Units];
+                var pageLeftMargin = pageSheet.Cells["PageLeftMargin"].Result[this.appConfig.Units];
+                var pageTopMargin = pageSheet.Cells["PageTopMargin"].Result[this.appConfig.Units];
+                var pageRightMargin = pageSheet.Cells["PageRightMargin"].Result[this.appConfig.Units];
+                var pageBottomMargin = pageSheet.Cells["PageBottomMargin"].Result[this.appConfig.Units];
+
+                corners.Left = Corners.ConvertMeasurement(pageLeftMargin);
+                corners.Base = Corners.ConvertMeasurement(pageBottomMargin);
+
+                var horizontalMargins = pageLeftMargin + pageRightMargin;
+                corners.Right = Corners.ConvertMeasurement(pageWidth - horizontalMargins) - sidePanelWidth;
+
+                var verticalMargins = pageTopMargin + pageBottomMargin;
+                corners.Top = Corners.ConvertMeasurement(pageHeight - verticalMargins) - headerHeight;
+
+                return corners;
+            }
+            finally
+            {
+                Marshal.ReleaseObject(pageSheet);
+            }
         }
 
         /// <inheritdoc />

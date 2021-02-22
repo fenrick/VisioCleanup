@@ -60,6 +60,8 @@ namespace VisioCleanup.Core.Services
                                 this.logger.LogDebug("No items selected, all loaded!");
                                 return;
                             }
+
+                            var page = this.visioApplication.GetPageSize(this.appConfig.HeaderHeight, this.appConfig.SidePanelWidth);
                         }
                         finally
                         {
