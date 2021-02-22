@@ -9,16 +9,21 @@ namespace VisioCleanup.Core.Models
 {
     using System.Collections.ObjectModel;
 
+    using Serilog;
+
     using VisioCleanup.Core.Models.Config;
 
     internal class DiagramShape
     {
+        private readonly ILogger logger;
+
         /// <summary>
         ///     Initialises a new instance of the <see cref="DiagramShape" /> class.
         /// </summary>
         /// <param name="visioId">Visio shape ID.</param>
         public DiagramShape(int visioId)
         {
+            this.logger = Log.ForContext<DiagramShape>();
             this.VisioId = visioId;
             this.Children = new Collection<DiagramShape>();
             this.Corners = new Corners
