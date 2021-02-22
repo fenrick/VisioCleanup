@@ -27,7 +27,8 @@ namespace VisioCleanup.Core.Services
         public async Task LayoutDiagram()
         {
             this.logger.LogError("Not implemented yet.");
-            throw new NotImplementedException();
+            await Task.Delay(5000);
+            this.logger.LogError("Still not implemented yet.");
         }
     }
 }
