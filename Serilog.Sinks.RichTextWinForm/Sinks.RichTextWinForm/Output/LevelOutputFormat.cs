@@ -50,35 +50,38 @@ namespace Serilog.Sinks.RichTextWinForm.Output
                 width += format[2] - '0';
             }
 
-            if (width is < 1)
+            switch (width)
             {
-                return string.Empty;
+                case < 1:
+                    return string.Empty;
+                case > 4:
+                    {
+                        var stringValue = value.ToString();
+                        if (stringValue.Length > width)
+                        {
+                            stringValue = stringValue.Substring(0, width);
+                        }
+
+                        return Casing.Format(stringValue);
+                    }
+
+                default:
+                    {
+                        var index = (int)value;
+                        if ((index < 0) || (index > (int)LogEventLevel.Fatal))
+                        {
+                            return Casing.Format(value.ToString(), format);
+                        }
+
+                        return format[0] switch
+                            {
+                                'w' => LowercaseLevelMap[index][width - 1],
+                                'u' => UppercaseLevelMap[index][width - 1],
+                                't' => TitleCaseLevelMap[index][width - 1],
+                                _ => Casing.Format(value.ToString(), format),
+                            };
+                    }
             }
-
-            if (width is > 4)
-            {
-                var stringValue = value.ToString();
-                if (stringValue.Length > width)
-                {
-                    stringValue = stringValue.Substring(0, width);
-                }
-
-                return Casing.Format(stringValue);
-            }
-
-            var index = (int)value;
-            if ((index < 0) || (index > (int)LogEventLevel.Fatal))
-            {
-                return Casing.Format(value.ToString(), format);
-            }
-
-            return format[0] switch
-                {
-                    'w' => LowercaseLevelMap[index][width - 1],
-                    'u' => UppercaseLevelMap[index][width - 1],
-                    't' => TitleCaseLevelMap[index][width - 1],
-                    _ => Casing.Format(value.ToString(), format),
-                };
         }
     }
 }

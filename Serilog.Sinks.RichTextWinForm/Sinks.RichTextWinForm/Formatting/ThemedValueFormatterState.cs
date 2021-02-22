@@ -17,6 +17,9 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
         public bool IsTopLevel;
 
-        public ThemedValueFormatterState Nest() => new() { Output = this.Output };
+        public ThemedValueFormatterState Nest()
+        {
+            return new() { Output = this.Output };
+        }
     }
 }

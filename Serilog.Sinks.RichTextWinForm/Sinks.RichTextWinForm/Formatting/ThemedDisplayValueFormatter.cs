@@ -25,10 +25,9 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             this.formatProvider = formatProvider;
         }
 
-        public int FormatLiteralValue(ScalarValue scalar, RichTextBox output, string format)
+        public void FormatLiteralValue(ScalarValue scalar, RichTextBox output, string format)
         {
             var value = scalar.Value;
-            var count = 0;
 
             switch (value)
             {
@@ -39,7 +38,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText("null");
                         }
 
-                        return count;
+                        break;
                     }
 
                 case string str:
@@ -52,12 +51,12 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                                 JsonValueFormatter.WriteQuotedJsonString(str, buffer);
                                 output.AppendText(buffer.ToString());
 
-                                return count;
+                                break;
                             }
 
                             output.AppendText(str);
 
-                            return count;
+                            break;
                         }
                     }
 
@@ -71,7 +70,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText(buffer.ToString());
                         }
 
-                        return count;
+                        break;
                     }
 
                 case bool b:
@@ -81,7 +80,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText(b.ToString());
                         }
 
-                        return count;
+                        break;
                     }
 
                 case char ch:
@@ -93,7 +92,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText("\'");
                         }
 
-                        return count;
+                        break;
                     }
 
                 default:
@@ -105,7 +104,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             output.AppendText(buffer.ToString());
                         }
 
-                        return count;
+                        break;
                     }
             }
         }
@@ -120,7 +119,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             }
 
             var delim = string.Empty;
-            foreach (var element in dictionary.Elements)
+            foreach (var (scalarValue, logEventPropertyValue) in dictionary.Elements)
             {
                 if (delim.Length != 0)
                 {
@@ -139,7 +138,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.String))
                 {
-                    count += this.Visit(state.Nest(), element.Key);
+                    count += this.Visit(state.Nest(), scalarValue);
                 }
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
@@ -147,7 +146,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     state.Output.AppendText("]=");
                 }
 
-                count += this.Visit(state.Nest(), element.Value);
+                count += this.Visit(state.Nest(), logEventPropertyValue);
             }
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
@@ -165,7 +164,8 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                 throw new ArgumentNullException(nameof(scalar));
             }
 
-            return this.FormatLiteralValue(scalar, state.Output, state.Format);
+            this.FormatLiteralValue(scalar, state.Output, state.Format);
+            return 0;
         }
 
         protected override int VisitSequenceValue(ThemedValueFormatterState state, SequenceValue sequence)
@@ -174,8 +174,6 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             {
                 throw new ArgumentNullException(nameof(sequence));
             }
-
-            var count = 0;
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
@@ -202,7 +200,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                 state.Output.AppendText("]");
             }
 
-            return count;
+            return 0;
         }
 
         protected override int VisitStructureValue(ThemedValueFormatterState state, StructureValue structure)
