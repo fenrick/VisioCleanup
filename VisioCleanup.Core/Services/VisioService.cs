@@ -46,6 +46,8 @@ namespace VisioCleanup.Core.Services
                         try
                         {
                             this.visioApplication.Open();
+
+                            var selection = this.visioApplication.Selection();
                         }
                         finally
                         {
