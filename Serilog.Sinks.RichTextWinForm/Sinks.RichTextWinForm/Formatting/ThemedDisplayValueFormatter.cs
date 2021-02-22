@@ -17,9 +17,9 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
     internal class ThemedDisplayValueFormatter : ThemedValueFormatter
     {
-        private readonly IFormatProvider formatProvider;
+        private readonly IFormatProvider? formatProvider;
 
-        public ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider formatProvider)
+        public ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
             : base(theme)
         {
             this.formatProvider = formatProvider;

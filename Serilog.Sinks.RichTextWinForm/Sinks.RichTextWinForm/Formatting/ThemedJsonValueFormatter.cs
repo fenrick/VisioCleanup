@@ -20,7 +20,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
     {
         private readonly ThemedDisplayValueFormatter displayFormatter;
 
-        public ThemedJsonValueFormatter(RichTextTheme theme, IFormatProvider formatProvider)
+        public ThemedJsonValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
             : base(theme)
         {
             this.displayFormatter = new ThemedDisplayValueFormatter(theme, formatProvider);
