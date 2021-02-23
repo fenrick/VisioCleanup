@@ -12,7 +12,7 @@ namespace VisioCleanup.Core.Models.Config
     {
         /// <summary>Gets or sets the bottom.</summary>
         /// <value>The bottom.</value>
-        public int Bottom { get; set; }
+        public int Base { get; set; }
 
         /// <summary>Gets or sets the field label format.</summary>
         /// <value>The field label format.</value>
