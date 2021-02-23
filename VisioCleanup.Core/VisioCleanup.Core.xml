@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <doc>
     <assembly>
         <name>VisioCleanup.Core</name>
@@ -84,7 +84,7 @@
             <param name="progId">String program identifier.</param>
             <returns>Object.</returns>
         </member>
-        <member name="M:VisioCleanup.Core.Marshal.ReleaseObject(System.Object)">
+        <member name="M:VisioCleanup.Core.Marshal.CLSIDFromProgID(System.String,System.Guid@)">
             <summary>
                 Release com object properly.
             </summary>
@@ -94,7 +94,7 @@
         <member name="T:VisioCleanup.Core.Models.Config.AppConfig">
             <summary>The app config.</summary>
         </member>
-        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Bottom">
+        <member name="P:VisioCleanup.Core.Models.Config.AppConfig.Base">
             <summary>Gets or sets the bottom.</summary>
             <value>The bottom.</value>
         </member>
