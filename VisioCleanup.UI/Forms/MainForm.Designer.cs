@@ -196,6 +196,7 @@ namespace VisioCleanup.UI.Forms
             this.logTextBox.BackColor = System.Drawing.SystemColors.Desktop;
             this.logTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.logTextBox.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.logTextBox.HideSelection = false;
             this.logTextBox.Location = new System.Drawing.Point(12, 12);
             this.logTextBox.Margin = new System.Windows.Forms.Padding(0);
             this.logTextBox.Name = "logTextBox";
