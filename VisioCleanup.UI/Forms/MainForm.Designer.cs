@@ -41,7 +41,7 @@ namespace VisioCleanup.UI.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Button processExcelDataSet;
-            System.Windows.Forms.Button layoutVisioDiagram;
+            System.Windows.Forms.Button loadVisioObjects;
             System.Windows.Forms.SplitContainer logSplitContainer;
             System.Windows.Forms.SplitContainer controlSplitContainer;
             this.controlsFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -52,7 +52,7 @@ namespace VisioCleanup.UI.Forms
             this.logTextBox = new System.Windows.Forms.RichTextBox();
             this.parametersBindingSource = new System.Windows.Forms.BindingSource(this.components);
             processExcelDataSet = new System.Windows.Forms.Button();
-            layoutVisioDiagram = new System.Windows.Forms.Button();
+            loadVisioObjects = new System.Windows.Forms.Button();
             logSplitContainer = new System.Windows.Forms.SplitContainer();
             controlSplitContainer = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(logSplitContainer)).BeginInit();
@@ -81,16 +81,16 @@ namespace VisioCleanup.UI.Forms
             processExcelDataSet.UseVisualStyleBackColor = true;
             processExcelDataSet.Click += new System.EventHandler(this.ProcessExcelDataSet_Click);
             // 
-            // layoutVisioDiagram
+            // loadVisioObjects
             // 
-            layoutVisioDiagram.Location = new System.Drawing.Point(12, 47);
-            layoutVisioDiagram.Margin = new System.Windows.Forms.Padding(0, 0, 0, 12);
-            layoutVisioDiagram.Name = "layoutVisioDiagram";
-            layoutVisioDiagram.Size = new System.Drawing.Size(145, 23);
-            layoutVisioDiagram.TabIndex = 2;
-            layoutVisioDiagram.Text = "Layout Visio Diagram";
-            layoutVisioDiagram.UseVisualStyleBackColor = true;
-            layoutVisioDiagram.Click += new System.EventHandler(this.LayoutVisioDiagram_Click);
+            loadVisioObjects.Location = new System.Drawing.Point(12, 47);
+            loadVisioObjects.Margin = new System.Windows.Forms.Padding(0, 0, 0, 12);
+            loadVisioObjects.Name = "loadVisioObjects";
+            loadVisioObjects.Size = new System.Drawing.Size(145, 23);
+            loadVisioObjects.TabIndex = 2;
+            loadVisioObjects.Text = "Load Visio Objects";
+            loadVisioObjects.UseVisualStyleBackColor = true;
+            loadVisioObjects.Click += new System.EventHandler(this.LoadVisioObjects_Click);
             // 
             // logSplitContainer
             // 
@@ -135,7 +135,7 @@ namespace VisioCleanup.UI.Forms
             // controlsFlowPanel
             // 
             this.controlsFlowPanel.Controls.Add(processExcelDataSet);
-            this.controlsFlowPanel.Controls.Add(layoutVisioDiagram);
+            this.controlsFlowPanel.Controls.Add(loadVisioObjects);
             this.controlsFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.controlsFlowPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsFlowPanel.Margin = new System.Windows.Forms.Padding(0);

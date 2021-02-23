@@ -55,12 +55,12 @@ namespace VisioCleanup.UI.Forms
             this.parametersDataGridView.DataSource = this.parametersBindingSource;
         }
 
-        /// <summary>Layout the visio diagram.</summary>
+        /// <summary>Load Visio Object Model.</summary>
         /// <param name="sender">The <paramref name="sender"/>.</param>
         /// <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
-        private async void LayoutVisioDiagram_Click(object sender, EventArgs eventArgs)
+        private async void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
         {
-            await this.visioService.LayoutDiagram();
+            await this.visioService.LoadVisioObjectModel();
         }
 
         /// <summary>Activate the processing of Excel data set.</summary>

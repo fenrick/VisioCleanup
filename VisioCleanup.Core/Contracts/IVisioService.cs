@@ -13,9 +13,9 @@ namespace VisioCleanup.Core.Contracts
     public interface IVisioService
     {
         /// <summary>
-        /// Layout currently selected diagram.
+        /// Load the visio object model.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-        Task LayoutDiagram();
+        Task LoadVisioObjectModel();
     }
 }
