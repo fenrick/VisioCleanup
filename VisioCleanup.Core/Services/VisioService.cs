@@ -41,7 +41,7 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task LayoutDiagram()
+        public async Task LoadVisioObjectModel()
         {
             await Task.Run(
                 () =>
