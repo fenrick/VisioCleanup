@@ -65,12 +65,12 @@ namespace VisioCleanup.Core.Services
                             var page = this.visioApplication.GetPageSize(this.appConfig.HeaderHeight, this.appConfig.SidePanelWidth);
 
                             this.logger.LogDebug("Create a fake parent shape.");
-                            DiagramShape parentShape = new(0) { ShapeText = "FAKE PARENT", Corners = default, ShapeType = ShapeType.FakeShape };
+                            DiagramShape fakeParentShape = new(0) { ShapeText = "FAKE PARENT", Corners = default, ShapeType = ShapeType.FakeShape };
 
                             this.logger.LogDebug("Adding children to parent.");
                             foreach (var visioId in selection)
                             {
-                                this.ProcessChildren(parentShape, visioId);
+                                this.ProcessChildren(fakeParentShape, visioId);
                             }
                         }
                         finally
