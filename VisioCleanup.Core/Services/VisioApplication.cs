@@ -29,6 +29,8 @@ namespace VisioCleanup.Core.Services
 
         private readonly ILogger<VisioApplication> logger;
 
+        private Page? activePage;
+
         private Application? visioApplication;
 
         /// <summary>
@@ -46,39 +48,38 @@ namespace VisioCleanup.Core.Services
         /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public Corners CalculateCorners(int visioId)
         {
-            Shape? shape = null;
-            try
-            {
-                var corners = default(Corners);
+            var shape = this.GetShape(visioId);
+            var corners = default(Corners);
 
-                shape = this.GetShape(visioId);
+            var pinX = shape.Cells[this.appConfig.PinXField].Result[this.appConfig.Units];
+            var locPinX = shape.Cells[this.appConfig.LocPinXField].Result[this.appConfig.Units];
+            var pinY = shape.Cells[this.appConfig.PinYField].Result[this.appConfig.Units];
+            var locPinY = shape.Cells[this.appConfig.LocPinYField].Result[this.appConfig.Units];
+            var width = shape.Cells[this.appConfig.WidthField].Result[this.appConfig.Units];
+            var height = shape.Cells[this.appConfig.HeightField].Result[this.appConfig.Units];
 
-                var pinX = shape.Cells[this.appConfig.PinXField].Result[this.appConfig.Units];
-                var locPinX = shape.Cells[this.appConfig.LocPinXField].Result[this.appConfig.Units];
-                var pinY = shape.Cells[this.appConfig.PinYField].Result[this.appConfig.Units];
-                var locPinY = shape.Cells[this.appConfig.LocPinYField].Result[this.appConfig.Units];
-                var width = shape.Cells[this.appConfig.WidthField].Result[this.appConfig.Units];
-                var height = shape.Cells[this.appConfig.HeightField].Result[this.appConfig.Units];
+            corners.Left = Corners.ConvertMeasurement(pinX - locPinX);
+            corners.Base = Corners.ConvertMeasurement(pinY - locPinY);
+            corners.Right = corners.Left + Corners.ConvertMeasurement(width);
+            corners.Top = corners.Base + Corners.ConvertMeasurement(height);
 
-                corners.Left = Corners.ConvertMeasurement(pinX - locPinX);
-                corners.Base = Corners.ConvertMeasurement(pinY - locPinY);
-                corners.Right = corners.Left + Corners.ConvertMeasurement(width);
-                corners.Top = corners.Base + Corners.ConvertMeasurement(height);
-
-                return corners;
-            }
-            finally
-            {
-                Marshal.ReleaseObject(shape);
-            }
+            return corners;
         }
 
         /// <inheritdoc />
         public void Close()
         {
+            this.logger.LogDebug("Releasing active page.");
+            this.activePage = null;
+
             this.logger.LogDebug("Releasing visio application.");
-            Marshal.ReleaseObject(this.visioApplication);
             this.visioApplication = null;
+
+            this.logger.LogDebug("Cleaning up.");
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
         /// <inheritdoc />
@@ -89,55 +90,45 @@ namespace VisioCleanup.Core.Services
         /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public IEnumerable<int> GetChildren(int visioId)
         {
-            Shape? parentShape = null;
-            Selection? selection = null;
             var childrenIds = new List<int>();
-            try
+            var parentShape = this.GetShape(visioId);
+
+            var relation = (short)VisSpatialRelationCodes.visSpatialContain;
+            var flags = (short)VisSpatialRelationFlags.visSpatialBackToFront;
+            parentShape.SpatialNeighbors[relation, 0, flags].GetIDs(out var ids);
+
+            this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", ids.Length);
+
+            // selection.GetIDs(out var selectionIDs);
+            if (ids.Length == 0)
             {
-                parentShape = this.GetShape(visioId);
+                return childrenIds;
+            }
 
-                var relation = (short)VisSpatialRelationCodes.visSpatialContain;
-                var flags = (short)VisSpatialRelationFlags.visSpatialBackToFront;
-                selection = parentShape.SpatialNeighbors[relation, 0, flags];
+            foreach (var potentialChildId in ids)
+            {
+                // check that immediate parent is the supplied shape.
+                relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
+                flags = (short)VisSpatialRelationFlags.visSpatialFrontToBack;
 
-                this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", selection.Count);
+                var potentialChildShape = this.GetShape((int)potentialChildId);
 
-                // selection.GetIDs(out var selectionIDs);
-                if (selection.Count == 0)
+                potentialChildShape.SpatialNeighbors[relation, 0, flags].GetIDs(out var parentIDs);
+
+                if (parentIDs.Length <= 0)
                 {
-                    return childrenIds;
+                    continue;
                 }
 
-                foreach (Shape shape in selection)
+                var primaryItemVisioId = parentIDs.GetValue(0);
+
+                if (visioId.Equals(primaryItemVisioId))
                 {
-                    // check that immediate parent is the supplied shape.
-                    relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
-                    flags = (short)VisSpatialRelationFlags.visSpatialFrontToBack;
-                    Selection parentSelection = shape.SpatialNeighbors[relation, 0, flags];
-                    if (parentSelection.Count <= 0)
-                    {
-                        continue;
-                    }
-
-                    var primaryItemVisioId = parentSelection.PrimaryItem.ID;
-
-                    if (visioId.Equals(primaryItemVisioId))
-                    {
-                        childrenIds.Add(shape.ID);
-                    }
+                    childrenIds.Add((int)potentialChildId);
                 }
+            }
 
-                this.logger.LogDebug("Final child shapes found: {CountOfVisioIDs}", childrenIds.Count);
-            }
-            catch (COMException e)
-            {
-                this.logger.LogError("COM Exception: {Exception}", e);
-            }
-            finally
-            {
-                Marshal.ReleaseObject(parentShape);
-                Marshal.ReleaseObject(selection);
-            }
+            this.logger.LogDebug("Final child shapes found: {CountOfVisioIDs}", childrenIds.Count);
 
             return childrenIds;
         }
@@ -152,51 +143,35 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            Shape? pageSheet = null;
-            try
-            {
-                var corners = default(Corners);
+            var corners = default(Corners);
 
-                pageSheet = this.visioApplication.ActivePage.PageSheet;
+            var pageSheet = this.visioApplication.ActivePage.PageSheet;
 
-                var pageWidth = pageSheet.Cells["PageWidth"].Result[this.appConfig.Units];
-                var pageHeight = pageSheet.Cells["PageHeight"].Result[this.appConfig.Units];
-                var pageLeftMargin = pageSheet.Cells["PageLeftMargin"].Result[this.appConfig.Units];
-                var pageTopMargin = pageSheet.Cells["PageTopMargin"].Result[this.appConfig.Units];
-                var pageRightMargin = pageSheet.Cells["PageRightMargin"].Result[this.appConfig.Units];
-                var pageBottomMargin = pageSheet.Cells["PageBottomMargin"].Result[this.appConfig.Units];
+            var pageWidth = pageSheet.Cells["PageWidth"].Result[this.appConfig.Units];
+            var pageHeight = pageSheet.Cells["PageHeight"].Result[this.appConfig.Units];
+            var pageLeftMargin = pageSheet.Cells["PageLeftMargin"].Result[this.appConfig.Units];
+            var pageTopMargin = pageSheet.Cells["PageTopMargin"].Result[this.appConfig.Units];
+            var pageRightMargin = pageSheet.Cells["PageRightMargin"].Result[this.appConfig.Units];
+            var pageBottomMargin = pageSheet.Cells["PageBottomMargin"].Result[this.appConfig.Units];
 
-                corners.Left = Corners.ConvertMeasurement(pageLeftMargin);
-                corners.Base = Corners.ConvertMeasurement(pageBottomMargin);
+            corners.Left = Corners.ConvertMeasurement(pageLeftMargin);
+            corners.Base = Corners.ConvertMeasurement(pageBottomMargin);
 
-                var horizontalMargins = pageLeftMargin + pageRightMargin;
-                corners.Right = Corners.ConvertMeasurement(pageWidth - horizontalMargins) - sidePanelWidth;
+            var horizontalMargins = pageLeftMargin + pageRightMargin;
+            corners.Right = Corners.ConvertMeasurement(pageWidth - horizontalMargins) - sidePanelWidth;
 
-                var verticalMargins = pageTopMargin + pageBottomMargin;
-                corners.Top = Corners.ConvertMeasurement(pageHeight - verticalMargins) - headerHeight;
+            var verticalMargins = pageTopMargin + pageBottomMargin;
+            corners.Top = Corners.ConvertMeasurement(pageHeight - verticalMargins) - headerHeight;
 
-                return corners;
-            }
-            finally
-            {
-                Marshal.ReleaseObject(pageSheet);
-            }
+            return corners;
         }
 
         /// <inheritdoc />
         /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public string GetShapeText(int visioId)
         {
-            Shape? shape = null;
-            try
-            {
-                shape = this.GetShape(visioId);
-                return shape.Text;
-            }
-            finally
-            {
-                Marshal.ReleaseObject(shape);
-            }
+            var shape = this.GetShape(visioId);
+            return shape.Text;
         }
 
         /// <inheritdoc />
@@ -206,6 +181,7 @@ namespace VisioCleanup.Core.Services
             {
                 this.logger.LogDebug("Opening connection to visio.");
                 this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application ?? throw new InvalidOperationException();
+                this.activePage = this.visioApplication.ActivePage;
             }
             catch (COMException)
             {
@@ -224,55 +200,35 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            Window? activeWindow = null;
-            Selection? selection = null;
-            try
+            var listVisioIds = new List<int>();
+            var activeWindow = this.visioApplication.ActiveWindow;
+            if (activeWindow is null)
             {
-                var listVisioIds = new List<int>();
-                activeWindow = this.visioApplication.ActiveWindow;
-                if (activeWindow is null)
-                {
-                    return listVisioIds.ToArray();
-                }
-
-                selection = activeWindow.Selection;
-
-                selection.GetIDs(out var ids);
-
-                if (ids is null)
-                {
-                    return listVisioIds.ToArray();
-                }
-
-                listVisioIds.AddRange(ids.Cast<int>());
-
                 return listVisioIds.ToArray();
             }
-            finally
+
+            var selection = activeWindow.Selection;
+
+            selection.GetIDs(out var ids);
+
+            if (ids is null)
             {
-                Marshal.ReleaseObject(activeWindow);
-                Marshal.ReleaseObject(selection);
+                return listVisioIds.ToArray();
             }
+
+            listVisioIds.AddRange(ids.Cast<int>());
+
+            return listVisioIds.ToArray();
         }
 
         private Shape GetShape(int visioId)
         {
-            if (this.visioApplication is null)
+            if (this.visioApplication is null || this.activePage is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            Page? activePage = null;
-            try
-            {
-                activePage = this.visioApplication.ActivePage;
-                var shape = activePage.Shapes.ItemFromID[visioId];
-                return shape;
-            }
-            finally
-            {
-                Marshal.ReleaseObject(activePage);
-            }
+            return this.activePage.Shapes.ItemFromID[visioId];
         }
     }
 }
