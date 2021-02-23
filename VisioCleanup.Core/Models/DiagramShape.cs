@@ -201,7 +201,7 @@ namespace VisioCleanup.Core.Models
             var children = this.Children;
             this.ClearNeighbours();
 
-            const double Tolerance = 5;
+            const double Tolerance = 5000;
 
             var lines = children.OrderBy(shape => shape.Corners.Left).Select(shape => shape.Corners.Left);
             foreach (var line in lines.Distinct())
