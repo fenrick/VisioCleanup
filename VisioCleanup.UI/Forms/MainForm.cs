@@ -28,6 +28,8 @@ namespace VisioCleanup.UI.Forms
 
         private readonly IVisioService visioService;
 
+        private IProcessingService? processingService;
+
         /// <summary>Initialises a new instance of the <see cref="MainForm" /> class.</summary>
         /// <param name="logger">The <paramref name="logger"/>.</param>
         /// <param name="options">The app config.</param>
@@ -50,6 +52,30 @@ namespace VisioCleanup.UI.Forms
             this.parametersBindingSource.Add(appConfig);
             this.parametersDataGridView.AutoGenerateColumns = true;
             this.parametersDataGridView.DataSource = this.parametersBindingSource;
+
+            this.logger.LogDebug("Preparing data set to data grid binding.");
+            this.dataGridView1.DataSource = this.dataSetBindingSource;
+            this.dataGridView1.AutoGenerateColumns = true;
+        }
+
+        private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
+        {
+            if (this.processingService is null)
+            {
+                this.logger.LogDebug("Processing Service is not defined.");
+                MessageBox.Show(
+                    "Unable to layout dataset, none is loaded.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error,
+                    MessageBoxDefaultButton.Button1,
+                    MessageBoxOptions.ServiceNotification,
+                    false);
+                return;
+            }
+
+            this.logger.LogDebug("Laying out data set.");
+            await this.processingService.LayoutDataSet();
         }
 
         /// <summary>Load Visio Object Model.</summary>
@@ -57,7 +83,12 @@ namespace VisioCleanup.UI.Forms
         /// <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
         private async void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
         {
+            this.logger.LogDebug("Loading objects from visio.");
             await this.visioService.LoadVisioObjectModel();
+
+            this.logger.LogDebug("Updating data set.");
+            this.dataSetBindingSource.DataSource = this.visioService.AllShapes;
+            this.processingService = this.visioService;
         }
 
         /// <summary>Activate the processing of Excel data set.</summary>
@@ -65,7 +96,12 @@ namespace VisioCleanup.UI.Forms
         /// <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
         private async void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
         {
+            this.logger.LogDebug("Loading objects from excel.");
             await this.excelService.ProcessDataSet();
+
+            this.logger.LogDebug("Updating dataset.");
+            this.dataSetBindingSource.DataSource = this.excelService.AllShapes;
+            this.processingService = this.excelService;
         }
     }
 }

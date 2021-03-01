@@ -8,7 +8,7 @@
 namespace VisioCleanup.Core.Services
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -20,7 +20,7 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models.Config;
 
     /// <summary>The visio service.</summary>
-    public class VisioService : IVisioService
+    public class VisioService : AbstractProcessingService, IVisioService
     {
         private readonly AppConfig appConfig;
 
@@ -55,6 +55,8 @@ namespace VisioCleanup.Core.Services
                             this.visioApplication.Open();
 
                             var selection = this.visioApplication.Selection();
+                            this.MasterShape = null;
+                            this.AllShapes = new Collection<DiagramShape>();
 
                             // confirm one or more items selected.
                             if (selection.Length == 0)
@@ -66,13 +68,16 @@ namespace VisioCleanup.Core.Services
                             var page = this.visioApplication.GetPageSize(this.appConfig.HeaderHeight, this.appConfig.SidePanelWidth);
 
                             this.logger.LogDebug("Create a fake parent shape.");
-                            DiagramShape fakeParentShape = new(0) { ShapeText = "FAKE PARENT", Corners = default, ShapeType = ShapeType.FakeShape };
+                            this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE PARENT", ShapeType = ShapeType.FakeShape };
+                            this.AllShapes.Add(this.MasterShape);
 
                             this.logger.LogDebug("Adding children to parent.");
                             foreach (var visioId in selection)
                             {
-                                this.ProcessChildren(fakeParentShape, visioId);
+                                this.ProcessChildren(this.MasterShape, visioId);
                             }
+
+                            this.MasterShape.ResizeShape();
                         }
                         finally
                         {
@@ -90,6 +95,7 @@ namespace VisioCleanup.Core.Services
                                               Corners = this.visioApplication.CalculateCorners(visioId),
                                               ShapeType = ShapeType.Existing,
                                           };
+            this.AllShapes.Add(childShape);
             parentShape.AddChildShape(childShape);
 
             // find children
