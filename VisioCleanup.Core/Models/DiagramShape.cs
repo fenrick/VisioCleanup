@@ -21,11 +21,15 @@ namespace VisioCleanup.Core.Models
 
         private DiagramShape? above;
 
+        private int baseSide;
+
         private DiagramShape? below;
 
         private DiagramShape? left;
 
         private DiagramShape? right;
+
+        private int topSide;
 
         /// <summary>
         ///     Initialises a new instance of the <see cref="DiagramShape" /> class.
@@ -72,7 +76,32 @@ namespace VisioCleanup.Core.Models
         /// <summary>
         ///     Gets or sets base of the shape.
         /// </summary>
-        public int BaseSide { get; set; }
+        public int BaseSide
+        {
+            get => this.baseSide;
+            set
+            {
+                if (this.baseSide == value)
+                {
+                    return;
+                }
+
+                // calculate movement
+                var movement = this.baseSide - value;
+
+                // check if surrounding shapes are "locked" or at Vertical Spacing
+                // if so move them before moving this.
+                if (this.Below != null)
+                {
+                    if (Math.Abs(this.Below.BaseSide - this.baseSide) == AppConfig!.VerticalSpacing)
+                    {
+                        this.Below.MoveVertical(movement);
+                    }
+                }
+
+                this.baseSide = value;
+            }
+        }
 
         public Collection<DiagramShape> Children { get; set; }
 
@@ -126,7 +155,32 @@ namespace VisioCleanup.Core.Models
         /// <summary>
         ///     Gets or sets top of the shape.
         /// </summary>
-        public int TopSide { get; set; }
+        public int TopSide
+        {
+            get => this.topSide;
+            set
+            {
+                if (this.topSide == value)
+                {
+                    return;
+                }
+
+                // calculate movement
+                var movement = this.topSide - value;
+
+                // check if surrounding shapes are "locked" or at Vertical Spacing
+                // if so move them before moving this.
+                if (this.Above != null)
+                {
+                    if (Math.Abs(this.Above.BaseSide - this.TopSide) == AppConfig!.VerticalSpacing)
+                    {
+                        this.Above.MoveVertical(movement);
+                    }
+                }
+
+                this.topSide = value;
+            }
+        }
 
         public int VisioId { get; set; }
 
@@ -215,6 +269,23 @@ namespace VisioCleanup.Core.Models
             childShape.ParentShape = this;
         }
 
+        public int Height()
+        {
+            return this.TopSide - this.BaseSide;
+        }
+
+        public void MoveHorizontal(int movement)
+        {
+            this.LeftSide = this.LeftSide + movement;
+            this.RightSide = this.RightSide + movement;
+        }
+
+        public void MoveVertical(int movement)
+        {
+            this.TopSide = this.TopSide + movement;
+            this.BaseSide = this.BaseSide + movement;
+        }
+
         public void ResizeShape()
         {
             int newLeftSide, newRightSide, newBaseSide, newTopSide;
@@ -250,7 +321,15 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <inheritdoc />
-        public override string ToString() => $"{this.VisioId}: {this.ShapeText}";
+        public override string ToString()
+        {
+            return $"{this.VisioId}: {this.ShapeText}";
+        }
+
+        public int Width()
+        {
+            return this.RightSide - this.LeftSide;
+        }
 
         /// <summary>
         ///     Map all neighbour shapes within tolerance of 10.
@@ -342,7 +421,10 @@ namespace VisioCleanup.Core.Models
         ///     Does this shape have children.
         /// </summary>
         /// <returns>true if at least one.</returns>
-        internal bool HasChildren() => this.Children.Count > 0;
+        internal bool HasChildren()
+        {
+            return this.Children.Count > 0;
+        }
 
         /// <summary>
         ///     Remove all records of shape neighbours.

@@ -106,6 +106,31 @@ namespace VisioCleanup.Core.Services
             GC.WaitForPendingFinalizers();
         }
 
+        public void CreateShape(DiagramShape diagramShape)
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
+            var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
+            var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
+            var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
+
+            var stencil = this.visioApplication.Documents["Basic.vss"];
+            var stencilName = "Ellipse";
+
+            // if (diagramShape.Stencil is not null)
+            // {
+            // stencilName = diagramShape.Stencil;
+            // }
+            var shape = this.visioApplication.ActivePage.Drop(stencil.Masters[stencilName], newPinX, newPinY);
+
+            diagramShape.VisioId = shape.ID;
+            diagramShape.ShapeType = ShapeType.Existing;
+        }
+
         /// <inheritdoc />
         /// <exception cref="T:System.AggregateException">
         ///     The exception that contains all the individual exceptions thrown on all
@@ -212,10 +237,71 @@ namespace VisioCleanup.Core.Services
             return listVisioIds.ToArray();
         }
 
+        public void SetForeground(DiagramShape? diagramShape)
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            if (diagramShape.ShapeType == ShapeType.Existing)
+            {
+                Shape shape = this.GetShape(diagramShape.VisioId);
+                shape.BringToFront();
+            }
+
+            foreach (var child in diagramShape.Children)
+            {
+                this.SetForeground(child);
+            }
+        }
+
+        public void UpdateShape(DiagramShape diagramShape)
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            var shape = this.GetShape(diagramShape.VisioId);
+
+            this.ChangeShape(this.VisioChanges(diagramShape), shape);
+        }
+
         private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
         {
             var shapeCell = shape.CellsSRC[(short)sectionIndex, (short)rowIndex, (short)cellIndex];
             return shapeCell.Result[VisUnitCodes.visMillimeters];
+        }
+
+        private void ChangeShape(IReadOnlyList<Dictionary<string, object>> items, IVShape shape)
+        {
+            if (items.Count == 0)
+            {
+                this.logger.LogDebug("No changes found.");
+                return;
+            }
+
+            this.logger.LogDebug("Updating shape.");
+
+            // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
+            var srcStream = new short[items.Count * 3];
+            var unitsArray = new object[items.Count];
+            var resultsArray = new object[items.Count];
+            for (var i = 0; i < items.Count; i++)
+            {
+                var item = items[i];
+                srcStream[(i * 3) + 0] = (short)item["section"];
+                srcStream[(i * 3) + 1] = (short)item["row"];
+                srcStream[(i * 3) + 2] = (short)item["cell"];
+                resultsArray[i] = item["result"];
+                unitsArray[i] = item["unit"];
+            }
+
+            // EXECUTE THE REQUEST
+            const short Flags = 0;
+            shape.SetResults(srcStream, unitsArray, resultsArray, Flags);
+            // shape.SetFormulas(srcStream, resultsArray, Flags);
         }
 
         private Shape GetShape(int visioId)
@@ -226,6 +312,58 @@ namespace VisioCleanup.Core.Services
             }
 
             return this.activePage.Shapes.ItemFromID[visioId];
+        }
+
+        private Dictionary<string, object>[] VisioChanges(DiagramShape diagramShape)
+        {
+            var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
+            var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
+            var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
+            var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
+
+            var visioChanges = new List<Dictionary<string, object>>();
+
+            var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
+            var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
+
+            visioChanges.Add(
+                new Dictionary<string, object>
+                    {
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormWidth },
+                        { "unit", VisUnitCodes.visMillimeters },
+                        { "result", width },
+                    });
+            visioChanges.Add(
+                new Dictionary<string, object>
+                    {
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormHeight },
+                        { "unit", VisUnitCodes.visMillimeters },
+                        { "result", height },
+                    });
+            visioChanges.Add(
+                new Dictionary<string, object>
+                    {
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormPinX },
+                        { "unit", VisUnitCodes.visMillimeters },
+                        { "result", newPinX },
+                    });
+            visioChanges.Add(
+                new Dictionary<string, object>
+                    {
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormPinY },
+                        { "unit", VisUnitCodes.visMillimeters },
+                        { "result", newPinY },
+                    });
+
+            return visioChanges.ToArray();
         }
     }
 }

@@ -9,6 +9,8 @@ namespace VisioCleanup.Core.Contracts
 {
     using System.Collections.Generic;
 
+    using VisioCleanup.Core.Models;
+
     /// <summary>
     /// Handle creation and management of visio.
     /// </summary>
@@ -71,5 +73,11 @@ namespace VisioCleanup.Core.Contracts
         /// </summary>
         /// <returns>Array of visio ids.</returns>
         int[] Selection();
+
+        void CreateShape(DiagramShape diagramShape);
+
+        void UpdateShape(DiagramShape diagramShape);
+
+        void SetForeground(DiagramShape? diagramShape);
     }
 }
