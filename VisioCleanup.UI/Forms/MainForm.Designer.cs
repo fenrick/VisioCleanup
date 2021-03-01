@@ -49,7 +49,7 @@ namespace VisioCleanup.UI.Forms
             this.parametersTab = new System.Windows.Forms.TabPage();
             this.parametersDataGridView = new System.Windows.Forms.DataGridView();
             this.dataSetTab = new System.Windows.Forms.TabPage();
-            this.logTextBox = new System.Windows.Forms.RichTextBox();
+            this.listBox = new System.Windows.Forms.ListBox();
             this.parametersBindingSource = new System.Windows.Forms.BindingSource(this.components);
             processExcelDataSet = new System.Windows.Forms.Button();
             loadVisioObjects = new System.Windows.Forms.Button();
@@ -106,7 +106,7 @@ namespace VisioCleanup.UI.Forms
             // 
             // logSplitContainer.Panel2
             // 
-            logSplitContainer.Panel2.Controls.Add(this.logTextBox);
+            logSplitContainer.Panel2.Controls.Add(this.listBox);
             logSplitContainer.Panel2.Padding = new System.Windows.Forms.Padding(12);
             logSplitContainer.Size = new System.Drawing.Size(800, 450);
             logSplitContainer.SplitterDistance = 220;
@@ -192,17 +192,16 @@ namespace VisioCleanup.UI.Forms
             this.dataSetTab.UseVisualStyleBackColor = true;
             // 
             // logTextBox
+            // listBox
             // 
-            this.logTextBox.BackColor = System.Drawing.SystemColors.Desktop;
-            this.logTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logTextBox.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.logTextBox.HideSelection = false;
-            this.logTextBox.Location = new System.Drawing.Point(12, 12);
-            this.logTextBox.Margin = new System.Windows.Forms.Padding(0);
-            this.logTextBox.Name = "logTextBox";
-            this.logTextBox.Size = new System.Drawing.Size(776, 202);
-            this.logTextBox.TabIndex = 0;
-            this.logTextBox.Text = "";
+            this.listBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBox.ItemHeight = 15;
+            this.listBox.Location = new System.Drawing.Point(12, 12);
+            this.listBox.Name = "listBox";
+            this.listBox.ScrollAlwaysVisible = true;
+            this.listBox.SelectionMode = System.Windows.Forms.SelectionMode.None;
+            this.listBox.Size = new System.Drawing.Size(776, 202);
+            this.listBox.TabIndex = 1;
             // 
             // parametersBindingSource
             // 
@@ -233,13 +232,12 @@ namespace VisioCleanup.UI.Forms
         }
 
         #endregion
-        
-        private RichTextBox logTextBox;
         private FlowLayoutPanel controlsFlowPanel;
         private TabControl tabControl1;
         private TabPage parametersTab;
         private TabPage dataSetTab;
         private DataGridView parametersDataGridView;
         private BindingSource parametersBindingSource;
+        private ListBox listBox;
     }
 }

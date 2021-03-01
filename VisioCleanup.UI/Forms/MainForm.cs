@@ -13,7 +13,7 @@ namespace VisioCleanup.UI.Forms
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
-    using Serilog.Sinks.RichTextWinForm;
+    using Serilog.Sinks.WinForm;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models.Config;
@@ -47,7 +47,7 @@ namespace VisioCleanup.UI.Forms
             this.InitializeComponent();
 
             this.logger.LogDebug("Setting log output.");
-            RichTextWinFormSink.AddRichTextBox(this.logTextBox);
+            WinFormSink.AddListView(this.listBox);
 
             this.logger.LogDebug("Binding appConfig to data grid.");
             this.parametersBindingSource.Add(this.appConfig);
