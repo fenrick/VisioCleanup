@@ -19,28 +19,28 @@ namespace VisioCleanup.Core.Contracts
         /// </summary>
         /// <param name="visioId">Visio shape id.</param>
         /// <returns>Base side.</returns>
-        int CalclateBaseSide(int visioId);
+        int CalculateBaseSide(int visioId);
 
         /// <summary>
         /// Calculate left side location.
         /// </summary>
         /// <param name="visioId">Visio shape id.</param>
         /// <returns>Left side.</returns>
-        int CalclateLeftSide(int visioId);
+        int CalculateLeftSide(int visioId);
 
         /// <summary>
         /// Calculate right side location.
         /// </summary>
         /// <param name="visioId">Visio shape id.</param>
         /// <returns>Right side.</returns>
-        int CalclateRightSide(int visioId);
+        int CalculateRightSide(int visioId);
 
         /// <summary>
         /// Calculate top side location.
         /// </summary>
         /// <param name="visioId">Visio shape id.</param>
         /// <returns>Top side.</returns>
-        int CalclateTopSide(int visioId);
+        int CalculateTopSide(int visioId);
 
         /// <summary>
         ///     Close visio session and shutdown.
