@@ -1,4 +1,5 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
+
 <doc>
     <assembly>
         <name>VisioCleanup.Core</name>
@@ -9,21 +10,63 @@
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IExcelService.ProcessDataSet">
             <summary>
-            Async process excel data set and load into memory.
+                Async process excel data set and load into memory.
             </summary>
             <returns>Async Task.</returns>
         </member>
-        <member name="T:VisioCleanup.Core.Contracts.IVisioApplication">
+        <member name="T:VisioCleanup.Core.Contracts.IProcessingService">
             <summary>
-            Handle creation and management of visio.
+                Implementers store and process diagram shapes for representing in visio.
             </summary>
         </member>
-        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.CalculateCorners(System.Int32)">
+        <member name="P:VisioCleanup.Core.Contracts.IProcessingService.AllShapes">
             <summary>
-                Calculate the corners of a shape.
+                Gets collection of all diagram shapes.
             </summary>
-            <param name="visioId">Shape ID for the shape.</param>
-            <returns>Corners of a shape.</returns>
+        </member>
+        <member name="P:VisioCleanup.Core.Contracts.IProcessingService.MasterShape">
+            <summary>
+                Gets the digram shape at the top of the tree.
+            </summary>
+        </member>
+        <member name="M:VisioCleanup.Core.Contracts.IProcessingService.LayoutDataSet">
+            <summary>
+                Laysouts the diagramshapes based on appconfig.
+            </summary>
+            <returns>A task.</returns>
+        </member>
+        <member name="T:VisioCleanup.Core.Contracts.IVisioApplication">
+            <summary>
+                Handle creation and management of visio.
+            </summary>
+        </member>
+        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.CalclateBaseSide(System.Int32)">
+            <summary>
+                Calculate base side location.
+            </summary>
+            <param name="visioId">Visio shape id.</param>
+            <returns>Base side.</returns>
+        </member>
+        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.CalclateLeftSide(System.Int32)">
+            <summary>
+                Calculate left side location.
+            </summary>
+            <param name="visioId">Visio shape id.</param>
+            <returns>Left side.</returns>
+        </member>
+        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.CalclateRightSide(System.Int32)">
+            <summary>
+                Calculate right side location.
+            </summary>
+            <param name="visioId">Visio shape id.</param>
+            <returns>Right side.</returns>
+        </member>
+        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.CalclateTopSide(System.Int32)">
+            <summary>
+                Calculate top side location.
+            </summary>
+            <param name="visioId">Visio shape id.</param>
+            <returns>Top side.</returns>
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.Close">
             <summary>
@@ -36,14 +79,6 @@
             </summary>
             <param name="visioId">Shape ID of the parent shape.</param>
             <returns>array of shape ids for children.</returns>
-        </member>
-        <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.GetPageSize(System.Int32,System.Int32)">
-            <summary>
-                Get size of the page.
-            </summary>
-            <param name="headerHeight">Header size.</param>
-            <param name="sidePanelWidth">Side panel size.</param>
-            <returns>Corners size.</returns>
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IVisioApplication.GetShapeText(System.Int32)">
             <summary>
@@ -68,9 +103,9 @@
         </member>
         <member name="M:VisioCleanup.Core.Contracts.IVisioService.LoadVisioObjectModel">
             <summary>
-            Load the visio object model.
+                Load the visio object model.
             </summary>
-            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the result of the asynchronous operation.</returns>
+            <returns>A <see cref="T:System.Threading.Tasks.Task" /> representing the result of the asynchronous operation.</returns>
         </member>
         <member name="T:VisioCleanup.Core.Marshal">
             <summary>
@@ -83,13 +118,6 @@
             </summary>
             <param name="progId">String program identifier.</param>
             <returns>Object.</returns>
-        </member>
-        <member name="M:VisioCleanup.Core.Marshal.CLSIDFromProgID(System.String,System.Guid@)">
-            <summary>
-                Release com object properly.
-            </summary>
-            <param name="obj">Object.</param>
-            <exception cref="T:System.NullReferenceException"><paramref name="obj" /> is <see langword="null" />.</exception>
         </member>
         <member name="T:VisioCleanup.Core.Models.Config.AppConfig">
             <summary>The app config.</summary>
@@ -174,73 +202,6 @@
             <summary>Gets or sets the width field.</summary>
             <value>The width field.</value>
         </member>
-        <member name="T:VisioCleanup.Core.Models.Corners">
-            <summary>
-                Corners of a visio shape.
-            </summary>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Corners.Left">
-            <summary>
-                Gets or sets left side of the shape.
-            </summary>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Corners.Right">
-            <summary>
-                Gets or sets right side of the shape.
-            </summary>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Corners.Base">
-            <summary>
-                Gets or sets base of the shape.
-            </summary>
-        </member>
-        <member name="P:VisioCleanup.Core.Models.Corners.Top">
-            <summary>
-                Gets or sets top of the shape.
-            </summary>
-        </member>
-        <member name="M:VisioCleanup.Core.Models.Corners.op_Equality(VisioCleanup.Core.Models.Corners,VisioCleanup.Core.Models.Corners)">
-            <summary>
-            Operator for equals.
-            </summary>
-            <param name="left">Left.</param>
-            <param name="right">Right.</param>
-            <returns>Are they equals.</returns>
-        </member>
-        <member name="M:VisioCleanup.Core.Models.Corners.op_Inequality(VisioCleanup.Core.Models.Corners,VisioCleanup.Core.Models.Corners)">
-            <summary>
-            Operator for not equals.
-            </summary>
-            <param name="left">Left.</param>
-            <param name="right">Right.</param>
-            <returns>Are they not equals.</returns>
-        </member>
-        <member name="M:VisioCleanup.Core.Models.Corners.ConvertMeasurement(System.Double)">
-            <summary>
-            Convert a visio measurement into an easier mathematical model.
-            </summary>
-            <param name="measurement">Measurement from visio.</param>
-            <returns>Easier internal measurement.</returns>
-        </member>
-        <member name="M:VisioCleanup.Core.Models.Corners.ConvertMeasurement(System.Int32)">
-            <summary>
-            Convert an easier measurement back to visio model.
-            </summary>
-            <param name="measurement">Easier internal measurement.</param>
-            <returns>Measurement for visio.</returns>
-        </member>
-        <member name="M:VisioCleanup.Core.Models.Corners.ToString">
-            <inheritdoc />
-        </member>
-        <member name="M:VisioCleanup.Core.Models.Corners.Equals(System.Object)">
-            <inheritdoc />
-        </member>
-        <member name="M:VisioCleanup.Core.Models.Corners.Equals(VisioCleanup.Core.Models.Corners)">
-            <inheritdoc />
-        </member>
-        <member name="M:VisioCleanup.Core.Models.Corners.GetHashCode">
-            <inheritdoc />
-        </member>
         <member name="M:VisioCleanup.Core.Models.DiagramShape.#ctor(System.Int32)">
             <summary>
                 Initialises a new instance of the <see cref="T:VisioCleanup.Core.Models.DiagramShape" /> class.
@@ -252,14 +213,24 @@
                 Gets the shape above.
             </summary>
         </member>
-        <member name="P:VisioCleanup.Core.Models.DiagramShape.Corners">
+        <member name="P:VisioCleanup.Core.Models.DiagramShape.BaseSide">
             <summary>
-                Gets or sets the corner structure.
+                Gets or sets base of the shape.
             </summary>
         </member>
         <member name="P:VisioCleanup.Core.Models.DiagramShape.Left">
             <summary>
                 Gets the shape to the left.
+            </summary>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.DiagramShape.LeftSide">
+            <summary>
+                Gets or sets left side of the shape.
+            </summary>
+        </member>
+        <member name="P:VisioCleanup.Core.Models.DiagramShape.RightSide">
+            <summary>
+                Gets or sets right side of the shape.
             </summary>
         </member>
         <member name="P:VisioCleanup.Core.Models.DiagramShape.ShapeText">
@@ -272,6 +243,11 @@
                 Gets or sets the shape type.
             </summary>
         </member>
+        <member name="P:VisioCleanup.Core.Models.DiagramShape.TopSide">
+            <summary>
+                Gets or sets top of the shape.
+            </summary>
+        </member>
         <member name="P:VisioCleanup.Core.Models.DiagramShape.Right">
             <summary>
                 Gets or sets the shape to the right.
@@ -281,6 +257,20 @@
             <summary>
                 Gets or sets the shape below.
             </summary>
+        </member>
+        <member name="M:VisioCleanup.Core.Models.DiagramShape.ConvertMeasurement(System.Double)">
+            <summary>
+                Convert a visio measurement into an easier mathematical model.
+            </summary>
+            <param name="measurement">Measurement from visio.</param>
+            <returns>Easier internal measurement.</returns>
+        </member>
+        <member name="M:VisioCleanup.Core.Models.DiagramShape.ConvertMeasurement(System.Int32)">
+            <summary>
+                Convert an easier measurement back to visio model.
+            </summary>
+            <param name="measurement">Easier internal measurement.</param>
+            <returns>Measurement for visio.</returns>
         </member>
         <member name="M:VisioCleanup.Core.Models.DiagramShape.AddChildShape(VisioCleanup.Core.Models.DiagramShape)">
             <summary>
@@ -331,18 +321,34 @@
         <member name="T:VisioCleanup.Core.ServiceCollectionExtensions">
             <summary>The service collection extensions.</summary>
         </member>
-        <member name="M:VisioCleanup.Core.ServiceCollectionExtensions.AddVisioCleanupCore(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+        <member
+            name="M:VisioCleanup.Core.ServiceCollectionExtensions.AddVisioCleanupCore(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>The add visio cleanup core.</summary>
-            <param name="serviceCollection">The <paramref name="serviceCollection"/>.</param>
-            <param name="configuration">The <paramref name="configuration"/>.</param>
+            <param name="serviceCollection">The <paramref name="serviceCollection" />.</param>
+            <param name="configuration">The <paramref name="configuration" />.</param>
             <returns>The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> .</returns>
+        </member>
+        <member name="T:VisioCleanup.Core.Services.AbstractProcessingService">
+            <summary>
+                Abstract implementation of common code for processing services.
+            </summary>
+        </member>
+        <member name="P:VisioCleanup.Core.Services.AbstractProcessingService.AllShapes">
+            <inheritdoc />
+        </member>
+        <member name="P:VisioCleanup.Core.Services.AbstractProcessingService.MasterShape">
+            <inheritdoc />
+        </member>
+        <member name="M:VisioCleanup.Core.Services.AbstractProcessingService.LayoutDataSet">
+            <inheritdoc />
         </member>
         <member name="T:VisioCleanup.Core.Services.ExcelService">
             <summary>The excel service.</summary>
         </member>
-        <member name="M:VisioCleanup.Core.Services.ExcelService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.ExcelService})">
+        <member
+            name="M:VisioCleanup.Core.Services.ExcelService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.ExcelService})">
             <summary>
-            Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.ExcelService"/> class.
+                Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.ExcelService" /> class.
             </summary>
             <param name="logger">Logging instance.</param>
         </member>
@@ -352,16 +358,13 @@
         <member name="T:VisioCleanup.Core.Services.VisioApplication">
             <inheritdoc />
         </member>
-        <member name="M:VisioCleanup.Core.Services.VisioApplication.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioApplication},Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
+        <member
+            name="M:VisioCleanup.Core.Services.VisioApplication.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioApplication},Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
             <summary>
-            Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioApplication"/> class.
+                Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioApplication" /> class.
             </summary>
             <param name="logger">Logging instance.</param>
             <param name="options">Application configuration.</param>
-        </member>
-        <member name="M:VisioCleanup.Core.Services.VisioApplication.CalculateCorners(System.Int32)">
-            <inheritdoc />
-            <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         </member>
         <member name="M:VisioCleanup.Core.Services.VisioApplication.Close">
             <inheritdoc />
@@ -373,11 +376,6 @@
                 threads.
             </exception>
             <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
-        </member>
-        <member name="M:VisioCleanup.Core.Services.VisioApplication.GetPageSize(System.Int32,System.Int32)">
-            <inheritdoc />
-            <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
-            <exception cref="T:System.NullReferenceException">page sheet is <see langword="null" />.</exception>
         </member>
         <member name="M:VisioCleanup.Core.Services.VisioApplication.GetShapeText(System.Int32)">
             <inheritdoc />
@@ -394,9 +392,10 @@
         <member name="T:VisioCleanup.Core.Services.VisioService">
             <summary>The visio service.</summary>
         </member>
-        <member name="M:VisioCleanup.Core.Services.VisioService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioService},VisioCleanup.Core.Contracts.IVisioApplication,Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
+        <member
+            name="M:VisioCleanup.Core.Services.VisioService.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.Core.Services.VisioService},VisioCleanup.Core.Contracts.IVisioApplication,Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig})">
             <summary>
-            Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioService"/> class.
+                Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioService" /> class.
             </summary>
             <param name="logger">Logging instance.</param>
             <param name="visioApplication">Visio application handler.</param>
