@@ -21,9 +21,6 @@ namespace VisioCleanup.UI.Forms
     /// <summary>Main application form.</summary>
     public partial class MainForm : Form
     {
-        /// <summary>The app config.</summary>
-        private readonly AppConfig appConfig;
-
         private readonly IExcelService excelService;
 
         /// <summary>The logger.</summary>
@@ -38,7 +35,7 @@ namespace VisioCleanup.UI.Forms
         /// <param name="visioService">The visio service.</param>
         public MainForm(ILogger<MainForm> logger, IOptions<AppConfig> options, IExcelService excelService, IVisioService visioService)
         {
-            this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
+            var appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.excelService = excelService ?? throw new ArgumentNullException(nameof(excelService));
             this.visioService = visioService ?? throw new ArgumentNullException(nameof(visioService));
@@ -50,7 +47,7 @@ namespace VisioCleanup.UI.Forms
             WinFormSink.AddListView(this.listBox);
 
             this.logger.LogDebug("Binding appConfig to data grid.");
-            this.parametersBindingSource.Add(this.appConfig);
+            this.parametersBindingSource.Add(appConfig);
             this.parametersDataGridView.AutoGenerateColumns = true;
             this.parametersDataGridView.DataSource = this.parametersBindingSource;
         }
