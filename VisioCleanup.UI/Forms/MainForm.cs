@@ -70,7 +70,7 @@ namespace VisioCleanup.UI.Forms
                     MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1,
                     MessageBoxOptions.ServiceNotification,
-                    false);
+                    displayHelpButton: false);
                 return;
             }
 
