@@ -9,19 +9,38 @@ namespace VisioCleanup.Core.Contracts
 {
     using System.Collections.Generic;
 
-    using VisioCleanup.Core.Models;
-
     /// <summary>
     /// Handle creation and management of visio.
     /// </summary>
     public interface IVisioApplication
     {
         /// <summary>
-        ///     Calculate the corners of a shape.
+        /// Calculate base side location.
         /// </summary>
-        /// <param name="visioId">Shape ID for the shape.</param>
-        /// <returns>Corners of a shape.</returns>
-        Corners CalculateCorners(int visioId);
+        /// <param name="visioId">Visio shape id.</param>
+        /// <returns>Base side.</returns>
+        int CalclateBaseSide(int visioId);
+
+        /// <summary>
+        /// Calculate left side location.
+        /// </summary>
+        /// <param name="visioId">Visio shape id.</param>
+        /// <returns>Left side.</returns>
+        int CalclateLeftSide(int visioId);
+
+        /// <summary>
+        /// Calculate right side location.
+        /// </summary>
+        /// <param name="visioId">Visio shape id.</param>
+        /// <returns>Right side.</returns>
+        int CalclateRightSide(int visioId);
+
+        /// <summary>
+        /// Calculate top side location.
+        /// </summary>
+        /// <param name="visioId">Visio shape id.</param>
+        /// <returns>Top side.</returns>
+        int CalclateTopSide(int visioId);
 
         /// <summary>
         ///     Close visio session and shutdown.
