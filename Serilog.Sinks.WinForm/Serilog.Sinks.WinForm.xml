@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+
+<doc>
+    <assembly>
+        <name>Serilog.Sinks.WinForm</name>
+    </assembly>
+    <members>
+        <member name="T:Serilog.Sinks.WinForm.FixedQueue`1">
+            <summary>
+                A queue with a fixed capacity, dequeuing when capacity is reached.
+            </summary>
+            <typeparam name="T">Type of queue.</typeparam>
+        </member>
+        <member name="M:Serilog.Sinks.WinForm.FixedQueue`1.#ctor(System.Int32)">
+            <summary>
+                Initialises a new instance of the <see cref="T:Serilog.Sinks.WinForm.FixedQueue`1" /> class.
+            </summary>
+            <param name="capacity">Size of queue.</param>
+        </member>
+        <member name="M:Serilog.Sinks.WinForm.FixedQueue`1.#ctor">
+            <summary>
+                Initialises a new instance of the <see cref="T:Serilog.Sinks.WinForm.FixedQueue`1" /> class. With a default capacity of 50.
+            </summary>
+        </member>
+        <member name="M:Serilog.Sinks.WinForm.FixedQueue`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                Initialises a new instance of the <see cref="T:Serilog.Sinks.WinForm.FixedQueue`1" /> class.
+            </summary>
+            <param name="collection">Default collection and capacity size.</param>
+        </member>
+        <member name="P:Serilog.Sinks.WinForm.FixedQueue`1.Capacity">
+            <summary>
+                Gets or sets capacity of queue.
+            </summary>
+        </member>
+        <member name="M:Serilog.Sinks.WinForm.FixedQueue`1.Enqueue(`0)">
+            <summary>
+                Adds item to the tail of the queue. Removin from head as required.
+            </summary>
+            <param name="item">Item to be added.</param>
+        </member>
+        <member name="T:Serilog.Sinks.WinForm.Output.LevelOutputFormat">
+            <summary>
+                Implements the {Level} element. can now have a fixed width applied to it, as well as casing rules. Width is
+                set through formats like "u3" (uppercase three chars), "w1" (one lowercase char), or "t4" (title case four chars).
+            </summary>
+        </member>
+        <member name="T:Serilog.Sinks.WinForm.Output.OutputTemplateRenderer">
+            <summary>Render output as per .</summary>
+        </member>
+        <member
+            name="M:Serilog.Sinks.WinForm.Output.OutputTemplateRenderer.#ctor(System.String,System.IFormatProvider)">
+            <summary>
+                Initialises a new instance of the
+                <see cref="T:Serilog.Sinks.WinForm.Output.OutputTemplateRenderer" /> class.
+            </summary>
+            <param name="outputTemplate">Template for output.</param>
+            <param name="formatProvider">Format provider.</param>
+            <exception cref="T:System.ArgumentNullException">No output template.</exception>
+        </member>
+        <member
+            name="M:Serilog.Sinks.WinForm.Output.OutputTemplateRenderer.Format(Serilog.Events.LogEvent,System.IO.TextWriter)">
+            <inheritdoc />
+        </member>
+        <member name="M:Serilog.Sinks.WinForm.Rendering.Casing.Format(System.String,System.String)">
+            <summary>
+                Apply upper or lower casing to <paramref name="value" /> when <paramref name="format" /> is provided. Returns
+                <paramref name="value" /> when no or invalid format provided.
+            </summary>
+            <param name="value">Provided string for formatting.</param>
+            <param name="format">Format string.</param>
+            <returns>The provided <paramref name="value" /> with formatting applied.</returns>
+        </member>
+        <member
+            name="M:Serilog.Sinks.WinForm.Rendering.Padding.Apply(System.IO.TextWriter,System.String,System.Nullable{Serilog.Parsing.Alignment})">
+            <summary>
+                Writes the provided <paramref name="value" /> to the output, applying direction-based padding when
+                <paramref name="alignment" /> is provided.
+            </summary>
+            <param name="output">Output object to write result.</param>
+            <param name="value">Provided value.</param>
+            <param name="alignment">The alignment settings to apply when rendering <paramref name="value" /> .</param>
+        </member>
+        <member name="T:Serilog.Sinks.WinForm.WinFormSink">
+            <summary>Sink log events to the monitoring rich text form element.</summary>
+        </member>
+        <member name="F:Serilog.Sinks.WinForm.WinFormSink.TextBoxes">
+            <summary>Gets a collection of rich text fields.</summary>
+            <value>A collection of rich text fields.</value>
+        </member>
+        <member name="M:Serilog.Sinks.WinForm.WinFormSink.#ctor(Serilog.Sinks.WinForm.Output.OutputTemplateRenderer)">
+            <summary>Initialises a new instance of the <see cref="T:Serilog.Sinks.WinForm.WinFormSink" /> class.</summary>
+            <param name="formatter">Formatter.</param>
+        </member>
+        <member name="M:Serilog.Sinks.WinForm.WinFormSink.AddTextBox(System.Windows.Forms.TextBox)">
+            <summary>
+                Add a new rich text box to the sink.
+            </summary>
+            <param name="textBox">TextBox to add.</param>
+        </member>
+        <member name="M:Serilog.Sinks.WinForm.WinFormSink.Emit(Serilog.Events.LogEvent)">
+            <inheritdoc />
+        </member>
+        <member name="T:Serilog.WinFormLoggerConfigurationExtensions">
+            <summary>Extends <see cref="T:Serilog.LoggerConfiguration" /> with methods for configuring Rich Text Windows Forms logging.</summary>
+        </member>
+        <member
+            name="M:Serilog.WinFormLoggerConfigurationExtensions.WinForm(Serilog.Configuration.LoggerSinkConfiguration,System.String,Serilog.Events.LogEventLevel,System.IFormatProvider,Serilog.Core.LoggingLevelSwitch)">
+            <summary>Writes log events to a <see cref="T:System.Windows.Forms.TextBox" /> .</summary>
+            <param name="loggerSinkConfiguration">Logger sink configuration.</param>
+            <param name="outputTemplate">
+                A message template describing the format used to write to the sink. The default is
+                "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
+            </param>
+            <param name="restrictedToMinimumLevel">
+                The minimum level for events passed through the sink. Ignored when
+                <paramref name="levelSwitch" /> is specified.
+            </param>
+            <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+            <param name="levelSwitch">A <see langword="switch" /> allowing the pass-through minimum level to be changed at runtime.</param>
+            <exception cref="T:System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
+            <exception cref="T:System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
+            <returns>Configuration object allowing method chaining.</returns>
+        </member>
+    </members>
+</doc>

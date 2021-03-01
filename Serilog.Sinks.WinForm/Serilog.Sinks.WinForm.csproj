@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0-windows</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
+        <Authors>Jolyon Suthers</Authors>
+        <Product>Serilog Sink WinForms</Product>
+        <AnalysisLevel>preview</AnalysisLevel>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Serilog</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>C:\Users\s770439\source\repos\VisioCleanup\Serilog.Sinks.WinForm\Serilog.Sinks.WinForm.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="stylecop.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="stylecop.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="GCop.All.Common" Version="2.7.0-rc.6" />
+        <PackageReference Include="Microsoft.CodeAnalysis" Version="3.9.0-4.final" />
+        <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.321">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>
