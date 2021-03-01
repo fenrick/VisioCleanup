@@ -10,6 +10,8 @@ namespace Serilog.Sinks.RichTextWinForm.Rendering
     using System.IO;
     using System.Windows.Forms;
 
+    using Serilog.Parsing;
+
     internal static class Padding
     {
         private static readonly char[] PaddingChars = new string(' ', 80).ToCharArray();
