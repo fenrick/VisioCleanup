@@ -36,14 +36,6 @@ namespace VisioCleanup.Core.Contracts
         IEnumerable<int> GetChildren(int visioId);
 
         /// <summary>
-        ///     Get size of the page.
-        /// </summary>
-        /// <param name="headerHeight">Header size.</param>
-        /// <param name="sidePanelWidth">Side panel size.</param>
-        /// <returns>Corners size.</returns>
-        Corners GetPageSize(int headerHeight, int sidePanelWidth);
-
-        /// <summary>
         ///     Obtains the current shape text for a shape.
         /// </summary>
         /// <param name="visioId">shape id.</param>

@@ -134,39 +134,6 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
-        /// <exception cref="T:System.NullReferenceException">page sheet is <see langword="null" />.</exception>
-        public Corners GetPageSize(int headerHeight, int sidePanelWidth)
-        {
-            if (this.visioApplication is null)
-            {
-                throw new InvalidOperationException("System not initialised.");
-            }
-
-            var corners = default(Corners);
-
-            var pageSheet = this.visioApplication.ActivePage.PageSheet;
-
-            var pageWidth = pageSheet.Cells["PageWidth"].Result[this.appConfig.Units];
-            var pageHeight = pageSheet.Cells["PageHeight"].Result[this.appConfig.Units];
-            var pageLeftMargin = pageSheet.Cells["PageLeftMargin"].Result[this.appConfig.Units];
-            var pageTopMargin = pageSheet.Cells["PageTopMargin"].Result[this.appConfig.Units];
-            var pageRightMargin = pageSheet.Cells["PageRightMargin"].Result[this.appConfig.Units];
-            var pageBottomMargin = pageSheet.Cells["PageBottomMargin"].Result[this.appConfig.Units];
-
-            corners.Left = Corners.ConvertMeasurement(pageLeftMargin);
-            corners.Base = Corners.ConvertMeasurement(pageBottomMargin);
-
-            var horizontalMargins = pageLeftMargin + pageRightMargin;
-            corners.Right = Corners.ConvertMeasurement(pageWidth - horizontalMargins) - sidePanelWidth;
-
-            var verticalMargins = pageTopMargin + pageBottomMargin;
-            corners.Top = Corners.ConvertMeasurement(pageHeight - verticalMargins) - headerHeight;
-
-            return corners;
-        }
-
-        /// <inheritdoc />
         /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public string GetShapeText(int visioId)
         {
