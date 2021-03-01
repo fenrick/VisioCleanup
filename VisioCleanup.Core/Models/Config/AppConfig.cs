@@ -26,10 +26,6 @@ namespace VisioCleanup.Core.Models.Config
         /// <value>The height.</value>
         public int Height { get; set; }
 
-        /// <summary>Gets or sets the height field.</summary>
-        /// <value>The height field.</value>
-        public string? HeightField { get; set; }
-
         /// <summary>Gets or sets the horizontal spacing.</summary>
         /// <value>The horizontal spacing.</value>
         public int HorizontalSpacing { get; set; }
@@ -37,22 +33,6 @@ namespace VisioCleanup.Core.Models.Config
         /// <summary>Gets or sets the left.</summary>
         /// <value>The left.</value>
         public int Left { get; set; }
-
-        /// <summary>Gets or sets the loc pin x field.</summary>
-        /// <value>The loc pin x field.</value>
-        public string? LocPinXField { get; set; }
-
-        /// <summary>Gets or sets the loc pin y field.</summary>
-        /// <value>The loc pin y field.</value>
-        public string? LocPinYField { get; set; }
-
-        /// <summary>Gets or sets the pin x field.</summary>
-        /// <value>The pin x field.</value>
-        public string? PinXField { get; set; }
-
-        /// <summary>Gets or sets the pin y field.</summary>
-        /// <value>The pin y field.</value>
-        public string? PinYField { get; set; }
 
         /// <summary>Gets or sets the right.</summary>
         /// <value>The right.</value>
@@ -74,10 +54,6 @@ namespace VisioCleanup.Core.Models.Config
         /// <value>The top.</value>
         public int Top { get; set; }
 
-        /// <summary>Gets or sets the units.</summary>
-        /// <value>The units.</value>
-        public string? Units { get; set; }
-
         /// <summary>Gets or sets the vertical spacing.</summary>
         /// <value>The vertical spacing.</value>
         public int VerticalSpacing { get; set; }
@@ -85,9 +61,5 @@ namespace VisioCleanup.Core.Models.Config
         /// <summary>Gets or sets the width.</summary>
         /// <value>The width.</value>
         public int Width { get; set; }
-
-        /// <summary>Gets or sets the width field.</summary>
-        /// <value>The width field.</value>
-        public string? WidthField { get; set; }
     }
 }
