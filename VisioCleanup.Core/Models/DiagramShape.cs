@@ -222,11 +222,11 @@ namespace VisioCleanup.Core.Models
             {
                 var children = this.Children;
 
-                newLeftSide = children.Select(shape => shape.LeftSide).Min() - AppConfig!.Left;
-                newRightSide = children.Select(shape => shape.RightSide).Max() + AppConfig!.Right;
+                newLeftSide = children.Select(shape => shape!.LeftSide).Min() - AppConfig!.Left;
+                newRightSide = children.Select(shape => shape!.RightSide).Max() + AppConfig!.Right;
 
-                newBaseSide = children.Select(shape => shape.BaseSide).Min() - AppConfig!.Base;
-                newTopSide = children.Select(shape => shape.TopSide).Max() + AppConfig!.Top;
+                newBaseSide = children.Select(shape => shape!.BaseSide).Min() - AppConfig!.Base;
+                newTopSide = children.Select(shape => shape!.TopSide).Max() + AppConfig!.Top;
             }
             else
             {
@@ -250,10 +250,7 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"{this.VisioId}: {this.ShapeText}";
-        }
+        public override string ToString() => $"{this.VisioId}: {this.ShapeText}";
 
         /// <summary>
         ///     Map all neighbour shapes within tolerance of 10.
@@ -345,10 +342,7 @@ namespace VisioCleanup.Core.Models
         ///     Does this shape have children.
         /// </summary>
         /// <returns>true if at least one.</returns>
-        internal bool HasChildren()
-        {
-            return this.Children.Count > 0;
-        }
+        internal bool HasChildren() => this.Children.Count > 0;
 
         /// <summary>
         ///     Remove all records of shape neighbours.
