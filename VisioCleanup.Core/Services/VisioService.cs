@@ -90,7 +90,10 @@ namespace VisioCleanup.Core.Services
             DiagramShape childShape = new(visioId)
                                           {
                                               ShapeText = this.visioApplication.GetShapeText(visioId),
-                                              Corners = this.visioApplication.CalculateCorners(visioId),
+                                              LeftSide = this.visioApplication.CalclateLeftSide(visioId),
+                                              RightSide = this.visioApplication.CalclateRightSide(visioId),
+                                              TopSide = this.visioApplication.CalclateTopSide(visioId),
+                                              BaseSide = this.visioApplication.CalclateBaseSide(visioId),
                                               ShapeType = ShapeType.Existing,
                                           };
             this.AllShapes.Add(childShape);

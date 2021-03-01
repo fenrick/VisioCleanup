@@ -9,7 +9,6 @@ namespace VisioCleanup.Core.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Runtime.InteropServices;
 
     using Microsoft.Extensions.Logging;
@@ -44,26 +43,46 @@ namespace VisioCleanup.Core.Services
             this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
-        /// <inheritdoc />
-        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
-        public Corners CalculateCorners(int visioId)
+        public int CalclateBaseSide(int visioId)
         {
             var shape = this.GetShape(visioId);
-            var corners = default(Corners);
+
+            var pinY = shape.Cells[this.appConfig.PinYField].Result[this.appConfig.Units];
+            var locPinY = shape.Cells[this.appConfig.LocPinYField].Result[this.appConfig.Units];
+
+            return DiagramShape.ConvertMeasurement(pinY - locPinY);
+        }
+
+        public int CalclateLeftSide(int visioId)
+        {
+            var shape = this.GetShape(visioId);
 
             var pinX = shape.Cells[this.appConfig.PinXField].Result[this.appConfig.Units];
             var locPinX = shape.Cells[this.appConfig.LocPinXField].Result[this.appConfig.Units];
+
+            return DiagramShape.ConvertMeasurement(pinX - locPinX);
+        }
+
+        public int CalclateRightSide(int visioId)
+        {
+            var shape = this.GetShape(visioId);
+
+            var pinX = shape.Cells[this.appConfig.PinXField].Result[this.appConfig.Units];
+            var locPinX = shape.Cells[this.appConfig.LocPinXField].Result[this.appConfig.Units];
+            var width = shape.Cells[this.appConfig.WidthField].Result[this.appConfig.Units];
+
+            return DiagramShape.ConvertMeasurement((pinX - locPinX) + width);
+        }
+
+        public int CalclateTopSide(int visioId)
+        {
+            var shape = this.GetShape(visioId);
+
             var pinY = shape.Cells[this.appConfig.PinYField].Result[this.appConfig.Units];
             var locPinY = shape.Cells[this.appConfig.LocPinYField].Result[this.appConfig.Units];
-            var width = shape.Cells[this.appConfig.WidthField].Result[this.appConfig.Units];
             var height = shape.Cells[this.appConfig.HeightField].Result[this.appConfig.Units];
 
-            corners.Left = Corners.ConvertMeasurement(pinX - locPinX);
-            corners.Base = Corners.ConvertMeasurement(pinY - locPinY);
-            corners.Right = corners.Left + Corners.ConvertMeasurement(width);
-            corners.Top = corners.Base + Corners.ConvertMeasurement(height);
-
-            return corners;
+            return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
         }
 
         /// <inheritdoc />
