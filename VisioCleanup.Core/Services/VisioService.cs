@@ -65,8 +65,6 @@ namespace VisioCleanup.Core.Services
                                 return;
                             }
 
-                            var page = this.visioApplication.GetPageSize(this.appConfig.HeaderHeight, this.appConfig.SidePanelWidth);
-
                             this.logger.LogDebug("Create a fake parent shape.");
                             this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE PARENT", ShapeType = ShapeType.FakeShape };
                             this.AllShapes.Add(this.MasterShape);
