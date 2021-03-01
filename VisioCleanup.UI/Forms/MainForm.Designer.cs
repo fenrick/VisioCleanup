@@ -44,13 +44,18 @@ namespace VisioCleanup.UI.Forms
             System.Windows.Forms.Button loadVisioObjects;
             System.Windows.Forms.SplitContainer logSplitContainer;
             System.Windows.Forms.SplitContainer controlSplitContainer;
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.controlsFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.dataSetTab = new System.Windows.Forms.TabPage();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.parametersTab = new System.Windows.Forms.TabPage();
             this.parametersDataGridView = new System.Windows.Forms.DataGridView();
-            this.dataSetTab = new System.Windows.Forms.TabPage();
             this.listBox = new System.Windows.Forms.ListBox();
             this.parametersBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.dataSetBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.layoutDataSet = new System.Windows.Forms.Button();
             processExcelDataSet = new System.Windows.Forms.Button();
             loadVisioObjects = new System.Windows.Forms.Button();
             logSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -65,9 +70,12 @@ namespace VisioCleanup.UI.Forms
             controlSplitContainer.SuspendLayout();
             this.controlsFlowPanel.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.dataSetTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.parametersTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.parametersDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.parametersBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataSetBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // processExcelDataSet
@@ -136,6 +144,7 @@ namespace VisioCleanup.UI.Forms
             // 
             this.controlsFlowPanel.Controls.Add(processExcelDataSet);
             this.controlsFlowPanel.Controls.Add(loadVisioObjects);
+            this.controlsFlowPanel.Controls.Add(this.layoutDataSet);
             this.controlsFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.controlsFlowPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsFlowPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -146,14 +155,39 @@ namespace VisioCleanup.UI.Forms
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.parametersTab);
             this.tabControl1.Controls.Add(this.dataSetTab);
+            this.tabControl1.Controls.Add(this.parametersTab);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(603, 196);
             this.tabControl1.TabIndex = 0;
+            // 
+            // dataSetTab
+            // 
+            this.dataSetTab.Controls.Add(this.dataGridView1);
+            this.dataSetTab.Location = new System.Drawing.Point(4, 24);
+            this.dataSetTab.Name = "dataSetTab";
+            this.dataSetTab.Padding = new System.Windows.Forms.Padding(3);
+            this.dataSetTab.Size = new System.Drawing.Size(595, 168);
+            this.dataSetTab.TabIndex = 1;
+            this.dataSetTab.Text = "Current Data Set";
+            this.dataSetTab.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToOrderColumns = true;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.RowTemplate.Height = 25;
+            this.dataGridView1.Size = new System.Drawing.Size(589, 162);
+            this.dataGridView1.TabIndex = 0;
             // 
             // parametersTab
             // 
@@ -173,7 +207,23 @@ namespace VisioCleanup.UI.Forms
             this.parametersDataGridView.AllowUserToOrderColumns = true;
             this.parametersDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.parametersDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.parametersDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.parametersDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.parametersDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.parametersDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.parametersDataGridView.Location = new System.Drawing.Point(3, 3);
             this.parametersDataGridView.Name = "parametersDataGridView";
@@ -181,17 +231,6 @@ namespace VisioCleanup.UI.Forms
             this.parametersDataGridView.Size = new System.Drawing.Size(589, 162);
             this.parametersDataGridView.TabIndex = 0;
             // 
-            // dataSetTab
-            // 
-            this.dataSetTab.Location = new System.Drawing.Point(4, 24);
-            this.dataSetTab.Name = "dataSetTab";
-            this.dataSetTab.Padding = new System.Windows.Forms.Padding(3);
-            this.dataSetTab.Size = new System.Drawing.Size(595, 168);
-            this.dataSetTab.TabIndex = 1;
-            this.dataSetTab.Text = "Current Data Set";
-            this.dataSetTab.UseVisualStyleBackColor = true;
-            // 
-            // logTextBox
             // listBox
             // 
             this.listBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -206,6 +245,17 @@ namespace VisioCleanup.UI.Forms
             // parametersBindingSource
             // 
             this.parametersBindingSource.AllowNew = false;
+            // 
+            // layoutDataSet
+            // 
+            this.layoutDataSet.Margin = new System.Windows.Forms.Padding(0, 0, 0, 12);
+            this.layoutDataSet.Location = new System.Drawing.Point(12, 85);
+            this.layoutDataSet.Name = "layoutDataSet";
+            this.layoutDataSet.Size = new System.Drawing.Size(145, 23);
+            this.layoutDataSet.TabIndex = 3;
+            this.layoutDataSet.Text = "Layout Data Set";
+            this.layoutDataSet.UseVisualStyleBackColor = true;
+            this.layoutDataSet.Click += new System.EventHandler(this.LayoutDataSet_Click);
             // 
             // MainForm
             // 
@@ -224,9 +274,12 @@ namespace VisioCleanup.UI.Forms
             controlSplitContainer.ResumeLayout(false);
             this.controlsFlowPanel.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.dataSetTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.parametersTab.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.parametersDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.parametersBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataSetBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -239,5 +292,8 @@ namespace VisioCleanup.UI.Forms
         private DataGridView parametersDataGridView;
         private BindingSource parametersBindingSource;
         private ListBox listBox;
+        private DataGridView dataGridView1;
+        private BindingSource dataSetBindingSource;
+        private Button layoutDataSet;
     }
 }
