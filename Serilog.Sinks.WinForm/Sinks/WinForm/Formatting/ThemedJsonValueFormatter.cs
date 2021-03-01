@@ -68,7 +68,7 @@ namespace Serilog.Sinks.WinForm.Formatting
                 return 0;
             }
 
-            this.FormatLiteralValue(scalar, state.Output);
+            FormatLiteralValue(scalar, state.Output);
             return 0;
         }
 
@@ -149,7 +149,7 @@ namespace Serilog.Sinks.WinForm.Formatting
             return count;
         }
 
-        private void FormatLiteralValue(ScalarValue scalar, TextWriter output)
+        private static void FormatLiteralValue(ScalarValue scalar, TextWriter output)
         {
             var value = scalar.Value;
 
