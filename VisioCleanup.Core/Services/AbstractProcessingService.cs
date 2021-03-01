@@ -7,9 +7,11 @@
 
 namespace VisioCleanup.Core.Services
 {
-    using System;
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Threading.Tasks;
+
+    using Microsoft.Extensions.Logging;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
@@ -19,6 +21,10 @@ namespace VisioCleanup.Core.Services
     /// </summary>
     public abstract class AbstractProcessingService : IProcessingService
     {
+        protected ILogger logger;
+
+        protected IVisioApplication visioApplication;
+
         /// <inheritdoc />
         public Collection<DiagramShape> AllShapes { get; protected set; } = new();
 
@@ -26,9 +32,65 @@ namespace VisioCleanup.Core.Services
         public DiagramShape? MasterShape { get; protected set; }
 
         /// <inheritdoc />
-        public Task LayoutDataSet()
+        public async Task LayoutDataSet()
         {
-            throw new NotImplementedException();
+            await Task.Run(
+                () =>
+                    {
+                        // step 1 - resize shapes without children
+                        foreach (var diagramShape in this.AllShapes.Where(diagramShape => !diagramShape.HasChildren()))
+                        {
+                            diagramShape.ResizeShape();
+                        }
+
+                        // step 2 - fix spacing for shapes without children
+
+                        // step 3 - fix size of shapes with children
+
+                        // step 4 - fix spacing for shapes with children
+
+                        // step 5
+                    });
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateVisio()
+        {
+            await Task.Run(
+                () =>
+                    {
+                        try
+                        {
+                            this.visioApplication.Open();
+
+                            // update each shape
+                            foreach (var diagramShape in this.AllShapes)
+                            {
+                                switch (diagramShape.ShapeType)
+                                {
+                                    case ShapeType.NewShape:
+                                        this.logger.LogDebug("Dropping new shape: {Shape}", diagramShape);
+                                        this.visioApplication.CreateShape(diagramShape);
+                                        goto case ShapeType.Existing;
+                                    case ShapeType.Existing:
+                                        this.logger.LogDebug("Checking shape: {Shape}", diagramShape);
+                                        this.visioApplication.UpdateShape(diagramShape);
+                                        break;
+                                    case ShapeType.FakeShape:
+                                        // we don't draw this!
+                                        this.logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
+                                        break;
+                                }
+                            }
+
+                            // iterate down the tree setting shapes to the foreground
+                            this.visioApplication.SetForeground(this.MasterShape);
+                        }
+                        finally
+                        {
+                            this.visioApplication.Close();
+                        }
+                    });
         }
     }
 }

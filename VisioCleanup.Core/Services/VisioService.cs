@@ -24,10 +24,6 @@ namespace VisioCleanup.Core.Services
     {
         private readonly AppConfig appConfig;
 
-        private readonly ILogger<VisioService> logger;
-
-        private readonly IVisioApplication visioApplication;
-
         /// <summary>
         /// Initialises a new instance of the <see cref="VisioService"/> class.
         /// </summary>

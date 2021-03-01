@@ -17,15 +17,15 @@ namespace VisioCleanup.Core.Services
     /// <summary>The excel service.</summary>
     public class ExcelService : AbstractProcessingService, IExcelService
     {
-        private readonly ILogger<ExcelService> logger;
-
         /// <summary>
         /// Initialises a new instance of the <see cref="ExcelService"/> class.
         /// </summary>
         /// <param name="logger">Logging instance.</param>
-        public ExcelService(ILogger<ExcelService> logger)
+        /// <param name="visioApplication">Visio application handler.</param>
+        public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.visioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
         }
 
         /// <inheritdoc />

@@ -76,6 +76,8 @@ namespace VisioCleanup.UI.Forms
 
             this.logger.LogDebug("Laying out data set.");
             await this.processingService.LayoutDataSet();
+
+            this.dataSetBindingSource.ResetBindings(true);
         }
 
         /// <summary>Load Visio Object Model.</summary>
@@ -102,6 +104,13 @@ namespace VisioCleanup.UI.Forms
             this.logger.LogDebug("Updating dataset.");
             this.dataSetBindingSource.DataSource = this.excelService.AllShapes;
             this.processingService = this.excelService;
+        }
+
+        private async void updateVisioDrawing_Click(object sender, EventArgs e)
+        {
+            this.logger.LogDebug("Drawing visio.");
+            await this.processingService.UpdateVisio();
+
         }
     }
 }

@@ -28,9 +28,15 @@ namespace VisioCleanup.Core.Contracts
         DiagramShape? MasterShape { get; }
 
         /// <summary>
-        /// Laysouts the diagramshapes based on appconfig.
+        /// Lays outs the diagramshapes based on appconfig.
         /// </summary>
         /// <returns>A task.</returns>
         Task LayoutDataSet();
+
+        /// <summary>
+        /// Draws new data set onto visio
+        /// </summary>
+        /// <returns>A task.</returns>
+        Task UpdateVisio();
     }
 }
