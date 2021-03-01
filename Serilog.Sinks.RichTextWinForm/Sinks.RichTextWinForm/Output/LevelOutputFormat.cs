@@ -7,6 +7,7 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Output
 {
+    using Serilog.Events;
     using Serilog.Sinks.RichTextWinForm.Rendering;
 
     /// <summary>

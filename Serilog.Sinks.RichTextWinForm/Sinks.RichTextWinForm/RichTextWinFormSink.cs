@@ -11,6 +11,8 @@ namespace Serilog.Sinks.RichTextWinForm
     using System.Collections.ObjectModel;
     using System.Windows.Forms;
 
+    using Serilog.Core;
+    using Serilog.Events;
     using Serilog.Sinks.RichTextWinForm.Output;
 
     /// <summary>Sink log events to the monitoring rich text form element.</summary>

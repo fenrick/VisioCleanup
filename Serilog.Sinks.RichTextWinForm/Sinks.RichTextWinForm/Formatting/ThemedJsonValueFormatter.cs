@@ -12,6 +12,8 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
     using System.IO;
     using System.Windows.Forms;
 
+    using Serilog.Events;
+    using Serilog.Formatting.Json;
     using Serilog.Sinks.RichTextWinForm.Themes;
 
     internal class ThemedJsonValueFormatter : ThemedValueFormatter
