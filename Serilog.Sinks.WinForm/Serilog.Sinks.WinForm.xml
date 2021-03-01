@@ -85,6 +85,12 @@
             <summary>Initialises a new instance of the <see cref="T:Serilog.Sinks.WinForm.WinFormSink" /> class.</summary>
             <param name="formatter">Formatter.</param>
         </member>
+        <member name="M:Serilog.Sinks.WinForm.WinFormSink.AddListView(System.Windows.Forms.ListBox)">
+            <summary>
+            Add list box to Sinks as output destination. Will flush any outstanding event queue.
+            </summary>
+            <param name="listBox">List box to output to.</param>
+        </member>
         <member name="M:Serilog.Sinks.WinForm.WinFormSink.AddTextBox(System.Windows.Forms.TextBox)">
             <summary>
             Add a new rich text box to the sink.
