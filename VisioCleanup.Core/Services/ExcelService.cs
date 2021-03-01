@@ -15,7 +15,7 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Contracts;
 
     /// <summary>The excel service.</summary>
-    public class ExcelService : IExcelService
+    public class ExcelService : AbstractProcessingService, IExcelService
     {
         private readonly ILogger<ExcelService> logger;
 
