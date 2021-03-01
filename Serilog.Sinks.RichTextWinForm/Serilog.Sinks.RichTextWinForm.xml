@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <doc>
     <assembly>
         <name>Serilog.Sinks.RichTextWinForm</name>
@@ -7,7 +8,8 @@
         <member name="T:Serilog.RichTextWinFormLoggerConfigurationExtensions">
             <summary>Extends <see cref="T:Serilog.LoggerConfiguration" /> with methods for configuring Rich Text Windows Forms logging.</summary>
         </member>
-        <member name="M:Serilog.RichTextWinFormLoggerConfigurationExtensions.RichTextWinForm(Serilog.Configuration.LoggerSinkConfiguration,System.String,Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme,Serilog.Events.LogEventLevel,System.IFormatProvider,Serilog.Core.LoggingLevelSwitch)">
+        <member
+            name="M:Serilog.RichTextWinFormLoggerConfigurationExtensions.RichTextWinForm(Serilog.Configuration.LoggerSinkConfiguration,System.String,Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme,Serilog.Events.LogEventLevel,System.IFormatProvider,Serilog.Core.LoggingLevelSwitch)">
             <summary>Writes log events to a <see cref="T:System.Windows.Forms.RichTextBox" /> .</summary>
             <param name="loggerSinkConfiguration">Logger sink configuration.</param>
             <param name="outputTemplate">
@@ -34,17 +36,23 @@
         <member name="T:Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer">
             <summary>Render output as per theme.</summary>
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer.#ctor(Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme,System.String,System.IFormatProvider)">
-            <summary>Initialises a new instance of the <see cref="T:Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer" /> class.</summary>
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer.#ctor(Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme,System.String,System.IFormatProvider)">
+            <summary>
+                Initialises a new instance of the
+                <see cref="T:Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer" /> class.
+            </summary>
             <param name="theme">Rich text theme.</param>
             <param name="outputTemplate">Template for output.</param>
             <param name="formatProvider">Format provider.</param>
             <exception cref="T:System.ArgumentNullException">No output template.</exception>
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer.Format(Serilog.Events.LogEvent,System.IO.TextWriter)">
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer.Format(Serilog.Events.LogEvent,System.IO.TextWriter)">
             <inheritdoc />
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer.Format(Serilog.Events.LogEvent,System.Windows.Forms.RichTextBox)">
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer.Format(Serilog.Events.LogEvent,System.Windows.Forms.RichTextBox)">
             <summary>Format log events to a richtextbox.</summary>
             <param name="logEvent">Log event.</param>
             <param name="output">A rich textbox.</param>
@@ -59,7 +67,8 @@
             <param name="format">Format string.</param>
             <returns>The provided <paramref name="value" /> with formatting applied.</returns>
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.Rendering.Padding.Apply(System.Windows.Forms.RichTextBox,System.String,System.Nullable{Serilog.Parsing.Alignment})">
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.Rendering.Padding.Apply(System.Windows.Forms.RichTextBox,System.String,System.Nullable{Serilog.Parsing.Alignment})">
             <summary>
                 Writes the provided <paramref name="value" /> to the output, applying direction-based padding when
                 <paramref name="alignment" /> is provided.
@@ -75,13 +84,18 @@
             <summary>Gets a collection of rich text fields.</summary>
             <value>A collection of rich text fields.</value>
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.RichTextWinFormSink.#ctor(Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer)">
-            <summary>Initialises a new instance of the <see cref="T:Serilog.Sinks.RichTextWinForm.RichTextWinFormSink" /> class.</summary>
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.RichTextWinFormSink.#ctor(Serilog.Sinks.RichTextWinForm.Output.OutputTemplateRenderer)">
+            <summary>
+                Initialises a new instance of the
+                <see cref="T:Serilog.Sinks.RichTextWinForm.RichTextWinFormSink" /> class.
+            </summary>
             <param name="formatter">Formatter.</param>
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.RichTextWinFormSink.AddRichTextBox(System.Windows.Forms.RichTextBox)">
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.RichTextWinFormSink.AddRichTextBox(System.Windows.Forms.RichTextBox)">
             <summary>
-            Add a new rich text box to the sink.
+                Add a new rich text box to the sink.
             </summary>
             <param name="richTextBox">RichTextBox to add.</param>
         </member>
@@ -90,7 +104,7 @@
         </member>
         <member name="T:Serilog.Sinks.RichTextWinForm.TextWriter.ColouredStringWriter">
             <summary>
-            Coloured String Writer.
+                Coloured String Writer.
             </summary>
         </member>
         <member name="T:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme">
@@ -100,16 +114,25 @@
             <summary>Gets collection of valid styles.</summary>
             <value>Collection of valid styles.</value>
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme.#ctor(System.Collections.Generic.IReadOnlyDictionary{Serilog.Sinks.RichTextWinForm.Themes.RichTextThemeStyle,Serilog.Sinks.RichTextWinForm.Themes.ThemeColours})">
-            <summary>Initialises a new instance of the <see cref="T:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme" /> class.</summary>
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme.#ctor(System.Collections.Generic.IReadOnlyDictionary{Serilog.Sinks.RichTextWinForm.Themes.RichTextThemeStyle,Serilog.Sinks.RichTextWinForm.Themes.ThemeColours})">
+            <summary>
+                Initialises a new instance of the
+                <see cref="T:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme" /> class.
+            </summary>
             <param name="styles">Styles to apply within the theme.</param>
             <exception cref="T:System.ArgumentNullException">When <paramref name="styles" /> is null.</exception>
         </member>
         <member name="M:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme.Reset(System.Windows.Forms.RichTextBox)">
-            <summary><see cref="M:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme.Reset(System.Windows.Forms.RichTextBox)" /> the <paramref name="output" /> to un-styled colors.</summary>
+            <summary>
+                <see
+                    cref="M:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme.Reset(System.Windows.Forms.RichTextBox)" />
+                the <paramref name="output" /> to un-styled colors.
+            </summary>
             <param name="output">Output destination.</param>
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme.Set(System.Windows.Forms.RichTextBox,Serilog.Sinks.RichTextWinForm.Themes.RichTextThemeStyle)">
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.Themes.RichTextTheme.Set(System.Windows.Forms.RichTextBox,Serilog.Sinks.RichTextWinForm.Themes.RichTextThemeStyle)">
             <summary>Begin a span of text in the specified <paramref name="style" /> .</summary>
             <param name="output">Output destination.</param>
             <param name="style">Style to apply.</param>
@@ -187,13 +210,15 @@
         <member name="F:Serilog.Sinks.RichTextWinForm.Themes.ThemeColours.Background">
             <summary>The background color to apply.</summary>
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.Themes.ThemeColours.op_Equality(Serilog.Sinks.RichTextWinForm.Themes.ThemeColours,Serilog.Sinks.RichTextWinForm.Themes.ThemeColours)">
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.Themes.ThemeColours.op_Equality(Serilog.Sinks.RichTextWinForm.Themes.ThemeColours,Serilog.Sinks.RichTextWinForm.Themes.ThemeColours)">
             <summary>Are they equal.</summary>
             <param name="left">Left.</param>
             <param name="right">Right.</param>
             <returns>Equality.</returns>
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.Themes.ThemeColours.op_Inequality(Serilog.Sinks.RichTextWinForm.Themes.ThemeColours,Serilog.Sinks.RichTextWinForm.Themes.ThemeColours)">
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.Themes.ThemeColours.op_Inequality(Serilog.Sinks.RichTextWinForm.Themes.ThemeColours,Serilog.Sinks.RichTextWinForm.Themes.ThemeColours)">
             <summary>Are they not equal.</summary>
             <param name="left">Left.</param>
             <param name="right">Right.</param>
@@ -202,7 +227,8 @@
         <member name="M:Serilog.Sinks.RichTextWinForm.Themes.ThemeColours.Equals(System.Object)">
             <inheritdoc />
         </member>
-        <member name="M:Serilog.Sinks.RichTextWinForm.Themes.ThemeColours.Equals(Serilog.Sinks.RichTextWinForm.Themes.ThemeColours)">
+        <member
+            name="M:Serilog.Sinks.RichTextWinForm.Themes.ThemeColours.Equals(Serilog.Sinks.RichTextWinForm.Themes.ThemeColours)">
             <inheritdoc />
         </member>
         <member name="M:Serilog.Sinks.RichTextWinForm.Themes.ThemeColours.GetHashCode">
