@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <doc>
     <assembly>
         <name>VisioCleanup.UI</name>
@@ -8,44 +9,42 @@
             <summary>Main application form.</summary>
             <summary>Main application form.</summary>
         </member>
-        <member name="F:VisioCleanup.UI.Forms.MainForm.appConfig">
-            <summary>The app config.</summary>
-        </member>
         <member name="F:VisioCleanup.UI.Forms.MainForm.logger">
             <summary>The logger.</summary>
         </member>
-        <member name="M:VisioCleanup.UI.Forms.MainForm.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.UI.Forms.MainForm},Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig},VisioCleanup.Core.Contracts.IExcelService,VisioCleanup.Core.Contracts.IVisioService)">
+        <member
+            name="M:VisioCleanup.UI.Forms.MainForm.#ctor(Microsoft.Extensions.Logging.ILogger{VisioCleanup.UI.Forms.MainForm},Microsoft.Extensions.Options.IOptions{VisioCleanup.Core.Models.Config.AppConfig},VisioCleanup.Core.Contracts.IExcelService,VisioCleanup.Core.Contracts.IVisioService)">
             <summary>Initialises a new instance of the <see cref="T:VisioCleanup.UI.Forms.MainForm" /> class.</summary>
-            <param name="logger">The <paramref name="logger"/>.</param>
+            <param name="logger">The <paramref name="logger" />.</param>
             <param name="options">The app config.</param>
             <param name="excelService">The excel service.</param>
             <param name="visioService">The visio service.</param>
         </member>
         <member name="M:VisioCleanup.UI.Forms.MainForm.LoadVisioObjects_Click(System.Object,System.EventArgs)">
             <summary>Load Visio Object Model.</summary>
-            <param name="sender">The <paramref name="sender"/>.</param>
-            <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
+            <param name="sender">The <paramref name="sender" />.</param>
+            <param name="eventArgs">The <paramref name="eventArgs" />.</param>
         </member>
         <member name="M:VisioCleanup.UI.Forms.MainForm.ProcessExcelDataSet_Click(System.Object,System.EventArgs)">
             <summary>Activate the processing of Excel data set.</summary>
-            <param name="sender">The <paramref name="sender"/>.</param>
-            <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
+            <param name="sender">The <paramref name="sender" />.</param>
+            <param name="eventArgs">The <paramref name="eventArgs" />.</param>
         </member>
         <member name="F:VisioCleanup.UI.Forms.MainForm.components">
             <summary>
-             Required designer variable.
+                Required designer variable.
             </summary>
         </member>
         <member name="M:VisioCleanup.UI.Forms.MainForm.Dispose(System.Boolean)">
             <summary>
-             Clean up any resources being used.
+                Clean up any resources being used.
             </summary>
             <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
         <member name="M:VisioCleanup.UI.Forms.MainForm.InitializeComponent">
             <summary>
-             Required method for Designer support - do not modify
-             the contents of this method with the code editor.
+                Required method for Designer support - do not modify
+                the contents of this method with the code editor.
             </summary>
         </member>
         <member name="T:VisioCleanup.UI.Program">
@@ -55,12 +54,14 @@
             <summary>The main entry point for the application.</summary>
             <param name="args">Arguments.</param>
         </member>
-        <member name="M:VisioCleanup.UI.Program.ConfigureApplicationServices(Microsoft.Extensions.Hosting.HostBuilderContext,Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+        <member
+            name="M:VisioCleanup.UI.Program.ConfigureApplicationServices(Microsoft.Extensions.Hosting.HostBuilderContext,Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>Configure services.</summary>
             <param name="hostBuilderContext">The host builder context.</param>
             <param name="serviceCollection">The service collection.</param>
         </member>
-        <member name="M:VisioCleanup.UI.Program.ConfigureSerilog(Microsoft.Extensions.Hosting.HostBuilderContext,Serilog.LoggerConfiguration)">
+        <member
+            name="M:VisioCleanup.UI.Program.ConfigureSerilog(Microsoft.Extensions.Hosting.HostBuilderContext,Serilog.LoggerConfiguration)">
             <summary>Configure Serilog.</summary>
             <param name="hostBuilderContext">The host builder context.</param>
             <param name="loggerConfiguration">The logger configuration.</param>
