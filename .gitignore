@@ -387,7 +387,7 @@ FodyWeavers.xsd
 # VS Code
 .vscode/
 VisioCleanup.xml
-VisioCleanup.Core.xml
-VisioCleanup.UI.xml
-Serilog.Sinks.WinForm.xml
-Serilog.Sinks.RichTextWinForm.xml
+VisioCleanup.UI/VisioCleanup.UI.xml
+Serilog.Sinks.WinForm/Serilog.Sinks.WinForm.xml
+Serilog.Sinks.RichTextWinForm/Serilog.Sinks.RichTextWinForm.xml
+VisioCleanup.Core/VisioCleanup.Core.xml
