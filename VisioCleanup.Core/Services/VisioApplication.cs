@@ -49,8 +49,8 @@ namespace VisioCleanup.Core.Services
         {
             var shape = this.GetShape(visioId);
 
-            var pinY = shape.Cells[this.appConfig.PinYField].Result[this.appConfig.Units];
-            var locPinY = shape.Cells[this.appConfig.LocPinYField].Result[this.appConfig.Units];
+            var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
+            var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
 
             return DiagramShape.ConvertMeasurement(pinY - locPinY);
         }
@@ -60,8 +60,8 @@ namespace VisioCleanup.Core.Services
         {
             var shape = this.GetShape(visioId);
 
-            var pinX = shape.Cells[this.appConfig.PinXField].Result[this.appConfig.Units];
-            var locPinX = shape.Cells[this.appConfig.LocPinXField].Result[this.appConfig.Units];
+            var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
+            var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
 
             return DiagramShape.ConvertMeasurement(pinX - locPinX);
         }
@@ -71,9 +71,9 @@ namespace VisioCleanup.Core.Services
         {
             var shape = this.GetShape(visioId);
 
-            var pinX = shape.Cells[this.appConfig.PinXField].Result[this.appConfig.Units];
-            var locPinX = shape.Cells[this.appConfig.LocPinXField].Result[this.appConfig.Units];
-            var width = shape.Cells[this.appConfig.WidthField].Result[this.appConfig.Units];
+            var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
+            var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
+            var width = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormWidth);
 
             return DiagramShape.ConvertMeasurement((pinX - locPinX) + width);
         }
@@ -83,9 +83,9 @@ namespace VisioCleanup.Core.Services
         {
             var shape = this.GetShape(visioId);
 
-            var pinY = shape.Cells[this.appConfig.PinYField].Result[this.appConfig.Units];
-            var locPinY = shape.Cells[this.appConfig.LocPinYField].Result[this.appConfig.Units];
-            var height = shape.Cells[this.appConfig.HeightField].Result[this.appConfig.Units];
+            var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
+            var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
+            var height = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
 
             return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
         }
@@ -210,6 +210,12 @@ namespace VisioCleanup.Core.Services
             listVisioIds.AddRange(ids.Cast<int>());
 
             return listVisioIds.ToArray();
+        }
+
+        private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
+        {
+            var shapeCell = shape.CellsSRC[(short)sectionIndex, (short)rowIndex, (short)cellIndex];
+            return shapeCell.Result[VisUnitCodes.visMillimeters];
         }
 
         private Shape GetShape(int visioId)
