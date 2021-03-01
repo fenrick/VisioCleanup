@@ -44,7 +44,8 @@ namespace VisioCleanup.Core.Services
             this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
-        public int CalclateBaseSide(int visioId)
+        /// <inheritdoc/>
+        public int CalculateBaseSide(int visioId)
         {
             var shape = this.GetShape(visioId);
 
@@ -54,7 +55,8 @@ namespace VisioCleanup.Core.Services
             return DiagramShape.ConvertMeasurement(pinY - locPinY);
         }
 
-        public int CalclateLeftSide(int visioId)
+        /// <inheritdoc/>
+        public int CalculateLeftSide(int visioId)
         {
             var shape = this.GetShape(visioId);
 
@@ -64,7 +66,8 @@ namespace VisioCleanup.Core.Services
             return DiagramShape.ConvertMeasurement(pinX - locPinX);
         }
 
-        public int CalclateRightSide(int visioId)
+        /// <inheritdoc/>
+        public int CalculateRightSide(int visioId)
         {
             var shape = this.GetShape(visioId);
 
@@ -75,7 +78,8 @@ namespace VisioCleanup.Core.Services
             return DiagramShape.ConvertMeasurement((pinX - locPinX) + width);
         }
 
-        public int CalclateTopSide(int visioId)
+        /// <inheritdoc/>
+        public int CalculateTopSide(int visioId)
         {
             var shape = this.GetShape(visioId);
 
