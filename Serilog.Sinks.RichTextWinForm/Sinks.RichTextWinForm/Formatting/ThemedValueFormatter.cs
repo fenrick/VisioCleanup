@@ -10,8 +10,6 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
     using System;
     using System.Windows.Forms;
 
-    using Serilog.Data;
-    using Serilog.Events;
     using Serilog.Sinks.RichTextWinForm.Themes;
 
     internal abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<ThemedValueFormatterState, int>

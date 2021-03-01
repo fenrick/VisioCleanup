@@ -9,9 +9,6 @@ namespace Serilog
 {
     using System;
 
-    using Serilog.Configuration;
-    using Serilog.Core;
-    using Serilog.Events;
     using Serilog.Sinks.RichTextWinForm;
     using Serilog.Sinks.RichTextWinForm.Output;
     using Serilog.Sinks.RichTextWinForm.Themes;
