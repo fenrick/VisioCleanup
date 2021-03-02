@@ -40,9 +40,9 @@ namespace VisioCleanup.Core.Models
             this.logger = Log.ForContext<DiagramShape>();
             this.VisioId = visioId;
             this.Children = new Collection<DiagramShape>();
-            this.TopSide = AppConfig!.Height;
+            this.TopSide = ConvertMeasurement((double)AppConfig!.Height);
             this.LeftSide = 0;
-            this.RightSide = AppConfig!.Width;
+            this.RightSide = ConvertMeasurement((double)AppConfig!.Width);
             this.BaseSide = 0;
         }
 
@@ -93,7 +93,7 @@ namespace VisioCleanup.Core.Models
                 // if so move them before moving this.
                 if (this.Below != null)
                 {
-                    if (Math.Abs(this.Below.BaseSide - this.baseSide) == AppConfig!.VerticalSpacing)
+                    if (Math.Abs(this.Below.BaseSide - this.baseSide) == ConvertMeasurement((double)AppConfig!.VerticalSpacing))
                     {
                         this.Below.MoveVertical(movement);
                     }
@@ -172,7 +172,7 @@ namespace VisioCleanup.Core.Models
                 // if so move them before moving this.
                 if (this.Above != null)
                 {
-                    if (Math.Abs(this.Above.BaseSide - this.TopSide) == AppConfig!.VerticalSpacing)
+                    if (Math.Abs(this.Above.BaseSide - this.TopSide) == ConvertMeasurement((double)AppConfig!.VerticalSpacing))
                     {
                         this.Above.MoveVertical(movement);
                     }
@@ -293,17 +293,17 @@ namespace VisioCleanup.Core.Models
             {
                 var children = this.Children;
 
-                newLeftSide = children.Select(shape => shape!.LeftSide).Min() - AppConfig!.Left;
-                newRightSide = children.Select(shape => shape!.RightSide).Max() + AppConfig!.Right;
+                newLeftSide = children.Select(shape => shape!.LeftSide).Min() - ConvertMeasurement((double)AppConfig!.Left);
+                newRightSide = children.Select(shape => shape!.RightSide).Max() + ConvertMeasurement((double)AppConfig!.Right);
 
-                newBaseSide = children.Select(shape => shape!.BaseSide).Min() - AppConfig!.Base;
-                newTopSide = children.Select(shape => shape!.TopSide).Max() + AppConfig!.Top;
+                newBaseSide = children.Select(shape => shape!.BaseSide).Min() - ConvertMeasurement((double)AppConfig!.Base);
+                newTopSide = children.Select(shape => shape!.TopSide).Max() + ConvertMeasurement((double)AppConfig!.Top);
             }
             else
             {
                 newTopSide = this.TopSide;
-                newBaseSide = this.TopSide - AppConfig!.Height;
-                newRightSide = this.LeftSide + AppConfig!.Width;
+                newBaseSide = this.TopSide - ConvertMeasurement((double)AppConfig!.Height);
+                newRightSide = this.LeftSide + ConvertMeasurement((double)AppConfig!.Width);
                 newLeftSide = this.LeftSide;
             }
 
