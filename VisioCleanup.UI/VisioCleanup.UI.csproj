@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0-windows</TargetFramework>
+        <RootNamespace>VisioCleanup.UI</RootNamespace>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisLevel>preview</AnalysisLevel>
+        <Nullable>enable</Nullable>
+        <Product>Visio Cleanup</Product>
+        <Authors>Jolyon Suthers</Authors>
+        <UseWindowsForms>true</UseWindowsForms>
+        <LangVersion>default</LangVersion>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>C:\Users\s770439\source\repos\VisioCleanup\VisioCleanup.UI\VisioCleanup.UI.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="appsettings.Development.json" />
+        <None Remove="appsettings.json" />
+        <None Remove="stylecop.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="stylecop.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="GCop.All.Common" Version="2.7.0-rc.6" />
+        <PackageReference Include="Microsoft.CodeAnalysis" Version="3.9.0-4.final" />
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.2.0-dev-00747" />
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="4.0.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0-dev-00264" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0-dev-00839" />
+        <PackageReference Include="WindowsFormsGenericHost" Version="0.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0-preview.1.21102.12" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0-preview.1.21102.12" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-preview.1.21102.12" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0-preview.1.21102.12" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.321">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="appsettings.Development.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TransformOnBuild>true</TransformOnBuild>
+        </Content>
+        <Content Include="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TransformOnBuild>true</TransformOnBuild>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Serilog.Sinks.WinForm\Serilog.Sinks.WinForm.csproj" />
+        <ProjectReference Include="..\VisioCleanup.Core\VisioCleanup.Core.csproj" />
+    </ItemGroup>
+
+</Project>
