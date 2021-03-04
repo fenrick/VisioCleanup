@@ -380,12 +380,15 @@ FodyWeavers.xsd
 
 # Rider
 # Rider auto-generates .iml files, and contentModel.xml
+.idea/
 **/.idea/**/*.iml
 **/.idea/**/contentModel.xml
 **/.idea/**/modules.xml
 
 # VS Code
 .vscode/
+
+# documentation crap
 VisioCleanup.xml
 VisioCleanup.UI/VisioCleanup.UI.xml
 Serilog.Sinks.WinForm/Serilog.Sinks.WinForm.xml
