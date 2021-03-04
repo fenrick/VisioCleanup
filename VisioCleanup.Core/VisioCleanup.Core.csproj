@@ -11,6 +11,7 @@
         <Nullable>enable</Nullable>
         <AnalysisLevel>preview</AnalysisLevel>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
