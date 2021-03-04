@@ -33,9 +33,7 @@ namespace VisioCleanup.Core.Services
 
         private Application? visioApplication;
 
-        /// <summary>
-        /// Initialises a new instance of the <see cref="VisioApplication"/> class.
-        /// </summary>
+        /// <summary>Initialises a new instance of the <see cref="VisioApplication" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="options">Application configuration.</param>
         public VisioApplication(ILogger<VisioApplication> logger, IOptions<AppConfig> options)
@@ -44,7 +42,7 @@ namespace VisioCleanup.Core.Services
             this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public int CalculateBaseSide(int visioId)
         {
             var shape = this.GetShape(visioId);
@@ -55,7 +53,7 @@ namespace VisioCleanup.Core.Services
             return DiagramShape.ConvertMeasurement(pinY - locPinY);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public int CalculateLeftSide(int visioId)
         {
             var shape = this.GetShape(visioId);
@@ -66,7 +64,7 @@ namespace VisioCleanup.Core.Services
             return DiagramShape.ConvertMeasurement(pinX - locPinX);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public int CalculateRightSide(int visioId)
         {
             var shape = this.GetShape(visioId);
@@ -78,7 +76,7 @@ namespace VisioCleanup.Core.Services
             return DiagramShape.ConvertMeasurement((pinX - locPinX) + width);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public int CalculateTopSide(int visioId)
         {
             var shape = this.GetShape(visioId);
@@ -106,6 +104,7 @@ namespace VisioCleanup.Core.Services
             GC.WaitForPendingFinalizers();
         }
 
+        /// <inheritdoc />
         public void CreateShape(DiagramShape diagramShape)
         {
             if (this.visioApplication is null)
@@ -133,8 +132,8 @@ namespace VisioCleanup.Core.Services
 
         /// <inheritdoc />
         /// <exception cref="T:System.AggregateException">
-        ///     The exception that contains all the individual exceptions thrown on all
-        ///     threads.
+        /// The exception that contains all the individual exceptions thrown on all
+        /// threads.
         /// </exception>
         /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public IEnumerable<int> GetChildren(int visioId)
@@ -237,6 +236,7 @@ namespace VisioCleanup.Core.Services
             return listVisioIds.ToArray();
         }
 
+        /// <inheritdoc />
         public void SetForeground(DiagramShape? diagramShape)
         {
             if (this.visioApplication is null)
@@ -256,6 +256,7 @@ namespace VisioCleanup.Core.Services
             }
         }
 
+        /// <inheritdoc />
         public void UpdateShape(DiagramShape diagramShape)
         {
             if (this.visioApplication is null)
@@ -301,6 +302,7 @@ namespace VisioCleanup.Core.Services
             // EXECUTE THE REQUEST
             const short Flags = 0;
             shape.SetResults(srcStream, unitsArray, resultsArray, Flags);
+
             // shape.SetFormulas(srcStream, resultsArray, Flags);
         }
 

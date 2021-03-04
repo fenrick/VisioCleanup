@@ -9,9 +9,7 @@ namespace Serilog.Sinks.RichTextWinForm.TextWriter
 {
     using System.IO;
 
-    /// <summary>
-    /// Coloured String Writer.
-    /// </summary>
+    /// <summary>Coloured String Writer.</summary>
     public class ColouredStringWriter : StringWriter
     {
     }

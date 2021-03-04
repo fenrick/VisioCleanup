@@ -12,30 +12,20 @@ namespace VisioCleanup.Core.Contracts
 
     using VisioCleanup.Core.Models;
 
-    /// <summary>
-    /// Implementers store and process diagram shapes for representing in visio.
-    /// </summary>
+    /// <summary>Implementers store and process diagram shapes for representing in visio.</summary>
     public interface IProcessingService
     {
-        /// <summary>
-        /// Gets collection of all diagram shapes.
-        /// </summary>
+        /// <summary>Gets collection of all diagram shapes.</summary>
         Collection<DiagramShape> AllShapes { get; }
 
-        /// <summary>
-        /// Gets the digram shape at the top of the tree.
-        /// </summary>
+        /// <summary>Gets the digram shape at the top of the tree.</summary>
         DiagramShape? MasterShape { get; }
 
-        /// <summary>
-        /// Lays outs the diagramshapes based on appconfig.
-        /// </summary>
+        /// <summary>Lays outs the diagramshapes based on appconfig.</summary>
         /// <returns>A task.</returns>
         Task LayoutDataSet();
 
-        /// <summary>
-        /// Draws new data set onto visio
-        /// </summary>
+        /// <summary>Draws new data set onto visio.</summary>
         /// <returns>A task.</returns>
         Task UpdateVisio();
     }

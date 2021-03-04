@@ -24,13 +24,13 @@ namespace Serilog
         /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
         /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
         /// <param name="outputTemplate">
-        ///     A message template describing the format used to write to the sink. The default is
-        ///     "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
+        /// A message template describing the format used to write to the sink. The default is
+        /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
         /// </param>
         /// <param name="theme">The richTextTheme to apply to the styled output.</param>
         /// <param name="restrictedToMinimumLevel">
-        ///     The minimum level for events passed through the sink. Ignored when
-        ///     <paramref name="levelSwitch" /> is specified.
+        /// The minimum level for events passed through the sink. Ignored when
+        /// <paramref name="levelSwitch" /> is specified.
         /// </param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="levelSwitch">A <see langword="switch" /> allowing the pass-through minimum level to be changed at runtime.</param>

@@ -12,14 +12,10 @@ namespace VisioCleanup.Core
     using System.Runtime.Versioning;
     using System.Security;
 
-    /// <summary>
-    ///     Implementation of .Net Framework 4.6 System.Runtime.InteropServices.Marshal.GetActiveObject().
-    /// </summary>
+    /// <summary>Implementation of .Net Framework 4.6 System.Runtime.InteropServices.Marshal.GetActiveObject().</summary>
     internal static class Marshal
     {
-        /// <summary>
-        ///     Copy of System.Runtime.InteropServices.Marshal.GetActiveObject().
-        /// </summary>
+        /// <summary>Copy of System.Runtime.InteropServices.Marshal.GetActiveObject().</summary>
         /// <param name="progId">String program identifier.</param>
         /// <returns>Object.</returns>
         [SecurityCritical] // auto-generated_required

@@ -16,13 +16,13 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
 
-    /// <summary>
-    /// Abstract implementation of common code for processing services.
-    /// </summary>
+    /// <summary>Abstract implementation of common code for processing services.</summary>
     public abstract class AbstractProcessingService : IProcessingService
     {
+        /// <summary>Logging environment.</summary>
         protected ILogger logger;
 
+        /// <summary>Visio processing engine.</summary>
         protected IVisioApplication visioApplication;
 
         /// <inheritdoc />

@@ -31,9 +31,7 @@ namespace VisioCleanup.Core.Models
 
         private int topSide;
 
-        /// <summary>
-        ///     Initialises a new instance of the <see cref="DiagramShape" /> class.
-        /// </summary>
+        /// <summary>Initialises a new instance of the <see cref="DiagramShape" /> class.</summary>
         /// <param name="visioId">Visio shape ID.</param>
         public DiagramShape(int visioId)
         {
@@ -48,9 +46,7 @@ namespace VisioCleanup.Core.Models
 
         public static AppConfig? AppConfig { get; set; }
 
-        /// <summary>
-        ///     Gets the shape above.
-        /// </summary>
+        /// <summary>Gets the shape above.</summary>
         public DiagramShape? Above
         {
             get => this.above;
@@ -73,9 +69,7 @@ namespace VisioCleanup.Core.Models
             }
         }
 
-        /// <summary>
-        ///     Gets or sets base of the shape.
-        /// </summary>
+        /// <summary>Gets or sets base of the shape.</summary>
         public int BaseSide
         {
             get => this.baseSide;
@@ -105,9 +99,7 @@ namespace VisioCleanup.Core.Models
 
         public Collection<DiagramShape> Children { get; set; }
 
-        /// <summary>
-        ///     Gets the shape to the left.
-        /// </summary>
+        /// <summary>Gets the shape to the left.</summary>
         public DiagramShape? Left
         {
             get => this.left;
@@ -130,31 +122,21 @@ namespace VisioCleanup.Core.Models
             }
         }
 
-        /// <summary>
-        ///     Gets or sets left side of the shape.
-        /// </summary>
+        /// <summary>Gets or sets left side of the shape.</summary>
         public int LeftSide { get; set; }
 
         public DiagramShape? ParentShape { get; set; }
 
-        /// <summary>
-        ///     Gets or sets right side of the shape.
-        /// </summary>
+        /// <summary>Gets or sets right side of the shape.</summary>
         public int RightSide { get; set; }
 
-        /// <summary>
-        ///     Gets the shape text.
-        /// </summary>
+        /// <summary>Gets the shape text.</summary>
         public string? ShapeText { get; init; }
 
-        /// <summary>
-        ///     Gets or sets the shape type.
-        /// </summary>
+        /// <summary>Gets or sets the shape type.</summary>
         public ShapeType ShapeType { get; set; }
 
-        /// <summary>
-        ///     Gets or sets top of the shape.
-        /// </summary>
+        /// <summary>Gets or sets top of the shape.</summary>
         public int TopSide
         {
             get => this.topSide;
@@ -184,9 +166,7 @@ namespace VisioCleanup.Core.Models
 
         public int VisioId { get; set; }
 
-        /// <summary>
-        ///     Gets or sets the shape to the right.
-        /// </summary>
+        /// <summary>Gets or sets the shape to the right.</summary>
         internal DiagramShape? Right
         {
             get => this.right;
@@ -209,9 +189,7 @@ namespace VisioCleanup.Core.Models
             }
         }
 
-        /// <summary>
-        ///     Gets or sets the shape below.
-        /// </summary>
+        /// <summary>Gets or sets the shape below.</summary>
         private DiagramShape? Below
         {
             get => this.below;
@@ -234,9 +212,7 @@ namespace VisioCleanup.Core.Models
             }
         }
 
-        /// <summary>
-        /// Convert a visio measurement into an easier mathematical model.
-        /// </summary>
+        /// <summary>Convert a visio measurement into an easier mathematical model.</summary>
         /// <param name="measurement">Measurement from visio.</param>
         /// <returns>Easier internal measurement.</returns>
         public static int ConvertMeasurement(double measurement)
@@ -244,9 +220,7 @@ namespace VisioCleanup.Core.Models
             return (int)(Math.Round(measurement, 3, MidpointRounding.AwayFromZero) * 1000);
         }
 
-        /// <summary>
-        /// Convert an easier measurement back to visio model.
-        /// </summary>
+        /// <summary>Convert an easier measurement back to visio model.</summary>
         /// <param name="measurement">Easier internal measurement.</param>
         /// <returns>Measurement for visio.</returns>
         public static double ConvertMeasurement(int measurement)
@@ -254,9 +228,7 @@ namespace VisioCleanup.Core.Models
             return (double)measurement / 1000;
         }
 
-        /// <summary>
-        ///     Add child shape to parent.
-        /// </summary>
+        /// <summary>Add child shape to parent.</summary>
         /// <param name="childShape">New child shape of this shape.</param>
         public void AddChildShape(DiagramShape childShape)
         {
@@ -331,9 +303,7 @@ namespace VisioCleanup.Core.Models
             return this.RightSide - this.LeftSide;
         }
 
-        /// <summary>
-        ///     Map all neighbour shapes within tolerance of 10.
-        /// </summary>
+        /// <summary>Map all neighbour shapes within tolerance of 10.</summary>
         /// <exception cref="NotImplementedException">No idea what to do yet with this.</exception>
         internal void FindNeighbours()
         {
@@ -417,18 +387,14 @@ namespace VisioCleanup.Core.Models
             }
         }
 
-        /// <summary>
-        ///     Does this shape have children.
-        /// </summary>
+        /// <summary>Does this shape have children.</summary>
         /// <returns>true if at least one.</returns>
         internal bool HasChildren()
         {
             return this.Children.Count > 0;
         }
 
-        /// <summary>
-        ///     Remove all records of shape neighbours.
-        /// </summary>
+        /// <summary>Remove all records of shape neighbours.</summary>
         private void ClearNeighbours()
         {
             // reset all shapes.

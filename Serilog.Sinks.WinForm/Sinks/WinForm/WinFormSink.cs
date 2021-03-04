@@ -38,9 +38,7 @@ namespace Serilog.Sinks.WinForm
             Sinks.Add(this);
         }
 
-        /// <summary>
-        /// Add list box to Sinks as output destination. Will flush any outstanding event queue.
-        /// </summary>
+        /// <summary>Add list box to Sinks as output destination. Will flush any outstanding event queue.</summary>
         /// <param name="listBox">List box to output to.</param>
         public static void AddListView(ListBox listBox)
         {
@@ -52,9 +50,7 @@ namespace Serilog.Sinks.WinForm
             }
         }
 
-        /// <summary>
-        /// Add a new rich text box to the sink.
-        /// </summary>
+        /// <summary>Add a new rich text box to the sink.</summary>
         /// <param name="textBox">TextBox to add.</param>
         public static void AddTextBox(TextBox textBox)
         {

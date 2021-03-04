@@ -36,9 +36,7 @@ namespace Serilog.Sinks.RichTextWinForm
             Sinks.Add(this);
         }
 
-        /// <summary>
-        /// Add a new rich text box to the sink.
-        /// </summary>
+        /// <summary>Add a new rich text box to the sink.</summary>
         /// <param name="richTextBox">RichTextBox to add.</param>
         public static void AddRichTextBox(RichTextBox richTextBox)
         {

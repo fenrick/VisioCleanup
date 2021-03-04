@@ -12,10 +12,8 @@ namespace VisioCleanup.Core.Contracts
     /// <summary>The VisioService interface.</summary>
     public interface IVisioService : IProcessingService
     {
-        /// <summary>
-        /// Load the visio object model.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        /// <summary>Load the visio object model.</summary>
+        /// <returns>A <see cref="Task" /> representing the result of the asynchronous operation.</returns>
         Task LoadVisioObjectModel();
     }
 }

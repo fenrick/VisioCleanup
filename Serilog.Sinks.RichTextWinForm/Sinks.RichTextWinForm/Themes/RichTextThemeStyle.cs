@@ -20,8 +20,8 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
         SecondaryText,
 
         /// <summary>
-        ///     De-emphasized text, for example literal text in output templates and punctuation used when writing structured
-        ///     data.
+        /// De-emphasized text, for example literal text in output templates and punctuation used when writing structured
+        /// data.
         /// </summary>
         TertiaryText,
 

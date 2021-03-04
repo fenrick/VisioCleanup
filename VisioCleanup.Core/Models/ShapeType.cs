@@ -7,24 +7,16 @@
 
 namespace VisioCleanup.Core.Models
 {
-    /// <summary>
-    ///     Type of diagram shape.
-    /// </summary>
+    /// <summary>Type of diagram shape.</summary>
     public enum ShapeType
     {
-        /// <summary>
-        ///     Existing diagram shape.
-        /// </summary>
+        /// <summary>Existing diagram shape.</summary>
         Existing,
 
-        /// <summary>
-        ///     New shape needed to be created.
-        /// </summary>
+        /// <summary>New shape needed to be created.</summary>
         NewShape,
 
-        /// <summary>
-        ///     Fake shape.
-        /// </summary>
+        /// <summary>Fake shape.</summary>
         FakeShape,
     }
 }

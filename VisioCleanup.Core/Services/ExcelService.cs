@@ -17,9 +17,7 @@ namespace VisioCleanup.Core.Services
     /// <summary>The excel service.</summary>
     public class ExcelService : AbstractProcessingService, IExcelService
     {
-        /// <summary>
-        /// Initialises a new instance of the <see cref="ExcelService"/> class.
-        /// </summary>
+        /// <summary>Initialises a new instance of the <see cref="ExcelService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
         public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication)

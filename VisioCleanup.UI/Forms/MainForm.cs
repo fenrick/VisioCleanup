@@ -31,7 +31,7 @@ namespace VisioCleanup.UI.Forms
         private IProcessingService? processingService;
 
         /// <summary>Initialises a new instance of the <see cref="MainForm" /> class.</summary>
-        /// <param name="logger">The <paramref name="logger"/>.</param>
+        /// <param name="logger">The <paramref name="logger" />.</param>
         /// <param name="options">The app config.</param>
         /// <param name="excelService">The excel service.</param>
         /// <param name="visioService">The visio service.</param>
@@ -81,8 +81,8 @@ namespace VisioCleanup.UI.Forms
         }
 
         /// <summary>Load Visio Object Model.</summary>
-        /// <param name="sender">The <paramref name="sender"/>.</param>
-        /// <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
+        /// <param name="sender">The <paramref name="sender" />.</param>
+        /// <param name="eventArgs">The <paramref name="eventArgs" />.</param>
         private async void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
         {
             this.logger.LogDebug("Loading objects from visio.");
@@ -94,8 +94,8 @@ namespace VisioCleanup.UI.Forms
         }
 
         /// <summary>Activate the processing of Excel data set.</summary>
-        /// <param name="sender">The <paramref name="sender"/>.</param>
-        /// <param name="eventArgs">The <paramref name="eventArgs"/>.</param>
+        /// <param name="sender">The <paramref name="sender" />.</param>
+        /// <param name="eventArgs">The <paramref name="eventArgs" />.</param>
         private async void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
         {
             this.logger.LogDebug("Loading objects from excel.");
@@ -110,7 +110,6 @@ namespace VisioCleanup.UI.Forms
         {
             this.logger.LogDebug("Drawing visio.");
             await this.processingService.UpdateVisio();
-
         }
     }
 }

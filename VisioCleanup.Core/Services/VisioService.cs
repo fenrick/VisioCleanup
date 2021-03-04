@@ -24,9 +24,7 @@ namespace VisioCleanup.Core.Services
     {
         private readonly AppConfig appConfig;
 
-        /// <summary>
-        /// Initialises a new instance of the <see cref="VisioService"/> class.
-        /// </summary>
+        /// <summary>Initialises a new instance of the <see cref="VisioService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="options">Application configuration being passed in.</param>
