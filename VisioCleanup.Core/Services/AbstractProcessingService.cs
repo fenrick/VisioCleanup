@@ -7,6 +7,7 @@
 
 namespace VisioCleanup.Core.Services
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
@@ -24,6 +25,12 @@ namespace VisioCleanup.Core.Services
 
         /// <summary>Visio processing engine.</summary>
         protected IVisioApplication visioApplication;
+
+        protected AbstractProcessingService(ILogger logger, IVisioApplication visioApplication)
+        {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.visioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
+        }
 
         /// <inheritdoc />
         public Collection<DiagramShape> AllShapes { get; protected set; } = new();
@@ -80,6 +87,8 @@ namespace VisioCleanup.Core.Services
                                         // we don't draw this!
                                         this.logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
                                         break;
+                                    default:
+                                        throw new InvalidOperationException("ShapeType not matched.");
                                 }
                             }
 

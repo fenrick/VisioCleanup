@@ -7,7 +7,6 @@
 
 namespace VisioCleanup.Core.Services
 {
-    using System;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
@@ -21,9 +20,8 @@ namespace VisioCleanup.Core.Services
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
         public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication)
+            : base(logger, visioApplication)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.visioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
         }
 
         /// <inheritdoc />

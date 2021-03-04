@@ -29,10 +29,9 @@ namespace VisioCleanup.Core.Services
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="options">Application configuration being passed in.</param>
         public VisioService(ILogger<VisioService> logger, IVisioApplication visioApplication, IOptions<AppConfig> options)
+            : base(logger, visioApplication)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
-            this.visioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
         }
 
         /// <inheritdoc />
