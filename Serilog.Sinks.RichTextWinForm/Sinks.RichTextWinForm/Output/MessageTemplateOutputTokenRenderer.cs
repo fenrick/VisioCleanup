@@ -36,6 +36,8 @@ namespace Serilog.Sinks.RichTextWinForm.Output
                         case 'j':
                             isJson = true;
                             break;
+                        default:
+                            continue;
                     }
                 }
             }
