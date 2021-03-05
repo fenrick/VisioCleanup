@@ -32,9 +32,13 @@ namespace VisioCleanup.Core
 
             // ReSharper disable once CatchAllClause
             catch
+#pragma warning disable GCop138
             {
+                // When you catch an exception you should throw exception or at least log error
                 CLSIDFromProgID(progId, out classId);
             }
+
+#pragma warning restore GCop138 // When you catch an exception you should throw exception or at least log error
 
             GetActiveObject(ref classId, IntPtr.Zero, out var obj);
             return obj;
@@ -56,6 +60,8 @@ namespace VisioCleanup.Core
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
         [SecurityCritical] // auto-generated
+#pragma warning disable GCop216 // A method named `{0}` is expected return a value. If it's meant to be void, then use a verb other than `Get` such as Read, Download, Sync, ...
         private static extern void GetActiveObject(ref Guid rclsid, IntPtr reserved, [MarshalAs(UnmanagedType.Interface)] out object ppunk);
+#pragma warning restore GCop216 // A method named `{0}` is expected return a value. If it's meant to be void, then use a verb other than `Get` such as Read, Download, Sync, ...
     }
 }
