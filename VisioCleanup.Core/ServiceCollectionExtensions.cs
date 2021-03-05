@@ -21,11 +21,10 @@ namespace VisioCleanup.Core
         /// <param name="serviceCollection">The <paramref name="serviceCollection" />.</param>
         /// <param name="configuration">The <paramref name="configuration" />.</param>
         /// <returns>The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> .</returns>
-        public static IServiceCollection AddVisioCleanupCore(this IServiceCollection serviceCollection, IConfiguration configuration)
-        {
+        public static IServiceCollection AddVisioCleanupCore(this IServiceCollection serviceCollection, IConfiguration configuration) =>
+
             // serviceCollection.AddHostedService<VisioCleanupService>();
-            return serviceCollection.Configure<AppConfig>(configuration.GetSection("VisioCleanup:Core")).AddSingleton<IVisioService, VisioService>()
+            serviceCollection.Configure<AppConfig>(configuration.GetSection("VisioCleanup:Core")).AddSingleton<IVisioService, VisioService>()
                 .AddSingleton<IExcelService, ExcelService>().AddSingleton<IVisioApplication, VisioApplication>();
-        }
     }
 }

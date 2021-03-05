@@ -17,10 +17,7 @@ namespace Serilog.Sinks.WinForm.Output
     {
         private readonly PropertyToken levelToken;
 
-        public LevelTokenRenderer(PropertyToken levelToken)
-        {
-            this.levelToken = levelToken;
-        }
+        public LevelTokenRenderer(PropertyToken levelToken) => this.levelToken = levelToken;
 
         public override void Render(LogEvent logEvent, TextWriter output)
         {

@@ -20,10 +20,8 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
         private readonly IFormatProvider? formatProvider;
 
         public ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
-            : base(theme)
-        {
+            : base(theme) =>
             this.formatProvider = formatProvider;
-        }
 
         public void FormatLiteralValue(ScalarValue scalar, RichTextBox output, string format)
         {

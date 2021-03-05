@@ -21,10 +21,8 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
         private readonly ThemedDisplayValueFormatter displayFormatter;
 
         public ThemedJsonValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
-            : base(theme)
-        {
+            : base(theme) =>
             this.displayFormatter = new ThemedDisplayValueFormatter(theme, formatProvider);
-        }
 
         protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
         {

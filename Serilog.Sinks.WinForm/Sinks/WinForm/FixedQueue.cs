@@ -20,10 +20,8 @@ namespace Serilog.Sinks.WinForm
         /// <summary>Initialises a new instance of the <see cref="FixedQueue{T}" /> class.</summary>
         /// <param name="capacity">Size of queue.</param>
         public FixedQueue(int capacity)
-            : base(capacity)
-        {
+            : base(capacity) =>
             this.Capacity = capacity;
-        }
 
         /// <summary>Initialises a new instance of the <see cref="FixedQueue{T}" /> class. With a default capacity of 50.</summary>
         public FixedQueue()
@@ -38,10 +36,8 @@ namespace Serilog.Sinks.WinForm
         /// <summary>Initialises a new instance of the <see cref="FixedQueue{T}" /> class.</summary>
         /// <param name="collection">Default collection and capacity size.</param>
         public FixedQueue(IEnumerable<T> collection)
-            : base(collection)
-        {
+            : base(collection) =>
             this.Capacity = collection.Count();
-        }
 
         /// <summary>Gets or sets capacity of queue.</summary>
         public int Capacity { get; set; }

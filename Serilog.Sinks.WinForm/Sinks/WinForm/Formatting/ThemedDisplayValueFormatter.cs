@@ -17,10 +17,7 @@ namespace Serilog.Sinks.WinForm.Formatting
     {
         private readonly IFormatProvider? formatProvider;
 
-        public ThemedDisplayValueFormatter(IFormatProvider? formatProvider)
-        {
-            this.formatProvider = formatProvider;
-        }
+        public ThemedDisplayValueFormatter(IFormatProvider? formatProvider) => this.formatProvider = formatProvider;
 
         public void FormatLiteralValue(ScalarValue scalar, TextWriter output, string format)
         {

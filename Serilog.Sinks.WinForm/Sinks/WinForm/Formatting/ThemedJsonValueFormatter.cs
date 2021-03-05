@@ -18,10 +18,7 @@ namespace Serilog.Sinks.WinForm.Formatting
     {
         private readonly ThemedDisplayValueFormatter diplayFormatter;
 
-        public ThemedJsonValueFormatter(IFormatProvider? formatProvider)
-        {
-            this.diplayFormatter = new ThemedDisplayValueFormatter(formatProvider);
-        }
+        public ThemedJsonValueFormatter(IFormatProvider? formatProvider) => this.diplayFormatter = new ThemedDisplayValueFormatter(formatProvider);
 
         protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
         {

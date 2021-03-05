@@ -24,36 +24,22 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
         /// <param name="left">Left.</param>
         /// <param name="right">Right.</param>
         /// <returns>Equality.</returns>
-        public static bool operator ==(ThemeColours left, ThemeColours right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(ThemeColours left, ThemeColours right) => left.Equals(right);
 
         /// <summary>Are they not equal.</summary>
         /// <param name="left">Left.</param>
         /// <param name="right">Right.</param>
         /// <returns>Inequality.</returns>
-        public static bool operator !=(ThemeColours left, ThemeColours right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(ThemeColours left, ThemeColours right) => !(left == right);
 
         /// <inheritdoc />
-        public override bool Equals(object? obj)
-        {
-            return obj is ThemeColours colours && this.Equals(colours);
-        }
+        public override bool Equals(object? obj) => obj is ThemeColours colours && this.Equals(colours);
 
         /// <inheritdoc />
-        public bool Equals(ThemeColours other)
-        {
-            return EqualityComparer<Color?>.Default.Equals(this.Foreground, other.Foreground) && EqualityComparer<Color?>.Default.Equals(this.Background, other.Background);
-        }
+        public bool Equals(ThemeColours other) =>
+            EqualityComparer<Color?>.Default.Equals(this.Foreground, other.Foreground) && EqualityComparer<Color?>.Default.Equals(this.Background, other.Background);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(this.Foreground, this.Background);
-        }
+        public override int GetHashCode() => HashCode.Combine(this.Foreground, this.Background);
     }
 }

@@ -19,10 +19,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
 
         private readonly RichTextTheme theme;
 
-        public ExceptionTokenRenderer(RichTextTheme theme)
-        {
-            this.theme = theme;
-        }
+        public ExceptionTokenRenderer(RichTextTheme theme) => this.theme = theme;
 
         public override void Render(LogEvent logEvent, RichTextBox output)
         {

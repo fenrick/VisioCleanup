@@ -15,10 +15,7 @@ namespace Serilog.Sinks.WinForm.Output
     {
         private readonly string text;
 
-        public TextTokenRenderer(string text)
-        {
-            this.text = text;
-        }
+        public TextTokenRenderer(string text) => this.text = text;
 
         public override void Render(LogEvent logEvent, TextWriter output)
         {

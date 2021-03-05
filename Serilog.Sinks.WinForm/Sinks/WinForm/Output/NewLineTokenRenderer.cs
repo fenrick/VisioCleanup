@@ -18,10 +18,7 @@ namespace Serilog.Sinks.WinForm.Output
     {
         private readonly Alignment? alignment;
 
-        public NewLineTokenRenderer(Alignment? alignment)
-        {
-            this.alignment = alignment;
-        }
+        public NewLineTokenRenderer(Alignment? alignment) => this.alignment = alignment;
 
         public override void Render(LogEvent logEvent, TextWriter output)
         {
