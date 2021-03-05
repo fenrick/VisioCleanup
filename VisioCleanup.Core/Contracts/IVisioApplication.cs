@@ -37,6 +37,8 @@ namespace VisioCleanup.Core.Contracts
         /// <summary>Close visio session and shutdown.</summary>
         void Close();
 
+        /// <summary>Create new shape on Visio diagram.</summary>
+        /// <param name="diagramShape">Shape to be created.</param>
         void CreateShape(DiagramShape diagramShape);
 
         /// <summary>Return an array of shapeIDs for children of the supplied shape id.</summary>
@@ -56,8 +58,12 @@ namespace VisioCleanup.Core.Contracts
         /// <returns>Array of visio ids.</returns>
         int[] Selection();
 
-        void SetForeground(DiagramShape? diagramShape);
+        /// <summary>If shape exists on Visio diagram, move to foreground.</summary>
+        /// <param name="diagramShape">Shape to be moved.</param>
+        void SetForeground(DiagramShape diagramShape);
 
+        /// <summary>Update shape on Visio diagram, moving, resizing, etc.</summary>
+        /// <param name="diagramShape">Shape to be updated.</param>
         void UpdateShape(DiagramShape diagramShape);
     }
 }

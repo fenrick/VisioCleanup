@@ -22,14 +22,15 @@ namespace VisioCleanup.Core.Services
         public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication)
             : base(logger, visioApplication)
         {
+            // empty constructor.
         }
 
         /// <inheritdoc />
         public async Task ProcessDataSet()
         {
-            this.logger.LogError("Not implemented yet.");
+            this.Logger.LogError("Not implemented yet.");
             await Task.Delay(5000);
-            this.logger.LogError("Still not implemented yet.");
+            this.Logger.LogError("Still not implemented yet.");
         }
     }
 }

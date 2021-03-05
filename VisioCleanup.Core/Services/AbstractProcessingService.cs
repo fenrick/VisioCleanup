@@ -20,16 +20,13 @@ namespace VisioCleanup.Core.Services
     /// <summary>Abstract implementation of common code for processing services.</summary>
     public abstract class AbstractProcessingService : IProcessingService
     {
-        /// <summary>Logging environment.</summary>
-        protected ILogger logger;
-
-        /// <summary>Visio processing engine.</summary>
-        protected IVisioApplication visioApplication;
-
+        /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="visioApplication">Visio Application engine.</param>
         protected AbstractProcessingService(ILogger logger, IVisioApplication visioApplication)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.visioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
+            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.VisioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
         }
 
         /// <inheritdoc />
@@ -37,6 +34,12 @@ namespace VisioCleanup.Core.Services
 
         /// <inheritdoc />
         public DiagramShape? MasterShape { get; protected set; }
+
+        /// <summary>Gets logging environment.</summary>
+        protected ILogger Logger { get; }
+
+        /// <summary>Gets visio processing engine.</summary>
+        protected IVisioApplication VisioApplication { get; }
 
         /// <inheritdoc />
         public async Task LayoutDataSet()
@@ -63,12 +66,17 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public async Task UpdateVisio()
         {
+            if (this.MasterShape is null)
+            {
+                throw new ArgumentNullException(nameof(this.MasterShape));
+            }
+
             await Task.Run(
                 () =>
                     {
                         try
                         {
-                            this.visioApplication.Open();
+                            this.VisioApplication.Open();
 
                             // update each shape
                             foreach (var diagramShape in this.AllShapes)
@@ -76,16 +84,16 @@ namespace VisioCleanup.Core.Services
                                 switch (diagramShape.ShapeType)
                                 {
                                     case ShapeType.NewShape:
-                                        this.logger.LogDebug("Dropping new shape: {Shape}", diagramShape);
-                                        this.visioApplication.CreateShape(diagramShape);
-                                        goto case ShapeType.Existing;
+                                        this.Logger.LogDebug("Dropping new shape: {Shape}", diagramShape);
+                                        this.VisioApplication.CreateShape(diagramShape);
+                                        break;
                                     case ShapeType.Existing:
-                                        this.logger.LogDebug("Checking shape: {Shape}", diagramShape);
-                                        this.visioApplication.UpdateShape(diagramShape);
+                                        this.Logger.LogDebug("Checking shape: {Shape}", diagramShape);
+                                        this.VisioApplication.UpdateShape(diagramShape);
                                         break;
                                     case ShapeType.FakeShape:
                                         // we don't draw this!
-                                        this.logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
+                                        this.Logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
                                         break;
                                     default:
                                         throw new InvalidOperationException("ShapeType not matched.");
@@ -93,11 +101,11 @@ namespace VisioCleanup.Core.Services
                             }
 
                             // iterate down the tree setting shapes to the foreground
-                            this.visioApplication.SetForeground(this.MasterShape);
+                            this.VisioApplication.SetForeground(this.MasterShape);
                         }
                         finally
                         {
-                            this.visioApplication.Close();
+                            this.VisioApplication.Close();
                         }
                     });
         }

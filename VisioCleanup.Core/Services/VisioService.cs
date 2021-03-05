@@ -29,10 +29,8 @@ namespace VisioCleanup.Core.Services
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="options">Application configuration being passed in.</param>
         public VisioService(ILogger<VisioService> logger, IVisioApplication visioApplication, IOptions<AppConfig> options)
-            : base(logger, visioApplication)
-        {
+            : base(logger, visioApplication) =>
             this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
-        }
 
         /// <inheritdoc />
         public async Task LoadVisioObjectModel()
@@ -45,24 +43,24 @@ namespace VisioCleanup.Core.Services
                             // setup DiagramShape
                             DiagramShape.AppConfig = this.appConfig;
 
-                            this.visioApplication.Open();
+                            this.VisioApplication.Open();
 
-                            var selection = this.visioApplication.Selection();
+                            var selection = this.VisioApplication.Selection();
                             this.MasterShape = null;
                             this.AllShapes = new Collection<DiagramShape>();
 
                             // confirm one or more items selected.
                             if (selection.Length == 0)
                             {
-                                this.logger.LogDebug("No items selected, all loaded!");
+                                this.Logger.LogDebug("No items selected, all loaded!");
                                 return;
                             }
 
-                            this.logger.LogDebug("Create a fake parent shape.");
+                            this.Logger.LogDebug("Create a fake parent shape.");
                             this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE PARENT", ShapeType = ShapeType.FakeShape };
                             this.AllShapes.Add(this.MasterShape);
 
-                            this.logger.LogDebug("Adding children to parent.");
+                            this.Logger.LogDebug("Adding children to parent.");
                             foreach (var visioId in selection)
                             {
                                 this.ProcessChildren(this.MasterShape, visioId);
@@ -72,7 +70,7 @@ namespace VisioCleanup.Core.Services
                         }
                         finally
                         {
-                            this.visioApplication.Close();
+                            this.VisioApplication.Close();
                         }
                     });
         }
@@ -82,18 +80,18 @@ namespace VisioCleanup.Core.Services
             // process shape
             DiagramShape childShape = new(visioId)
                                           {
-                                              ShapeText = this.visioApplication.GetShapeText(visioId),
-                                              LeftSide = this.visioApplication.CalculateLeftSide(visioId),
-                                              RightSide = this.visioApplication.CalculateRightSide(visioId),
-                                              TopSide = this.visioApplication.CalculateTopSide(visioId),
-                                              BaseSide = this.visioApplication.CalculateBaseSide(visioId),
+                                              ShapeText = this.VisioApplication.GetShapeText(visioId),
+                                              LeftSide = this.VisioApplication.CalculateLeftSide(visioId),
+                                              RightSide = this.VisioApplication.CalculateRightSide(visioId),
+                                              TopSide = this.VisioApplication.CalculateTopSide(visioId),
+                                              BaseSide = this.VisioApplication.CalculateBaseSide(visioId),
                                               ShapeType = ShapeType.Existing,
                                           };
             this.AllShapes.Add(childShape);
             parentShape.AddChildShape(childShape);
 
             // find children
-            var childrenIds = this.visioApplication.GetChildren(visioId).ToList();
+            var childrenIds = this.VisioApplication.GetChildren(visioId).ToList();
             foreach (var childId in childrenIds)
             {
                 this.ProcessChildren(childShape, childId);

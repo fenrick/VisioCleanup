@@ -128,6 +128,8 @@ namespace VisioCleanup.Core.Services
 
             diagramShape.VisioId = shape.ID;
             diagramShape.ShapeType = ShapeType.Existing;
+
+            this.UpdateShape(diagramShape);
         }
 
         /// <inheritdoc />
@@ -237,11 +239,16 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        public void SetForeground(DiagramShape? diagramShape)
+        public void SetForeground(DiagramShape diagramShape)
         {
             if (this.visioApplication is null)
             {
                 throw new InvalidOperationException("System not initialised.");
+            }
+
+            if (diagramShape is null)
+            {
+                throw new ArgumentNullException(nameof(diagramShape));
             }
 
             if (diagramShape.ShapeType == ShapeType.Existing)
