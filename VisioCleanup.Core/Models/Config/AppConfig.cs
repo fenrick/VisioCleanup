@@ -12,7 +12,7 @@ namespace VisioCleanup.Core.Models.Config
     {
         /// <summary>Gets or sets the bottom.</summary>
         /// <value>The bottom.</value>
-        public int Base { get; set; }
+        public double Base { get; set; }
 
         /// <summary>Gets or sets the field label format.</summary>
         /// <value>The field label format.</value>
@@ -20,23 +20,23 @@ namespace VisioCleanup.Core.Models.Config
 
         /// <summary>Gets or sets the header height.</summary>
         /// <value>The header height.</value>
-        public int HeaderHeight { get; set; }
+        public double HeaderHeight { get; set; }
 
         /// <summary>Gets or sets the height.</summary>
         /// <value>The height.</value>
-        public int Height { get; set; }
+        public double Height { get; set; }
 
         /// <summary>Gets or sets the horizontal spacing.</summary>
         /// <value>The horizontal spacing.</value>
-        public int HorizontalSpacing { get; set; }
+        public double HorizontalSpacing { get; set; }
 
         /// <summary>Gets or sets the left.</summary>
         /// <value>The left.</value>
-        public int Left { get; set; }
+        public double Left { get; set; }
 
         /// <summary>Gets or sets the right.</summary>
         /// <value>The right.</value>
-        public int Right { get; set; }
+        public double Right { get; set; }
 
         /// <summary>Gets or sets the shape type label format.</summary>
         /// <value>The shape type label format.</value>
@@ -44,7 +44,7 @@ namespace VisioCleanup.Core.Models.Config
 
         /// <summary>Gets or sets the side panel width.</summary>
         /// <value>The side panel width.</value>
-        public int SidePanelWidth { get; set; }
+        public double SidePanelWidth { get; set; }
 
         /// <summary>Gets or sets the sort field label format.</summary>
         /// <value>The sort field label format.</value>
@@ -52,14 +52,14 @@ namespace VisioCleanup.Core.Models.Config
 
         /// <summary>Gets or sets the top.</summary>
         /// <value>The top.</value>
-        public int Top { get; set; }
+        public double Top { get; set; }
 
         /// <summary>Gets or sets the vertical spacing.</summary>
         /// <value>The vertical spacing.</value>
-        public int VerticalSpacing { get; set; }
+        public double VerticalSpacing { get; set; }
 
         /// <summary>Gets or sets the width.</summary>
         /// <value>The width.</value>
-        public int Width { get; set; }
+        public double Width { get; set; }
     }
 }

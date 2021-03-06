@@ -29,11 +29,9 @@ namespace VisioCleanup.Core.Models
         private DiagramShape? left;
 
         /// <summary>Parent shape of curent shape.</summary>
-        private DiagramShape? parentShape;
+        internal DiagramShape? parentShape;
 
         private DiagramShape? right;
-
-        private int topSide;
 
         /// <summary>Initialises a new instance of the <see cref="DiagramShape" /> class.</summary>
         /// <param name="visioId">Visio shape ID.</param>
@@ -42,9 +40,9 @@ namespace VisioCleanup.Core.Models
             this.logger = Log.ForContext<DiagramShape>();
             this.VisioId = visioId;
             this.Children = new Collection<DiagramShape>();
-            this.TopSide = ConvertMeasurement((double)AppConfig!.Height);
+            this.TopSide = ConvertMeasurement(AppConfig!.Height);
             this.LeftSide = 0;
-            this.RightSide = ConvertMeasurement((double)AppConfig!.Width);
+            this.RightSide = ConvertMeasurement(AppConfig!.Width);
             this.BaseSide = 0;
         }
 
@@ -82,15 +80,16 @@ namespace VisioCleanup.Core.Models
                     return;
                 }
 
-                // calculate movement
-                var movement = this.baseSide - value;
-
                 // check if surrounding shapes are "locked" or at Vertical Spacing
                 // if so move them before moving this.
                 if (this.Below is not null)
                 {
-                    if (Math.Abs(this.Below.BaseSide - this.baseSide) == ConvertMeasurement((double)AppConfig!.VerticalSpacing))
+                    if (Math.Abs(this.Below.TopSide - this.baseSide) <= ConvertMeasurement(AppConfig!.VerticalSpacing))
                     {
+                        // calculate movement
+                        var movement = this.Below.TopSide - (value - ConvertMeasurement(AppConfig!.VerticalSpacing));
+                        
+                        this.logger.Debug("Moving {shape} by {movement} vertical.", this.Below, movement);
                         this.Below.MoveVertical(movement);
                     }
                 }
@@ -128,8 +127,35 @@ namespace VisioCleanup.Core.Models
         /// <summary>Gets or sets left side of the shape.</summary>
         public int LeftSide { get; set; }
 
+        private int rightSide;
+
         /// <summary>Gets or sets right side of the shape.</summary>
-        public int RightSide { get; set; }
+        public int RightSide
+        {
+            get => this.rightSide;
+            set {
+            if (this.rightSide == value)
+            {
+                return;
+            }
+
+            // check if surrounding shapes are "locked" or at Vertical Spacing
+            // if so move them before moving this.
+            if (this.Right is not null)
+            {
+                if (Math.Abs(this.Right.LeftSide - this.rightSide) <= ConvertMeasurement(AppConfig!.HorizontalSpacing))
+                {
+                    // calculate movement
+                    var movement = this.Right.LeftSide - (value + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+                        
+                    this.logger.Debug("Moving {shape} by {movement} horizontal.", this.Right, movement);
+                    this.Right.MoveHorizontal(movement);
+                }
+            }
+
+            this.rightSide = value;
+        }
+        }
 
         /// <summary>Gets the shape text.</summary>
         public string? ShapeText { get; init; }
@@ -138,32 +164,7 @@ namespace VisioCleanup.Core.Models
         public ShapeType ShapeType { get; set; }
 
         /// <summary>Gets or sets top of the shape.</summary>
-        public int TopSide
-        {
-            get => this.topSide;
-            set
-            {
-                if (this.topSide == value)
-                {
-                    return;
-                }
-
-                // calculate movement
-                var movement = this.topSide - value;
-
-                // check if surrounding shapes are "locked" or at Vertical Spacing
-                // if so move them before moving this.
-                if (this.Above is not null)
-                {
-                    if (Math.Abs(this.Above.BaseSide - this.TopSide) == ConvertMeasurement((double)AppConfig!.VerticalSpacing))
-                    {
-                        this.Above.MoveVertical(movement);
-                    }
-                }
-
-                this.topSide = value;
-            }
-        }
+        public int TopSide { get; set; }
 
         /// <summary>Gets or sets visio shape id.</summary>
         public int VisioId { get; set; }
@@ -239,35 +240,126 @@ namespace VisioCleanup.Core.Models
             childShape.parentShape = this;
         }
 
+        public bool AlignToParent()
+        {
+            var newLeft = this.parentShape.LeftSide + ConvertMeasurement(AppConfig!.Left);
+            var newTop = this.parentShape.TopSide - ConvertMeasurement(AppConfig!.Top);
+
+            var topMovement = this.TopSide - newTop;
+
+            var leftMovement = this.LeftSide - newLeft;
+
+            if (topMovement == 0 && leftMovement == 0)
+            {
+                return false;
+            }
+
+            this.logger.Debug("Aligning {shape} to {parent}.", this, this.parentShape);
+            this.MoveVertical(topMovement);
+            this.MoveHorizontal(leftMovement);
+            return true;
+
+        }
+
+        public bool FixAlignment()
+        {
+            var result = false;
+
+            // align vertically on left side
+            if (this.Below is not null)
+            {
+                if (this.Below.LeftSide != this.LeftSide)
+                {
+                    // calculate movement
+                    var movement = this.Below.LeftSide - this.LeftSide;
+                    
+                    this.logger.Debug("Moving {shape} by {movement} horizontal.", this.Below, movement);
+                    this.Below.MoveHorizontal(movement);
+                    result = true;
+                }
+            }
+
+            // align horizontally on top side
+            if (this.Right is not null)
+            {
+                if (this.Right.TopSide != this.TopSide)
+                {
+                    // calculate movement
+                    var movement = this.Right.TopSide - this.TopSide;
+                    
+                    this.logger.Debug("Moving {shape} by {movement} vertical.", this.Right, movement);
+                    this.Right.MoveVertical(movement);
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
+        public bool FixSpacing()
+        {
+            var result = false;
+
+            // fix vertical spacing
+            if (this.Below is not null)
+            {
+                if (Math.Abs(this.Below.TopSide - this.baseSide) != ConvertMeasurement(AppConfig!.VerticalSpacing))
+                {
+                    // calculate movement
+                    var movement = this.Below.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
+
+                    this.logger.Debug("Moving {shape} by {movement} vertical.", this.Below, movement);
+                    this.Below.MoveVertical(movement);
+                    result = true;
+                }
+            }
+
+            // fix horizontal spacing
+            if (this.Right is not null)
+            {
+                if (Math.Abs(this.Right.LeftSide - this.RightSide) != ConvertMeasurement(AppConfig!.HorizontalSpacing))
+                {
+                    // calculate movement
+                    var movement = this.Right.LeftSide - (this.RightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+                    
+                    this.logger.Debug("Moving {shape} by {movement} horizontal.", this.Right, movement);
+                    this.Right.MoveHorizontal(movement);
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>Calculate the height of the shape.</summary>
         /// <returns>Height.</returns>
         public int Height() => this.TopSide - this.BaseSide;
 
         /// <summary>Resize the shape based on appconfig.</summary>
-        public void ResizeShape()
+        public bool ResizeShape()
         {
             int? newLeftSide, newRightSide, newBaseSide, newTopSide;
             if (this.HasChildren())
             {
                 var children = this.Children;
 
-                newLeftSide = children.Select(shape => shape?.LeftSide).Min() - ConvertMeasurement((double)AppConfig!.Left);
-                newRightSide = children.Select(shape => shape?.RightSide).Max() + ConvertMeasurement((double)AppConfig!.Right);
+                newLeftSide = children.Select(shape => shape?.LeftSide).Min() - ConvertMeasurement(AppConfig!.Left);
+                newRightSide = children.Select(shape => shape?.RightSide).Max() + ConvertMeasurement(AppConfig!.Right);
 
-                newBaseSide = children.Select(shape => shape?.BaseSide).Min() - ConvertMeasurement((double)AppConfig!.Base);
-                newTopSide = children.Select(shape => shape?.TopSide).Max() + ConvertMeasurement((double)AppConfig!.Top);
+                newBaseSide = children.Select(shape => shape?.BaseSide).Min() - ConvertMeasurement(AppConfig!.Base);
+                newTopSide = children.Select(shape => shape?.TopSide).Max() + ConvertMeasurement(AppConfig!.Top);
             }
             else
             {
                 newTopSide = this.TopSide;
-                newBaseSide = this.TopSide - ConvertMeasurement((double)AppConfig!.Height);
-                newRightSide = this.LeftSide + ConvertMeasurement((double)AppConfig!.Width);
+                newBaseSide = this.TopSide - ConvertMeasurement(AppConfig!.Height);
+                newRightSide = this.LeftSide + ConvertMeasurement(AppConfig!.Width);
                 newLeftSide = this.LeftSide;
             }
 
             if ((this.LeftSide == newLeftSide) && (this.RightSide == newRightSide) && (this.TopSide == newTopSide) && (this.BaseSide == newBaseSide))
             {
-                return;
+                return false;;
             }
 
             this.logger.Debug("Resizing: {Shape}", this);
@@ -276,6 +368,7 @@ namespace VisioCleanup.Core.Models
             this.LeftSide = newLeftSide ?? this.LeftSide;
             this.RightSide = newRightSide ?? this.RightSide;
             this.BaseSide = newBaseSide ?? this.BaseSide;
+            return true;
         }
 
         /// <inheritdoc />
@@ -391,14 +484,26 @@ namespace VisioCleanup.Core.Models
 
         private void MoveHorizontal(int movement)
         {
-            this.LeftSide += movement;
-            this.RightSide += movement;
+            this.LeftSide -= movement;
+            this.RightSide -= movement;
+
+            foreach (var shape in this.Children)
+            {
+                this.logger.Debug("Moving {shape} by {movement} horizontal.", shape, movement);
+                shape.MoveHorizontal(movement);
+            }
         }
 
         private void MoveVertical(int movement)
         {
-            this.TopSide += movement;
-            this.BaseSide += movement;
+            this.TopSide -= movement;
+            this.BaseSide -= movement;
+
+            foreach (var shape in this.Children)
+            {
+                this.logger.Debug("Moving {shape} by {movement} vertical.", shape, movement);
+                shape.MoveVertical(movement);
+            }
         }
     }
 }

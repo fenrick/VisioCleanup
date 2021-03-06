@@ -60,6 +60,8 @@ namespace VisioCleanup.UI.Forms
 
         private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
         {
+            this.controlsFlowPanel.Enabled = false;
+
             if (this.processingService is null)
             {
                 this.logger.LogDebug("Processing Service is not defined.");
@@ -78,6 +80,8 @@ namespace VisioCleanup.UI.Forms
             await this.processingService.LayoutDataSet();
 
             this.dataSetBindingSource.ResetBindings(true);
+
+            this.controlsFlowPanel.Enabled = true;
         }
 
         /// <summary>Load Visio Object Model.</summary>
@@ -85,12 +89,16 @@ namespace VisioCleanup.UI.Forms
         /// <param name="eventArgs">The <paramref name="eventArgs" />.</param>
         private async void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
         {
+            this.controlsFlowPanel.Enabled = false;
+
             this.logger.LogDebug("Loading objects from visio.");
             await this.visioService.LoadVisioObjectModel();
 
             this.logger.LogDebug("Updating data set.");
             this.dataSetBindingSource.DataSource = this.visioService.AllShapes;
             this.processingService = this.visioService;
+
+            this.controlsFlowPanel.Enabled = true;
         }
 
         /// <summary>Activate the processing of Excel data set.</summary>
@@ -98,18 +106,26 @@ namespace VisioCleanup.UI.Forms
         /// <param name="eventArgs">The <paramref name="eventArgs" />.</param>
         private async void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
         {
+            this.controlsFlowPanel.Enabled = false;
+
             this.logger.LogDebug("Loading objects from excel.");
             await this.excelService.ProcessDataSet();
 
             this.logger.LogDebug("Updating dataset.");
             this.dataSetBindingSource.DataSource = this.excelService.AllShapes;
             this.processingService = this.excelService;
+
+            this.controlsFlowPanel.Enabled = true;
         }
 
         private async void updateVisioDrawing_Click(object sender, EventArgs e)
         {
+            this.controlsFlowPanel.Enabled = false;
+
             this.logger.LogDebug("Drawing visio.");
             await this.processingService.UpdateVisio();
+
+            this.controlsFlowPanel.Enabled = true;
         }
     }
 }
