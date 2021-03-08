@@ -58,12 +58,18 @@ namespace VisioCleanup.Core.Services
 
                             this.Logger.LogDebug("Create a fake parent shape.");
                             this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE PARENT", ShapeType = ShapeType.FakeShape };
+
                             this.AllShapes.Add(this.MasterShape);
 
                             this.Logger.LogDebug("Adding children to parent.");
                             Parallel.ForEach(selection, childId => { this.ProcessChildren(this.MasterShape, childId); });
 
                             // set left and top for master shape. Resize will handle reset.
+                            if (this.MasterShape is null)
+                            {
+                                return;
+                            }
+
                             this.MasterShape.LeftSide = this.MasterShape.Children.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.appConfig.Left);
                             this.MasterShape.TopSide = this.MasterShape.Children.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.appConfig.Top);
 

@@ -340,7 +340,7 @@ namespace VisioCleanup.Core.Models
         /// <exception cref="NotImplementedException">No idea what to do yet with this.</exception>
         internal void FindNeighbours()
         {
-            if (!(this.Children.Count > 0))
+            if (this.Children.Count <= 0)
             {
                 return;
             }

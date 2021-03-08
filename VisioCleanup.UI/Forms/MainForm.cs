@@ -64,13 +64,13 @@ namespace VisioCleanup.UI.Forms
             {
                 this.logger.LogDebug("Processing Service is not defined.");
                 MessageBox.Show(
-                    "Unable to layout dataset, none is loaded.",
-                    "Error",
+                    @"Unable to layout dataset, none is loaded.",
+                    @"Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1,
                     MessageBoxOptions.ServiceNotification,
-                    false);
+                    displayHelpButton: false);
                 return;
             }
 
@@ -124,13 +124,13 @@ namespace VisioCleanup.UI.Forms
             {
                 this.logger.LogDebug("Processing Service is not defined.");
                 MessageBox.Show(
-                    "Unable to layout dataset, none is loaded.",
-                    "Error",
+                    @"Unable to draw dataset, none is loaded.",
+                    @"Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1,
                     MessageBoxOptions.ServiceNotification,
-                    false);
+                    displayHelpButton: false);
                 return;
             }
 

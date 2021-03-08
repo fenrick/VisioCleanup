@@ -13,20 +13,16 @@ namespace VisioCleanup.Core.Services
     using System.Runtime.InteropServices;
 
     using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
     using Microsoft.Office.Interop.Visio;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
-    using VisioCleanup.Core.Models.Config;
 
     using Marshal = VisioCleanup.Core.Marshal;
 
     /// <inheritdoc />
     public class VisioApplication : IVisioApplication
     {
-        private readonly AppConfig appConfig;
-
         private readonly ILogger<VisioApplication> logger;
 
         private Page? activePage;
@@ -35,12 +31,7 @@ namespace VisioCleanup.Core.Services
 
         /// <summary>Initialises a new instance of the <see cref="VisioApplication" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
-        /// <param name="options">Application configuration.</param>
-        public VisioApplication(ILogger<VisioApplication> logger, IOptions<AppConfig> options)
-        {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
-        }
+        public VisioApplication(ILogger<VisioApplication> logger) => this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         /// <inheritdoc />
         public int CalculateBaseSide(int visioId)
@@ -148,6 +139,11 @@ namespace VisioCleanup.Core.Services
             parentShape.SpatialNeighbors[relation, 0, flags].GetIDs(out var ids);
 
             // selection.GetIDs(out var selectionIDs);
+            if (ids is null)
+            {
+                return childrenIds;
+            }
+
             if (ids.Length == 0)
             {
                 return childrenIds;
@@ -164,6 +160,11 @@ namespace VisioCleanup.Core.Services
                 var potentialChildShape = this.GetShape((int)potentialChildId);
 
                 potentialChildShape.SpatialNeighbors[relation, 0, flags].GetIDs(out var parentIDs);
+
+                if (parentIDs is null)
+                {
+                    continue;
+                }
 
                 if (parentIDs.Length <= 0)
                 {
