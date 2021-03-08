@@ -83,14 +83,11 @@ namespace VisioCleanup.Core.Models
                 // if so move them before moving this.
                 if (this.Below is not null)
                 {
-                    if (Math.Abs(this.Below.TopSide - this.baseSide) <= ConvertMeasurement(AppConfig!.VerticalSpacing))
-                    {
-                        // calculate movement
-                        var movement = this.Below.TopSide - (value - ConvertMeasurement(AppConfig!.VerticalSpacing));
+                    // calculate movement
+                    var movement = this.Below.TopSide - (value - ConvertMeasurement(AppConfig!.VerticalSpacing));
 
-                        this.logger.Debug("Moving {shape} by {movement} vertical.", this.Below, movement);
-                        this.Below.MoveVertical(movement);
-                    }
+                    this.logger.Debug("Moving {shape} by {movement} vertical.", this.Below, movement);
+                    this.Below.MoveVertical(movement);
                 }
 
                 this.baseSide = value;
@@ -141,14 +138,11 @@ namespace VisioCleanup.Core.Models
                 // if so move them before moving this.
                 if (this.Right is not null)
                 {
-                    if (Math.Abs(this.Right.LeftSide - this.rightSide) <= ConvertMeasurement(AppConfig!.HorizontalSpacing))
-                    {
-                        // calculate movement
-                        var movement = this.Right.LeftSide - (value + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+                    // calculate movement
+                    var movement = this.Right.LeftSide - (value + ConvertMeasurement(AppConfig!.HorizontalSpacing));
 
-                        this.logger.Debug("Moving {shape} by {movement} horizontal.", this.Right, movement);
-                        this.Right.MoveHorizontal(movement);
-                    }
+                    this.logger.Debug("Moving {shape} by {movement} horizontal.", this.Right, movement);
+                    this.Right.MoveHorizontal(movement);
                 }
 
                 this.rightSide = value;
