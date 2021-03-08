@@ -7,6 +7,7 @@
 
 namespace VisioCleanup.Core.Services
 {
+    using System;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
@@ -16,21 +17,34 @@ namespace VisioCleanup.Core.Services
     /// <summary>The excel service.</summary>
     public class ExcelService : AbstractProcessingService, IExcelService
     {
+        private readonly IExcelApplication excelApplication;
+
         /// <summary>Initialises a new instance of the <see cref="ExcelService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
-        public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication)
+        /// <param name="excelApplication">Excel application handler.</param>
+        public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication, IExcelApplication excelApplication)
             : base(logger, visioApplication)
         {
-            // empty constructor.
+            this.excelApplication = excelApplication ?? throw new ArgumentNullException(nameof(excelApplication));
         }
 
         /// <inheritdoc />
         public async Task ProcessDataSet()
         {
-            this.Logger.LogError("Not implemented yet.");
-            await Task.Delay(5000);
-            this.Logger.LogError("Still not implemented yet.");
+            await Task.Run(
+                () =>
+                    {
+                        try
+                        {
+                            // open connection to excel
+                            this.excelApplication.Open();
+                        }
+                        finally
+                        {
+                            this.excelApplication.Close();
+                        }
+                    });
         }
     }
 }
