@@ -243,6 +243,11 @@ namespace VisioCleanup.Core.Models
 
         public bool AlignToParent()
         {
+            if (this.ParentShape is null)
+            {
+                return false;
+            }
+
             var newLeft = this.ParentShape.LeftSide + ConvertMeasurement(AppConfig!.Left);
             var newTop = this.ParentShape.TopSide - ConvertMeasurement(AppConfig!.Top);
 
