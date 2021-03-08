@@ -169,7 +169,7 @@ namespace VisioCleanup.Core.Models
 
         internal static AppConfig? AppConfig { get; set; }
 
-        /// <summary>Parent shape of curent shape.</summary>
+        /// <summary>Gets or sets parent shape of curent shape.</summary>
         internal DiagramShape? ParentShape { get; set; }
 
         /// <summary>Gets or sets the shape to the right.</summary>
