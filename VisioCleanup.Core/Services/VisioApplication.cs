@@ -253,7 +253,7 @@ namespace VisioCleanup.Core.Services
 
             if (diagramShape.ShapeType == ShapeType.Existing)
             {
-                Shape shape = this.GetShape(diagramShape.VisioId);
+                var shape = this.GetShape(diagramShape.VisioId);
                 shape.BringToFront();
             }
 
@@ -273,7 +273,7 @@ namespace VisioCleanup.Core.Services
 
             var shape = this.GetShape(diagramShape.VisioId);
 
-            this.ChangeShape(this.VisioChanges(diagramShape), shape);
+            this.ChangeShape(VisioChanges(diagramShape), shape);
         }
 
         private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
@@ -282,48 +282,7 @@ namespace VisioCleanup.Core.Services
             return shapeCell.Result[VisUnitCodes.visMillimeters];
         }
 
-        private void ChangeShape(IReadOnlyList<Dictionary<string, object>> items, IVShape shape)
-        {
-            if (items.Count == 0)
-            {
-                this.logger.LogDebug("No changes found.");
-                return;
-            }
-
-            this.logger.LogDebug("Updating shape.");
-
-            // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
-            var srcStream = new short[items.Count * 3];
-            var unitsArray = new object[items.Count];
-            var resultsArray = new object[items.Count];
-            for (var i = 0; i < items.Count; i++)
-            {
-                var item = items[i];
-                srcStream[(i * 3) + 0] = (short)item["section"];
-                srcStream[(i * 3) + 1] = (short)item["row"];
-                srcStream[(i * 3) + 2] = (short)item["cell"];
-                resultsArray[i] = item["result"];
-                unitsArray[i] = item["unit"];
-            }
-
-            // EXECUTE THE REQUEST
-            const short Flags = 0;
-            shape.SetResults(srcStream, unitsArray, resultsArray, Flags);
-
-            // shape.SetFormulas(srcStream, resultsArray, Flags);
-        }
-
-        private Shape GetShape(int visioId)
-        {
-            if (this.visioApplication is null || this.activePage is null)
-            {
-                throw new InvalidOperationException("System not initialised.");
-            }
-
-            return this.activePage.Shapes.ItemFromID[visioId];
-        }
-
-        private Dictionary<string, object>[] VisioChanges(DiagramShape diagramShape)
+        private static Dictionary<string, object>[] VisioChanges(DiagramShape diagramShape)
         {
             var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
             var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
@@ -373,6 +332,47 @@ namespace VisioCleanup.Core.Services
                     });
 
             return visioChanges.ToArray();
+        }
+
+        private void ChangeShape(IReadOnlyList<Dictionary<string, object>> items, IVShape shape)
+        {
+            if (items.Count == 0)
+            {
+                this.logger.LogDebug("No changes found.");
+                return;
+            }
+
+            this.logger.LogDebug("Updating shape.");
+
+            // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
+            var srcStream = new short[items.Count * 3];
+            var unitsArray = new object[items.Count];
+            var resultsArray = new object[items.Count];
+            for (var i = 0; i < items.Count; i++)
+            {
+                var item = items[i];
+                srcStream[(i * 3) + 0] = (short)item["section"];
+                srcStream[(i * 3) + 1] = (short)item["row"];
+                srcStream[(i * 3) + 2] = (short)item["cell"];
+                resultsArray[i] = item["result"];
+                unitsArray[i] = item["unit"];
+            }
+
+            // EXECUTE THE REQUEST
+            const short Flags = 0;
+            shape.SetResults(srcStream, unitsArray, resultsArray, Flags);
+
+            // shape.SetFormulas(srcStream, resultsArray, Flags);
+        }
+
+        private Shape GetShape(int visioId)
+        {
+            if (this.visioApplication is null || this.activePage is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            return this.activePage.Shapes.ItemFromID[visioId];
         }
     }
 }
