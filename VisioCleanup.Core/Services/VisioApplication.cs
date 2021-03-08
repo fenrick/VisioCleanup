@@ -147,13 +147,13 @@ namespace VisioCleanup.Core.Services
             var flags = (short)VisSpatialRelationFlags.visSpatialBackToFront;
             parentShape.SpatialNeighbors[relation, 0, flags].GetIDs(out var ids);
 
-            this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", ids.Length);
-
             // selection.GetIDs(out var selectionIDs);
             if (ids.Length == 0)
             {
                 return childrenIds;
             }
+
+            this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", ids.Length);
 
             foreach (var potentialChildId in ids)
             {
