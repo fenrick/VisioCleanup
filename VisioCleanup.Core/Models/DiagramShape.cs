@@ -18,9 +18,6 @@ namespace VisioCleanup.Core.Models
     /// <summary>Representation of a single shape in a visio diagram.</summary>
     public class DiagramShape
     {
-        /// <summary>Parent shape of curent shape.</summary>
-        internal DiagramShape? parentShape;
-
         private readonly ILogger logger;
 
         private DiagramShape? above;
@@ -172,6 +169,9 @@ namespace VisioCleanup.Core.Models
 
         internal static AppConfig? AppConfig { get; set; }
 
+        /// <summary>Parent shape of curent shape.</summary>
+        internal DiagramShape? ParentShape { get; set; }
+
         /// <summary>Gets or sets the shape to the right.</summary>
         internal DiagramShape? Right
         {
@@ -238,13 +238,13 @@ namespace VisioCleanup.Core.Models
             }
 
             // add to array
-            childShape.parentShape = this;
+            childShape.ParentShape = this;
         }
 
         public bool AlignToParent()
         {
-            var newLeft = this.parentShape.LeftSide + ConvertMeasurement(AppConfig!.Left);
-            var newTop = this.parentShape.TopSide - ConvertMeasurement(AppConfig!.Top);
+            var newLeft = this.ParentShape.LeftSide + ConvertMeasurement(AppConfig!.Left);
+            var newTop = this.ParentShape.TopSide - ConvertMeasurement(AppConfig!.Top);
 
             var topMovement = this.TopSide - newTop;
 
@@ -255,7 +255,7 @@ namespace VisioCleanup.Core.Models
                 return false;
             }
 
-            this.logger.Debug("Aligning {shape} to {parent}.", this, this.parentShape);
+            this.logger.Debug("Aligning {shape} to {parent}.", this, this.ParentShape);
             this.MoveVertical(topMovement);
             this.MoveHorizontal(leftMovement);
             return true;
@@ -360,7 +360,6 @@ namespace VisioCleanup.Core.Models
             if ((this.LeftSide == newLeftSide) && (this.RightSide == newRightSide) && (this.TopSide == newTopSide) && (this.BaseSide == newBaseSide))
             {
                 return false;
-                
             }
 
             this.logger.Debug("Resizing: {Shape}", this);
