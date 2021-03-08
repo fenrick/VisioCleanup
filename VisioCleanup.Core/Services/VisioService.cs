@@ -66,6 +66,10 @@ namespace VisioCleanup.Core.Services
                                 this.ProcessChildren(this.MasterShape, visioId);
                             }
 
+                            // set left and top for master shape. Resize will handle reset.
+                            this.MasterShape.LeftSide = this.MasterShape.Children.Select(shape => shape.LeftSide).Min() + DiagramShape.ConvertMeasurement(this.appConfig.Left);
+                            this.MasterShape.TopSide = this.MasterShape.Children.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.appConfig.Top);
+
                             this.MasterShape.ResizeShape();
                         }
                         finally
