@@ -9,7 +9,6 @@ namespace VisioCleanup.Core.Services
 {
     using System;
     using System.Collections.ObjectModel;
-    using System.Linq;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
@@ -44,66 +43,21 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public async Task LayoutDataSet()
         {
+            if (this.MasterShape is null)
+            {
+                return;
+            }
+
             await Task.Run(
                 () =>
                     {
-                        bool result;
+                        var counter = 1;
 
                         do
                         {
-                            result = false;
-
-                            // step 1 - resize shapes without children
-                            foreach (var diagramShape in this.AllShapes.Where(diagramShape => !diagramShape.HasChildren()))
-                            {
-                                if (diagramShape.ResizeShape())
-                                {
-                                    result = true;
-                                }
-                            }
-
-                            // step 2 - move top left child shape into position
-                            foreach (var diagramShape in this.AllShapes.Where(
-                                diagramShape => (diagramShape.ShapeType != ShapeType.FakeShape) && diagramShape.Left is null && diagramShape.Above is null))
-                            {
-                                if (diagramShape.AlignToParent())
-                                {
-                                    result = true;
-                                }
-                            }
-
-                            continue;
-
-                            // step 3 - fix spacing for shapes
-                            foreach (var diagramShape in this.AllShapes)
-                            {
-                                if (diagramShape.FixSpacing())
-                                {
-                                    result = true;
-                                }
-                            }
-
-                            // step 4 - align shapes
-                            foreach (var diagramShape in this.AllShapes.Where(diagramShape => (diagramShape.ShapeType != ShapeType.FakeShape)))
-                            {
-                                if (diagramShape.FixAlignment())
-                                {
-                                    result = true;
-                                }
-                            }
+                            this.Logger.LogDebug("Loop {count}", counter++);
                         }
-                        while (false);
-                        
-                        // step 5 - fix size of shapes (including those with children)
-                        foreach (var diagramShape in this.AllShapes)
-                        {
-                            if (diagramShape.ResizeShape())
-                            {
-                                result = true;
-                            }
-                        }
-
-                        return;
+                        while (this.MasterShape.CorrectDiagram());
                     });
         }
 
