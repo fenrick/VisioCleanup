@@ -71,6 +71,11 @@ namespace VisioCleanup.Core.Services
                             this.MasterShape.TopSide = this.MasterShape.Children.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.appConfig.Top);
 
                             this.MasterShape.ResizeShape();
+
+                            foreach (var shape in this.AllShapes)
+                            {
+                                shape.FindNeighbours();
+                            }
                         }
                         finally
                         {
@@ -100,9 +105,6 @@ namespace VisioCleanup.Core.Services
             {
                 this.ProcessChildren(childShape, childId);
             }
-
-            // find neighbours
-            parentShape.FindNeighbours();
         }
     }
 }
