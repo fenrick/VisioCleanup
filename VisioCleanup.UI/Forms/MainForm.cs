@@ -60,8 +60,6 @@ namespace VisioCleanup.UI.Forms
 
         private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
         {
-            this.controlsFlowPanel.Enabled = false;
-
             if (this.processingService is null)
             {
                 this.logger.LogDebug("Processing Service is not defined.");
@@ -72,9 +70,11 @@ namespace VisioCleanup.UI.Forms
                     MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1,
                     MessageBoxOptions.ServiceNotification,
-                    displayHelpButton: false);
+                    false);
                 return;
             }
+
+            this.controlsFlowPanel.Enabled = false;
 
             this.logger.LogDebug("Laying out data set.");
             await this.processingService.LayoutDataSet();
@@ -120,6 +120,20 @@ namespace VisioCleanup.UI.Forms
 
         private async void UpdateVisioDrawing_Click(object sender, EventArgs e)
         {
+            if (this.processingService is null)
+            {
+                this.logger.LogDebug("Processing Service is not defined.");
+                MessageBox.Show(
+                    "Unable to layout dataset, none is loaded.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error,
+                    MessageBoxDefaultButton.Button1,
+                    MessageBoxOptions.ServiceNotification,
+                    false);
+                return;
+            }
+
             this.controlsFlowPanel.Enabled = false;
 
             this.logger.LogDebug("Drawing visio.");
