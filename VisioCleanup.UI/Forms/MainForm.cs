@@ -118,7 +118,7 @@ namespace VisioCleanup.UI.Forms
             this.controlsFlowPanel.Enabled = true;
         }
 
-        private async void updateVisioDrawing_Click(object sender, EventArgs e)
+        private async void UpdateVisioDrawing_Click(object sender, EventArgs e)
         {
             this.controlsFlowPanel.Enabled = false;
 

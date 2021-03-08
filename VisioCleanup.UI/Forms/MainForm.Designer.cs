@@ -251,7 +251,7 @@ namespace VisioCleanup.UI.Forms
             this.updateVisioDrawing.TabIndex = 4;
             this.updateVisioDrawing.Text = "Update Visio Drawing";
             this.updateVisioDrawing.UseVisualStyleBackColor = true;
-            this.updateVisioDrawing.Click += new System.EventHandler(this.updateVisioDrawing_Click);
+            this.updateVisioDrawing.Click += new System.EventHandler(this.UpdateVisioDrawing_Click);
 
             // MainForm
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
