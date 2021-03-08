@@ -31,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="GCop.All.Common" Version="2.7.0-rc.6" />
+        <PackageReference Include="GCop.All.Common" Version="2.7.5" />
         <PackageReference Include="Microsoft.CodeAnalysis" Version="3.10.0-1.final" />
         <PackageReference Include="Serilog.Enrichers.Thread" Version="3.2.0-dev-00750" />
         <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
