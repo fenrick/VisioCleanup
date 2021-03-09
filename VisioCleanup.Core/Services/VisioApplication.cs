@@ -109,13 +109,14 @@ namespace VisioCleanup.Core.Services
             var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
 
             var stencil = this.visioApplication.Documents["Basic.vss"];
-            var stencilName = "Ellipse";
+            var stencilName = "Rounded Rectangle";
 
             // if (diagramShape.Stencil is not null)
             // {
             // stencilName = diagramShape.Stencil;
             // }
             var shape = this.visioApplication.ActivePage.Drop(stencil.Masters[stencilName], newPinX, newPinY);
+            shape.Text = diagramShape.ShapeText;
 
             diagramShape.VisioId = shape.ID;
             diagramShape.ShapeType = ShapeType.Existing;
