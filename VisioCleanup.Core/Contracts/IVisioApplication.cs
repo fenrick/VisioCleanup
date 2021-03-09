@@ -46,6 +46,14 @@ namespace VisioCleanup.Core.Contracts
         /// <returns>array of shape ids for children.</returns>
         IEnumerable<int> GetChildren(int visioId);
 
+        /// <summary>Calculate the left hand side of the page.</summary>
+        /// <returns>Integer representing it.</returns>
+        int GetPageLeftSide();
+
+        /// <summary>Calculate the top side of the page.</summary>
+        /// <returns>Integer representing it.</returns>
+        int GetPageTopSide();
+
         /// <summary>Obtains the current shape text for a shape.</summary>
         /// <param name="visioId">shape id.</param>
         /// <returns>shape text.</returns>

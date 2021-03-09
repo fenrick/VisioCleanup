@@ -120,6 +120,12 @@ namespace VisioCleanup.Core.Models
         /// <summary>Gets or sets the shape type.</summary>
         public ShapeType ShapeType { get; set; }
 
+        /// <summary>Gets or sets value used to sort shapes.</summary>
+        public string? SortValue { get; set; }
+
+        /// <summary>Gets or sets the stencil used for drawing shape.</summary>
+        public string? Stencil { get; set; }
+
         /// <summary>Gets or sets top of the shape.</summary>
         public int TopSide { get; set; }
 
@@ -285,6 +291,10 @@ namespace VisioCleanup.Core.Models
 
             return result;
         }
+
+        /// <summary>Does this shape have a parent.</summary>
+        /// <returns>True if a parent.</returns>
+        public bool HasParent() => this.parentShape is not null;
 
         /// <summary>Calculate the height of the shape.</summary>
         /// <returns>Height.</returns>

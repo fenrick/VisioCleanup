@@ -8,11 +8,15 @@
 namespace VisioCleanup.Core.Services
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
 
     using VisioCleanup.Core.Contracts;
+    using VisioCleanup.Core.Models;
+    using VisioCleanup.Core.Models.Config;
 
     /// <summary>The excel service.</summary>
     public class ExcelService : AbstractProcessingService, IExcelService
@@ -41,6 +45,26 @@ namespace VisioCleanup.Core.Services
 
                             // open connection to visio
                             this.VisioApplication.Open();
+
+                            // retrieve records
+                            this.AllShapes = this.excelApplication.RetrieveRecords();
+
+                            if (this.AllShapes.Count == 0)
+                            {
+                                return;
+                            }
+
+                            this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE MASTER", ShapeType = ShapeType.FakeShape };
+
+                            this.MasterShape.LeftSide = this.VisioApplication.GetPageLeftSide();
+                            this.MasterShape.TopSide = this.VisioApplication.GetPageTopSide() - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight);
+
+                            foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent()))
+                            {
+                                this.MasterShape.AddChildShape(shape);
+                            }
+
+                            // need to set children relationships.
                         }
                         finally
                         {

@@ -185,6 +185,36 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
+        public int GetPageLeftSide()
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            var pageSheet = this.visioApplication.ActivePage.PageSheet;
+
+            return DiagramShape.ConvertMeasurement(
+                GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesLeftMargin));
+        }
+
+        /// <inheritdoc />
+        public int GetPageTopSide()
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            var pageSheet = this.visioApplication.ActivePage.PageSheet;
+
+            var height = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageHeight);
+            var topMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPrintPropertiesTopMargin);
+
+            return DiagramShape.ConvertMeasurement(height - topMargin);
+        }
+
+        /// <inheritdoc />
         /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
         public string GetShapeText(int visioId)
         {

@@ -7,6 +7,10 @@
 
 namespace VisioCleanup.Core.Contracts
 {
+    using System.Collections.ObjectModel;
+
+    using VisioCleanup.Core.Models;
+
     /// <summary>Handle creation and management of excel interop objects.</summary>
     public interface IExcelApplication
     {
@@ -15,5 +19,9 @@ namespace VisioCleanup.Core.Contracts
 
         /// <summary>Open excel session.</summary>
         void Open();
+
+        /// <summary>Retrieve records from excel.</summary>
+        /// <returns>Collection of diagram shapes.</returns>
+        Collection<DiagramShape> RetrieveRecords();
     }
 }
