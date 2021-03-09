@@ -13,6 +13,7 @@ namespace VisioCleanup.Core.Services
 
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+    using Microsoft.Office.Interop.Excel;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
@@ -30,6 +31,8 @@ namespace VisioCleanup.Core.Services
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.VisioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
             this.AppConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
+            // setup DiagramShape
+            DiagramShape.AppConfig = this.AppConfig;
         }
 
         /// <inheritdoc />

@@ -39,9 +39,6 @@ namespace VisioCleanup.Core.Services
                     {
                         try
                         {
-                            // setup DiagramShape
-                            DiagramShape.AppConfig = this.AppConfig;
-
                             this.VisioApplication.Open();
 
                             var selection = this.VisioApplication.Selection();
