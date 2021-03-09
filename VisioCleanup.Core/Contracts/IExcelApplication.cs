@@ -7,9 +7,7 @@
 
 namespace VisioCleanup.Core.Contracts
 {
-    /// <summary>
-    /// Handle creation and management of excel interop objects.
-    /// </summary>
+    /// <summary>Handle creation and management of excel interop objects.</summary>
     public interface IExcelApplication
     {
         /// <summary>Close excel session and shutdown.</summary>
