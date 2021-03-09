@@ -7,7 +7,6 @@
 
 namespace VisioCleanup.Core.Services
 {
-    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
@@ -22,15 +21,15 @@ namespace VisioCleanup.Core.Services
     /// <summary>The visio service.</summary>
     public class VisioService : AbstractProcessingService, IVisioService
     {
-        private readonly AppConfig appConfig;
-
         /// <summary>Initialises a new instance of the <see cref="VisioService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="options">Application configuration being passed in.</param>
         public VisioService(ILogger<VisioService> logger, IVisioApplication visioApplication, IOptions<AppConfig> options)
-            : base(logger, visioApplication) =>
-            this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
+            : base(logger, options, visioApplication)
+        {
+            // all in base.
+        }
 
         /// <inheritdoc />
         public async Task LoadVisioObjectModel()
@@ -41,7 +40,7 @@ namespace VisioCleanup.Core.Services
                         try
                         {
                             // setup DiagramShape
-                            DiagramShape.AppConfig = this.appConfig;
+                            DiagramShape.AppConfig = this.AppConfig;
 
                             this.VisioApplication.Open();
 
@@ -70,8 +69,8 @@ namespace VisioCleanup.Core.Services
                                 return;
                             }
 
-                            this.MasterShape.LeftSide = this.MasterShape.Children.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.appConfig.Left);
-                            this.MasterShape.TopSide = this.MasterShape.Children.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.appConfig.Top);
+                            this.MasterShape.LeftSide = this.MasterShape.Children.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
+                            this.MasterShape.TopSide = this.MasterShape.Children.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
 
                             this.MasterShape.ResizeShape();
 

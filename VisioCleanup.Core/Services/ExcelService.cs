@@ -23,8 +23,9 @@ namespace VisioCleanup.Core.Services
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="excelApplication">Excel application handler.</param>
-        public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication, IExcelApplication excelApplication)
-            : base(logger, visioApplication) =>
+        /// <param name="options">Application configuration being passed in.</param>
+        public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication, IExcelApplication excelApplication, IOptions<AppConfig> options)
+            : base(logger, options, visioApplication) =>
             this.excelApplication = excelApplication ?? throw new ArgumentNullException(nameof(excelApplication));
 
         /// <inheritdoc />
@@ -37,9 +38,14 @@ namespace VisioCleanup.Core.Services
                         {
                             // open connection to excel
                             this.excelApplication.Open();
+
+                            // open connection to visio
+                            this.VisioApplication.Open();
                         }
                         finally
                         {
+                            this.VisioApplication.Close();
+
                             this.excelApplication.Close();
                         }
                     });

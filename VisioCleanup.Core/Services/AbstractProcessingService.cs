@@ -12,20 +12,24 @@ namespace VisioCleanup.Core.Services
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
+    using VisioCleanup.Core.Models.Config;
 
     /// <summary>Abstract implementation of common code for processing services.</summary>
     public abstract class AbstractProcessingService : IProcessingService
     {
         /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
         /// <param name="logger">Logger.</param>
+        /// <param name="options">Application configuration being passed in.</param>
         /// <param name="visioApplication">Visio Application engine.</param>
-        protected AbstractProcessingService(ILogger logger, IVisioApplication visioApplication)
+        protected AbstractProcessingService(ILogger logger, IOptions<AppConfig> options, IVisioApplication visioApplication)
         {
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.VisioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
+            this.AppConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <inheritdoc />
@@ -33,6 +37,9 @@ namespace VisioCleanup.Core.Services
 
         /// <inheritdoc />
         public DiagramShape? MasterShape { get; protected set; }
+
+        /// <summary>Gets application configuration.</summary>
+        protected AppConfig AppConfig { get; }
 
         /// <summary>Gets logging environment.</summary>
         protected ILogger Logger { get; }
