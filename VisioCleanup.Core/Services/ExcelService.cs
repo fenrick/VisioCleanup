@@ -24,10 +24,8 @@ namespace VisioCleanup.Core.Services
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="excelApplication">Excel application handler.</param>
         public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication, IExcelApplication excelApplication)
-            : base(logger, visioApplication)
-        {
+            : base(logger, visioApplication) =>
             this.excelApplication = excelApplication ?? throw new ArgumentNullException(nameof(excelApplication));
-        }
 
         /// <inheritdoc />
         public async Task ProcessDataSet()
