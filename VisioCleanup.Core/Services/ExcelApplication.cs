@@ -84,11 +84,11 @@ namespace VisioCleanup.Core.Services
                 Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
                 foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
                 {
-                    Dictionary<FieldType, string> values = new();
+                    Dictionary<FieldType, string?> values = new();
 
                     foreach (var (key, value) in columnMapping[cellIndex])
                     {
-                        values[key] = (string)data.GetValue(rowNumber, value)!;
+                        values[key] = data.GetValue(rowNumber, value) as string;
                     }
 
                     rowResults.Add(cellIndex, values);
