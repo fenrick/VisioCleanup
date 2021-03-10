@@ -56,6 +56,8 @@ namespace VisioCleanup.UI.Forms
             this.logger.LogDebug("Preparing data set to data grid binding.");
             this.dataGridView1.DataSource = this.dataSetBindingSource;
             this.dataGridView1.AutoGenerateColumns = true;
+
+            this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
         }
 
         private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
@@ -140,6 +142,11 @@ namespace VisioCleanup.UI.Forms
             await this.processingService.UpdateVisio();
 
             this.controlsFlowPanel.Enabled = true;
+        }
+
+        private void MainForm_DpiChanged(object sender, DpiChangedEventArgs e)
+        {
+            this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
         }
     }
 }
