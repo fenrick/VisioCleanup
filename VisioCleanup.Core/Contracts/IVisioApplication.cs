@@ -50,6 +50,10 @@ namespace VisioCleanup.Core.Contracts
         /// <returns>Integer representing it.</returns>
         int GetPageLeftSide();
 
+        /// <summary>Calculate the right hand side of the page.</summary>
+        /// <returns>Integer representing it.</returns>
+        int GetPageRightSide();
+
         /// <summary>Calculate the top side of the page.</summary>
         /// <returns>Integer representing it.</returns>
         int GetPageTopSide();
@@ -73,5 +77,9 @@ namespace VisioCleanup.Core.Contracts
         /// <summary>Update shape on Visio diagram, moving, resizing, etc.</summary>
         /// <param name="diagramShape">Shape to be updated.</param>
         void UpdateShape(DiagramShape diagramShape);
+
+        /// <summary>Change visio updating diagram.</summary>
+        /// <param name="visualChanges">Value to change.</param>
+        void VisualChanges(bool visualChanges);
     }
 }

@@ -23,6 +23,8 @@ namespace VisioCleanup.Core.Services
     {
         private readonly IExcelApplication excelApplication;
 
+        private int maxRight;
+
         /// <summary>Initialises a new instance of the <see cref="ExcelService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
@@ -31,6 +33,40 @@ namespace VisioCleanup.Core.Services
         public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication, IExcelApplication excelApplication, IOptions<AppConfig> options)
             : base(logger, options, visioApplication) =>
             this.excelApplication = excelApplication ?? throw new ArgumentNullException(nameof(excelApplication));
+
+        /// <inheritdoc />
+        public new async Task LayoutDataSet()
+        {
+            await Task.Run(
+                () =>
+                    {
+                        try
+                        {
+                            this.VisioApplication.Open();
+
+                            this.maxRight = this.VisioApplication.GetPageRightSide() - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
+                        }
+                        finally
+                        {
+                            this.VisioApplication.Close();
+                        }
+
+                        if (this.MasterShape is null)
+                        {
+                            throw new InvalidOperationException("Need to load shapes first.");
+                        }
+
+                        do
+                        {
+                            // initiate a base layout.
+                            base.LayoutDataSet().Wait();
+
+                            // look for overruns.
+                            this.ChopDown(this.MasterShape);
+                        }
+                        while (this.MasterShape.Width() > this.maxRight);
+                    });
+        }
 
         /// <inheritdoc />
         public async Task ProcessDataSet()
@@ -65,6 +101,7 @@ namespace VisioCleanup.Core.Services
                             }
 
                             // need to set children relationships.
+                            this.SortChildren(this.MasterShape);
                         }
                         finally
                         {
@@ -73,6 +110,74 @@ namespace VisioCleanup.Core.Services
                             this.excelApplication.Close();
                         }
                     });
+        }
+
+        private void ChopDown(DiagramShape diagramShape)
+        {
+            // check shape is too wide.
+            if (diagramShape.Width() > this.maxRight)
+            {
+                // find overlapping child
+                var overlapChild = diagramShape.Children.First(shape => (shape.LeftSide < this.maxRight) && (shape.RightSide >= this.maxRight));
+
+                // if has children, then loop.
+                if (overlapChild.Children.Count > 0)
+                {
+                    this.ChopDown(overlapChild);
+                }
+                else
+                {
+                    // if no shape to left, then move parent.
+                    if (overlapChild.Left is null)
+                    {
+                        overlapChild = overlapChild.ParentShape;
+                    }
+
+                    // find far left shape.
+                    var shape = overlapChild;
+                    while (shape.Left is not null)
+                    {
+                        shape = shape.Left;
+                    }
+
+                    // do we have nothing above us?
+                    if (overlapChild.Above is not null)
+                    {
+                        throw new InvalidOperationException("this shouldn't happen.");
+                    }
+
+                    // clear one side.
+                    if (overlapChild.Left is not null)
+                    {
+                        overlapChild.Left.Right = null;
+                    }
+
+                    // clear other side
+                    overlapChild.Left = null;
+
+                    // set above
+                    overlapChild.Above = shape;
+
+                    // move
+                    // overlapChild.ParentShape!.CorrectDiagram();
+                }
+            }
+        }
+
+        private void SortChildren(DiagramShape diagramShape)
+        {
+            foreach (var child in diagramShape.Children)
+            {
+                this.SortChildren(child);
+            }
+
+            for (var i = 0; i < diagramShape.Children.Count; i++)
+            {
+                if (diagramShape.Children.Count > (i + 1))
+                {
+                    diagramShape.Children[i].Right = diagramShape.Children[i + 1];
+                }
+            }
         }
     }
 }

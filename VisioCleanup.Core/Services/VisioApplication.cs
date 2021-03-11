@@ -200,6 +200,22 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
+        public int GetPageRightSide()
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            var pageSheet = this.visioApplication.ActivePage.PageSheet;
+
+            var rightMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesRightMargin);
+            var width = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageWidth);
+
+            return DiagramShape.ConvertMeasurement(width - rightMargin);
+        }
+
+        /// <inheritdoc />
         public int GetPageTopSide()
         {
             if (this.visioApplication is null)
@@ -306,6 +322,20 @@ namespace VisioCleanup.Core.Services
             var shape = this.GetShape(diagramShape.VisioId);
 
             this.ChangeShape(VisioChanges(diagramShape), shape);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
+        public void VisualChanges(bool visualChanges)
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            this.visioApplication.ShowChanges = visualChanges;
+            this.visioApplication.UndoEnabled = visualChanges;
+            this.visioApplication.ScreenUpdating = visualChanges ? (short)1 : (short)0;
         }
 
         private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)

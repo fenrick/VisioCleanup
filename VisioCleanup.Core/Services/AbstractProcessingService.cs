@@ -85,6 +85,7 @@ namespace VisioCleanup.Core.Services
                         try
                         {
                             this.VisioApplication.Open();
+                            this.VisioApplication.VisualChanges(false);
 
                             // update each shape
                             foreach (var diagramShape in this.AllShapes)
@@ -113,6 +114,7 @@ namespace VisioCleanup.Core.Services
                         }
                         finally
                         {
+                            this.VisioApplication.VisualChanges(true);
                             this.VisioApplication.Close();
                         }
                     });
