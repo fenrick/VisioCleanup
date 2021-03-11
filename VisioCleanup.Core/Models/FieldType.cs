@@ -7,24 +7,16 @@
 
 namespace VisioCleanup.Core.Models
 {
-    /// <summary>
-    /// Fields within an excel data table.
-    /// </summary>
+    /// <summary>Fields within an excel data table.</summary>
     public enum FieldType
     {
-        /// <summary>
-        /// ShapeText field.
-        /// </summary>
+        /// <summary>ShapeText field.</summary>
         ShapeText,
 
-        /// <summary>
-        /// Sorting field.
-        /// </summary>
+        /// <summary>Sorting field.</summary>
         SortValue,
 
-        /// <summary>
-        /// ShapeType field.
-        /// </summary>
+        /// <summary>ShapeType field.</summary>
         ShapeType,
     }
 }
