@@ -72,7 +72,7 @@ namespace VisioCleanup.UI.Forms
                     MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1,
                     MessageBoxOptions.ServiceNotification,
-                    displayHelpButton: false);
+                    false);
                 return;
             }
 
@@ -101,6 +101,11 @@ namespace VisioCleanup.UI.Forms
             this.processingService = this.visioService;
 
             this.controlsFlowPanel.Enabled = true;
+        }
+
+        private void MainForm_DpiChanged(object sender, DpiChangedEventArgs e)
+        {
+            this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
         }
 
         /// <summary>Activate the processing of Excel data set.</summary>
@@ -132,7 +137,7 @@ namespace VisioCleanup.UI.Forms
                     MessageBoxIcon.Error,
                     MessageBoxDefaultButton.Button1,
                     MessageBoxOptions.ServiceNotification,
-                    displayHelpButton: false);
+                    false);
                 return;
             }
 
@@ -142,11 +147,6 @@ namespace VisioCleanup.UI.Forms
             await this.processingService.UpdateVisio();
 
             this.controlsFlowPanel.Enabled = true;
-        }
-
-        private void MainForm_DpiChanged(object sender, DpiChangedEventArgs e)
-        {
-            this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
         }
     }
 }
