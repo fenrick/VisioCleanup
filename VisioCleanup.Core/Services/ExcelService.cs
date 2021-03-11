@@ -56,15 +56,15 @@ namespace VisioCleanup.Core.Services
                             throw new InvalidOperationException("Need to load shapes first.");
                         }
 
-                        do
+                        // do
                         {
                             // initiate a base layout.
-                            base.LayoutDataSet().Wait();
+                            this.MasterShape.CorrectDiagram();
 
                             // look for overruns.
                             this.ChopDown(this.MasterShape);
                         }
-                        while (this.MasterShape.Width() > this.maxRight);
+                        // while (this.MasterShape.Width() > this.maxRight);
                     });
         }
 
@@ -115,53 +115,62 @@ namespace VisioCleanup.Core.Services
         private void ChopDown(DiagramShape diagramShape)
         {
             // check shape is too wide.
-            if (diagramShape.Width() > this.maxRight)
+            if (diagramShape.Width() <= this.maxRight)
             {
-                // find overlapping child
-                var overlapChild = diagramShape.Children.First(shape => (shape.LeftSide < this.maxRight) && (shape.RightSide >= this.maxRight));
-
-                // if has children, then loop.
-                if (overlapChild.Children.Count > 0)
-                {
-                    this.ChopDown(overlapChild);
-                }
-                else
-                {
-                    // if no shape to left, then move parent.
-                    if (overlapChild.Left is null)
-                    {
-                        overlapChild = overlapChild.ParentShape;
-                    }
-
-                    // find far left shape.
-                    var shape = overlapChild;
-                    while (shape.Left is not null)
-                    {
-                        shape = shape.Left;
-                    }
-
-                    // do we have nothing above us?
-                    if (overlapChild.Above is not null)
-                    {
-                        throw new InvalidOperationException("this shouldn't happen.");
-                    }
-
-                    // clear one side.
-                    if (overlapChild.Left is not null)
-                    {
-                        overlapChild.Left.Right = null;
-                    }
-
-                    // clear other side
-                    overlapChild.Left = null;
-
-                    // set above
-                    overlapChild.Above = shape;
-
-                    // move
-                    // overlapChild.ParentShape!.CorrectDiagram();
-                }
+                return;
             }
+
+            // find overlapping child
+            var overlapChild = diagramShape.Children.FirstOrDefault(shape => (shape.LeftSide < this.maxRight) && (shape.RightSide >= this.maxRight));
+
+            // if has children, then loop.
+            if (overlapChild is not null && overlapChild.Children.Count > 0)
+            {
+                this.ChopDown(overlapChild);
+                return;
+            }
+
+            // if no shape to left, then move parent.
+            if (overlapChild?.Left is null)
+            {
+                overlapChild = diagramShape;
+            }
+
+            // find far left shape.
+            var shape = overlapChild;
+            while (shape.Left is not null)
+            {
+                shape = shape.Left;
+            }
+
+            if (shape == overlapChild)
+            {
+                return;
+            }
+
+            // do we have nothing above us?
+            if (overlapChild.Above is not null)
+            {
+                throw new InvalidOperationException("this shouldn't happen.");
+            }
+
+            // clear one side.
+            if (overlapChild.Left is not null)
+            {
+                overlapChild.Left.Right = null;
+            }
+
+            // set above
+            shape.Below = overlapChild;
+
+            // resize parent
+            overlapChild.ParentShape!.CorrectDiagram();
+
+            // find sides.
+            overlapChild.ParentShape!.FindNeighbours();
+
+            // loop parent again
+            this.ChopDown(overlapChild.ParentShape);
         }
 
         private void SortChildren(DiagramShape diagramShape)

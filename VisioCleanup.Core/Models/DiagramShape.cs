@@ -20,13 +20,9 @@ namespace VisioCleanup.Core.Models
     {
         private readonly ILogger logger;
 
-        private DiagramShape? above;
-
         private int baseSide;
 
         private DiagramShape? below;
-
-        private DiagramShape? left;
 
         private DiagramShape? right;
 
@@ -46,27 +42,7 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <summary>Gets or sets the shape above.</summary>
-        public DiagramShape? Above
-        {
-            get => this.above;
-            set
-            {
-                this.above = value;
-                if (value == null)
-                {
-                    return;
-                }
-
-                if (value.Below == null)
-                {
-                    value.Below = this;
-                }
-                else if (!value.Below.Equals(this))
-                {
-                    value.Below = this;
-                }
-            }
-        }
+        public DiagramShape? Above { get; set; }
 
         /// <summary>Gets or sets base of the shape.</summary>
         public int BaseSide
@@ -84,7 +60,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {shape} by {movement} vertical.", this.Below, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.Below, movement);
                         this.Below.MoveVertical(movement);
                     }
                 }
@@ -96,7 +72,7 @@ namespace VisioCleanup.Core.Models
                     var movement = this.Right.TopSide - this.TopSide;
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {shape} by {movement} vertical.", this.Right, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.Right, movement);
                         this.Right.MoveVertical(movement);
                     }
                 }
@@ -109,19 +85,37 @@ namespace VisioCleanup.Core.Models
             get => this.below;
             set
             {
-                this.below = value;
-                if (value == null)
+                // remove existing relationship.
+                if (this.below is not null)
                 {
-                    return;
+                    this.below.Above = null;
                 }
 
-                if (value.Above == null)
+                // set value.
+                this.below = value;
+
+                if (this.below is not null)
                 {
-                    value.Above = this;
-                }
-                else if (!value.Above.Equals(this))
-                {
-                    value.Above = this;
+                    // set relationship.
+                    this.below.Above = this;
+
+                    // calculate movement
+                    var movement = this.below.LeftSide - this.LeftSide;
+
+                    if (movement != 0)
+                    {
+                        this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.below, movement);
+                        this.below.MoveHorizontal(movement);
+                    }
+
+                    // calculate movement
+                    movement = this.below.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
+
+                    if (movement != 0)
+                    {
+                        this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.below, movement);
+                        this.below.MoveVertical(movement);
+                    }
                 }
             }
         }
@@ -130,27 +124,7 @@ namespace VisioCleanup.Core.Models
         public Collection<DiagramShape> Children { get; }
 
         /// <summary>Gets or sets the shape to the left.</summary>
-        public DiagramShape? Left
-        {
-            get => this.left;
-            set
-            {
-                this.left = value;
-                if (value == null)
-                {
-                    return;
-                }
-
-                if (value.Right == null)
-                {
-                    value.Right = this;
-                }
-                else if (!value.Right.Equals(this))
-                {
-                    value.Right = this;
-                }
-            }
-        }
+        public DiagramShape? Left { get; set; }
 
         /// <summary>Gets or sets left side of the shape.</summary>
         public int LeftSide { get; set; }
@@ -164,19 +138,36 @@ namespace VisioCleanup.Core.Models
             get => this.right;
             set
             {
-                this.right = value;
-                if (value == null)
+                // remove existing relationship.
+                if (this.right is not null)
                 {
-                    return;
+                    this.right.Left = null;
                 }
 
-                if (value.Left == null)
+                // set value.
+                this.right = value;
+
+                if (this.right is not null)
                 {
-                    value.Left = this;
-                }
-                else if (!value.Left.Equals(this))
-                {
-                    value.Left = this;
+                    // set relationship.
+                    this.right.Left = this;
+
+                    // calculate movement
+                    var movement = this.right.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+
+                    if (movement != 0)
+                    {
+                        this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.right, movement);
+                        this.right.MoveHorizontal(movement);
+                    }
+
+                    // calculate movement
+                    movement = this.right.TopSide - this.TopSide;
+                    if (movement != 0)
+                    {
+                        this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.right, movement);
+                        this.right.MoveVertical(movement);
+                    }
                 }
             }
         }
@@ -197,7 +188,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {shape} by {movement} horizontal.", this.Right, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.Right, movement);
                         this.Right.MoveHorizontal(movement);
                     }
                 }
@@ -210,7 +201,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {shape} by {movement} horizontal.", this.Below, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.Below, movement);
                         this.Below.MoveHorizontal(movement);
                     }
                 }
@@ -281,7 +272,7 @@ namespace VisioCleanup.Core.Models
 
                     if ((topMovement != 0) || (leftMovement != 0))
                     {
-                        this.logger.Debug("Aligning {shape} to {parent}.", this, this.ParentShape);
+                        this.logger.Debug("Aligning {Shape} to {Parent}.", this, this.ParentShape);
                         this.MoveVertical(topMovement);
                         this.MoveHorizontal(leftMovement);
                         result = true;
@@ -296,7 +287,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {shape} by {movement} horizontal.", this.Right, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.Right, movement);
                         this.Right.MoveHorizontal(movement);
                         result = true;
                     }
@@ -305,7 +296,7 @@ namespace VisioCleanup.Core.Models
                     movement = this.Right.TopSide - this.TopSide;
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {shape} by {movement} vertical.", this.Right, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.Right, movement);
                         this.Right.MoveVertical(movement);
                         result = true;
                     }
@@ -319,7 +310,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {shape} by {movement} horizontal.", this.Below, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.Below, movement);
                         this.Below.MoveHorizontal(movement);
                         result = true;
                     }
@@ -329,7 +320,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {shape} by {movement} vertical.", this.Below, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.Below, movement);
                         this.Below.MoveVertical(movement);
                         result = true;
                     }
