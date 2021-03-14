@@ -55,16 +55,16 @@ namespace VisioCleanup.Core.Services
                         {
                             throw new InvalidOperationException("Need to load shapes first.");
                         }
-
-                        // do
                         {
+                            // do
                             // initiate a base layout.
                             this.MasterShape.CorrectDiagram();
 
                             // look for overruns.
                             this.ChopDown(this.MasterShape);
                         }
-                        // while (this.MasterShape.Width() > this.maxRight);
+
+                        // while (this.MasterShape.RightSide > this.maxRight);
                     });
         }
 
@@ -102,6 +102,8 @@ namespace VisioCleanup.Core.Services
 
                             // need to set children relationships.
                             this.SortChildren(this.MasterShape);
+
+                            this.AllShapes.Add(this.MasterShape);
                         }
                         finally
                         {
@@ -115,25 +117,70 @@ namespace VisioCleanup.Core.Services
         private void ChopDown(DiagramShape diagramShape)
         {
             // check shape is too wide.
-            if (diagramShape.Width() <= this.maxRight)
+            if (diagramShape.RightSide < this.maxRight)
             {
                 return;
             }
 
             // find overlapping child
-            var overlapChild = diagramShape.Children.FirstOrDefault(shape => (shape.LeftSide < this.maxRight) && (shape.RightSide >= this.maxRight));
+            DiagramShape? overlapChild = null;
+            foreach (var shape1 in diagramShape.Children.OrderBy(shape => shape.LeftSide))
+            {
+                if (shape1.RightSide >= this.maxRight)
+                {
+                    overlapChild = shape1;
+                    break;
+                }
+            }
+
+            if ((this.maxRight - diagramShape.LeftSide) <= (DiagramShape.ConvertMeasurement(this.AppConfig.Width) * 2))
+            {
+                if (diagramShape.Left is not null)
+                {
+                    // set to null to be processed later.
+                    overlapChild = null;
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             // if has children, then loop.
-            if (overlapChild is not null && overlapChild.Children.Count > 0)
+            if (overlapChild is not null && (overlapChild.Children.Count > 0))
             {
-                this.ChopDown(overlapChild);
+                do
+                {
+                    // chop down.
+                    this.ChopDown(overlapChild);
+
+                    // correct diagram.
+                    diagramShape.CorrectDiagram();
+
+                    // find sides.
+                    diagramShape.FindNeighbours();
+                }
+                while (overlapChild.RightSide >= this.maxRight);
+
+                this.ChopDown(diagramShape);
                 return;
             }
 
-            // if no shape to left, then move parent.
-            if (overlapChild?.Left is null)
+            if (overlapChild is null)
             {
                 overlapChild = diagramShape;
+            }
+
+            // if no shape to left, then move parent.
+            while (overlapChild!.Left is null)
+            {
+                overlapChild = overlapChild.ParentShape;
+
+                // if we've run out of parents, then we're probably as good as can be.
+                if (overlapChild is null)
+                {
+                    return;
+                }
             }
 
             // find far left shape.
@@ -162,29 +209,25 @@ namespace VisioCleanup.Core.Services
 
             // set above
             shape.Below = overlapChild;
-
-            // resize parent
-            overlapChild.ParentShape!.CorrectDiagram();
-
-            // find sides.
-            overlapChild.ParentShape!.FindNeighbours();
-
-            // loop parent again
-            this.ChopDown(overlapChild.ParentShape);
         }
 
         private void SortChildren(DiagramShape diagramShape)
         {
             foreach (var child in diagramShape.Children)
             {
-                this.SortChildren(child);
+                if (child.Children.Count > 0)
+                {
+                    this.SortChildren(child);
+                }
             }
 
-            for (var i = 0; i < diagramShape.Children.Count; i++)
+            var children = diagramShape.Children.OrderByDescending(shape => shape.TotalChildrenCount()).ToList();
+
+            for (var i = 0; i < children.Count; i++)
             {
-                if (diagramShape.Children.Count > (i + 1))
+                if (children.Count > (i + 1))
                 {
-                    diagramShape.Children[i].Right = diagramShape.Children[i + 1];
+                    children[i].Right = children[i + 1];
                 }
             }
         }

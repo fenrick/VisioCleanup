@@ -81,5 +81,9 @@ namespace VisioCleanup.Core.Contracts
         /// <summary>Change visio updating diagram.</summary>
         /// <param name="visualChanges">Value to change.</param>
         void VisualChanges(bool visualChanges);
+
+        void CompleteDrops();
+
+        void CompleteUpdates();
     }
 }

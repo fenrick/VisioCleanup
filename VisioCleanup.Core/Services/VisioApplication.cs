@@ -8,9 +8,11 @@
 namespace VisioCleanup.Core.Services
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
     using Microsoft.Office.Interop.Visio;
@@ -23,9 +25,13 @@ namespace VisioCleanup.Core.Services
     /// <inheritdoc />
     public class VisioApplication : IVisioApplication
     {
+        private static readonly ConcurrentDictionary<string, Master?> stencilCache = new();
+
         private readonly ILogger<VisioApplication> logger;
 
         private Page? activePage;
+
+        private readonly List<Dictionary<string, object>> toDrop = new();
 
         private Application? visioApplication;
 
@@ -82,6 +88,9 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void Close()
         {
+            this.logger.LogDebug("Clearing stencil cache.");
+            stencilCache.Clear();
+
             this.logger.LogDebug("Releasing active page.");
             this.activePage = null;
 
@@ -93,6 +102,47 @@ namespace VisioCleanup.Core.Services
             GC.WaitForPendingFinalizers();
             GC.Collect();
             GC.WaitForPendingFinalizers();
+        }
+
+        /// <inheritdoc />
+        public void CompleteDrops()
+        {
+            var dropCount = this.toDrop.Count;
+            if (dropCount == 0)
+            {
+                return;
+            }
+
+            var objectsToInstance = new object[dropCount];
+            var xyArray = new double[dropCount * 2];
+            for (var i = 0; i < dropCount; i++)
+            {
+                var dropDetails = this.toDrop[i];
+                objectsToInstance[i] = dropDetails["master"];
+                xyArray[(i * 2)] = (double)dropDetails["x"];
+                xyArray[(i * 2) + 1] = (double)dropDetails["y"];
+            }
+
+            this.visioApplication.ActivePage.DropMany(objectsToInstance, xyArray, out var IDarray);
+
+            if (IDarray is null)
+            {
+                throw new InvalidOperationException("Unable to drop shapes.");
+            }
+
+            for (var i = 0; i < dropCount; i++)
+            {
+                var dropDetails = this.toDrop[i];
+                DiagramShape shape = dropDetails["shape"] as DiagramShape;
+                shape.VisioId = ((short)IDarray.GetValue(i));
+
+                var visioShape = GetShape(shape.VisioId);
+                visioShape.Text = shape.ShapeText;
+
+                this.UpdateShape(shape);
+            }
+
+            this.toDrop.Clear();
         }
 
         /// <inheritdoc />
@@ -108,20 +158,52 @@ namespace VisioCleanup.Core.Services
             var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
             var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
 
-            var stencil = this.visioApplication.Documents["Basic.vss"];
-            var stencilName = "Rounded Rectangle";
+            var shapeMaster = "Rectangle";
 
-            // if (diagramShape.Stencil is not null)
-            // {
-            // stencilName = diagramShape.Stencil;
-            // }
-            var shape = this.visioApplication.ActivePage.Drop(stencil.Masters[stencilName], newPinX, newPinY);
-            shape.Text = diagramShape.ShapeText;
+            if (diagramShape.Master is not null)
+            {
+                shapeMaster = diagramShape.Master;
+            }
 
-            diagramShape.VisioId = shape.ID;
-            diagramShape.ShapeType = ShapeType.Existing;
+            var master = stencilCache.GetOrAdd(
+                shapeMaster,
+                key =>
+                    {
+                        // var documentStencil = this.visioApplication.ActiveDocument.Masters;
+                        this.visioApplication.ActiveWindow.DockedStencils(out var stencilNames);
+                        foreach (var stencilName in stencilNames)
+                        {
+                            if (stencilName is null || stencilName.Equals(string.Empty))
+                            {
+                                continue;
+                            }
 
-            this.UpdateShape(diagramShape);
+                            var stencil = this.visioApplication.Documents[stencilName];
+                            stencil.Masters.GetNames(out var masterNames);
+                            var result = (masterNames as string[]).Contains(shapeMaster);
+                            if (result)
+                            {
+                                return stencil.Masters[shapeMaster];
+                            }
+                        }
+
+                        return null;
+                    });
+
+            if (master is null)
+            {
+                return;
+            }
+
+            this.toDrop.Add(new Dictionary<string, object> { { "shape", diagramShape }, { "master", master }, { "x", newPinX }, { "y", newPinY } });
+
+            // var shape = this.visioApplication.ActivePage.Drop(master, newPinX, newPinY);
+            // shape.Text = diagramShape.ShapeText;
+
+            // diagramShape.VisioId = shape.ID;
+            // diagramShape.ShapeType = ShapeType.Existing;
+
+            // this.UpdateShape(diagramShape);
         }
 
         /// <inheritdoc />
@@ -305,11 +387,10 @@ namespace VisioCleanup.Core.Services
                 shape.BringToFront();
             }
 
-            foreach (var child in diagramShape.Children)
-            {
-                this.SetForeground(child);
-            }
+            Parallel.ForEach(diagramShape.Children, this.SetForeground);
         }
+
+        private List<Dictionary<string, object>> shapeUpdates = new();
 
         /// <inheritdoc />
         public void UpdateShape(DiagramShape diagramShape)
@@ -321,7 +402,54 @@ namespace VisioCleanup.Core.Services
 
             var shape = this.GetShape(diagramShape.VisioId);
 
-            this.ChangeShape(VisioChanges(diagramShape), shape);
+            var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
+            var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
+            var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
+            var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
+
+            var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
+            var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
+
+            this.shapeUpdates.Add(
+                new Dictionary<string, object>
+                    {
+                        {"sheetID", (short)diagramShape.VisioId },
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormWidth },
+                        { "unit", VisUnitCodes.visMillimeters },
+                        { "result", width },
+                    });
+            this.shapeUpdates.Add(
+                new Dictionary<string, object>
+                    {
+                        {"sheetID", (short)diagramShape.VisioId },
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormHeight },
+                        { "unit", VisUnitCodes.visMillimeters },
+                        { "result", height },
+                    });
+            this.shapeUpdates.Add(
+                new Dictionary<string, object>
+                    {
+                        {"sheetID", (short)diagramShape.VisioId },
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormPinX },
+                        { "unit", VisUnitCodes.visMillimeters },
+                        { "result", newPinX },
+                    });
+            this.shapeUpdates.Add(
+                new Dictionary<string, object>
+                    {
+                        {"sheetID", (short)diagramShape.VisioId },
+                        { "section", (short)VisSectionIndices.visSectionObject },
+                        { "row", (short)VisRowIndices.visRowXFormOut },
+                        { "cell", (short)VisCellIndices.visXFormPinY },
+                        { "unit", VisUnitCodes.visMillimeters },
+                        { "result", newPinY },
+                    });
         }
 
         /// <inheritdoc />
@@ -336,6 +464,7 @@ namespace VisioCleanup.Core.Services
             this.visioApplication.ShowChanges = visualChanges;
             this.visioApplication.UndoEnabled = visualChanges;
             this.visioApplication.ScreenUpdating = visualChanges ? (short)1 : (short)0;
+            this.visioApplication.DeferRecalc = visualChanges ? (short)1 : (short)0;
         }
 
         private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
@@ -343,62 +472,16 @@ namespace VisioCleanup.Core.Services
             var shapeCell = shape.CellsSRC[(short)sectionIndex, (short)rowIndex, (short)cellIndex];
             return shapeCell.Result[VisUnitCodes.visMillimeters];
         }
-
-        private static Dictionary<string, object>[] VisioChanges(DiagramShape diagramShape)
+        
+        public void CompleteUpdates()
         {
-            var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
-            var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
-            var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
-            var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
 
-            var visioChanges = new List<Dictionary<string, object>>();
-
-            var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
-            var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
-
-            visioChanges.Add(
-                new Dictionary<string, object>
-                    {
-                        { "section", (short)VisSectionIndices.visSectionObject },
-                        { "row", (short)VisRowIndices.visRowXFormOut },
-                        { "cell", (short)VisCellIndices.visXFormWidth },
-                        { "unit", VisUnitCodes.visMillimeters },
-                        { "result", width },
-                    });
-            visioChanges.Add(
-                new Dictionary<string, object>
-                    {
-                        { "section", (short)VisSectionIndices.visSectionObject },
-                        { "row", (short)VisRowIndices.visRowXFormOut },
-                        { "cell", (short)VisCellIndices.visXFormHeight },
-                        { "unit", VisUnitCodes.visMillimeters },
-                        { "result", height },
-                    });
-            visioChanges.Add(
-                new Dictionary<string, object>
-                    {
-                        { "section", (short)VisSectionIndices.visSectionObject },
-                        { "row", (short)VisRowIndices.visRowXFormOut },
-                        { "cell", (short)VisCellIndices.visXFormPinX },
-                        { "unit", VisUnitCodes.visMillimeters },
-                        { "result", newPinX },
-                    });
-            visioChanges.Add(
-                new Dictionary<string, object>
-                    {
-                        { "section", (short)VisSectionIndices.visSectionObject },
-                        { "row", (short)VisRowIndices.visRowXFormOut },
-                        { "cell", (short)VisCellIndices.visXFormPinY },
-                        { "unit", VisUnitCodes.visMillimeters },
-                        { "result", newPinY },
-                    });
-
-            return visioChanges.ToArray();
-        }
-
-        private void ChangeShape(IReadOnlyList<Dictionary<string, object>> items, IVShape shape)
-        {
-            if (items.Count == 0)
+            var shapeUpdatesCount = this.shapeUpdates.Count;
+            if (shapeUpdatesCount == 0)
             {
                 this.logger.LogDebug("No changes found.");
                 return;
@@ -407,24 +490,25 @@ namespace VisioCleanup.Core.Services
             this.logger.LogDebug("Updating shape.");
 
             // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
-            var srcStream = new short[items.Count * 3];
-            var unitsArray = new object[items.Count];
-            var resultsArray = new object[items.Count];
-            for (var i = 0; i < items.Count; i++)
+            var srcStream = new short[shapeUpdatesCount * 4];
+            var unitsArray = new object[shapeUpdatesCount];
+            var resultsArray = new object[shapeUpdatesCount];
+            for (var i = 0; i < shapeUpdatesCount; i++)
             {
-                var item = items[i];
-                srcStream[(i * 3) + 0] = (short)item["section"];
-                srcStream[(i * 3) + 1] = (short)item["row"];
-                srcStream[(i * 3) + 2] = (short)item["cell"];
+                var item = this.shapeUpdates[i];
+                srcStream[(i * 4) + 0] = (short)item["sheetID"];
+                srcStream[(i * 4) + 1] = (short)item["section"];
+                srcStream[(i * 4) + 2] = (short)item["row"];
+                srcStream[(i * 4) + 3] = (short)item["cell"];
                 resultsArray[i] = item["result"];
                 unitsArray[i] = item["unit"];
             }
 
             // EXECUTE THE REQUEST
             const short Flags = 0;
-            shape.SetResults(srcStream, unitsArray, resultsArray, Flags);
-
-            // shape.SetFormulas(srcStream, resultsArray, Flags);
+            this.visioApplication.ActivePage.SetResults(srcStream, unitsArray, resultsArray, Flags);
+            
+            this.shapeUpdates.Clear();
         }
 
         private Shape GetShape(int visioId)

@@ -113,7 +113,7 @@ namespace VisioCleanup.Core.Services
                         this.logger.LogDebug("Creating shape for: {ShapeText}", shapeText);
                         allShapes.Add(
                             shapeText,
-                            new DiagramShape(shapeCounter++) { ShapeText = shapeText, ShapeType = ShapeType.NewShape, SortValue = sortValue, Stencil = shapeType });
+                            new DiagramShape(shapeCounter++) { ShapeText = shapeText, ShapeType = ShapeType.NewShape, SortValue = sortValue, Master = shapeType });
                     }
 
                     var shape = allShapes[shapeText];

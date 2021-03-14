@@ -78,6 +78,11 @@ namespace Serilog.Sinks.WinForm
 
             while (this.unprocessedLogEvents.TryDequeue(out var unprocessedLogEvent))
             {
+                if (unprocessedLogEvent is null)
+                {
+                    continue;
+                }
+
                 StringWriter buffer = new();
                 this.formatter.Format(unprocessedLogEvent, buffer);
 
@@ -108,7 +113,8 @@ namespace Serilog.Sinks.WinForm
 
                     if (listBox.InvokeRequired)
                     {
-                        listBox.Invoke((MethodInvoker)(() => { listBox.Items.Add(buffer.ToString()); }));
+                        listBox.Invoke((MethodInvoker)(() => { listBox.Items.Add(buffer.ToString());
+                                                               }));
                         continue;
                     }
 
