@@ -117,7 +117,7 @@ namespace VisioCleanup.Core.Services
         private void ChopDown(DiagramShape diagramShape)
         {
             // check shape is too wide.
-            if (diagramShape.RightSide < this.maxRight)
+            if (diagramShape.RightSide < (this.maxRight + DiagramShape.ConvertMeasurement(this.AppConfig.Right)))
             {
                 return;
             }
