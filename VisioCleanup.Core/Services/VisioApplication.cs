@@ -146,6 +146,7 @@ namespace VisioCleanup.Core.Services
                 }
 
                 shape.VisioId = (short)idArray.GetValue(i)!;
+                shape.ShapeType = ShapeType.Existing;
 
                 var visioShape = this.GetShape(shape.VisioId);
                 visioShape.Text = shape.ShapeText;
@@ -221,6 +222,11 @@ namespace VisioCleanup.Core.Services
                     {
                         // var documentStencil = this.visioApplication.ActiveDocument.Masters;
                         this.visioApplication.ActiveWindow.DockedStencils(out var stencilNames);
+                        if (stencilNames is null || stencilNames.Length == 0)
+                        {
+                            return null;
+                        }
+
                         foreach (var stencilName in stencilNames)
                         {
                             if (stencilName is null || stencilName.Equals(string.Empty))
@@ -235,10 +241,10 @@ namespace VisioCleanup.Core.Services
                                 continue;
                             }
 
-                            var result = (masterNames as string[])!.Contains(shapeMaster);
+                            var result = (masterNames as string[])!.Contains(key);
                             if (result)
                             {
-                                return stencil.Masters[shapeMaster];
+                                return stencil.Masters[key];
                             }
                         }
 

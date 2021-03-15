@@ -11,6 +11,8 @@ namespace VisioCleanup.Core.Models
     using System.Collections.ObjectModel;
     using System.Linq;
 
+    using JetBrains.Annotations;
+
     using Serilog;
 
     using VisioCleanup.Core.Models.Config;
@@ -66,7 +68,11 @@ namespace VisioCleanup.Core.Models
                 }
 
                 // move shape on right
-                if (this.Right is not null)
+                if (this.Right is null)
+                {
+                    return;
+                }
+
                 {
                     // calculate movement
                     var movement = this.Right.TopSide - this.TopSide;
@@ -94,28 +100,30 @@ namespace VisioCleanup.Core.Models
                 // set value.
                 this.below = value;
 
-                if (this.below is not null)
+                if (this.below is null)
                 {
-                    // set relationship.
-                    this.below.Above = this;
+                    return;
+                }
 
-                    // calculate movement
-                    var movement = this.below.LeftSide - this.LeftSide;
+                // set relationship.
+                this.below.Above = this;
 
-                    if (movement != 0)
-                    {
-                        this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.below, movement);
-                        this.below.MoveHorizontal(movement);
-                    }
+                // calculate movement
+                var movement = this.below.LeftSide - this.LeftSide;
 
-                    // calculate movement
-                    movement = this.below.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
+                if (movement != 0)
+                {
+                    this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.below, movement);
+                    this.below.MoveHorizontal(movement);
+                }
 
-                    if (movement != 0)
-                    {
-                        this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.below, movement);
-                        this.below.MoveVertical(movement);
-                    }
+                // calculate movement
+                movement = this.below.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
+
+                if (movement != 0)
+                {
+                    this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.below, movement);
+                    this.below.MoveVertical(movement);
                 }
             }
         }
@@ -150,27 +158,29 @@ namespace VisioCleanup.Core.Models
                 // set value.
                 this.right = value;
 
-                if (this.right is not null)
+                if (this.right is null)
                 {
-                    // set relationship.
-                    this.right.Left = this;
+                    return;
+                }
 
-                    // calculate movement
-                    var movement = this.right.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+                // set relationship.
+                this.right.Left = this;
 
-                    if (movement != 0)
-                    {
-                        this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.right, movement);
-                        this.right.MoveHorizontal(movement);
-                    }
+                // calculate movement
+                var movement = this.right.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
 
-                    // calculate movement
-                    movement = this.right.TopSide - this.TopSide;
-                    if (movement != 0)
-                    {
-                        this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.right, movement);
-                        this.right.MoveVertical(movement);
-                    }
+                if (movement != 0)
+                {
+                    this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.right, movement);
+                    this.right.MoveHorizontal(movement);
+                }
+
+                // calculate movement
+                movement = this.right.TopSide - this.TopSide;
+                if (movement != 0)
+                {
+                    this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.right, movement);
+                    this.right.MoveVertical(movement);
                 }
             }
         }
@@ -197,7 +207,11 @@ namespace VisioCleanup.Core.Models
                 }
 
                 // align shape below to left hand side.
-                if (this.Below is not null)
+                if (this.Below is null)
+                {
+                    return;
+                }
+
                 {
                     // calculate movement
                     var movement = this.Below.LeftSide - this.LeftSide;
@@ -218,7 +232,7 @@ namespace VisioCleanup.Core.Models
         public ShapeType ShapeType { get; set; }
 
         /// <summary>Gets or sets value used to sort shapes.</summary>
-        public string? SortValue { get; set; }
+        public string? SortValue { get; [UsedImplicitly] set; }
 
         /// <summary>Gets or sets top of the shape.</summary>
         public int TopSide { get; set; }
