@@ -25,15 +25,15 @@ namespace VisioCleanup.Core.Services
     /// <inheritdoc />
     public class VisioApplication : IVisioApplication
     {
-        private static readonly ConcurrentDictionary<string, Master?> stencilCache = new();
+        private static readonly ConcurrentDictionary<string, Master?> StencilCache = new();
 
         private readonly ILogger<VisioApplication> logger;
+
+        private readonly List<Dictionary<string, object>> shapeUpdates = new();
 
         private readonly List<Dictionary<string, object>> toDrop = new();
 
         private Page? activePage;
-
-        private readonly List<Dictionary<string, object>> shapeUpdates = new();
 
         private Application? visioApplication;
 
@@ -91,7 +91,7 @@ namespace VisioCleanup.Core.Services
         public void Close()
         {
             this.logger.LogDebug("Clearing stencil cache.");
-            stencilCache.Clear();
+            StencilCache.Clear();
 
             this.logger.LogDebug("Releasing active page.");
             this.activePage = null;
@@ -109,6 +109,11 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void CompleteDrops()
         {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
             var dropCount = this.toDrop.Count;
             if (dropCount == 0)
             {
@@ -125,9 +130,9 @@ namespace VisioCleanup.Core.Services
                 xyArray[(i * 2) + 1] = (double)dropDetails["y"];
             }
 
-            this.visioApplication.ActivePage.DropMany(objectsToInstance, xyArray, out var IDarray);
+            this.visioApplication.ActivePage.DropMany(objectsToInstance, xyArray, out var idArray);
 
-            if (IDarray is null)
+            if (idArray is null)
             {
                 throw new InvalidOperationException("Unable to drop shapes.");
             }
@@ -135,8 +140,12 @@ namespace VisioCleanup.Core.Services
             for (var i = 0; i < dropCount; i++)
             {
                 var dropDetails = this.toDrop[i];
-                DiagramShape shape = dropDetails["shape"] as DiagramShape;
-                shape.VisioId = (short)IDarray.GetValue(i);
+                if (dropDetails["shape"] is not DiagramShape shape)
+                {
+                    throw new InvalidOperationException("Unable to load shape.");
+                }
+
+                shape.VisioId = (short)idArray.GetValue(i)!;
 
                 var visioShape = this.GetShape(shape.VisioId);
                 visioShape.Text = shape.ShapeText;
@@ -147,6 +156,7 @@ namespace VisioCleanup.Core.Services
             this.toDrop.Clear();
         }
 
+        /// <inheritdoc />
         public void CompleteUpdates()
         {
             if (this.visioApplication is null)
@@ -205,7 +215,7 @@ namespace VisioCleanup.Core.Services
                 shapeMaster = diagramShape.Master;
             }
 
-            var master = stencilCache.GetOrAdd(
+            var master = StencilCache.GetOrAdd(
                 shapeMaster,
                 key =>
                     {
@@ -220,7 +230,12 @@ namespace VisioCleanup.Core.Services
 
                             var stencil = this.visioApplication.Documents[stencilName];
                             stencil.Masters.GetNames(out var masterNames);
-                            var result = (masterNames as string[]).Contains(shapeMaster);
+                            if (masterNames is null || (masterNames.Length <= 0))
+                            {
+                                continue;
+                            }
+
+                            var result = (masterNames as string[])!.Contains(shapeMaster);
                             if (result)
                             {
                                 return stencil.Masters[shapeMaster];
@@ -437,8 +452,6 @@ namespace VisioCleanup.Core.Services
             {
                 throw new InvalidOperationException("System not initialised.");
             }
-
-            var shape = this.GetShape(diagramShape.VisioId);
 
             var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
             var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);

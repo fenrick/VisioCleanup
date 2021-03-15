@@ -81,7 +81,7 @@ namespace VisioCleanup.Core.Services
             object[,] data = rows.Value;
             foreach (var rowNumber in Enumerable.Range(1, data.GetLength(0)))
             {
-                Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
+                Dictionary<int, Dictionary<FieldType, string?>> rowResults = new();
                 foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
                 {
                     Dictionary<FieldType, string?> values = new();

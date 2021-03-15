@@ -55,16 +55,12 @@ namespace VisioCleanup.Core.Services
                         {
                             throw new InvalidOperationException("Need to load shapes first.");
                         }
-                        {
-                            // do
-                            // initiate a base layout.
-                            this.MasterShape.CorrectDiagram();
 
-                            // look for overruns.
-                            this.ChopDown(this.MasterShape);
-                        }
+                        // initiate a base layout.
+                        this.MasterShape.CorrectDiagram();
 
-                        // while (this.MasterShape.RightSide > this.maxRight);
+                        // look for overruns.
+                        this.ChopDown(this.MasterShape);
                     });
         }
 
