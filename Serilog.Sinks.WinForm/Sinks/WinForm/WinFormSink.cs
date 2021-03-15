@@ -113,8 +113,7 @@ namespace Serilog.Sinks.WinForm
 
                     if (listBox.InvokeRequired)
                     {
-                        listBox.Invoke((MethodInvoker)(() => { listBox.Items.Add(buffer.ToString());
-                                                               }));
+                        listBox.Invoke((MethodInvoker)(() => { listBox.Items.Add(buffer.ToString()); }));
                         continue;
                     }
 
