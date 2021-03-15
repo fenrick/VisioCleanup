@@ -37,6 +37,10 @@ namespace VisioCleanup.Core.Contracts
         /// <summary>Close visio session and shutdown.</summary>
         void Close();
 
+        void CompleteDrops();
+
+        void CompleteUpdates();
+
         /// <summary>Create new shape on Visio diagram.</summary>
         /// <param name="diagramShape">Shape to be created.</param>
         void CreateShape(DiagramShape diagramShape);
@@ -81,9 +85,5 @@ namespace VisioCleanup.Core.Contracts
         /// <summary>Change visio updating diagram.</summary>
         /// <param name="visualChanges">Value to change.</param>
         void VisualChanges(bool visualChanges);
-
-        void CompleteDrops();
-
-        void CompleteUpdates();
     }
 }
