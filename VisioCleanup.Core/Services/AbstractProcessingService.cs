@@ -113,7 +113,7 @@ namespace VisioCleanup.Core.Services
                             this.VisioApplication.CompleteUpdates();
 
                             // iterate down the tree setting shapes to the foreground
-                            //this.VisioApplication.SetForeground(this.MasterShape);
+                            // this.VisioApplication.SetForeground(this.MasterShape);
                         }
                         finally
                         {
