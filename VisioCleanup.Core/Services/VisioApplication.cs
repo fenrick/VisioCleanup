@@ -29,9 +29,11 @@ namespace VisioCleanup.Core.Services
 
         private readonly ILogger<VisioApplication> logger;
 
+        private readonly List<Dictionary<string, object>> toDrop = new();
+
         private Page? activePage;
 
-        private readonly List<Dictionary<string, object>> toDrop = new();
+        private readonly List<Dictionary<string, object>> shapeUpdates = new();
 
         private Application? visioApplication;
 
@@ -119,7 +121,7 @@ namespace VisioCleanup.Core.Services
             {
                 var dropDetails = this.toDrop[i];
                 objectsToInstance[i] = dropDetails["master"];
-                xyArray[(i * 2)] = (double)dropDetails["x"];
+                xyArray[i * 2] = (double)dropDetails["x"];
                 xyArray[(i * 2) + 1] = (double)dropDetails["y"];
             }
 
@@ -134,15 +136,53 @@ namespace VisioCleanup.Core.Services
             {
                 var dropDetails = this.toDrop[i];
                 DiagramShape shape = dropDetails["shape"] as DiagramShape;
-                shape.VisioId = ((short)IDarray.GetValue(i));
+                shape.VisioId = (short)IDarray.GetValue(i);
 
-                var visioShape = GetShape(shape.VisioId);
+                var visioShape = this.GetShape(shape.VisioId);
                 visioShape.Text = shape.ShapeText;
 
                 this.UpdateShape(shape);
             }
 
             this.toDrop.Clear();
+        }
+
+        public void CompleteUpdates()
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
+            var shapeUpdatesCount = this.shapeUpdates.Count;
+            if (shapeUpdatesCount == 0)
+            {
+                this.logger.LogDebug("No changes found.");
+                return;
+            }
+
+            this.logger.LogDebug("Updating shape.");
+
+            // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
+            var srcStream = new short[shapeUpdatesCount * 4];
+            var unitsArray = new object[shapeUpdatesCount];
+            var resultsArray = new object[shapeUpdatesCount];
+            for (var i = 0; i < shapeUpdatesCount; i++)
+            {
+                var item = this.shapeUpdates[i];
+                srcStream[(i * 4) + 0] = (short)item["sheetID"];
+                srcStream[(i * 4) + 1] = (short)item["section"];
+                srcStream[(i * 4) + 2] = (short)item["row"];
+                srcStream[(i * 4) + 3] = (short)item["cell"];
+                resultsArray[i] = item["result"];
+                unitsArray[i] = item["unit"];
+            }
+
+            // EXECUTE THE REQUEST
+            const short Flags = 0;
+            this.visioApplication.ActivePage.SetResults(srcStream, unitsArray, resultsArray, Flags);
+
+            this.shapeUpdates.Clear();
         }
 
         /// <inheritdoc />
@@ -390,8 +430,6 @@ namespace VisioCleanup.Core.Services
             Parallel.ForEach(diagramShape.Children, this.SetForeground);
         }
 
-        private List<Dictionary<string, object>> shapeUpdates = new();
-
         /// <inheritdoc />
         public void UpdateShape(DiagramShape diagramShape)
         {
@@ -413,7 +451,7 @@ namespace VisioCleanup.Core.Services
             this.shapeUpdates.Add(
                 new Dictionary<string, object>
                     {
-                        {"sheetID", (short)diagramShape.VisioId },
+                        { "sheetID", (short)diagramShape.VisioId },
                         { "section", (short)VisSectionIndices.visSectionObject },
                         { "row", (short)VisRowIndices.visRowXFormOut },
                         { "cell", (short)VisCellIndices.visXFormWidth },
@@ -423,7 +461,7 @@ namespace VisioCleanup.Core.Services
             this.shapeUpdates.Add(
                 new Dictionary<string, object>
                     {
-                        {"sheetID", (short)diagramShape.VisioId },
+                        { "sheetID", (short)diagramShape.VisioId },
                         { "section", (short)VisSectionIndices.visSectionObject },
                         { "row", (short)VisRowIndices.visRowXFormOut },
                         { "cell", (short)VisCellIndices.visXFormHeight },
@@ -433,7 +471,7 @@ namespace VisioCleanup.Core.Services
             this.shapeUpdates.Add(
                 new Dictionary<string, object>
                     {
-                        {"sheetID", (short)diagramShape.VisioId },
+                        { "sheetID", (short)diagramShape.VisioId },
                         { "section", (short)VisSectionIndices.visSectionObject },
                         { "row", (short)VisRowIndices.visRowXFormOut },
                         { "cell", (short)VisCellIndices.visXFormPinX },
@@ -443,7 +481,7 @@ namespace VisioCleanup.Core.Services
             this.shapeUpdates.Add(
                 new Dictionary<string, object>
                     {
-                        {"sheetID", (short)diagramShape.VisioId },
+                        { "sheetID", (short)diagramShape.VisioId },
                         { "section", (short)VisSectionIndices.visSectionObject },
                         { "row", (short)VisRowIndices.visRowXFormOut },
                         { "cell", (short)VisCellIndices.visXFormPinY },
@@ -471,44 +509,6 @@ namespace VisioCleanup.Core.Services
         {
             var shapeCell = shape.CellsSRC[(short)sectionIndex, (short)rowIndex, (short)cellIndex];
             return shapeCell.Result[VisUnitCodes.visMillimeters];
-        }
-        
-        public void CompleteUpdates()
-        {
-            if (this.visioApplication is null)
-            {
-                throw new InvalidOperationException("System not initialised.");
-            }
-
-            var shapeUpdatesCount = this.shapeUpdates.Count;
-            if (shapeUpdatesCount == 0)
-            {
-                this.logger.LogDebug("No changes found.");
-                return;
-            }
-
-            this.logger.LogDebug("Updating shape.");
-
-            // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
-            var srcStream = new short[shapeUpdatesCount * 4];
-            var unitsArray = new object[shapeUpdatesCount];
-            var resultsArray = new object[shapeUpdatesCount];
-            for (var i = 0; i < shapeUpdatesCount; i++)
-            {
-                var item = this.shapeUpdates[i];
-                srcStream[(i * 4) + 0] = (short)item["sheetID"];
-                srcStream[(i * 4) + 1] = (short)item["section"];
-                srcStream[(i * 4) + 2] = (short)item["row"];
-                srcStream[(i * 4) + 3] = (short)item["cell"];
-                resultsArray[i] = item["result"];
-                unitsArray[i] = item["unit"];
-            }
-
-            // EXECUTE THE REQUEST
-            const short Flags = 0;
-            this.visioApplication.ActivePage.SetResults(srcStream, unitsArray, resultsArray, Flags);
-            
-            this.shapeUpdates.Clear();
         }
 
         private Shape GetShape(int visioId)
