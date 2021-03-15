@@ -11,8 +11,6 @@ namespace VisioCleanup.Core.Models
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    using Microsoft.Office.Interop.Visio;
-
     using Serilog;
 
     using VisioCleanup.Core.Models.Config;
@@ -122,11 +120,6 @@ namespace VisioCleanup.Core.Models
             }
         }
 
-        internal int TotalChildrenCount()
-        {
-            return (!this.Children.Any()) ? 1 : 1 + this.Children.Sum(child => child.TotalChildrenCount());
-        }
-
         /// <summary>Gets collection of child shapes.</summary>
         public Collection<DiagramShape> Children { get; }
 
@@ -135,6 +128,9 @@ namespace VisioCleanup.Core.Models
 
         /// <summary>Gets or sets left side of the shape.</summary>
         public int LeftSide { get; set; }
+
+        /// <summary>Gets or sets the stencil used for drawing shape.</summary>
+        public string? Master { get; set; }
 
         /// <summary>Gets or sets parent shape of curent shape.</summary>
         public DiagramShape? ParentShape { get; set; }
@@ -223,9 +219,6 @@ namespace VisioCleanup.Core.Models
 
         /// <summary>Gets or sets value used to sort shapes.</summary>
         public string? SortValue { get; set; }
-
-        /// <summary>Gets or sets the stencil used for drawing shape.</summary>
-        public string? Master { get; set; }
 
         /// <summary>Gets or sets top of the shape.</summary>
         public int TopSide { get; set; }
@@ -487,6 +480,11 @@ namespace VisioCleanup.Core.Models
                     }
                 }
             }
+        }
+
+        internal int TotalChildrenCount()
+        {
+            return !this.Children.Any() ? 1 : 1 + this.Children.Sum(child => child.TotalChildrenCount());
         }
 
         private string CornerString() =>
