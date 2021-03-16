@@ -58,7 +58,10 @@ namespace VisioCleanup.Core.Services
                             this.AllShapes.Add(this.MasterShape);
 
                             this.Logger.LogDebug("Adding children to parent.");
-                            Parallel.ForEach(selection, childId => { this.ProcessChildren(this.MasterShape, childId); });
+                            foreach (var childId in selection)
+                            {
+                                this.ProcessChildren(this.MasterShape, childId);
+                            }
 
                             // set left and top for master shape. Resize will handle reset.
                             if (this.MasterShape is null)
@@ -100,7 +103,10 @@ namespace VisioCleanup.Core.Services
 
             // find children
             var childrenIds = this.VisioApplication.GetChildren(visioId).ToList();
-            Parallel.ForEach(childrenIds, childId => { this.ProcessChildren(childShape, childId); });
+            foreach (var childId in childrenIds)
+            {
+                this.ProcessChildren(childShape, childId);
+            }
         }
     }
 }
