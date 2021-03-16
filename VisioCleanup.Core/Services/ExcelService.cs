@@ -120,6 +120,9 @@ namespace VisioCleanup.Core.Services
         {
             this.Logger.LogDebug("Checking {Shape} for fit.", diagramShape);
 
+            // ensure the diagram is correct.
+            diagramShape.CorrectDiagram();
+
             // check shape is too wide.
             if (diagramShape.RightSide < maxRight)
             {
