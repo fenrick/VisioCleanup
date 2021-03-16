@@ -25,11 +25,13 @@ namespace VisioCleanup.Core.Services
     /// <inheritdoc />
     public class VisioApplication : IVisioApplication
     {
-        private static readonly ConcurrentDictionary<string, Master?> StencilCache = new();
-
         private readonly ILogger<VisioApplication> logger;
 
+        private readonly ConcurrentDictionary<int, Shape> shapeCache = new();
+
         private readonly List<Dictionary<string, object>> shapeUpdates = new();
+
+        private readonly ConcurrentDictionary<string, Master?> stencilCache = new();
 
         private readonly List<Dictionary<string, object>> toDrop = new();
 
@@ -90,8 +92,11 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void Close()
         {
+            this.logger.LogDebug("Clearning shape cache.");
+            this.shapeCache.Clear();
+
             this.logger.LogDebug("Clearing stencil cache.");
-            StencilCache.Clear();
+            this.stencilCache.Clear();
 
             this.logger.LogDebug("Releasing active page.");
             this.activePage = null;
@@ -216,13 +221,13 @@ namespace VisioCleanup.Core.Services
                 shapeMaster = diagramShape.Master;
             }
 
-            var master = StencilCache.GetOrAdd(
+            var master = this.stencilCache.GetOrAdd(
                 shapeMaster,
                 key =>
                     {
                         // var documentStencil = this.visioApplication.ActiveDocument.Masters;
                         this.visioApplication.ActiveWindow.DockedStencils(out var stencilNames);
-                        if (stencilNames is null || stencilNames.Length == 0)
+                        if (stencilNames is null || (stencilNames.Length == 0))
                         {
                             return null;
                         }
@@ -280,48 +285,47 @@ namespace VisioCleanup.Core.Services
 
             var relation = (short)VisSpatialRelationCodes.visSpatialContain;
             var flags = (short)VisSpatialRelationFlags.visSpatialBackToFront;
-            parentShape.SpatialNeighbors[relation, 0, flags].GetIDs(out var ids);
+            Selection selection = parentShape.SpatialNeighbors[relation, 0, flags];
 
-            // selection.GetIDs(out var selectionIDs);
-            if (ids is null)
+            if (selection is null)
             {
                 return childrenIds;
             }
 
-            if (ids.Length == 0)
+            if (selection.Count == 0)
             {
                 return childrenIds;
             }
 
-            this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", ids.Length);
+            this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", selection.Count);
 
-            foreach (var potentialChildId in ids)
+#pragma warning disable GCop659 // Use 'var' instead of explicit type.
+            foreach (Shape potentialChildShape in selection)
             {
                 // check that immediate parent is the supplied shape.
                 relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
                 flags = (short)VisSpatialRelationFlags.visSpatialFrontToBack;
 
-                var potentialChildShape = this.GetShape((int)potentialChildId);
+                Selection childSelection = potentialChildShape.SpatialNeighbors[relation, 0, flags];
 
-                potentialChildShape.SpatialNeighbors[relation, 0, flags].GetIDs(out var parentIDs);
-
-                if (parentIDs is null)
+                if (childSelection is null)
                 {
                     continue;
                 }
 
-                if (parentIDs.Length <= 0)
+                if (childSelection.Count <= 0)
                 {
                     continue;
                 }
 
-                var primaryItemVisioId = parentIDs.GetValue(0);
+                var primaryItemVisio = childSelection.PrimaryItem;
 
-                if (visioId.Equals(primaryItemVisioId))
+                if (parentShape.Equals(primaryItemVisio))
                 {
-                    childrenIds.Add((int)potentialChildId);
+                    childrenIds.Add(potentialChildShape.ID);
                 }
             }
+#pragma warning restore GCop659 // Use 'var' instead of explicit type.
 
             this.logger.LogDebug("Final child shapes found: {CountOfVisioIDs}", childrenIds.Count);
 
@@ -390,6 +394,9 @@ namespace VisioCleanup.Core.Services
                 this.logger.LogDebug("Opening connection to visio.");
                 this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application ?? throw new InvalidOperationException();
                 this.activePage = this.visioApplication.ActivePage;
+
+                this.stencilCache.Clear();
+                this.shapeCache.Clear();
             }
             catch (COMException)
             {
@@ -518,6 +525,8 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
+            return;
+
             this.visioApplication.ShowChanges = visualChanges;
             this.visioApplication.UndoEnabled = visualChanges;
             this.visioApplication.ScreenUpdating = visualChanges ? (short)1 : (short)0;
@@ -537,7 +546,7 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            return this.activePage.Shapes.ItemFromID[visioId];
+            return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID[sheetId]);
         }
     }
 }
