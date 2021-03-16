@@ -92,6 +92,8 @@ namespace VisioCleanup.UI.Forms
         private async void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
         {
             this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
+            this.processingService = null;
 
             this.logger.LogDebug("Loading objects from visio.");
             await this.visioService.LoadVisioObjectModel();
@@ -114,6 +116,8 @@ namespace VisioCleanup.UI.Forms
         private async void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
         {
             this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
+            this.processingService = null;
 
             this.logger.LogDebug("Loading objects from excel.");
             await this.excelService.ProcessDataSet();
