@@ -65,7 +65,7 @@ namespace VisioCleanup.Core.Services
 
                         do
                         {
-                            this.Logger.LogDebug("Loop {count}", counter++);
+                            this.Logger.LogInformation("Correcting diagram: pass {Count}.", counter++);
                         }
                         while (this.MasterShape.CorrectDiagram());
                     });
@@ -86,6 +86,7 @@ namespace VisioCleanup.Core.Services
                         {
                             this.VisioApplication.Open();
                             this.VisioApplication.VisualChanges(false);
+                            this.Logger.LogInformation("Modelling changes to visio.");
 
                             // update each shape
                             foreach (var diagramShape in this.AllShapes)
@@ -109,6 +110,7 @@ namespace VisioCleanup.Core.Services
                                 }
                             }
 
+                            this.Logger.LogInformation("Executing changes to visio.");
                             this.VisioApplication.CompleteDrops();
                             this.VisioApplication.CompleteUpdates();
 

@@ -61,7 +61,7 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        public Collection<DiagramShape> RetrieveRecords()
+        public IEnumerable<DiagramShape> RetrieveRecords()
         {
             if (this.excelApplication is null)
             {
@@ -70,7 +70,6 @@ namespace VisioCleanup.Core.Services
 
             var dataTable = this.excelApplication.ActiveSheet.ListObjects[1];
             Dictionary<string, DiagramShape> allShapes = new();
-            var shapeCounter = 1;
 
             // find headers
             SortedList<int, Dictionary<FieldType, int>> columnMapping = this.FindHeaders(dataTable);
@@ -95,31 +94,9 @@ namespace VisioCleanup.Core.Services
                 }
 
                 DiagramShape? previousShape = null;
-                foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
+                foreach (var i in Enumerable.Range(1, columnMapping.Count))
                 {
-                    var rowResult = rowResults[cellIndex];
-
-                    var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : null;
-                    var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
-                    var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : null;
-
-                    if (shapeText is null)
-                    {
-                        continue;
-                    }
-
-                    if (!allShapes.ContainsKey(shapeText))
-                    {
-                        this.logger.LogDebug("Creating shape for: {ShapeText}", shapeText);
-                        allShapes.Add(
-                            shapeText,
-                            new DiagramShape(shapeCounter++) { ShapeText = shapeText, ShapeType = ShapeType.NewShape, SortValue = sortValue, Master = shapeType });
-                    }
-
-                    var shape = allShapes[shapeText];
-
-                    previousShape?.AddChildShape(shape);
-                    previousShape = shape;
+                    previousShape = this.CreateShape(rowResults[i], allShapes, previousShape);
                 }
             }
 
@@ -130,6 +107,29 @@ namespace VisioCleanup.Core.Services
             }
 
             return shapes;
+        }
+
+        private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string?> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
+        {
+            var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : null;
+            var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
+            var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : null;
+
+            if (shapeText is null)
+            {
+                return previousShape;
+            }
+
+            if (!allShapes.ContainsKey(shapeText))
+            {
+                this.logger.LogDebug("Creating shape for: {ShapeText}", shapeText);
+                allShapes.Add(shapeText, new DiagramShape(0) { ShapeText = shapeText, ShapeType = ShapeType.NewShape, SortValue = sortValue, Master = shapeType });
+            }
+
+            var shape = allShapes[shapeText];
+
+            previousShape?.AddChildShape(shape);
+            return shape;
         }
 
         private SortedList<int, Dictionary<FieldType, int>> FindHeaders(ListObject dataTable)

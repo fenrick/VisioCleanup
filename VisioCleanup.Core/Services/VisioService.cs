@@ -7,6 +7,8 @@
 
 namespace VisioCleanup.Core.Services
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
@@ -41,39 +43,44 @@ namespace VisioCleanup.Core.Services
                         {
                             this.VisioApplication.Open();
 
-                            var selection = this.VisioApplication.Selection();
-                            this.MasterShape = null;
-                            this.AllShapes = new Collection<DiagramShape>();
+                            List<DiagramShape> shapes = new();
 
-                            // confirm one or more items selected.
-                            if (selection.Length == 0)
-                            {
-                                this.Logger.LogDebug("No items selected, all loaded!");
-                                return;
-                            }
-
-                            this.Logger.LogDebug("Create a fake parent shape.");
+                            this.Logger.LogInformation("Create a fake parent shape.");
                             this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE PARENT", ShapeType = ShapeType.FakeShape };
+                            shapes.Add(this.MasterShape);
 
-                            this.AllShapes.Add(this.MasterShape);
+                            this.Logger.LogInformation("Retrieving selected shapes.");
+                            shapes.AddRange(this.VisioApplication.RetrieveShapes());
 
-                            this.Logger.LogDebug("Adding children to parent.");
-                            foreach (var childId in selection)
-                            {
-                                this.ProcessChildren(this.MasterShape, childId);
-                            }
-
-                            // set left and top for master shape. Resize will handle reset.
-                            if (this.MasterShape is null)
+                            if (shapes.Count == 1)
                             {
                                 return;
                             }
 
-                            this.MasterShape.LeftSide = this.MasterShape.Children.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
-                            this.MasterShape.TopSide = this.MasterShape.Children.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
+                            this.AllShapes = new Collection<DiagramShape>(shapes);
+
+                            // turn overlaps into parents
+                            this.Logger.LogInformation("Finding parent shapes.");
+                            foreach (var diagramShape in this.AllShapes)
+                            {
+                                var parentShape = this.FindClosestOverlap(diagramShape);
+                                parentShape?.AddChildShape(diagramShape);
+                            }
+
+                            // add children to master shape.
+                            this.Logger.LogInformation("Assigning fake parent.");
+                            foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
+                            {
+                                this.MasterShape!.AddChildShape(shape);
+                            }
+
+                            // set master shape size.
+                            this.MasterShape!.LeftSide = this.MasterShape.Children.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
+                            this.MasterShape!.TopSide = this.MasterShape.Children.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
 
                             this.MasterShape.ResizeShape();
 
+                            this.Logger.LogInformation("Finding shape neighours.");
                             foreach (var shape in this.AllShapes)
                             {
                                 shape.FindNeighbours();
@@ -86,27 +93,27 @@ namespace VisioCleanup.Core.Services
                     });
         }
 
-        private void ProcessChildren(DiagramShape parentShape, int visioId)
+        private DiagramShape? FindClosestOverlap(DiagramShape diagramShape)
         {
-            // process shape
-            DiagramShape childShape = new(visioId)
-                                          {
-                                              ShapeText = this.VisioApplication.GetShapeText(visioId),
-                                              LeftSide = this.VisioApplication.CalculateLeftSide(visioId),
-                                              RightSide = this.VisioApplication.CalculateRightSide(visioId),
-                                              TopSide = this.VisioApplication.CalculateTopSide(visioId),
-                                              BaseSide = this.VisioApplication.CalculateBaseSide(visioId),
-                                              ShapeType = ShapeType.Existing,
-                                          };
-            this.AllShapes.Add(childShape);
-            parentShape.AddChildShape(childShape);
+            var allOverlaps = this.AllShapes.Where(
+                shape => (shape.LeftSide < diagramShape.LeftSide) && (shape.TopSide > diagramShape.TopSide) && (shape.RightSide > diagramShape.RightSide)
+                         && (shape.BaseSide < diagramShape.BaseSide));
 
-            // find children
-            var childrenIds = this.VisioApplication.GetChildren(visioId).ToList();
-            foreach (var childId in childrenIds)
+            var minShapeArea = long.MaxValue;
+            DiagramShape? minShape = null;
+            foreach (var shape in allOverlaps.ToList())
             {
-                this.ProcessChildren(childShape, childId);
+                var shapeArea = Math.BigMul(shape.Width(), shape.Height());
+                if (minShapeArea <= shapeArea)
+                {
+                    continue;
+                }
+
+                minShape = shape;
+                minShapeArea = shapeArea;
             }
+
+            return minShape;
         }
     }
 }

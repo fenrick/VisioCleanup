@@ -77,11 +77,12 @@ namespace VisioCleanup.UI.Forms
             }
 
             this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
 
             this.logger.LogDebug("Laying out data set.");
             await this.processingService.LayoutDataSet();
 
-            this.dataSetBindingSource.ResetBindings(true);
+            this.dataSetBindingSource.DataSource = this.processingService.AllShapes;
 
             this.controlsFlowPanel.Enabled = true;
         }
@@ -146,9 +147,11 @@ namespace VisioCleanup.UI.Forms
             }
 
             this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
 
             this.logger.LogDebug("Drawing visio.");
             await this.processingService.UpdateVisio();
+            this.dataSetBindingSource.DataSource = this.processingService.AllShapes;
 
             this.controlsFlowPanel.Enabled = true;
         }

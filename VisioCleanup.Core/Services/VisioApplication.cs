@@ -10,6 +10,7 @@ namespace VisioCleanup.Core.Services
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Threading.Tasks;
@@ -41,52 +42,11 @@ namespace VisioCleanup.Core.Services
 
         /// <summary>Initialises a new instance of the <see cref="VisioApplication" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
-        public VisioApplication(ILogger<VisioApplication> logger) => this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-        /// <inheritdoc />
-        public int CalculateBaseSide(int visioId)
+        public VisioApplication(ILogger<VisioApplication> logger)
         {
-            var shape = this.GetShape(visioId);
-
-            var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
-            var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
-
-            return DiagramShape.ConvertMeasurement(pinY - locPinY);
-        }
-
-        /// <inheritdoc />
-        public int CalculateLeftSide(int visioId)
-        {
-            var shape = this.GetShape(visioId);
-
-            var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
-            var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
-
-            return DiagramShape.ConvertMeasurement(pinX - locPinX);
-        }
-
-        /// <inheritdoc />
-        public int CalculateRightSide(int visioId)
-        {
-            var shape = this.GetShape(visioId);
-
-            var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
-            var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
-            var width = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormWidth);
-
-            return DiagramShape.ConvertMeasurement((pinX - locPinX) + width);
-        }
-
-        /// <inheritdoc />
-        public int CalculateTopSide(int visioId)
-        {
-            var shape = this.GetShape(visioId);
-
-            var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
-            var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
-            var height = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
-
-            return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.activePage = null;
+            this.visioApplication = null;
         }
 
         /// <inheritdoc />
@@ -142,6 +102,8 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("Unable to drop shapes.");
             }
 
+            this.LoadShapeCache();
+
             for (var i = 0; i < dropCount; i++)
             {
                 var dropDetails = this.toDrop[i];
@@ -150,7 +112,9 @@ namespace VisioCleanup.Core.Services
                     throw new InvalidOperationException("Unable to load shape.");
                 }
 
-                shape.VisioId = (short)idArray.GetValue(i)!;
+                var shapeId = (ushort)(short)idArray.GetValue(i)!;
+
+                shape.VisioId = shapeId;
                 shape.ShapeType = ShapeType.Existing;
 
                 var visioShape = this.GetShape(shape.VisioId);
@@ -273,66 +237,6 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        /// <exception cref="T:System.AggregateException">
-        /// The exception that contains all the individual exceptions thrown on all
-        /// threads.
-        /// </exception>
-        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
-        public IEnumerable<int> GetChildren(int visioId)
-        {
-            var childrenIds = new List<int>();
-            var parentShape = this.GetShape(visioId);
-
-            var relation = (short)VisSpatialRelationCodes.visSpatialContain;
-            var flags = (short)VisSpatialRelationFlags.visSpatialBackToFront;
-            Selection selection = parentShape.SpatialNeighbors[relation, 0, flags];
-
-            if (selection is null)
-            {
-                return childrenIds;
-            }
-
-            if (selection.Count == 0)
-            {
-                return childrenIds;
-            }
-
-            this.logger.LogDebug("Potential child shapes found: {CountOfSelection}", selection.Count);
-
-#pragma warning disable GCop659 // Use 'var' instead of explicit type.
-            foreach (Shape potentialChildShape in selection)
-            {
-                // check that immediate parent is the supplied shape.
-                relation = (short)VisSpatialRelationCodes.visSpatialContainedIn;
-                flags = (short)VisSpatialRelationFlags.visSpatialFrontToBack;
-
-                Selection childSelection = potentialChildShape.SpatialNeighbors[relation, 0, flags];
-
-                if (childSelection is null)
-                {
-                    continue;
-                }
-
-                if (childSelection.Count <= 0)
-                {
-                    continue;
-                }
-
-                var primaryItemVisio = childSelection.PrimaryItem;
-
-                if (parentShape.Equals(primaryItemVisio))
-                {
-                    childrenIds.Add(potentialChildShape.ID);
-                }
-            }
-#pragma warning restore GCop659 // Use 'var' instead of explicit type.
-
-            this.logger.LogDebug("Final child shapes found: {CountOfVisioIDs}", childrenIds.Count);
-
-            return childrenIds;
-        }
-
-        /// <inheritdoc />
         public int GetPageLeftSide()
         {
             if (this.visioApplication is null)
@@ -379,14 +283,6 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        /// <exception cref="T:System.NullReferenceException">Shape is <see langword="null" />.</exception>
-        public string GetShapeText(int visioId)
-        {
-            var shape = this.GetShape(visioId);
-            return shape.Text;
-        }
-
-        /// <inheritdoc />
         public void Open()
         {
             try
@@ -406,34 +302,56 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
-        /// <exception cref="T:System.NullReferenceException">Visio object is <see langword="null" />.</exception>
-        public int[] Selection()
+        public IEnumerable<DiagramShape> RetrieveShapes()
         {
             if (this.visioApplication is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            var listVisioIds = new List<int>();
-            var activeWindow = this.visioApplication.ActiveWindow;
-            if (activeWindow is null)
+            Dictionary<int, DiagramShape> allShapes = new();
+
+            // get selection.
+            var selection = this.visioApplication.ActiveWindow.Selection;
+
+            this.logger.LogDebug("Found {Count} selected shapes.", selection.Count);
+#pragma warning disable GCop659
+            foreach (var selected in selection.Cast<Shape>().Where(selected => selected is not null))
             {
-                return listVisioIds.ToArray();
+                this.logger.LogDebug("Processing shape: {ShapeID} - {ShapeText}", selected.ID, selected.Text);
+
+                var sheetId = selected.ID;
+                if (allShapes.ContainsKey(sheetId))
+                {
+                    this.logger.LogDebug("Shape already processed.");
+                    continue;
+                }
+
+                // create new shape.
+                DiagramShape diagramShape = new(sheetId)
+                                                {
+                                                    ShapeText = selected.Text,
+                                                    ShapeType = ShapeType.Existing,
+                                                    LeftSide = this.CalculateLeftSide(sheetId),
+                                                    RightSide = this.CalculateRightSide(sheetId),
+                                                    TopSide = this.CalculateTopSide(sheetId),
+                                                    BaseSide = this.CalculateBaseSide(sheetId),
+                                                };
+                this.logger.LogDebug("Adding shape to collection.");
+                allShapes.Add(sheetId, diagramShape);
             }
 
-            var selection = activeWindow.Selection;
+#pragma warning restore GCop659
+            this.logger.LogDebug("Processed a total of {Count} shapes.", allShapes.Count);
 
-            selection.GetIDs(out var ids);
-
-            if (ids is null)
+            // generate final collection
+            Collection<DiagramShape> shapes = new();
+            foreach (var (_, value) in allShapes)
             {
-                return listVisioIds.ToArray();
+                shapes.Add(value);
             }
 
-            listVisioIds.AddRange(ids.Cast<int>());
-
-            return listVisioIds.ToArray();
+            return shapes;
         }
 
         /// <inheritdoc />
@@ -525,8 +443,6 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            return;
-
             this.visioApplication.ShowChanges = visualChanges;
             this.visioApplication.UndoEnabled = visualChanges;
             this.visioApplication.ScreenUpdating = visualChanges ? (short)1 : (short)0;
@@ -539,6 +455,48 @@ namespace VisioCleanup.Core.Services
             return shapeCell.Result[VisUnitCodes.visMillimeters];
         }
 
+        private int CalculateBaseSide(int visioId)
+        {
+            var shape = this.GetShape(visioId);
+
+            var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
+            var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
+
+            return DiagramShape.ConvertMeasurement(pinY - locPinY);
+        }
+
+        private int CalculateLeftSide(int visioId)
+        {
+            var shape = this.GetShape(visioId);
+
+            var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
+            var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
+
+            return DiagramShape.ConvertMeasurement(pinX - locPinX);
+        }
+
+        private int CalculateRightSide(int visioId)
+        {
+            var shape = this.GetShape(visioId);
+
+            var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
+            var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
+            var width = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormWidth);
+
+            return DiagramShape.ConvertMeasurement((pinX - locPinX) + width);
+        }
+
+        private int CalculateTopSide(int visioId)
+        {
+            var shape = this.GetShape(visioId);
+
+            var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
+            var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
+            var height = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
+
+            return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
+        }
+
         private Shape GetShape(int visioId)
         {
             if (this.visioApplication is null || this.activePage is null)
@@ -547,6 +505,28 @@ namespace VisioCleanup.Core.Services
             }
 
             return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID[sheetId]);
+        }
+
+        private void LoadShapeCache()
+        {
+            if (this.visioApplication is null || this.activePage is null)
+            {
+                throw new InvalidOperationException("Initialise system first");
+            }
+
+            // clear cache
+            this.shapeCache.Clear();
+
+            var shapes = this.activePage.Shapes;
+            foreach (var element in shapes)
+            {
+                if (element is not Shape shape)
+                {
+                    continue;
+                }
+
+                this.shapeCache.TryAdd(shape.ID, shape);
+            }
         }
     }
 }

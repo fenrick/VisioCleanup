@@ -7,6 +7,7 @@
 
 namespace VisioCleanup.Core.Contracts
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
 
     using VisioCleanup.Core.Models;
@@ -22,6 +23,6 @@ namespace VisioCleanup.Core.Contracts
 
         /// <summary>Retrieve records from excel.</summary>
         /// <returns>Collection of diagram shapes.</returns>
-        Collection<DiagramShape> RetrieveRecords();
+        IEnumerable<DiagramShape> RetrieveRecords();
     }
 }
