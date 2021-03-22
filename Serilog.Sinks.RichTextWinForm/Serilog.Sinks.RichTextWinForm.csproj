@@ -26,9 +26,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="GCop.All.Common" Version="2.7.5" />
+        <PackageReference Include="GCop.All.Common" Version="2.7.5">
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="JetBrains.Annotations" Version="2021.1.0-eap01" />
-        <PackageReference Include="Microsoft.CodeAnalysis" Version="3.10.0-1.final" />
         <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333">

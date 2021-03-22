@@ -31,13 +31,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="GCop.All.Common" Version="2.7.5" />
+        <PackageReference Include="GCop.All.Common" Version="2.7.5">
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="JetBrains.Annotations" Version="2021.1.0-eap01" />
-        <PackageReference Include="Microsoft.CodeAnalysis" Version="3.10.0-1.final" />
         <PackageReference Include="Serilog.Enrichers.Thread" Version="3.2.0-dev-00750" />
         <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
         <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0-dev-00264" />
-        <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+        <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0">
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
         <PackageReference Include="WindowsFormsGenericHost" Version="0.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0-preview.2.21154.6" />
