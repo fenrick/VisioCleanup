@@ -134,13 +134,13 @@ namespace VisioCleanup.Core.Models
         /// <summary>Gets collection of child shapes.</summary>
         public Collection<DiagramShape> Children { get; }
 
-        /// <summary>Gets or sets the shape to the left.</summary>
+        /// <summary>Gets the shape to the left.</summary>
         public DiagramShape? Left { get; private set; }
 
         /// <summary>Gets or sets left side of the shape.</summary>
         public int LeftSide { get; set; }
 
-        /// <summary>Gets or sets the stencil used for drawing shape.</summary>
+        /// <summary>Gets the stencil used for drawing shape.</summary>
         public string? Master { get; init; }
 
         /// <summary>Gets  parent shape of curent shape.</summary>
@@ -335,9 +335,12 @@ namespace VisioCleanup.Core.Models
             var newBaseSide = this.TopSide - height;
             var newRightSide = this.LeftSide + width;
 
-            if ((this.RightSide == newRightSide) && (this.BaseSide == newBaseSide))
+            if (this.RightSide == newRightSide)
             {
-                return false;
+                if (this.BaseSide == newBaseSide)
+                {
+                    return false;
+                }
             }
 
             this.logger.Debug("Resizing: {Shape}", this);
@@ -443,7 +446,12 @@ namespace VisioCleanup.Core.Models
         }
 
         private string CornerString() =>
-            $"Top: {ConvertMeasurement(this.TopSide)}, Right: {ConvertMeasurement(this.RightSide)}, Base: {ConvertMeasurement(this.BaseSide)}, Left: {ConvertMeasurement(this.LeftSide)}";
+            string.Format(
+                "Top: {0}, Right: {1}, Base: {2}, Left: {3}",
+                ConvertMeasurement(this.TopSide),
+                ConvertMeasurement(this.RightSide),
+                ConvertMeasurement(this.BaseSide),
+                ConvertMeasurement(this.LeftSide));
 
         private bool FixPosition()
         {
@@ -465,7 +473,14 @@ namespace VisioCleanup.Core.Models
 
                 var leftMovement = this.LeftSide - newLeft;
 
-                if ((topMovement != 0) || (leftMovement != 0))
+                if (topMovement != 0)
+                {
+                    this.logger.Debug("Aligning {Shape} to {Parent}.", this, this.ParentShape);
+                    this.MoveVertical(topMovement);
+                    this.MoveHorizontal(leftMovement);
+                    result = true;
+                }
+                else if (leftMovement != 0)
                 {
                     this.logger.Debug("Aligning {Shape} to {Parent}.", this, this.ParentShape);
                     this.MoveVertical(topMovement);

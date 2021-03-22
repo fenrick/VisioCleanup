@@ -51,14 +51,14 @@ namespace VisioCleanup.Core.Services
         protected IVisioApplication VisioApplication { get; }
 
         /// <inheritdoc />
-        public async Task LayoutDataSet()
+        public Task LayoutDataSet()
         {
             if (this.MasterShape is null)
             {
-                return;
+                throw new ArgumentNullException(nameof(this.MasterShape));
             }
 
-            await Task.Run(
+            return Task.Run(
                 () =>
                     {
                         var counter = 1;
@@ -72,14 +72,14 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task UpdateVisio()
+        public Task UpdateVisio()
         {
             if (this.MasterShape is null)
             {
                 throw new ArgumentNullException(nameof(this.MasterShape));
             }
 
-            await Task.Run(
+            return Task.Run(
                 () =>
                     {
                         try

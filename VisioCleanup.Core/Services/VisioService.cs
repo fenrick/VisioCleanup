@@ -34,9 +34,9 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task LoadVisioObjectModel()
+        public Task LoadVisioObjectModel()
         {
-            await Task.Run(
+            return Task.Run(
                 () =>
                     {
                         try
@@ -95,9 +95,11 @@ namespace VisioCleanup.Core.Services
 
         private DiagramShape? FindClosestOverlap(DiagramShape diagramShape)
         {
-            var allOverlaps = this.AllShapes.Where(
-                shape => (shape.LeftSide < diagramShape.LeftSide) && (shape.TopSide > diagramShape.TopSide) && (shape.RightSide > diagramShape.RightSide)
-                         && (shape.BaseSide < diagramShape.BaseSide));
+            bool AllSidesOverlap(DiagramShape shape) =>
+                (shape.LeftSide < diagramShape.LeftSide) && (shape.TopSide > diagramShape.TopSide) && (shape.RightSide > diagramShape.RightSide)
+                && (shape.BaseSide < diagramShape.BaseSide);
+
+            var allOverlaps = this.AllShapes.Where(AllSidesOverlap);
 
             var minShapeArea = long.MaxValue;
             DiagramShape? minShape = null;

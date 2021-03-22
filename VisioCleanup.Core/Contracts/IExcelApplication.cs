@@ -8,7 +8,6 @@
 namespace VisioCleanup.Core.Contracts
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
 
     using VisioCleanup.Core.Models;
 

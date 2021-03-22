@@ -29,16 +29,11 @@ namespace VisioCleanup.Core
             {
                 CLSIDFromProgIDEx(progId, out classId);
             }
-
-            // ReSharper disable once CatchAllClause
             catch
-#pragma warning disable GCop138
             {
                 // When you catch an exception you should throw exception or at least log error
                 CLSIDFromProgID(progId, out classId);
             }
-
-#pragma warning restore GCop138 // When you catch an exception you should throw exception or at least log error
 
             GetActiveObject(ref classId, IntPtr.Zero, out var obj);
             return obj;

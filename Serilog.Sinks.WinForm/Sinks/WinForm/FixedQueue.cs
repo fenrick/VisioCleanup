@@ -26,12 +26,9 @@ namespace Serilog.Sinks.WinForm
         /// <summary>Initialises a new instance of the <see cref="FixedQueue{T}" /> class. With a default capacity of 50.</summary>
         public FixedQueue()
             : this(DefaultCapacity)
-#pragma warning disable GCop661
         {
             // empty
         }
-
-#pragma warning restore GCop661
 
         /// <summary>Initialises a new instance of the <see cref="FixedQueue{T}" /> class.</summary>
         /// <param name="collection">Default collection and capacity size.</param>

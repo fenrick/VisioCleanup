@@ -21,17 +21,20 @@ namespace VisioCleanup.UI.Forms
     /// <summary>Main application form.</summary>
     public partial class MainForm : Form
     {
+        /// <summary>The excel service.</summary>
         private readonly IExcelService excelService;
 
         /// <summary>The logger.</summary>
         private readonly ILogger<MainForm> logger;
 
+        /// <summary>The visio service.</summary>
         private readonly IVisioService visioService;
 
+        /// <summary>The processing service.</summary>
         private IProcessingService? processingService;
 
         /// <summary>Initialises a new instance of the <see cref="MainForm" /> class.</summary>
-        /// <param name="logger">The <paramref name="logger" />.</param>
+        /// <param name="logger">The <paramref name="logger" /> .</param>
         /// <param name="options">The app config.</param>
         /// <param name="excelService">The excel service.</param>
         /// <param name="visioService">The visio service.</param>
@@ -60,100 +63,211 @@ namespace VisioCleanup.UI.Forms
             this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
         }
 
+        /// <summary>The layout data set_ click.</summary>
+        /// <param name="sender">The <paramref name="sender" /> .</param>
+        /// <param name="eventArgs">The event args.</param>
         private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
         {
             if (this.processingService is null)
             {
                 this.logger.LogDebug("Processing Service is not defined.");
-                MessageBox.Show(
-                    @"Unable to layout dataset, none is loaded.",
-                    @"Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1,
-                    MessageBoxOptions.ServiceNotification,
-                    false);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               MessageBox.Show(
+                                                   @"Unable to layout dataset, none is loaded.",
+                                                   @"Error",
+                                                   MessageBoxButtons.OK,
+                                                   MessageBoxIcon.Error,
+                                                   MessageBoxDefaultButton.Button1,
+                                                   MessageBoxOptions.ServiceNotification);
+                                           }));
                 return;
             }
 
-            this.controlsFlowPanel.Enabled = false;
-            this.dataSetBindingSource.DataSource = null;
+            try
+            {
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.controlsFlowPanel.Enabled = false;
+                                               this.dataSetBindingSource.DataSource = null;
+                                           }));
 
-            this.logger.LogDebug("Laying out data set.");
-            await this.processingService.LayoutDataSet();
+                this.logger.LogDebug("Laying out data set.");
 
-            this.dataSetBindingSource.DataSource = this.processingService.AllShapes;
+                await this.processingService!.LayoutDataSet().ConfigureAwait(false);
 
-            this.controlsFlowPanel.Enabled = true;
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
+
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
+            }
+            catch (InvalidOperationException invalidOperationException)
+            {
+                this.logger.LogError(invalidOperationException, "Error laying out dataset.");
+                this.processingService = null;
+                this.dataSetBindingSource = null;
+            }
+            catch (ArgumentNullException argumentNullException)
+            {
+                this.logger.LogError(argumentNullException, "Error laying out dataset.");
+                this.processingService = null;
+                this.dataSetBindingSource = null;
+            }
         }
 
         /// <summary>Load Visio Object Model.</summary>
-        /// <param name="sender">The <paramref name="sender" />.</param>
-        /// <param name="eventArgs">The <paramref name="eventArgs" />.</param>
+        /// <param name="sender">The <paramref name="sender" /> .</param>
+        /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
         private async void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
         {
-            this.controlsFlowPanel.Enabled = false;
-            this.dataSetBindingSource.DataSource = null;
-            this.processingService = null;
+            try
+            {
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.controlsFlowPanel.Enabled = false;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.processingService = null;
+                                           }));
 
-            this.logger.LogDebug("Loading objects from visio.");
-            await this.visioService.LoadVisioObjectModel();
+                this.logger.LogDebug("Loading objects from visio.");
+                await this.visioService.LoadVisioObjectModel().ConfigureAwait(false);
 
-            this.logger.LogDebug("Updating data set.");
-            this.dataSetBindingSource.DataSource = this.visioService.AllShapes;
-            this.processingService = this.visioService;
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.logger.LogDebug("Updating data set.");
+                                               this.dataSetBindingSource.DataSource = this.visioService.AllShapes;
+                                               this.processingService = this.visioService;
 
-            this.controlsFlowPanel.Enabled = true;
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
+            }
+            catch (InvalidOperationException invalidOperationException)
+            {
+                this.logger.LogError(invalidOperationException, "Error reading visio diagram.");
+                this.processingService = null;
+                this.dataSetBindingSource = null;
+            }
+            catch (ArgumentNullException argumentNullException)
+            {
+                this.logger.LogError(argumentNullException, "Error reading visio diagram.");
+                this.processingService = null;
+                this.dataSetBindingSource = null;
+            }
         }
 
-        private void MainForm_DpiChanged(object sender, DpiChangedEventArgs e)
+        /// <summary>The main form_ dpi changed.</summary>
+        /// <param name="sender">The <paramref name="sender" /> .</param>
+        /// <param name="dpiChangedEventArgs">The dpi Changed Event Args.</param>
+        private void MainForm_DpiChanged(object sender, DpiChangedEventArgs dpiChangedEventArgs)
         {
             this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
         }
 
         /// <summary>Activate the processing of Excel data set.</summary>
-        /// <param name="sender">The <paramref name="sender" />.</param>
-        /// <param name="eventArgs">The <paramref name="eventArgs" />.</param>
+        /// <param name="sender">The <paramref name="sender" /> .</param>
+        /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
         private async void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
         {
-            this.controlsFlowPanel.Enabled = false;
-            this.dataSetBindingSource.DataSource = null;
-            this.processingService = null;
+            try
+            {
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.controlsFlowPanel.Enabled = false;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.processingService = null;
+                                           }));
 
-            this.logger.LogDebug("Loading objects from excel.");
-            await this.excelService.ProcessDataSet();
+                this.logger.LogDebug("Loading objects from excel.");
 
-            this.logger.LogDebug("Updating dataset.");
-            this.dataSetBindingSource.DataSource = this.excelService.AllShapes;
-            this.processingService = this.excelService;
+                await this.excelService.ProcessDataSet().ConfigureAwait(false);
 
-            this.controlsFlowPanel.Enabled = true;
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.logger.LogDebug("Updating dataset.");
+                                               this.dataSetBindingSource.DataSource = this.excelService.AllShapes;
+                                               this.processingService = this.excelService;
+
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
+            }
+            catch (InvalidOperationException invalidOperationException)
+            {
+                this.logger.LogError(invalidOperationException, "Error reading excel diagram.");
+                this.processingService = null;
+                this.dataSetBindingSource = null;
+            }
+            catch (ArgumentNullException argumentNullException)
+            {
+                this.logger.LogError(argumentNullException, "Error reading excel diagram.");
+                this.processingService = null;
+                this.dataSetBindingSource = null;
+            }
         }
 
+        /// <summary>sThe update visio drawing_ click.</summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The dpiChangedEventArgs.</param>
         private async void UpdateVisioDrawing_Click(object sender, EventArgs e)
         {
             if (this.processingService is null)
             {
                 this.logger.LogDebug("Processing Service is not defined.");
-                MessageBox.Show(
-                    @"Unable to draw dataset, none is loaded.",
-                    @"Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1,
-                    MessageBoxOptions.ServiceNotification,
-                    false);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               MessageBox.Show(
+                                                   @"Unable to layout dataset, none is loaded.",
+                                                   @"Error",
+                                                   MessageBoxButtons.OK,
+                                                   MessageBoxIcon.Error,
+                                                   MessageBoxDefaultButton.Button1,
+                                                   MessageBoxOptions.ServiceNotification);
+                                           }));
                 return;
             }
 
-            this.controlsFlowPanel.Enabled = false;
-            this.dataSetBindingSource.DataSource = null;
+            try
+            {
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.controlsFlowPanel.Enabled = false;
+                                               this.dataSetBindingSource.DataSource = null;
+                                           }));
 
-            this.logger.LogDebug("Drawing visio.");
-            await this.processingService.UpdateVisio();
-            this.dataSetBindingSource.DataSource = this.processingService.AllShapes;
+                this.logger.LogDebug("Drawing visio.");
 
-            this.controlsFlowPanel.Enabled = true;
+                await this.processingService!.UpdateVisio().ConfigureAwait(false);
+
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
+
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
+            }
+            catch (InvalidOperationException invalidOperationException)
+            {
+                this.logger.LogError(invalidOperationException, "Error drawing in visio.");
+                this.processingService = null;
+                this.dataSetBindingSource = null;
+            }
+            catch (ArgumentNullException argumentNullException)
+            {
+                this.logger.LogError(argumentNullException, "Error drawing in visio.");
+                this.processingService = null;
+                this.dataSetBindingSource = null;
+            }
         }
     }
 }

@@ -185,40 +185,7 @@ namespace VisioCleanup.Core.Services
                 shapeMaster = diagramShape.Master;
             }
 
-            var master = this.stencilCache.GetOrAdd(
-                shapeMaster,
-                key =>
-                    {
-                        // var documentStencil = this.visioApplication.ActiveDocument.Masters;
-                        this.visioApplication.ActiveWindow.DockedStencils(out var stencilNames);
-                        if (stencilNames is null || (stencilNames.Length == 0))
-                        {
-                            return null;
-                        }
-
-                        foreach (var stencilName in stencilNames)
-                        {
-                            if (stencilName is null || stencilName.Equals(string.Empty))
-                            {
-                                continue;
-                            }
-
-                            var stencil = this.visioApplication.Documents[stencilName];
-                            stencil.Masters.GetNames(out var masterNames);
-                            if (masterNames is null || (masterNames.Length <= 0))
-                            {
-                                continue;
-                            }
-
-                            var result = (masterNames as string[])!.Contains(key);
-                            if (result)
-                            {
-                                return stencil.Masters[key];
-                            }
-                        }
-
-                        return null;
-                    });
+            var master = this.stencilCache.GetOrAdd(shapeMaster, this.StencilValueFactory);
 
             if (master is null)
             {
@@ -315,7 +282,6 @@ namespace VisioCleanup.Core.Services
             var selection = this.visioApplication.ActiveWindow.Selection;
 
             this.logger.LogDebug("Found {Count} selected shapes.", selection.Count);
-#pragma warning disable GCop659
             foreach (var selected in selection.Cast<Shape>().Where(selected => selected is not null))
             {
                 this.logger.LogDebug("Processing shape: {ShapeID} - {ShapeText}", selected.ID, selected.Text);
@@ -341,7 +307,6 @@ namespace VisioCleanup.Core.Services
                 allShapes.Add(sheetId, diagramShape);
             }
 
-#pragma warning restore GCop659
             this.logger.LogDebug("Processed a total of {Count} shapes.", allShapes.Count);
 
             // generate final collection
@@ -527,6 +492,44 @@ namespace VisioCleanup.Core.Services
 
                 this.shapeCache.TryAdd(shape.ID, shape);
             }
+        }
+
+        private Master? StencilValueFactory(string key)
+        {
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("Initialise system first.");
+            }
+
+            // var documentStencil = this.visioApplication.ActiveDocument.Masters;
+            this.visioApplication.ActiveWindow.DockedStencils(out var stencilNames);
+            if (stencilNames is null || (stencilNames.Length == 0))
+            {
+                return null;
+            }
+
+            foreach (var stencilName in stencilNames)
+            {
+                if (stencilName is null || stencilName.Equals(string.Empty))
+                {
+                    continue;
+                }
+
+                var stencil = this.visioApplication.Documents[stencilName];
+                stencil.Masters.GetNames(out var masterNames);
+                if (masterNames is null || (masterNames.Length <= 0))
+                {
+                    continue;
+                }
+
+                var result = (masterNames as string[])!.Contains(key);
+                if (result)
+                {
+                    return stencil.Masters[key];
+                }
+            }
+
+            return null;
         }
     }
 }

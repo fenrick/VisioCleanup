@@ -37,9 +37,9 @@ namespace VisioCleanup.Core.Services
             this.excelApplication = excelApplication ?? throw new ArgumentNullException(nameof(excelApplication));
 
         /// <inheritdoc />
-        public new async Task LayoutDataSet()
+        public new Task LayoutDataSet()
         {
-            await Task.Run(
+            return Task.Run(
                 () =>
                     {
                         int maxRight;
@@ -72,9 +72,9 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task ProcessDataSet()
+        public Task ProcessDataSet()
         {
-            await Task.Run(
+            return Task.Run(
                 () =>
                     {
                         try
@@ -178,7 +178,8 @@ namespace VisioCleanup.Core.Services
                 this.Logger.LogDebug("Internal max right: {MaxRight}", internalMaxRight);
 
                 // find overlapping child
-                var overlapChild = diagramShape.Children.OrderBy(childShape => childShape.LeftSide).FirstOrDefault(childShape => childShape.RightSide >= internalMaxRight);
+                var orderedChildren = diagramShape.Children.OrderBy(childShape => childShape.LeftSide);
+                var overlapChild = orderedChildren.FirstOrDefault(childShape => childShape.RightSide >= internalMaxRight);
 
                 // do we have an child to move
                 if (overlapChild is null)
@@ -244,7 +245,8 @@ namespace VisioCleanup.Core.Services
                 }
             }
 
-            var children = diagramShape.Children.OrderByDescending(shape => shape.TotalChildrenCount()).ToList();
+            var orderedChildren = diagramShape.Children.OrderByDescending(shape => shape.TotalChildrenCount());
+            var children = orderedChildren.ToList();
 
             for (var i = 0; i < children.Count; i++)
             {
