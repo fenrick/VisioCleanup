@@ -11,6 +11,7 @@ namespace VisioCleanup.Core.Services
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Runtime.InteropServices;
 
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -20,6 +21,7 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
 
+    using Marshal = VisioCleanup.Core.Marshal;
     using Range = Microsoft.Office.Interop.Excel.Range;
 
     /// <inheritdoc />
@@ -57,18 +59,31 @@ namespace VisioCleanup.Core.Services
         public void Open()
         {
             this.logger.LogDebug("Opening connection to excel.");
-            this.excelApplication = Marshal.GetActiveObject("Excel.Application") as Application ?? throw new InvalidOperationException("Excel must be running.");
+            try
+            {
+                this.excelApplication = Marshal.GetActiveObject("Excel.Application") as Application ?? throw new InvalidOperationException("Excel must be running.");
+            }
+            catch (COMException _)
+            {
+                throw new InvalidOperationException("Excel must be running.");
+            }
         }
 
         /// <inheritdoc />
         public IEnumerable<DiagramShape> RetrieveRecords()
         {
-            if (this.excelApplication is null)
+            if (this.excelApplication is null || this.excelApplication.ActiveSheet is null)
             {
                 throw new InvalidOperationException("Excel must be running.");
             }
 
-            var dataTable = this.excelApplication.ActiveSheet.ListObjects[1];
+            Worksheet excelApplicationActiveSheet = this.excelApplication.ActiveSheet;
+            if (excelApplicationActiveSheet.ListObjects.Count == 0)
+            {
+                throw new InvalidOperationException("Excel not setup correctly.");
+            }
+
+            var dataTable = excelApplicationActiveSheet.ListObjects[1];
             Dictionary<string, DiagramShape> allShapes = new();
 
             // find headers

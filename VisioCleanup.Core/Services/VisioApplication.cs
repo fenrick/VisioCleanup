@@ -189,7 +189,8 @@ namespace VisioCleanup.Core.Services
 
             if (master is null)
             {
-                return;
+                this.logger.LogError("Unable to find matching stencil: {StencilName}", shapeMaster);
+                throw new InvalidOperationException("Unable to find matching stencil.");
             }
 
             this.toDrop.Add(new Dictionary<string, object> { { "shape", diagramShape }, { "master", master }, { "x", newPinX }, { "y", newPinY } });
@@ -206,12 +207,12 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public int GetPageLeftSide()
         {
-            if (this.visioApplication is null)
+            if (this.visioApplication is null || this.activePage is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            var pageSheet = this.visioApplication.ActivePage.PageSheet;
+            var pageSheet = this.activePage.PageSheet;
 
             return DiagramShape.ConvertMeasurement(
                 GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesLeftMargin));
@@ -220,12 +221,13 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public int GetPageRightSide()
         {
-            if (this.visioApplication is null)
+            if (this.visioApplication is null || this.activePage is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            var pageSheet = this.visioApplication.ActivePage.PageSheet;
+            var pageSheet = this.activePage.PageSheet;
+            
 
             var rightMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesRightMargin);
             var width = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageWidth);
@@ -236,12 +238,12 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public int GetPageTopSide()
         {
-            if (this.visioApplication is null)
+            if (this.visioApplication is null || this.activePage is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            var pageSheet = this.visioApplication.ActivePage.PageSheet;
+            var pageSheet = this.activePage.PageSheet;
 
             var height = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageHeight);
             var topMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPrintPropertiesTopMargin);
@@ -263,15 +265,14 @@ namespace VisioCleanup.Core.Services
             }
             catch (COMException)
             {
-                this.logger.LogDebug("Visio not running, time to open it.");
-                this.visioApplication = new Application();
+                throw new InvalidOperationException();
             }
         }
 
         /// <inheritdoc />
         public IEnumerable<DiagramShape> RetrieveShapes()
         {
-            if (this.visioApplication is null)
+            if (this.visioApplication is null || this.visioApplication.ActiveWindow is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
@@ -399,8 +400,8 @@ namespace VisioCleanup.Core.Services
                     });
         }
 
+        /// <exception cref="System.InvalidOperationException">System not initialised.</exception>
         /// <inheritdoc />
-        /// <exception cref="T:System.InvalidOperationException">System not initialised.</exception>
         public void VisualChanges(bool visualChanges)
         {
             if (this.visioApplication is null)

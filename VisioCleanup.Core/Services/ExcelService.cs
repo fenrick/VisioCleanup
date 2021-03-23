@@ -120,8 +120,10 @@ namespace VisioCleanup.Core.Services
                         }
                         finally
                         {
+                            this.Logger.LogInformation("Closing connection to visio.");
                             this.VisioApplication.Close();
 
+                            this.Logger.LogInformation("Closing connection to excel.");
                             this.excelApplication.Close();
                         }
                     });

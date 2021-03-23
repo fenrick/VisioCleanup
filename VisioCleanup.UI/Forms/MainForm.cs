@@ -13,7 +13,7 @@ namespace VisioCleanup.UI.Forms
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
-    using Serilog.Sinks.WinForm;
+    using Serilog.Sinks.RichTextWinForm;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models.Config;
@@ -49,7 +49,7 @@ namespace VisioCleanup.UI.Forms
             this.InitializeComponent();
 
             this.logger.LogDebug("Setting log output.");
-            WinFormSink.AddListView(this.listBox);
+            RichTextWinFormSink.AddRichTextBox(this.richTextLogBox);
 
             this.logger.LogDebug("Binding appConfig to data grid.");
             this.parametersBindingSource.Add(appConfig);
@@ -108,15 +108,25 @@ namespace VisioCleanup.UI.Forms
             }
             catch (InvalidOperationException invalidOperationException)
             {
-                this.logger.LogError(invalidOperationException, "Error laying out dataset.");
-                this.processingService = null;
-                this.dataSetBindingSource = null;
+                this.logger.LogError(invalidOperationException, invalidOperationException.Message);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.processingService = null;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
             }
             catch (ArgumentNullException argumentNullException)
             {
-                this.logger.LogError(argumentNullException, "Error laying out dataset.");
-                this.processingService = null;
-                this.dataSetBindingSource = null;
+                this.logger.LogError(argumentNullException, argumentNullException.Message);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.processingService = null;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
             }
         }
 
@@ -150,15 +160,25 @@ namespace VisioCleanup.UI.Forms
             }
             catch (InvalidOperationException invalidOperationException)
             {
-                this.logger.LogError(invalidOperationException, "Error reading visio diagram.");
-                this.processingService = null;
-                this.dataSetBindingSource = null;
+                this.logger.LogError(invalidOperationException, invalidOperationException.Message);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.processingService = null;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
             }
             catch (ArgumentNullException argumentNullException)
             {
-                this.logger.LogError(argumentNullException, "Error reading visio diagram.");
-                this.processingService = null;
-                this.dataSetBindingSource = null;
+                this.logger.LogError(argumentNullException, argumentNullException.Message);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.processingService = null;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
             }
         }
 
@@ -201,15 +221,32 @@ namespace VisioCleanup.UI.Forms
             }
             catch (InvalidOperationException invalidOperationException)
             {
-                this.logger.LogError(invalidOperationException, "Error reading excel diagram.");
-                this.processingService = null;
-                this.dataSetBindingSource = null;
+                this.logger.LogError(invalidOperationException, invalidOperationException.Message);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.processingService = null;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.controlsFlowPanel.Enabled = true;
+                                               MessageBox.Show(
+                                                   @"Excel and visio need to be setup for this to work.",
+                                                   @"Error",
+                                                   MessageBoxButtons.OK,
+                                                   MessageBoxIcon.Error,
+                                                   MessageBoxDefaultButton.Button1,
+                                                   MessageBoxOptions.ServiceNotification);
+                                           }));
             }
             catch (ArgumentNullException argumentNullException)
             {
-                this.logger.LogError(argumentNullException, "Error reading excel diagram.");
-                this.processingService = null;
-                this.dataSetBindingSource = null;
+                this.logger.LogError(argumentNullException, argumentNullException.Message);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.processingService = null;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
             }
         }
 
@@ -258,15 +295,32 @@ namespace VisioCleanup.UI.Forms
             }
             catch (InvalidOperationException invalidOperationException)
             {
-                this.logger.LogError(invalidOperationException, "Error drawing in visio.");
-                this.processingService = null;
-                this.dataSetBindingSource = null;
+                this.logger.LogError(invalidOperationException, invalidOperationException.Message);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.processingService = null;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.controlsFlowPanel.Enabled = true;
+                                               MessageBox.Show(
+                                                   @"Visio needs to be setup for this to work.",
+                                                   @"Error",
+                                                   MessageBoxButtons.OK,
+                                                   MessageBoxIcon.Error,
+                                                   MessageBoxDefaultButton.Button1,
+                                                   MessageBoxOptions.ServiceNotification);
+                                           }));
             }
             catch (ArgumentNullException argumentNullException)
             {
-                this.logger.LogError(argumentNullException, "Error drawing in visio.");
-                this.processingService = null;
-                this.dataSetBindingSource = null;
+                this.logger.LogError(argumentNullException, argumentNullException.Message);
+                this.Invoke(
+                    (MethodInvoker)(() =>
+                                           {
+                                               this.processingService = null;
+                                               this.dataSetBindingSource.DataSource = null;
+                                               this.controlsFlowPanel.Enabled = true;
+                                           }));
             }
         }
     }

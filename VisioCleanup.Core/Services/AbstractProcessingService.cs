@@ -119,6 +119,7 @@ namespace VisioCleanup.Core.Services
                         }
                         finally
                         {
+                            this.Logger.LogInformation("Closing connection to visio.");
                             this.VisioApplication.VisualChanges(true);
                             this.VisioApplication.Close();
                         }
