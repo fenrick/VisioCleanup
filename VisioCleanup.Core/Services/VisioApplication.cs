@@ -501,10 +501,22 @@ namespace VisioCleanup.Core.Services
             {
                 throw new InvalidOperationException("Initialise system first.");
             }
+            
+            var documentStencil = this.visioApplication.ActiveDocument.Masters;
+            {
+                documentStencil.GetNames(out var masterNames);
+                if (masterNames is not null && masterNames.Length > 0)
+                {
+                    var result = (masterNames as string[])!.Contains(key);
+                    if (result)
+                    {
+                        return documentStencil[key];
+                    }
+                }
+            }
 
-            // var documentStencil = this.visioApplication.ActiveDocument.Masters;
             this.visioApplication.ActiveWindow.DockedStencils(out var stencilNames);
-            if (stencilNames is null || (stencilNames.Length == 0))
+            if (stencilNames is null)
             {
                 return null;
             }
