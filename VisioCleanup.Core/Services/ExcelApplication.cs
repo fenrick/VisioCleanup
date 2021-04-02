@@ -135,13 +135,15 @@ namespace VisioCleanup.Core.Services
                 return previousShape;
             }
 
-            if (!allShapes.ContainsKey(shapeText))
+            var shapeIdentifier = $"{previousShape?.ShapeIdentifier} {shapeText}:{shapeType}".Trim();
+
+            if (!allShapes.ContainsKey(shapeIdentifier))
             {
                 this.logger.LogDebug("Creating shape for: {ShapeText}", shapeText);
-                allShapes.Add(shapeText, new DiagramShape(0) { ShapeText = shapeText, ShapeType = ShapeType.NewShape, SortValue = sortValue, Master = shapeType });
+                allShapes.Add(shapeIdentifier, new DiagramShape(0) { ShapeText = shapeText, ShapeType = ShapeType.NewShape, SortValue = sortValue, Master = shapeType, ShapeIdentifier = shapeIdentifier});
             }
 
-            var shape = allShapes[shapeText];
+            var shape = allShapes[shapeIdentifier];
 
             previousShape?.AddChildShape(shape);
             return shape;
