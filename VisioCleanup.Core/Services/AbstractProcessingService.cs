@@ -98,7 +98,7 @@ namespace VisioCleanup.Core.Services
                                         this.VisioApplication.CreateShape(diagramShape);
                                         break;
                                     case ShapeType.Existing:
-                                        this.Logger.LogDebug("Checking shape: {Shape}", diagramShape);
+                                        this.Logger.LogDebug("Updating shape: {Shape}", diagramShape);
                                         this.VisioApplication.UpdateShape(diagramShape);
                                         break;
                                     case ShapeType.FakeShape:
