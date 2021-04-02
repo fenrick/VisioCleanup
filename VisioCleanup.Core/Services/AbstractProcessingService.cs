@@ -125,5 +125,36 @@ namespace VisioCleanup.Core.Services
                         }
                     });
         }
+
+        protected void SortChildren(DiagramShape diagramShape)
+        {
+            foreach (var child in diagramShape.Children)
+            {
+                if (child.Children.Count > 0)
+                {
+                    this.SortChildren(child);
+                }
+            }
+
+            var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
+                shape =>
+                    {
+                        if (shape.SortValue is null)
+                        {
+                            return 0 - shape.TotalChildrenCount();
+                        }
+
+                        return shape.SortValue;
+                    });
+            var children = orderedChildren.ToList();
+
+            for (var i = 0; i < children.Count; i++)
+            {
+                if (children.Count > (i + 1))
+                {
+                    children[i].Right = children[i + 1];
+                }
+            }
+        }
     }
 }
