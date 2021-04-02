@@ -44,6 +44,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -159,15 +167,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Visio Cleanup"
-        "ProductCode" = "8:{7A128DE0-9022-4126-BD22-45EA15AB9125}"
-        "PackageCode" = "8:{3E978DB3-A573-43CF-849C-373A6D3A3B39}"
+        "ProductCode" = "8:{6C46597D-3435-4B49-B863-E172369C60B4}"
+        "PackageCode" = "8:{2CF8FF31-EC38-4A69-ACCE-955C42ABF329}"
         "UpgradeCode" = "8:{6295A043-A955-4D67-B97A-26B4F3EBE9F0}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.1"
+        "ProductVersion" = "8:1.0.2"
         "Manufacturer" = "8:Jolyon Suthers"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
