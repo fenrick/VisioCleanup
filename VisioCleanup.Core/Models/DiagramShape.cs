@@ -344,9 +344,9 @@ namespace VisioCleanup.Core.Models
             }
 
             this.logger.Debug("Resizing: {Shape}", this);
-            this.logger.Debug("New size for shape: {Corners}", this.CornerString());
             this.RightSide = newRightSide;
             this.BaseSide = newBaseSide;
+            this.logger.Debug("New size for {Shape}: {Corners}",this, this.CornerString());
             return true;
         }
 
@@ -447,11 +447,11 @@ namespace VisioCleanup.Core.Models
 
         private string CornerString() =>
             string.Format(
-                "Top: {0}, Right: {1}, Base: {2}, Left: {3}",
+                "Top: {0}, Left: {1}, Width: {2}, Height: {3}",
                 ConvertMeasurement(this.TopSide),
-                ConvertMeasurement(this.RightSide),
-                ConvertMeasurement(this.BaseSide),
-                ConvertMeasurement(this.LeftSide));
+                ConvertMeasurement(this.LeftSide),
+                ConvertMeasurement(this.Width()),
+                ConvertMeasurement(this.Height()));
 
         private bool FixPosition()
         {
