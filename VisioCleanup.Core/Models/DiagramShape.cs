@@ -253,6 +253,8 @@ namespace VisioCleanup.Core.Models
 
         internal static AppConfig? AppConfig { get; set; }
 
+        public string? ShapeIdentifier { get; set; }
+
         /// <summary>Convert a visio measurement into an easier mathematical model.</summary>
         /// <param name="measurement">Measurement from visio.</param>
         /// <returns>Easier internal measurement.</returns>
