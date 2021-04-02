@@ -102,7 +102,7 @@ namespace VisioCleanup.Core.Services
 
                     foreach (var (key, value) in columnMapping[cellIndex])
                     {
-                        values[key] = data.GetValue(rowNumber, value) as string;
+                        values[key] = data.GetValue(rowNumber, value).ToString();
                     }
 
                     rowResults.Add(cellIndex, values);
