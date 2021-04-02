@@ -428,7 +428,7 @@ namespace VisioCleanup.Core.Models
                         case not null when currentShape.LeftSide >= shape.LeftSide:
                             continue;
                         case not null when (shape.LeftSide - currentShape.RightSide) < (Tolerance * 2):
-                            shape.Left = currentShape;
+                            currentShape.Right = shape;
 
                             currentShape = shape;
                             break;
