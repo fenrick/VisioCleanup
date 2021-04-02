@@ -21,6 +21,22 @@ namespace VisioCleanup.Core.Models.Config
             set;
         }
 
+        /// <summary>Gets or sets the database catalog.</summary>
+        public string? DatabaseCatalog
+        {
+            get;
+            [UsedImplicitly]
+            set;
+        }
+
+        /// <summary>Gets or sets the database server name</summary>
+        public string? DatabaseServer
+        {
+            get;
+            [UsedImplicitly]
+            set;
+        }
+
         /// <summary>Gets or sets the field label format.</summary>
         /// <value>The field label format.</value>
         public string? FieldLabelFormat

@@ -26,8 +26,10 @@ namespace VisioCleanup.Core
             serviceCollection.Configure<AppConfig>(configuration.GetSection("VisioCleanup:Core"));
             serviceCollection.AddSingleton<IVisioApplication, VisioApplication>();
             serviceCollection.AddSingleton<IExcelApplication, ExcelApplication>();
+            serviceCollection.AddSingleton<IIServerDatabaseApplication, IServerDatabaseApplication>();
             serviceCollection.AddSingleton<IVisioService, VisioService>();
             serviceCollection.AddSingleton<IExcelService, ExcelService>();
+            serviceCollection.AddSingleton<IDatabaseService, DatabaseService>();
 
             return serviceCollection;
         }
