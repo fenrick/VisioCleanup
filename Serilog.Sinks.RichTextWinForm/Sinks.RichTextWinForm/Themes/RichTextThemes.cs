@@ -14,7 +14,7 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
     public static class RichTextThemes
     {
         /// <summary>Gets default theme.</summary>
-        /// <value>Default theme.</value>
+        /// <value><see cref="Serilog.Sinks.RichTextWinForm.Themes.RichTextThemes.Default" /> theme.</value>
         public static RichTextTheme Default { get; } = new(
             new Dictionary<RichTextThemeStyle, ThemeColours>
                 {

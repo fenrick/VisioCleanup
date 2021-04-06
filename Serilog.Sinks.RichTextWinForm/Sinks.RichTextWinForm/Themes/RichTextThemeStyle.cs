@@ -40,7 +40,7 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
         /// <summary>Numbers.</summary>
         Number,
 
-        /// <summary>Boolean values.</summary>
+        /// <summary><see cref="Serilog.Sinks.RichTextWinForm.Themes.RichTextThemeStyle.Boolean" /> values.</summary>
         Boolean,
 
         /// <summary>All other scalar values, e.g. <see cref="System.Guid" /> instances.</summary>

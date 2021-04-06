@@ -63,7 +63,7 @@ namespace VisioCleanup.Core.Services
             {
                 this.excelApplication = Marshal.GetActiveObject("Excel.Application") as Application ?? throw new InvalidOperationException("Excel must be running.");
             }
-            catch (COMException _)
+            catch (COMException)
             {
                 throw new InvalidOperationException("Excel must be running.");
             }
@@ -102,7 +102,7 @@ namespace VisioCleanup.Core.Services
 
                     foreach (var (key, value) in columnMapping[cellIndex])
                     {
-                        values[key] = data.GetValue(rowNumber, value).ToString();
+                        values[key] = data.GetValue(rowNumber, value)?.ToString();
                     }
 
                     rowResults.Add(cellIndex, values);
@@ -140,7 +140,16 @@ namespace VisioCleanup.Core.Services
             if (!allShapes.ContainsKey(shapeIdentifier))
             {
                 this.logger.LogDebug("Creating shape for: {ShapeText}", shapeText);
-                allShapes.Add(shapeIdentifier, new DiagramShape(0) { ShapeText = shapeText, ShapeType = ShapeType.NewShape, SortValue = sortValue, Master = shapeType, ShapeIdentifier = shapeIdentifier});
+                allShapes.Add(
+                    shapeIdentifier,
+                    new DiagramShape(0)
+                        {
+                            ShapeText = shapeText,
+                            ShapeType = ShapeType.NewShape,
+                            SortValue = sortValue,
+                            Master = shapeType,
+                            ShapeIdentifier = shapeIdentifier,
+                        });
             }
 
             var shape = allShapes[shapeIdentifier];

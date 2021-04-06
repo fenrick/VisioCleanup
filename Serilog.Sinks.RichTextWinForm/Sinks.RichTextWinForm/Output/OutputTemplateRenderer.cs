@@ -26,8 +26,8 @@ namespace Serilog.Sinks.RichTextWinForm.Output
         /// <summary>Initialises a new instance of the <see cref="OutputTemplateRenderer" /> class.</summary>
         /// <param name="theme">Rich text theme.</param>
         /// <param name="outputTemplate">Template for output.</param>
-        /// <param name="formatProvider">Format provider.</param>
-        /// <exception cref="ArgumentNullException">No output template.</exception>
+        /// <param name="formatProvider">FormatProvider.</param>
+        /// <exception cref="System.ArgumentNullException">No output template.</exception>
         public OutputTemplateRenderer(RichTextTheme theme, string outputTemplate, IFormatProvider? formatProvider)
         {
             if (outputTemplate is null)
@@ -82,10 +82,10 @@ namespace Serilog.Sinks.RichTextWinForm.Output
             throw new InvalidOperationException("Not valid for this Sink!");
         }
 
-        /// <summary>Format log events to a richtextbox.</summary>
-        /// <param name="logEvent">Log event.</param>
+        /// <summary>Render log events to a richtextbox.</summary>
+        /// <param name="logEvent"><see cref="Log" /> event.</param>
         /// <param name="output">A rich textbox.</param>
-        /// <exception cref="ArgumentNullException">Required parameter's not supplied.</exception>
+        /// <exception cref="System.ArgumentNullException">Required parameter's not supplied.</exception>
         public void Format(LogEvent logEvent, RichTextBox output)
         {
             if (logEvent is null)

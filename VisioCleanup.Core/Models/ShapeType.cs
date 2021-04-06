@@ -10,7 +10,7 @@ namespace VisioCleanup.Core.Models
     /// <summary>Type of diagram shape.</summary>
     public enum ShapeType
     {
-        /// <summary>Existing diagram shape.</summary>
+        /// <summary><see cref="VisioCleanup.Core.Models.ShapeType.Existing" /> diagram shape.</summary>
         Existing,
 
         /// <summary>New shape needed to be created.</summary>

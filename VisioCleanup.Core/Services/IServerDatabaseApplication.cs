@@ -18,16 +18,18 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
 
+    /// <inheritdoc />
     public class IServerDatabaseApplication : IIServerDatabaseApplication
     {
-        private AppConfig appConfig;
-
-        private SqlConnection databaseConnection;
+        private readonly AppConfig appConfig;
 
         private readonly ILogger<IServerDatabaseApplication> logger;
 
+        private SqlConnection? databaseConnection;
+
         /// <summary>Initialises a new instance of the <see cref="IServerDatabaseApplication" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
+        /// <param name="options">Configuration options.</param>
         public IServerDatabaseApplication(ILogger<IServerDatabaseApplication> logger, IOptions<AppConfig> options)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

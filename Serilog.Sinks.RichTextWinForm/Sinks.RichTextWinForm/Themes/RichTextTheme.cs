@@ -32,7 +32,7 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
             this.styles = styles.ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
-        /// <summary><see cref="Reset" /> the <paramref name="output" /> to un-styled colors.</summary>
+        /// <summary><see cref="RichTextTheme.Reset" /> the <paramref name="output" /> to un-styled colors.</summary>
         /// <param name="output">Output destination.</param>
         public static void Reset(RichTextBox output)
         {

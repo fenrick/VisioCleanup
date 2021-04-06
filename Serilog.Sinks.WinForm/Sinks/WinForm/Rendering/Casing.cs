@@ -11,10 +11,10 @@ namespace Serilog.Sinks.WinForm.Rendering
     {
         /// <summary>
         /// Apply upper or lower casing to <paramref name="value" /> when <paramref name="format" /> is provided. Returns
-        /// <paramref name="value" /> when no or invalid format provided.
+        /// <paramref name="value" /> when no or invalid <paramref name="format" /> provided.
         /// </summary>
         /// <param name="value">Provided string for formatting.</param>
-        /// <param name="format">Format string.</param>
+        /// <param name="format"><see cref="Casing.Format" /> string.</param>
         /// <returns>The provided <paramref name="value" /> with formatting applied.</returns>
         public static string Format(string value, string? format = null)
         {

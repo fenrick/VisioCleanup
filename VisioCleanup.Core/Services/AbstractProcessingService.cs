@@ -127,6 +127,8 @@ namespace VisioCleanup.Core.Services
                     });
         }
 
+        /// <summary>Sort the children of the diagram shape.</summary>
+        /// <param name="diagramShape">Shape that's children are to be sorted.</param>
         protected void SortChildren(DiagramShape diagramShape)
         {
             foreach (var child in diagramShape.Children)

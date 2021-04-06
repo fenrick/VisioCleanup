@@ -38,7 +38,10 @@ namespace Serilog.Sinks.WinForm
             Sinks.Add(this);
         }
 
-        /// <summary>Add list box to Sinks as output destination. Will flush any outstanding event queue.</summary>
+        /// <summary>
+        /// Add list box to <see cref="Serilog.Sinks.WinForm.WinFormSink.Sinks" /> as output destination. Will flush any
+        /// outstanding event queue.
+        /// </summary>
         /// <param name="listBox">List box to output to.</param>
         public static void AddListView(ListBox listBox)
         {

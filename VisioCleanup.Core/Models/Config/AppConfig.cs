@@ -29,7 +29,7 @@ namespace VisioCleanup.Core.Models.Config
             set;
         }
 
-        /// <summary>Gets or sets the database server name</summary>
+        /// <summary>Gets or sets the database server name.</summary>
         public string? DatabaseServer
         {
             get;

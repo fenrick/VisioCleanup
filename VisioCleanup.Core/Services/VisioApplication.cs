@@ -193,8 +193,7 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("Unable to find matching stencil.");
             }
 
-            //this.toDrop.Add(new Dictionary<string, object> { { "shape", diagramShape }, { "master", master }, { "x", newPinX }, { "y", newPinY } });
-
+            // this.toDrop.Add(new Dictionary<string, object> { { "shape", diagramShape }, { "master", master }, { "x", newPinX }, { "y", newPinY } });
             var shape = this.visioApplication.ActivePage.Drop(master, newPinX, newPinY);
 
             diagramShape.VisioId = shape.ID;
@@ -229,7 +228,6 @@ namespace VisioCleanup.Core.Services
             }
 
             var pageSheet = this.activePage.PageSheet;
-            
 
             var rightMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesRightMargin);
             var width = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageWidth);
@@ -354,11 +352,11 @@ namespace VisioCleanup.Core.Services
 
             var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
             var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
-            double newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
-            double newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
+            var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
+            var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
 
-            double width = DiagramShape.ConvertMeasurement(diagramShape.Width());
-            double height = DiagramShape.ConvertMeasurement(diagramShape.Height());
+            var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
+            var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
 
             var updates = new List<Dictionary<string, object>>();
 
@@ -402,7 +400,7 @@ namespace VisioCleanup.Core.Services
                         { "unit", VisUnitCodes.visMillimeters },
                         { "result", newPinY },
                     });
-            
+
             // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
             var srcStreamFields = 3;
             var srcStream = new short[updates.Count * srcStreamFields];
@@ -411,7 +409,8 @@ namespace VisioCleanup.Core.Services
             for (var i = 0; i < updates.Count; i++)
             {
                 var item = updates[i];
-                int srcStreamTracker = 0;
+                var srcStreamTracker = 0;
+
                 // srcStream[(i * srcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["sheetID"]);
                 srcStream[(i * srcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["section"]);
                 srcStream[(i * srcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["row"]);
@@ -526,11 +525,11 @@ namespace VisioCleanup.Core.Services
             {
                 throw new InvalidOperationException("Initialise system first.");
             }
-            
+
             var documentStencil = this.visioApplication.ActiveDocument.Masters;
             {
                 documentStencil.GetNames(out var masterNames);
-                if (masterNames is not null && masterNames.Length > 0)
+                if (masterNames is not null && (masterNames.Length > 0))
                 {
                     var result = (masterNames as string[])!.Contains(key);
                     if (result)

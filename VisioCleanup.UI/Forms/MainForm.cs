@@ -21,6 +21,9 @@ namespace VisioCleanup.UI.Forms
     /// <summary>Main application form.</summary>
     public partial class MainForm : Form
     {
+        /// <summary>The database service.</summary>
+        private readonly IDatabaseService databaseService;
+
         /// <summary>The excel service.</summary>
         private readonly IExcelService excelService;
 
@@ -30,9 +33,6 @@ namespace VisioCleanup.UI.Forms
         /// <summary>The visio service.</summary>
         private readonly IVisioService visioService;
 
-        /// <summary>The database service.</summary>
-        private IDatabaseService databaseService;
-
         /// <summary>The processing service.</summary>
         private IProcessingService? processingService;
 
@@ -41,6 +41,7 @@ namespace VisioCleanup.UI.Forms
         /// <param name="options">The app config.</param>
         /// <param name="excelService">The excel service.</param>
         /// <param name="visioService">The visio service.</param>
+        /// <param name="databaseService">The database management service.</param>
         public MainForm(ILogger<MainForm> logger, IOptions<AppConfig> options, IExcelService excelService, IVisioService visioService, IDatabaseService databaseService)
         {
             var appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
@@ -135,8 +136,8 @@ namespace VisioCleanup.UI.Forms
         }
 
         /// <summary>sThe load from iserver database.</summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The dpiChangedEventArgs.</param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The click event.</param>
         private async void LoadFromIServer_Click(object sender, EventArgs e)
         {
             try
@@ -315,8 +316,8 @@ namespace VisioCleanup.UI.Forms
         }
 
         /// <summary>sThe update visio drawing_ click.</summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The dpiChangedEventArgs.</param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The DPI change details.</param>
         private async void UpdateVisioDrawing_Click(object sender, EventArgs e)
         {
             if (this.processingService is null)

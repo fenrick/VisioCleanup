@@ -14,7 +14,7 @@ namespace VisioCleanup.Core.Contracts
     /// <summary>Handle creation and management of visio.</summary>
     public interface IVisioApplication
     {
-        /// <summary>Close visio session and shutdown.</summary>
+        /// <summary><see cref="Close" /> visio session and shutdown.</summary>
         void Close();
 
         /// <summary>Execute the dropping of shapes onto the visio page.</summary>
@@ -39,7 +39,7 @@ namespace VisioCleanup.Core.Contracts
         /// <returns>Integer representing it.</returns>
         int GetPageTopSide();
 
-        /// <summary>Open visio session.</summary>
+        /// <summary><see cref="Open" /> visio session.</summary>
         void Open();
 
         /// <summary>Retrieve hierachy of shapes from Visio.</summary>

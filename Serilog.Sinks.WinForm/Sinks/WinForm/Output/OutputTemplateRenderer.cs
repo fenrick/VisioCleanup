@@ -23,8 +23,8 @@ namespace Serilog.Sinks.WinForm.Output
 
         /// <summary>Initialises a new instance of the <see cref="OutputTemplateRenderer" /> class.</summary>
         /// <param name="outputTemplate">Template for output.</param>
-        /// <param name="formatProvider">Format provider.</param>
-        /// <exception cref="ArgumentNullException">No output template.</exception>
+        /// <param name="formatProvider"><see cref="OutputTemplateRenderer.Format" /> provider.</param>
+        /// <exception cref="System.ArgumentNullException">No output template.</exception>
         public OutputTemplateRenderer(string outputTemplate, IFormatProvider? formatProvider)
         {
             if (outputTemplate is null)

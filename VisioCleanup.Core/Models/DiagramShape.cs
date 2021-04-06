@@ -143,7 +143,7 @@ namespace VisioCleanup.Core.Models
         /// <summary>Gets the stencil used for drawing shape.</summary>
         public string? Master { get; init; }
 
-        /// <summary>Gets  parent shape of curent shape.</summary>
+        /// <summary>Gets parent shape of curent shape.</summary>
         public DiagramShape? ParentShape { get; private set; }
 
         /// <summary>Gets or sets the shape to the right.</summary>
@@ -190,7 +190,7 @@ namespace VisioCleanup.Core.Models
             }
         }
 
-        /// <summary>Gets or sets right side of the shape.</summary>
+        /// <summary>Gets or sets <see cref="VisioCleanup.Core.Models.DiagramShape.right" /> side of the shape.</summary>
         public int RightSide
         {
             get => this.rightSide;
@@ -231,6 +231,9 @@ namespace VisioCleanup.Core.Models
             }
         }
 
+        /// <summary>Gets or sets a unique shape identifier.</summary>
+        public string? ShapeIdentifier { get; set; }
+
         /// <summary>Gets the shape text.</summary>
         public string? ShapeText { get; init; }
 
@@ -253,15 +256,13 @@ namespace VisioCleanup.Core.Models
 
         internal static AppConfig? AppConfig { get; set; }
 
-        public string? ShapeIdentifier { get; set; }
-
-        /// <summary>Convert a visio measurement into an easier mathematical model.</summary>
+        /// <summary>Convert a visio <paramref name="measurement" /> into an easier mathematical model.</summary>
         /// <param name="measurement">Measurement from visio.</param>
-        /// <returns>Easier internal measurement.</returns>
+        /// <returns>Easier <see langword="internal" /> measurement.</returns>
         public static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, 3, MidpointRounding.AwayFromZero) * 1000);
 
-        /// <summary>Convert an easier measurement back to visio model.</summary>
-        /// <param name="measurement">Easier internal measurement.</param>
+        /// <summary>Convert an easier <paramref name="measurement" /> back to visio model.</summary>
+        /// <param name="measurement">Easier <see langword="internal" /> measurement.</param>
         /// <returns>Measurement for visio.</returns>
         public static double ConvertMeasurement(int measurement) => (double)measurement / 1000;
 
@@ -348,7 +349,7 @@ namespace VisioCleanup.Core.Models
             this.logger.Debug("Resizing: {Shape}", this);
             this.RightSide = newRightSide;
             this.BaseSide = newBaseSide;
-            this.logger.Debug("New size for {Shape}: {Corners}",this, this.CornerString());
+            this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
             return true;
         }
 
@@ -360,7 +361,7 @@ namespace VisioCleanup.Core.Models
         public int Width() => this.RightSide - this.LeftSide;
 
         /// <summary>Map all neighbour shapes within tolerance of 10.</summary>
-        /// <exception cref="NotImplementedException">No idea what to do yet with this.</exception>
+        /// <exception cref="System.NotImplementedException">No idea what to do yet with this.</exception>
         internal void FindNeighbours()
         {
             if (this.Children.Count <= 0)
@@ -448,12 +449,7 @@ namespace VisioCleanup.Core.Models
         }
 
         private string CornerString() =>
-            string.Format(
-                "Top: {0}, Left: {1}, Width: {2}, Height: {3}",
-                ConvertMeasurement(this.TopSide),
-                ConvertMeasurement(this.LeftSide),
-                ConvertMeasurement(this.Width()),
-                ConvertMeasurement(this.Height()));
+            $"Top: {ConvertMeasurement(this.TopSide)}, Left: {ConvertMeasurement(this.LeftSide)}, Width: {ConvertMeasurement(this.Width())}, Height: {ConvertMeasurement(this.Height())}";
 
         private bool FixPosition()
         {

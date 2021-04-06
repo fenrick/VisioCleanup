@@ -17,20 +17,23 @@ namespace Serilog.Sinks.WinForm
     {
         private const int DefaultCapacity = 50;
 
-        /// <summary>Initialises a new instance of the <see cref="FixedQueue{T}" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="Serilog.Sinks.WinForm.FixedQueue{T}" /> class.</summary>
         /// <param name="capacity">Size of queue.</param>
         public FixedQueue(int capacity)
             : base(capacity) =>
             this.Capacity = capacity;
 
-        /// <summary>Initialises a new instance of the <see cref="FixedQueue{T}" /> class. With a default capacity of 50.</summary>
+        /// <summary>
+        /// Initialises a new instance of the <see cref="Serilog.Sinks.WinForm.FixedQueue{T}" /> class. With a default.
+        /// capacity of 50.
+        /// </summary>
         public FixedQueue()
             : this(DefaultCapacity)
         {
             // empty
         }
 
-        /// <summary>Initialises a new instance of the <see cref="FixedQueue{T}" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="Serilog.Sinks.WinForm.FixedQueue{T}" /> class.</summary>
         /// <param name="collection">Default collection and capacity size.</param>
         public FixedQueue(IEnumerable<T> collection)
             : base(collection) =>
@@ -39,7 +42,7 @@ namespace Serilog.Sinks.WinForm
         /// <summary>Gets or sets capacity of queue.</summary>
         public int Capacity { get; set; }
 
-        /// <summary>Adds item to the tail of the queue. Removin from head as required.</summary>
+        /// <summary>Adds <paramref name="item" /> to the tail of the queue. Removin from head as required.</summary>
         /// <param name="item">Item to be added.</param>
         public new void Enqueue(T item)
         {

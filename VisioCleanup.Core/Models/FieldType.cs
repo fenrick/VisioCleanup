@@ -10,7 +10,7 @@ namespace VisioCleanup.Core.Models
     /// <summary>Fields within an excel data table.</summary>
     public enum FieldType
     {
-        /// <summary>ShapeText field.</summary>
+        /// <summary><see cref="VisioCleanup.Core.Models.FieldType.ShapeText" /> field.</summary>
         ShapeText,
 
         /// <summary>Sorting field.</summary>

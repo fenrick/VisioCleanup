@@ -14,6 +14,7 @@ namespace VisioCleanup.Core.Contracts
     {
         /// <summary>Load dataset based on database query, from iserver reporting database.</summary>
         /// <param name="sqlCommand">sql to execute.</param>
+        /// <returns>Async task.</returns>
         Task ProcessDataSet(string sqlCommand);
     }
 }

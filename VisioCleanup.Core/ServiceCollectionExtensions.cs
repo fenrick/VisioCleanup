@@ -18,8 +18,8 @@ namespace VisioCleanup.Core
     public static class ServiceCollectionExtensions
     {
         /// <summary>The add visio cleanup core.</summary>
-        /// <param name="serviceCollection">The <paramref name="serviceCollection" />.</param>
-        /// <param name="configuration">The <paramref name="configuration" />.</param>
+        /// <param name="serviceCollection">The <paramref name="serviceCollection" /> .</param>
+        /// <param name="configuration">The <paramref name="configuration" /> .</param>
         /// <returns>The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> .</returns>
         public static IServiceCollection AddVisioCleanupCore(this IServiceCollection serviceCollection, IConfiguration configuration)
         {

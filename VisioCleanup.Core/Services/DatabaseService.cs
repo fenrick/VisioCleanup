@@ -23,7 +23,7 @@ namespace VisioCleanup.Core.Services
     /// <summary>The database service.</summary>
     public class DatabaseService : AbstractProcessingService, IDatabaseService
     {
-        private IIServerDatabaseApplication iserverDatabaseApplication;
+        private readonly IIServerDatabaseApplication iserverDatabaseApplication;
 
         /// <summary>Initialises a new instance of the <see cref="DatabaseService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
