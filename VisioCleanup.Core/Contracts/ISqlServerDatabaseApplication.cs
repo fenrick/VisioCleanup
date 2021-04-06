@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IIServerDatabaseApplication.cs" company="Jolyon Suthers">
+// <copyright file="ISqlServerDatabaseApplication.cs" company="Jolyon Suthers">
 // Copyright (c) Jolyon Suthers. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,8 +11,8 @@ namespace VisioCleanup.Core.Contracts
 
     using VisioCleanup.Core.Models;
 
-    /// <summary>The IServerDatabaseApplication interface.</summary>
-    public interface IIServerDatabaseApplication
+    /// <summary>The SqlServerDatabaseApplication interface.</summary>
+    public interface ISqlServerDatabaseApplication
     {
         /// <summary>Close database connection and cleanup objects.</summary>
         void Close();

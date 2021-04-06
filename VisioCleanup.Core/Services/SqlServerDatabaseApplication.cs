@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IServerDatabaseApplication.cs" company="Jolyon Suthers">
+// <copyright file="SqlServerDatabaseApplication.cs" company="Jolyon Suthers">
 // Copyright (c) Jolyon Suthers. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -19,18 +19,18 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models.Config;
 
     /// <inheritdoc />
-    public class IServerDatabaseApplication : IIServerDatabaseApplication
+    public class SqlServerDatabaseApplication : ISqlServerDatabaseApplication
     {
         private readonly AppConfig appConfig;
 
-        private readonly ILogger<IServerDatabaseApplication> logger;
+        private readonly ILogger<SqlServerDatabaseApplication> logger;
 
         private SqlConnection? databaseConnection;
 
-        /// <summary>Initialises a new instance of the <see cref="IServerDatabaseApplication" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="SqlServerDatabaseApplication" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="options">Configuration options.</param>
-        public IServerDatabaseApplication(ILogger<IServerDatabaseApplication> logger, IOptions<AppConfig> options)
+        public SqlServerDatabaseApplication(ILogger<SqlServerDatabaseApplication> logger, IOptions<AppConfig> options)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
