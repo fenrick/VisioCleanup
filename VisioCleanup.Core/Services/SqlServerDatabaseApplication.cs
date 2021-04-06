@@ -9,6 +9,9 @@ namespace VisioCleanup.Core.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Data.Common;
+    using System.Linq;
 
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Logging;
@@ -67,17 +70,125 @@ namespace VisioCleanup.Core.Services
         {
             using SqlCommand command = new(sqlCommand, this.databaseConnection);
             using SqlDataReader reader = command.ExecuteReader();
-            var lineCount = 0;
+
+            Dictionary<string, DiagramShape> allShapes = new();
+
+            // map columns
+            SortedList<int, Dictionary<FieldType, int>> columnMapping = this.MapColumns(reader.GetColumnSchema());
+
             while (reader.Read())
             {
-                lineCount++;
-                for (var i = 0; i < reader.FieldCount; i++)
+                Dictionary<int, Dictionary<FieldType, string?>> rowResults = new();
+                foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
                 {
-                    this.logger.LogDebug("{Line} - {Field} {Value}", lineCount, reader.GetName(i), reader.GetString(i));
+                    Dictionary<FieldType, string?> values = new();
+
+                    foreach (var (key, value) in columnMapping[cellIndex])
+                    {
+                        if (!reader.IsDBNull(value))
+                        {
+                            values[key] = reader.GetFieldValue<string>(value);
+                        }
+                    }
+
+                    rowResults.Add(cellIndex, values);
+                }
+
+                DiagramShape? previousShape = null;
+                foreach (var i in Enumerable.Range(1, columnMapping.Count))
+                {
+                    previousShape = this.CreateShape(rowResults[i], allShapes, previousShape);
                 }
             }
 
-            return new List<DiagramShape>();
+            Collection<DiagramShape> shapes = new();
+            foreach (var (_, value) in allShapes)
+            {
+                shapes.Add(value);
+            }
+
+            return shapes;
+        }
+
+        private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string?> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
+        {
+            var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : null;
+            var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
+            var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : null;
+
+            if (shapeText is null)
+            {
+                return previousShape;
+            }
+
+            var shapeIdentifier = $"{previousShape?.ShapeIdentifier} {shapeText}:{shapeType}".Trim();
+
+            if (!allShapes.ContainsKey(shapeIdentifier))
+            {
+                this.logger.LogDebug("Creating shape for: {ShapeText}", shapeText);
+                allShapes.Add(
+                    shapeIdentifier,
+                    new DiagramShape(0)
+                        {
+                            ShapeText = shapeText,
+                            ShapeType = ShapeType.NewShape,
+                            SortValue = sortValue,
+                            Master = shapeType,
+                            ShapeIdentifier = shapeIdentifier,
+                        });
+            }
+
+            var shape = allShapes[shapeIdentifier];
+
+            previousShape?.AddChildShape(shape);
+            return shape;
+        }
+
+        private SortedList<int, Dictionary<FieldType, int>> MapColumns(ReadOnlyCollection<DbColumn> columnSchema)
+        {
+            SortedList<int, Dictionary<FieldType, int>> columnMapping = new();
+            var level = 0;
+            do
+            {
+                Dictionary<FieldType, int> mappings = new();
+                var fieldName = string.Format(this.appConfig.FieldLabelFormat ?? "{0}", level);
+                var sortFieldName = string.Format(this.appConfig.SortFieldLabelFormat ?? "{0} SortValue", level);
+                var shapeFieldName = string.Format(this.appConfig.ShapeTypeLabelFormat ?? "{0} Shape", level);
+
+                level++;
+
+                foreach (var column in columnSchema)
+                {
+                    var columnColumnOrdinal = (int)column.ColumnOrdinal;
+                    var columnColumnName = column.ColumnName;
+                    FieldType? fieldMapping = null;
+                    if (columnColumnName.Equals(fieldName, StringComparison.Ordinal))
+                    {
+                        fieldMapping = FieldType.ShapeText;
+                    }
+                    else if (columnColumnName.Equals(sortFieldName, StringComparison.Ordinal))
+                    {
+                        fieldMapping = FieldType.SortValue;
+                    }
+                    else if (columnColumnName.Equals(shapeFieldName, StringComparison.Ordinal))
+                    {
+                        fieldMapping = FieldType.ShapeType;
+                    }
+
+                    if (fieldMapping is not null)
+                    {
+                        mappings.Add((FieldType)fieldMapping, columnColumnOrdinal);
+                    }
+                }
+
+                if (mappings.ContainsKey(FieldType.ShapeText))
+                {
+                    columnMapping.Add(level, mappings);
+                }
+            }
+            while (columnMapping.ContainsKey(level));
+
+            return columnMapping;
         }
     }
 }

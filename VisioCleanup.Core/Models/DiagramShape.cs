@@ -369,8 +369,15 @@ namespace VisioCleanup.Core.Models
                 return;
             }
 
-            // reset all shapes.
+            // reset all shapes, without triggering movements.
             var children = this.Children;
+            foreach (var child in children)
+            {
+                //child.Above = null;
+                //child.below = null;
+                //child.Left = null;
+                //child.right = null;
+            }
 
             const double Tolerance = 5000;
 
@@ -393,7 +400,8 @@ namespace VisioCleanup.Core.Models
                     {
                         case not null when currentShape.BaseSide.Equals(shape.BaseSide):
                             // overlap!
-                            throw new NotImplementedException("No idea what to do yet with this!");
+                            this.logger.Error("Weird circumstances, check diagram for overlaps between {Shape} and {Shape2}", currentShape, shape);
+                            continue;
                         case not null when currentShape.BaseSide >= shape.BaseSide:
                             continue;
                         case not null when (shape.BaseSide - currentShape.TopSide) < (Tolerance * 2):
@@ -427,7 +435,8 @@ namespace VisioCleanup.Core.Models
                     {
                         case not null when currentShape.LeftSide.Equals(shape.LeftSide):
                             // overlap!
-                            throw new NotImplementedException("No idea what to do yet with this!");
+                            this.logger.Error("Weird circumstances, check diagram for overlaps between {Shape} and {Shape2}", currentShape, shape);
+                            continue;
                         case not null when currentShape.LeftSide >= shape.LeftSide:
                             continue;
                         case not null when (shape.LeftSide - currentShape.RightSide) < (Tolerance * 2):

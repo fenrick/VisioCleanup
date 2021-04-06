@@ -22,6 +22,8 @@ namespace VisioCleanup.Core.Services
     /// <summary>Abstract implementation of common code for processing services.</summary>
     public abstract class AbstractProcessingService : IProcessingService
     {
+        protected int convertedAppConfigRight;
+
         /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
         /// <param name="logger">Logger.</param>
         /// <param name="options">Application configuration being passed in.</param>
@@ -157,6 +159,118 @@ namespace VisioCleanup.Core.Services
                 {
                     children[i].Right = children[i + 1];
                 }
+            }
+
+            diagramShape.CorrectDiagram();
+        }
+
+        private bool ChopdownImplementation(DiagramShape overlapChild)
+        {
+            // we shouldn't have something above.
+            if (overlapChild.Above is not null)
+            {
+                throw new InvalidOperationException("this shouldn't happen.");
+            }
+
+            // look for new above shape.
+            var shape = overlapChild;
+            while (shape.Left is not null)
+            {
+                // shape to the left
+                shape = shape.Left;
+            }
+
+            // can't overlap with ourselves.
+            if (shape == overlapChild)
+            {
+                return false;
+            }
+
+            // wipe current relationships
+            overlapChild.Left!.Right = null;
+
+            this.Logger.LogDebug("Chopping down at {Shape}", overlapChild);
+
+            // set new above (indirectly)
+            shape.Below = overlapChild;
+            return true;
+        }
+
+        protected void ChopDown(DiagramShape diagramShape, int maxRight)
+        {
+            while (true)
+            {
+                this.Logger.LogDebug("Checking {Shape} for fit.", diagramShape);
+
+                // ensure the diagram is correct.
+                diagramShape.CorrectDiagram();
+
+                // check shape is too wide.
+                if (diagramShape.RightSide < maxRight)
+                {
+                    this.Logger.LogDebug("We fit in the space supplied.");
+                    return;
+                }
+
+                // remove internal padding.
+                var internalMaxRight = maxRight - this.convertedAppConfigRight;
+                this.Logger.LogDebug("Internal max right: {MaxRight}", internalMaxRight);
+
+                // find overlapping child
+                var orderedChildren = diagramShape.Children.OrderBy(childShape => childShape.LeftSide);
+                var overlapChild = orderedChildren.FirstOrDefault(childShape => childShape.RightSide >= internalMaxRight);
+
+                // do we have an child to move
+                if (overlapChild is null)
+                {
+                    // no overlap child - needs more work.
+                    throw new InvalidOperationException("this shouldn't happen.");
+                }
+
+                this.Logger.LogDebug("Found overlapping shape: {Shape}", overlapChild);
+
+                // does this have children?
+                if (overlapChild.Children.Count > 0)
+                {
+                    do
+                    {
+                        this.Logger.LogDebug("Can we chop this shape up?");
+                        this.ChopDown(overlapChild, internalMaxRight);
+
+                        this.Logger.LogDebug("Correcting {Shape}", diagramShape);
+                        diagramShape.CorrectDiagram();
+
+                        this.Logger.LogDebug("Checking neighbours for {Shape}", diagramShape);
+                        diagramShape.FindNeighbours();
+                    }
+                    while (overlapChild.RightSide >= internalMaxRight);
+
+                    // process this shape again, just incase.
+                    continue;
+                }
+
+                while (overlapChild.Left is null)
+                {
+                    if (overlapChild.ParentShape is null)
+                    {
+                        // can't fix the top shape.
+                        return;
+                    }
+
+                    // bounce up a shape.
+                    overlapChild = overlapChild.ParentShape;
+
+                    // increase max right accordingly.
+                    internalMaxRight += this.convertedAppConfigRight;
+                }
+
+                if (ChopdownImplementation(overlapChild))
+                {
+                    // fix other relationships.
+                    diagramShape.FindNeighbours();
+                }
+
+                break;
             }
         }
     }

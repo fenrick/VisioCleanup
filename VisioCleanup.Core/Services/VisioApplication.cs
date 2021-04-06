@@ -433,10 +433,10 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            // this.visioApplication.ShowChanges = visualChanges;
-            // this.visioApplication.UndoEnabled = visualChanges;
-            // this.visioApplication.ScreenUpdating = visualChanges ? (short)1 : (short)0;
-            // this.visioApplication.DeferRecalc = visualChanges ? (short)1 : (short)0;
+            this.visioApplication.ShowChanges = visualChanges;
+            this.visioApplication.UndoEnabled = visualChanges;
+            this.visioApplication.ScreenUpdating = visualChanges ? (short)1 : (short)0;
+            this.visioApplication.DeferRecalc = visualChanges ? (short)1 : (short)0;
         }
 
         private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)

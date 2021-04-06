@@ -37,6 +37,41 @@ namespace VisioCleanup.Core.Services
             IOptions<AppConfig> options)
             : base(logger, options, visioApplication) =>
             this.iserverDatabaseApplication = iserverDatabaseApplication ?? throw new ArgumentNullException(nameof(iserverDatabaseApplication));
+        
+        /// <inheritdoc />
+        public new Task LayoutDataSet()
+        {
+            return Task.Run(
+                () =>
+                    {
+                        int maxRight;
+
+                        try
+                        {
+                            this.VisioApplication.Open();
+
+                            maxRight = this.VisioApplication.GetPageRightSide() - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
+                        }
+                        finally
+                        {
+                            this.VisioApplication.Close();
+                        }
+
+                        if (this.MasterShape is null)
+                        {
+                            throw new InvalidOperationException("Need to load shapes first.");
+                        }
+
+                        // initiate a base layout.
+                        this.Logger.LogInformation("Correcting diagram.");
+                        this.MasterShape.CorrectDiagram();
+                        this.convertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+
+                        // look for overruns.
+                        this.Logger.LogInformation("Chopping down to fit.");
+                        this.ChopDown(this.MasterShape, maxRight);
+                    });
+        }
 
         /// <inheritdoc />
         public Task ProcessDataSet(string sqlCommand)
