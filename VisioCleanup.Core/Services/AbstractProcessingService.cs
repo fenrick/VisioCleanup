@@ -22,7 +22,8 @@ namespace VisioCleanup.Core.Services
     /// <summary>Abstract implementation of common code for processing services.</summary>
     public abstract class AbstractProcessingService : IProcessingService
     {
-        protected int convertedAppConfigRight;
+        /// <summary>Store for converted app config right measure.</summary>
+        protected int ConvertedAppConfigRight;
 
         /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
         /// <param name="logger">Logger.</param>
@@ -122,24 +123,20 @@ namespace VisioCleanup.Core.Services
                         }
                         finally
                         {
-                            this.Logger.LogInformation("Closing connection to visio.");
+                            this.Logger.LogInformation("Recalculating diagrams.");
                             this.VisioApplication.VisualChanges(true);
                             this.VisioApplication.Close();
+                            this.Logger.LogInformation("Visio closed.");
                         }
                     });
         }
 
         /// <summary>Sort the children of the diagram shape.</summary>
         /// <param name="diagramShape">Shape that's children are to be sorted.</param>
-        protected void SortChildren(DiagramShape diagramShape)
+        /// <param name="maxRight">Maximum right side.</param>
+        protected void SortChildren(DiagramShape diagramShape, int maxRight)
         {
-            foreach (var child in diagramShape.Children)
-            {
-                if (child.Children.Count > 0)
-                {
-                    this.SortChildren(child);
-                }
-            }
+            var internalMaxRight = maxRight - this.ConvertedAppConfigRight;
 
             var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
                 shape =>
@@ -153,125 +150,199 @@ namespace VisioCleanup.Core.Services
                     });
             var children = orderedChildren.ToList();
 
-            for (var i = 0; i < children.Count; i++)
+            foreach (var child in children.Where(child => child.Children.Count > 0))
             {
-                if (children.Count > (i + 1))
+                this.SortChildren(child, internalMaxRight);
+            }
+
+            double maxLine;
+            if (children.Count == (diagramShape.TotalChildrenCount() - 1))
+            {
+                maxLine = Math.Round(Math.Sqrt(children.Count), MidpointRounding.ToPositiveInfinity);
+                var drawLines = children.Count / maxLine;
+                if (drawLines > 5)
                 {
-                    children[i].Right = children[i + 1];
+                    maxLine = Math.Round(children.Count / 5d, MidpointRounding.ToPositiveInfinity);
                 }
             }
+            else
+            {
+                maxLine = int.MaxValue;
+            }
+
+            var lineCount = 0;
+            var lines = 1;
+            var currentMaxDepth = 1;
+
+            // clear existing relationships.
+            foreach (var child in children)
+            {
+                child.Right = null;
+                child.Below = null;
+            }
+
+            for (var i = 1; i <= children.Count; i++)
+            {
+                // shape being placed.
+                var childShape = children[i - 1];
+
+                // are we first shape?
+                if (i == 1)
+                {
+                    lineCount++;
+
+                    diagramShape.CorrectDiagram();
+
+                    if (childShape.Children.Count > 0)
+                    {
+                        currentMaxDepth = childShape.ChildrenDepth;
+                    }
+
+                    // skip over
+                    continue;
+                }
+
+                // are we below line count?
+                if (lineCount < maxLine)
+                {
+                    // width if placed on right.
+                    var rightWidth = children[i - 2].RightSide + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing);
+
+                    // can we place on right
+                    if (rightWidth < internalMaxRight)
+                    {
+                        children[i - 2].Right = childShape;
+                        lineCount++;
+
+                        diagramShape.CorrectDiagram();
+
+                        if (childShape.Children.Count > 0)
+                        {
+                            if (childShape.ChildrenDepth < currentMaxDepth)
+                            {
+                                this.SortChildrenByLines(childShape, currentMaxDepth);
+                            }
+                        }
+
+                        continue;
+                    }
+                }
+
+                // find start of line.
+                var shape = children[i - 2];
+                while (shape.Left is not null)
+                {
+                    shape = shape.Left;
+                }
+
+                // are we relating to ourself?
+                if (shape == childShape)
+                {
+                    lineCount++;
+
+                    diagramShape.CorrectDiagram();
+                    continue;
+                }
+
+                shape.Below = childShape;
+                lineCount = 1;
+                lines++;
+
+                if (childShape.Children.Count > 0)
+                {
+                    currentMaxDepth = childShape.ChildrenDepth;
+                }
+
+                diagramShape.CorrectDiagram();
+            }
+
+            diagramShape.ChildrenDepth = lines;
+
+            diagramShape.FindNeighbours();
 
             diagramShape.CorrectDiagram();
         }
 
-        private bool ChopdownImplementation(DiagramShape overlapChild)
+        private void SortChildrenByLines(DiagramShape diagramShape, int drawLines)
         {
-            // we shouldn't have something above.
-            if (overlapChild.Above is not null)
-            {
-                throw new InvalidOperationException("this shouldn't happen.");
-            }
-
-            // look for new above shape.
-            var shape = overlapChild;
-            while (shape.Left is not null)
-            {
-                // shape to the left
-                shape = shape.Left;
-            }
-
-            // can't overlap with ourselves.
-            if (shape == overlapChild)
-            {
-                return false;
-            }
-
-            // wipe current relationships
-            overlapChild.Left!.Right = null;
-
-            this.Logger.LogDebug("Chopping down at {Shape}", overlapChild);
-
-            // set new above (indirectly)
-            shape.Below = overlapChild;
-            return true;
-        }
-
-        protected void ChopDown(DiagramShape diagramShape, int maxRight)
-        {
-            while (true)
-            {
-                this.Logger.LogDebug("Checking {Shape} for fit.", diagramShape);
-
-                // ensure the diagram is correct.
-                diagramShape.CorrectDiagram();
-
-                // check shape is too wide.
-                if (diagramShape.RightSide < maxRight)
-                {
-                    this.Logger.LogDebug("We fit in the space supplied.");
-                    return;
-                }
-
-                // remove internal padding.
-                var internalMaxRight = maxRight - this.convertedAppConfigRight;
-                this.Logger.LogDebug("Internal max right: {MaxRight}", internalMaxRight);
-
-                // find overlapping child
-                var orderedChildren = diagramShape.Children.OrderBy(childShape => childShape.LeftSide);
-                var overlapChild = orderedChildren.FirstOrDefault(childShape => childShape.RightSide >= internalMaxRight);
-
-                // do we have an child to move
-                if (overlapChild is null)
-                {
-                    // no overlap child - needs more work.
-                    throw new InvalidOperationException("this shouldn't happen.");
-                }
-
-                this.Logger.LogDebug("Found overlapping shape: {Shape}", overlapChild);
-
-                // does this have children?
-                if (overlapChild.Children.Count > 0)
-                {
-                    do
+            var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
+                shape =>
                     {
-                        this.Logger.LogDebug("Can we chop this shape up?");
-                        this.ChopDown(overlapChild, internalMaxRight);
+                        if (shape.SortValue is null)
+                        {
+                            return 0 - shape.TotalChildrenCount();
+                        }
 
-                        this.Logger.LogDebug("Correcting {Shape}", diagramShape);
-                        diagramShape.CorrectDiagram();
+                        return shape.SortValue;
+                    });
+            var children = orderedChildren.ToList();
 
-                        this.Logger.LogDebug("Checking neighbours for {Shape}", diagramShape);
-                        diagramShape.FindNeighbours();
-                    }
-                    while (overlapChild.RightSide >= internalMaxRight);
+            // clear existing relationships.
+            foreach (var child in children)
+            {
+                child.Right = null;
+                child.Below = null;
+            }
 
-                    // process this shape again, just incase.
+            var lineCount = 0;
+            var lines = 1;
+            var maxLine = Math.Round(children.Count / (double)drawLines, MidpointRounding.ToPositiveInfinity);
+
+            for (var i = 1; i <= children.Count; i++)
+            {
+                // shape being placed.
+                var childShape = children[i - 1];
+
+                // are we first shape?
+                if (i == 1)
+                {
+                    lineCount++;
+
+                    diagramShape.CorrectDiagram();
+
+                    // skip over
                     continue;
                 }
 
-                while (overlapChild.Left is null)
+                // are we below line count?
+                if (lineCount < maxLine)
                 {
-                    if (overlapChild.ParentShape is null)
-                    {
-                        // can't fix the top shape.
-                        return;
-                    }
+                    children[i - 2].Right = childShape;
+                    lineCount++;
 
-                    // bounce up a shape.
-                    overlapChild = overlapChild.ParentShape;
+                    diagramShape.CorrectDiagram();
 
-                    // increase max right accordingly.
-                    internalMaxRight += this.convertedAppConfigRight;
+                    continue;
                 }
 
-                if (ChopdownImplementation(overlapChild))
+                // find start of line.
+                var shape = children[i - 2];
+                while (shape.Left is not null)
                 {
-                    // fix other relationships.
-                    diagramShape.FindNeighbours();
+                    shape = shape.Left;
                 }
 
-                break;
+                // are we relating to ourself?
+                if (shape == childShape)
+                {
+                    lineCount++;
+
+                    diagramShape.CorrectDiagram();
+                    continue;
+                }
+
+                shape.Below = childShape;
+                lineCount = 1;
+                lines++;
+
+                diagramShape.CorrectDiagram();
             }
+
+            diagramShape.ChildrenDepth = lines;
+
+            diagramShape.FindNeighbours();
+
+            diagramShape.CorrectDiagram();
         }
     }
 }

@@ -27,14 +27,14 @@ namespace Serilog.Sinks.WinForm.Output
             {
                 foreach (var character in token.Format)
                 {
-                    if (character == 'l')
+                    switch (character)
                     {
-                        isLiteral = true;
-                    }
-
-                    if (character == 'j')
-                    {
-                        isJson = true;
+                        case 'l':
+                            isLiteral = true;
+                            break;
+                        case 'j':
+                            isJson = true;
+                            break;
                     }
                 }
             }

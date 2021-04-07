@@ -8,6 +8,7 @@
 namespace VisioCleanup.UI.Forms
 {
     using System;
+    using System.Linq;
     using System.Windows.Forms;
 
     using Microsoft.Extensions.Logging;
@@ -21,6 +22,8 @@ namespace VisioCleanup.UI.Forms
     /// <summary>Main application form.</summary>
     public partial class MainForm : Form
     {
+        private readonly AppConfig appConfig;
+
         /// <summary>The database service.</summary>
         private readonly IDatabaseService databaseService;
 
@@ -44,7 +47,7 @@ namespace VisioCleanup.UI.Forms
         /// <param name="databaseService">The database management service.</param>
         public MainForm(ILogger<MainForm> logger, IOptions<AppConfig> options, IExcelService excelService, IVisioService visioService, IDatabaseService databaseService)
         {
-            var appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
+            this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.excelService = excelService ?? throw new ArgumentNullException(nameof(excelService));
             this.visioService = visioService ?? throw new ArgumentNullException(nameof(visioService));
@@ -57,7 +60,7 @@ namespace VisioCleanup.UI.Forms
             RichTextWinFormSink.AddRichTextBox(this.richTextLogBox);
 
             this.logger.LogDebug("Binding appConfig to data grid.");
-            this.parametersBindingSource.Add(appConfig);
+            this.parametersBindingSource.Add(this.appConfig);
             this.parametersDataGridView.AutoGenerateColumns = true;
             this.parametersDataGridView.DataSource = this.parametersBindingSource;
 
@@ -66,6 +69,19 @@ namespace VisioCleanup.UI.Forms
             this.dataGridView1.AutoGenerateColumns = true;
 
             this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
+
+            foreach (var queryName in this.appConfig.DatabaseQueries.Select(databaseQuery => databaseQuery["Name"]))
+            {
+                this.selectSQLStatementComboBox.Items.Add(queryName);
+            }
+
+            this.selectSQLStatementComboBox.SelectedIndex = 0;
+
+            foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
+            {
+                this.sqlStatementTextBox.Text = databaseQuery["Query"];
+                this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
+            }
         }
 
         /// <summary>The layout data set_ click.</summary>
@@ -312,6 +328,16 @@ namespace VisioCleanup.UI.Forms
                                                this.dataSetBindingSource.DataSource = null;
                                                this.controlsFlowPanel.Enabled = true;
                                            }));
+            }
+        }
+
+        private void SelectSqlStatementComboBoxSelectionChangeCommitted(object sender, EventArgs e)
+        {
+            foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
+            {
+                this.sqlStatementTextBox.Text = databaseQuery["Query"];
+
+                this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
             }
         }
 

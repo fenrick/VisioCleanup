@@ -11,6 +11,7 @@ namespace VisioCleanup.Core.Services
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Data.Common;
+    using System.Diagnostics;
     using System.Linq;
 
     using Microsoft.Data.SqlClient;
@@ -59,6 +60,7 @@ namespace VisioCleanup.Core.Services
                                                          DataSource = this.appConfig.DatabaseServer,
                                                          Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated,
                                                          InitialCatalog = this.appConfig.DatabaseCatalog,
+                                                         ApplicationIntent = ApplicationIntent.ReadOnly,
                                                      };
 
             this.databaseConnection = new SqlConnection(builder.ConnectionString);
@@ -94,11 +96,7 @@ namespace VisioCleanup.Core.Services
                     rowResults.Add(cellIndex, values);
                 }
 
-                DiagramShape? previousShape = null;
-                foreach (var i in Enumerable.Range(1, columnMapping.Count))
-                {
-                    previousShape = this.CreateShape(rowResults[i], allShapes, previousShape);
-                }
+                DiagramShape? previousShape = Enumerable.Range(1, columnMapping.Count).Aggregate<int, DiagramShape?>(null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
             }
 
             Collection<DiagramShape> shapes = new();
@@ -159,6 +157,7 @@ namespace VisioCleanup.Core.Services
 
                 foreach (var column in columnSchema)
                 {
+                    Debug.Assert(column.ColumnOrdinal is not null, "column.ColumnOrdinal is not  null");
                     var columnColumnOrdinal = (int)column.ColumnOrdinal;
                     var columnColumnName = column.ColumnName;
                     FieldType? fieldMapping = null;
@@ -166,19 +165,23 @@ namespace VisioCleanup.Core.Services
                     {
                         fieldMapping = FieldType.ShapeText;
                     }
-                    else if (columnColumnName.Equals(sortFieldName, StringComparison.Ordinal))
+
+                    if (columnColumnName.Equals(sortFieldName, StringComparison.Ordinal))
                     {
                         fieldMapping = FieldType.SortValue;
                     }
-                    else if (columnColumnName.Equals(shapeFieldName, StringComparison.Ordinal))
+
+                    if (columnColumnName.Equals(shapeFieldName, StringComparison.Ordinal))
                     {
                         fieldMapping = FieldType.ShapeType;
                     }
 
-                    if (fieldMapping is not null)
+                    if (fieldMapping is null)
                     {
-                        mappings.Add((FieldType)fieldMapping, columnColumnOrdinal);
+                        continue;
                     }
+
+                    mappings.Add((FieldType)fieldMapping, columnColumnOrdinal);
                 }
 
                 if (mappings.ContainsKey(FieldType.ShapeText))

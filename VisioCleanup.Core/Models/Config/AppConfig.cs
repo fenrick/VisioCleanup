@@ -7,6 +7,8 @@
 
 namespace VisioCleanup.Core.Models.Config
 {
+    using System.Collections.Generic;
+
     using JetBrains.Annotations;
 
     /// <summary>The app config.</summary>
@@ -23,6 +25,14 @@ namespace VisioCleanup.Core.Models.Config
 
         /// <summary>Gets or sets the database catalog.</summary>
         public string? DatabaseCatalog
+        {
+            get;
+            [UsedImplicitly]
+            set;
+        }
+
+        /// <summary>Gets or sets the list of database queries.</summary>
+        public List<Dictionary<string, string>>? DatabaseQueries
         {
             get;
             [UsedImplicitly]

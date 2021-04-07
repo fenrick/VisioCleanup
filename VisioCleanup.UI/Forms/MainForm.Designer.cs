@@ -43,12 +43,12 @@ namespace VisioCleanup.UI.Forms
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Button processExcelDataSet;
             System.Windows.Forms.Button loadVisioObjects;
-            System.Windows.Forms.Button loadFromIServerButton;
             System.Windows.Forms.SplitContainer logSplitContainer;
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.controlSplitContainer = new System.Windows.Forms.SplitContainer();
             this.controlsFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.loadFromIServerButton = new System.Windows.Forms.Button();
             this.layoutDataSet = new System.Windows.Forms.Button();
             this.updateVisioDrawing = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -62,7 +62,6 @@ namespace VisioCleanup.UI.Forms
             this.richTextLogBox = new System.Windows.Forms.RichTextBox();
             this.parametersBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.dataSetBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            loadFromIServerButton = new System.Windows.Forms.Button();
             processExcelDataSet = new System.Windows.Forms.Button();
             loadVisioObjects = new System.Windows.Forms.Button();
             logSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -85,23 +84,12 @@ namespace VisioCleanup.UI.Forms
             ((System.ComponentModel.ISupportInitialize)(this.dataSetBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
-            // loadFromIServerButton
-            // 
-            loadFromIServerButton.Location = new System.Drawing.Point(14, 16);
-            loadFromIServerButton.Margin = new System.Windows.Forms.Padding(0, 0, 0, 13);
-            loadFromIServerButton.Name = "loadFromIServerButton";
-            loadFromIServerButton.Size = new System.Drawing.Size(134, 24);
-            loadFromIServerButton.TabIndex = 1;
-            loadFromIServerButton.Text = "Load from iServer";
-            loadFromIServerButton.UseVisualStyleBackColor = true;
-            loadFromIServerButton.Click += new System.EventHandler(this.LoadFromIServer_Click);
-            // 
             // processExcelDataSet
             // 
-            processExcelDataSet.Location = new System.Drawing.Point(11, 42);
-            processExcelDataSet.Margin = new System.Windows.Forms.Padding(0, 0, 0, 13);
+            processExcelDataSet.Location = new System.Drawing.Point(22, 100);
+            processExcelDataSet.Margin = new System.Windows.Forms.Padding(0, 0, 0, 26);
             processExcelDataSet.Name = "processExcelDataSet";
-            processExcelDataSet.Size = new System.Drawing.Size(134, 24);
+            processExcelDataSet.Size = new System.Drawing.Size(268, 48);
             processExcelDataSet.TabIndex = 2;
             processExcelDataSet.Text = "Process Excel DataSet";
             processExcelDataSet.UseVisualStyleBackColor = true;
@@ -109,10 +97,10 @@ namespace VisioCleanup.UI.Forms
             // 
             // loadVisioObjects
             // 
-            loadVisioObjects.Location = new System.Drawing.Point(11, 79);
-            loadVisioObjects.Margin = new System.Windows.Forms.Padding(0, 0, 0, 13);
+            loadVisioObjects.Location = new System.Drawing.Point(22, 174);
+            loadVisioObjects.Margin = new System.Windows.Forms.Padding(0, 0, 0, 26);
             loadVisioObjects.Name = "loadVisioObjects";
-            loadVisioObjects.Size = new System.Drawing.Size(134, 24);
+            loadVisioObjects.Size = new System.Drawing.Size(268, 48);
             loadVisioObjects.TabIndex = 3;
             loadVisioObjects.Text = "Load Visio Objects";
             loadVisioObjects.UseVisualStyleBackColor = true;
@@ -133,9 +121,10 @@ namespace VisioCleanup.UI.Forms
             // logSplitContainer.Panel2
             // 
             logSplitContainer.Panel2.Controls.Add(this.richTextLogBox);
-            logSplitContainer.Panel2.Padding = new System.Windows.Forms.Padding(11, 13, 11, 13);
-            logSplitContainer.Size = new System.Drawing.Size(743, 480);
-            logSplitContainer.SplitterDistance = 234;
+            logSplitContainer.Panel2.Padding = new System.Windows.Forms.Padding(22, 26, 22, 26);
+            logSplitContainer.Size = new System.Drawing.Size(1486, 960);
+            logSplitContainer.SplitterDistance = 468;
+            logSplitContainer.SplitterWidth = 8;
             logSplitContainer.TabIndex = 5;
             // 
             // controlSplitContainer
@@ -153,14 +142,15 @@ namespace VisioCleanup.UI.Forms
             // controlSplitContainer.Panel2
             // 
             this.controlSplitContainer.Panel2.Controls.Add(this.tabControl1);
-            this.controlSplitContainer.Panel2.Padding = new System.Windows.Forms.Padding(11, 13, 11, 13);
-            this.controlSplitContainer.Size = new System.Drawing.Size(743, 234);
+            this.controlSplitContainer.Panel2.Padding = new System.Windows.Forms.Padding(22, 26, 22, 26);
+            this.controlSplitContainer.Size = new System.Drawing.Size(1486, 468);
             this.controlSplitContainer.SplitterDistance = 169;
+            this.controlSplitContainer.SplitterWidth = 8;
             this.controlSplitContainer.TabIndex = 3;
             // 
             // controlsFlowPanel
             // 
-            this.controlsFlowPanel.Controls.Add(loadFromIServerButton);
+            this.controlsFlowPanel.Controls.Add(this.loadFromIServerButton);
             this.controlsFlowPanel.Controls.Add(processExcelDataSet);
             this.controlsFlowPanel.Controls.Add(loadVisioObjects);
             this.controlsFlowPanel.Controls.Add(this.layoutDataSet);
@@ -169,16 +159,27 @@ namespace VisioCleanup.UI.Forms
             this.controlsFlowPanel.Location = new System.Drawing.Point(0, 0);
             this.controlsFlowPanel.Margin = new System.Windows.Forms.Padding(0);
             this.controlsFlowPanel.Name = "controlsFlowPanel";
-            this.controlsFlowPanel.Padding = new System.Windows.Forms.Padding(11, 13, 11, 13);
-            this.controlsFlowPanel.Size = new System.Drawing.Size(169, 234);
+            this.controlsFlowPanel.Padding = new System.Windows.Forms.Padding(22, 26, 22, 26);
+            this.controlsFlowPanel.Size = new System.Drawing.Size(169, 468);
             this.controlsFlowPanel.TabIndex = 0;
+            // 
+            // loadFromIServerButton
+            // 
+            this.loadFromIServerButton.Location = new System.Drawing.Point(22, 26);
+            this.loadFromIServerButton.Margin = new System.Windows.Forms.Padding(0, 0, 0, 26);
+            this.loadFromIServerButton.Name = "loadFromIServerButton";
+            this.loadFromIServerButton.Size = new System.Drawing.Size(268, 48);
+            this.loadFromIServerButton.TabIndex = 1;
+            this.loadFromIServerButton.Text = "Load from iServer";
+            this.loadFromIServerButton.UseVisualStyleBackColor = true;
+            this.loadFromIServerButton.Click += new System.EventHandler(this.LoadFromIServer_Click);
             // 
             // layoutDataSet
             // 
-            this.layoutDataSet.Location = new System.Drawing.Point(11, 116);
-            this.layoutDataSet.Margin = new System.Windows.Forms.Padding(0, 0, 0, 13);
+            this.layoutDataSet.Location = new System.Drawing.Point(22, 248);
+            this.layoutDataSet.Margin = new System.Windows.Forms.Padding(0, 0, 0, 26);
             this.layoutDataSet.Name = "layoutDataSet";
-            this.layoutDataSet.Size = new System.Drawing.Size(134, 24);
+            this.layoutDataSet.Size = new System.Drawing.Size(268, 48);
             this.layoutDataSet.TabIndex = 4;
             this.layoutDataSet.Text = "Layout Data Set";
             this.layoutDataSet.UseVisualStyleBackColor = true;
@@ -186,10 +187,10 @@ namespace VisioCleanup.UI.Forms
             // 
             // updateVisioDrawing
             // 
-            this.updateVisioDrawing.Location = new System.Drawing.Point(11, 153);
-            this.updateVisioDrawing.Margin = new System.Windows.Forms.Padding(0, 0, 0, 13);
+            this.updateVisioDrawing.Location = new System.Drawing.Point(22, 322);
+            this.updateVisioDrawing.Margin = new System.Windows.Forms.Padding(0, 0, 0, 26);
             this.updateVisioDrawing.Name = "updateVisioDrawing";
-            this.updateVisioDrawing.Size = new System.Drawing.Size(134, 24);
+            this.updateVisioDrawing.Size = new System.Drawing.Size(268, 48);
             this.updateVisioDrawing.TabIndex = 5;
             this.updateVisioDrawing.Text = "Update Visio Drawing";
             this.updateVisioDrawing.UseVisualStyleBackColor = true;
@@ -201,19 +202,21 @@ namespace VisioCleanup.UI.Forms
             this.tabControl1.Controls.Add(this.parametersTab);
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(11, 13);
+            this.tabControl1.Location = new System.Drawing.Point(22, 26);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(6);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(548, 208);
+            this.tabControl1.Size = new System.Drawing.Size(1265, 416);
             this.tabControl1.TabIndex = 0;
             // 
             // dataSetTab
             // 
             this.dataSetTab.Controls.Add(this.dataGridView1);
-            this.dataSetTab.Location = new System.Drawing.Point(4, 24);
+            this.dataSetTab.Location = new System.Drawing.Point(8, 46);
+            this.dataSetTab.Margin = new System.Windows.Forms.Padding(6);
             this.dataSetTab.Name = "dataSetTab";
-            this.dataSetTab.Padding = new System.Windows.Forms.Padding(3);
-            this.dataSetTab.Size = new System.Drawing.Size(540, 180);
+            this.dataSetTab.Padding = new System.Windows.Forms.Padding(6);
+            this.dataSetTab.Size = new System.Drawing.Size(1249, 362);
             this.dataSetTab.TabIndex = 1;
             this.dataSetTab.Text = "Current Data Set";
             this.dataSetTab.UseVisualStyleBackColor = true;
@@ -225,21 +228,23 @@ namespace VisioCleanup.UI.Forms
             this.dataGridView1.AllowUserToOrderColumns = true;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.Location = new System.Drawing.Point(6, 6);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(6);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidth = 82;
             this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(534, 174);
+            this.dataGridView1.Size = new System.Drawing.Size(1237, 350);
             this.dataGridView1.TabIndex = 0;
             // 
             // parametersTab
             // 
             this.parametersTab.Controls.Add(this.parametersDataGridView);
-            this.parametersTab.Location = new System.Drawing.Point(4, 24);
+            this.parametersTab.Location = new System.Drawing.Point(8, 46);
+            this.parametersTab.Margin = new System.Windows.Forms.Padding(6);
             this.parametersTab.Name = "parametersTab";
-            this.parametersTab.Padding = new System.Windows.Forms.Padding(3);
-            this.parametersTab.Size = new System.Drawing.Size(540, 180);
+            this.parametersTab.Padding = new System.Windows.Forms.Padding(6);
+            this.parametersTab.Size = new System.Drawing.Size(1249, 362);
             this.parametersTab.TabIndex = 0;
             this.parametersTab.Text = "Parameters";
             this.parametersTab.UseVisualStyleBackColor = true;
@@ -269,34 +274,40 @@ namespace VisioCleanup.UI.Forms
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.parametersDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.parametersDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.parametersDataGridView.Location = new System.Drawing.Point(3, 3);
+            this.parametersDataGridView.Location = new System.Drawing.Point(6, 6);
+            this.parametersDataGridView.Margin = new System.Windows.Forms.Padding(6);
             this.parametersDataGridView.Name = "parametersDataGridView";
             this.parametersDataGridView.RowHeadersWidth = 82;
             this.parametersDataGridView.RowTemplate.Height = 25;
-            this.parametersDataGridView.Size = new System.Drawing.Size(534, 174);
+            this.parametersDataGridView.Size = new System.Drawing.Size(1237, 350);
             this.parametersDataGridView.TabIndex = 0;
             // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.sqlStatementTextBox);
             this.tabPage1.Controls.Add(this.selectSQLStatementComboBox);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(8, 46);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(6);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(540, 180);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPage1.Size = new System.Drawing.Size(1249, 362);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Database Queries";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // sqlStatementTextBox
             // 
+            this.sqlStatementTextBox.AcceptsReturn = true;
+            this.sqlStatementTextBox.AllowDrop = true;
             this.sqlStatementTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.sqlStatementTextBox.Location = new System.Drawing.Point(4, 34);
+            this.sqlStatementTextBox.Location = new System.Drawing.Point(8, 68);
+            this.sqlStatementTextBox.Margin = new System.Windows.Forms.Padding(6);
             this.sqlStatementTextBox.Multiline = true;
             this.sqlStatementTextBox.Name = "sqlStatementTextBox";
-            this.sqlStatementTextBox.Size = new System.Drawing.Size(533, 143);
+            this.sqlStatementTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.sqlStatementTextBox.Size = new System.Drawing.Size(1235, 288);
             this.sqlStatementTextBox.TabIndex = 1;
             // 
             // selectSQLStatementComboBox
@@ -304,19 +315,22 @@ namespace VisioCleanup.UI.Forms
             this.selectSQLStatementComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.selectSQLStatementComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.selectSQLStatementComboBox.Location = new System.Drawing.Point(4, 4);
+            this.selectSQLStatementComboBox.Location = new System.Drawing.Point(8, 8);
+            this.selectSQLStatementComboBox.Margin = new System.Windows.Forms.Padding(6);
             this.selectSQLStatementComboBox.Name = "selectSQLStatementComboBox";
-            this.selectSQLStatementComboBox.Size = new System.Drawing.Size(533, 23);
+            this.selectSQLStatementComboBox.Size = new System.Drawing.Size(1215, 40);
             this.selectSQLStatementComboBox.TabIndex = 0;
+            this.selectSQLStatementComboBox.SelectionChangeCommitted += new System.EventHandler(this.SelectSqlStatementComboBoxSelectionChangeCommitted);
             // 
             // richTextLogBox
             // 
             this.richTextLogBox.BackColor = System.Drawing.SystemColors.WindowText;
             this.richTextLogBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextLogBox.ForeColor = System.Drawing.SystemColors.Window;
-            this.richTextLogBox.Location = new System.Drawing.Point(11, 13);
+            this.richTextLogBox.Location = new System.Drawing.Point(22, 26);
+            this.richTextLogBox.Margin = new System.Windows.Forms.Padding(6);
             this.richTextLogBox.Name = "richTextLogBox";
-            this.richTextLogBox.Size = new System.Drawing.Size(721, 216);
+            this.richTextLogBox.Size = new System.Drawing.Size(1442, 432);
             this.richTextLogBox.TabIndex = 1;
             this.richTextLogBox.Text = "";
             // 
@@ -326,10 +340,11 @@ namespace VisioCleanup.UI.Forms
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(743, 480);
+            this.ClientSize = new System.Drawing.Size(1486, 960);
             this.Controls.Add(logSplitContainer);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "MainForm";
             this.DpiChanged += new System.Windows.Forms.DpiChangedEventHandler(this.MainForm_DpiChanged);
             logSplitContainer.Panel1.ResumeLayout(false);
@@ -370,5 +385,6 @@ namespace VisioCleanup.UI.Forms
         private TabPage tabPage1;
         private ComboBox selectSQLStatementComboBox;
         private TextBox sqlStatementTextBox;
+        private Button loadFromIServerButton;
     }
 }

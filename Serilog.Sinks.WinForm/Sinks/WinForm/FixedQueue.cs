@@ -49,13 +49,14 @@ namespace Serilog.Sinks.WinForm
             if (this.Count == this.Capacity)
             {
                 // remove an item
-                if (this.TryDequeue(out _))
+                if (!this.TryDequeue(out _))
                 {
-                    base.Enqueue(item);
-                    return;
+                    throw new InvalidOperationException("Unable to dequeue from queue.");
                 }
 
-                throw new InvalidOperationException("Unable to dequeue from queue.");
+                base.Enqueue(item);
+                return;
+
             }
 
             base.Enqueue(item);

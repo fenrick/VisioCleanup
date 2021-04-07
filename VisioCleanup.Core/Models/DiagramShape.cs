@@ -134,6 +134,11 @@ namespace VisioCleanup.Core.Models
         /// <summary>Gets collection of child shapes.</summary>
         public Collection<DiagramShape> Children { get; }
 
+        /// <summary>
+        /// Gets or sets how deep is the rendered children.
+        /// </summary>
+        public int ChildrenDepth { get; set; }
+
         /// <summary>Gets the shape to the left.</summary>
         public DiagramShape? Left { get; private set; }
 
@@ -373,10 +378,10 @@ namespace VisioCleanup.Core.Models
             var children = this.Children;
             foreach (var child in children)
             {
-                //child.Above = null;
-                //child.below = null;
-                //child.Left = null;
-                //child.right = null;
+                // child.Above = null;
+                // child.below = null;
+                // child.Left = null;
+                // child.right = null;
             }
 
             const double Tolerance = 5000;

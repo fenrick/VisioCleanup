@@ -35,41 +35,6 @@ namespace VisioCleanup.Core.Services
             this.excelApplication = excelApplication ?? throw new ArgumentNullException(nameof(excelApplication));
 
         /// <inheritdoc />
-        public new Task LayoutDataSet()
-        {
-            return Task.Run(
-                () =>
-                    {
-                        int maxRight;
-
-                        try
-                        {
-                            this.VisioApplication.Open();
-
-                            maxRight = this.VisioApplication.GetPageRightSide() - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
-                        }
-                        finally
-                        {
-                            this.VisioApplication.Close();
-                        }
-
-                        if (this.MasterShape is null)
-                        {
-                            throw new InvalidOperationException("Need to load shapes first.");
-                        }
-
-                        // initiate a base layout.
-                        this.Logger.LogInformation("Correcting diagram.");
-                        this.MasterShape.CorrectDiagram();
-                        this.convertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
-
-                        // look for overruns.
-                        this.Logger.LogInformation("Chopping down to fit.");
-                        this.ChopDown(this.MasterShape, maxRight);
-                    });
-        }
-
-        /// <inheritdoc />
         public Task ProcessDataSet()
         {
             return Task.Run(
@@ -95,6 +60,9 @@ namespace VisioCleanup.Core.Services
                                                    };
                             shapes.Add(this.MasterShape);
 
+                            var maxRight = this.VisioApplication.GetPageRightSide() - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
+                            this.ConvertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+
                             // retrieve records
                             this.Logger.LogInformation("Loading excel data.");
                             shapes.AddRange(this.excelApplication.RetrieveRecords());
@@ -114,7 +82,7 @@ namespace VisioCleanup.Core.Services
 
                             // need to set children relationships.
                             this.Logger.LogInformation("Sorting shapes into lines.");
-                            this.SortChildren(this.MasterShape);
+                            this.SortChildren(this.MasterShape, maxRight);
                         }
                         finally
                         {

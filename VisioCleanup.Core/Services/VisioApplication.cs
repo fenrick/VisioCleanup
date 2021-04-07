@@ -272,7 +272,7 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public IEnumerable<DiagramShape> RetrieveShapes()
         {
-            if (this.visioApplication is null || this.visioApplication.ActiveWindow is null)
+            if (visioApplication?.ActiveWindow is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
@@ -358,48 +358,46 @@ namespace VisioCleanup.Core.Services
             var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
             var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
 
-            var updates = new List<Dictionary<string, object>>();
+            var updates = new List<Dictionary<string, object>>
+                              {
+                                  new Dictionary<string, object>
+                                      {
+                                          { "sheetID", diagramShape.VisioId },
+                                          { "section", (short)VisSectionIndices.visSectionObject },
+                                          { "row", (short)VisRowIndices.visRowXFormOut },
+                                          { "cell", (short)VisCellIndices.visXFormWidth },
+                                          { "unit", VisUnitCodes.visMillimeters },
+                                          { "result", width },
+                                      },
+                                  new Dictionary<string, object>
+                                      {
+                                          { "sheetID", diagramShape.VisioId },
+                                          { "section", (short)VisSectionIndices.visSectionObject },
+                                          { "row", (short)VisRowIndices.visRowXFormOut },
+                                          { "cell", (short)VisCellIndices.visXFormHeight },
+                                          { "unit", VisUnitCodes.visMillimeters },
+                                          { "result", height },
+                                      },
+                                  new Dictionary<string, object>
+                                      {
+                                          { "sheetID", diagramShape.VisioId },
+                                          { "section", (short)VisSectionIndices.visSectionObject },
+                                          { "row", (short)VisRowIndices.visRowXFormOut },
+                                          { "cell", (short)VisCellIndices.visXFormPinX },
+                                          { "unit", VisUnitCodes.visMillimeters },
+                                          { "result", newPinX },
+                                      },
+                                  new Dictionary<string, object>
+                                      {
+                                          { "sheetID", diagramShape.VisioId },
+                                          { "section", (short)VisSectionIndices.visSectionObject },
+                                          { "row", (short)VisRowIndices.visRowXFormOut },
+                                          { "cell", (short)VisCellIndices.visXFormPinY },
+                                          { "unit", VisUnitCodes.visMillimeters },
+                                          { "result", newPinY },
+                                      }
+                              };
 
-            updates.Add(
-                new Dictionary<string, object>
-                    {
-                        { "sheetID", diagramShape.VisioId },
-                        { "section", (short)VisSectionIndices.visSectionObject },
-                        { "row", (short)VisRowIndices.visRowXFormOut },
-                        { "cell", (short)VisCellIndices.visXFormWidth },
-                        { "unit", VisUnitCodes.visMillimeters },
-                        { "result", width },
-                    });
-            updates.Add(
-                new Dictionary<string, object>
-                    {
-                        { "sheetID", diagramShape.VisioId },
-                        { "section", (short)VisSectionIndices.visSectionObject },
-                        { "row", (short)VisRowIndices.visRowXFormOut },
-                        { "cell", (short)VisCellIndices.visXFormHeight },
-                        { "unit", VisUnitCodes.visMillimeters },
-                        { "result", height },
-                    });
-            updates.Add(
-                new Dictionary<string, object>
-                    {
-                        { "sheetID", diagramShape.VisioId },
-                        { "section", (short)VisSectionIndices.visSectionObject },
-                        { "row", (short)VisRowIndices.visRowXFormOut },
-                        { "cell", (short)VisCellIndices.visXFormPinX },
-                        { "unit", VisUnitCodes.visMillimeters },
-                        { "result", newPinX },
-                    });
-            updates.Add(
-                new Dictionary<string, object>
-                    {
-                        { "sheetID", diagramShape.VisioId },
-                        { "section", (short)VisSectionIndices.visSectionObject },
-                        { "row", (short)VisRowIndices.visRowXFormOut },
-                        { "cell", (short)VisCellIndices.visXFormPinY },
-                        { "unit", VisUnitCodes.visMillimeters },
-                        { "result", newPinY },
-                    });
 
             // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
             var srcStreamFields = 3;
