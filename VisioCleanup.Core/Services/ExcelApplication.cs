@@ -72,7 +72,7 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public IEnumerable<DiagramShape> RetrieveRecords()
         {
-            if (excelApplication?.ActiveSheet is null)
+            if (this.excelApplication?.ActiveSheet is null)
             {
                 throw new InvalidOperationException("Excel must be running.");
             }
@@ -108,7 +108,8 @@ namespace VisioCleanup.Core.Services
                     rowResults.Add(cellIndex, values);
                 }
 
-                DiagramShape? previousShape = Enumerable.Range(1, columnMapping.Count).Aggregate<int, DiagramShape?>(null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
+                var previousShape = Enumerable.Range(1, columnMapping.Count)
+                    .Aggregate<int, DiagramShape?>(null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
             }
 
             Collection<DiagramShape> shapes = new();

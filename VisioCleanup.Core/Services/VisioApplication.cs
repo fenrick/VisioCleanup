@@ -272,7 +272,7 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public IEnumerable<DiagramShape> RetrieveShapes()
         {
-            if (visioApplication?.ActiveWindow is null)
+            if (this.visioApplication?.ActiveWindow is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
@@ -360,7 +360,7 @@ namespace VisioCleanup.Core.Services
 
             var updates = new List<Dictionary<string, object>>
                               {
-                                  new Dictionary<string, object>
+                                  new()
                                       {
                                           { "sheetID", diagramShape.VisioId },
                                           { "section", (short)VisSectionIndices.visSectionObject },
@@ -369,7 +369,7 @@ namespace VisioCleanup.Core.Services
                                           { "unit", VisUnitCodes.visMillimeters },
                                           { "result", width },
                                       },
-                                  new Dictionary<string, object>
+                                  new()
                                       {
                                           { "sheetID", diagramShape.VisioId },
                                           { "section", (short)VisSectionIndices.visSectionObject },
@@ -378,7 +378,7 @@ namespace VisioCleanup.Core.Services
                                           { "unit", VisUnitCodes.visMillimeters },
                                           { "result", height },
                                       },
-                                  new Dictionary<string, object>
+                                  new()
                                       {
                                           { "sheetID", diagramShape.VisioId },
                                           { "section", (short)VisSectionIndices.visSectionObject },
@@ -387,7 +387,7 @@ namespace VisioCleanup.Core.Services
                                           { "unit", VisUnitCodes.visMillimeters },
                                           { "result", newPinX },
                                       },
-                                  new Dictionary<string, object>
+                                  new()
                                       {
                                           { "sheetID", diagramShape.VisioId },
                                           { "section", (short)VisSectionIndices.visSectionObject },
@@ -395,9 +395,8 @@ namespace VisioCleanup.Core.Services
                                           { "cell", (short)VisCellIndices.visXFormPinY },
                                           { "unit", VisUnitCodes.visMillimeters },
                                           { "result", newPinY },
-                                      }
+                                      },
                               };
-
 
             // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
             var srcStreamFields = 3;

@@ -134,9 +134,7 @@ namespace VisioCleanup.Core.Models
         /// <summary>Gets collection of child shapes.</summary>
         public Collection<DiagramShape> Children { get; }
 
-        /// <summary>
-        /// Gets or sets how deep is the rendered children.
-        /// </summary>
+        /// <summary>Gets or sets how deep is the rendered children.</summary>
         public int ChildrenDepth { get; set; }
 
         /// <summary>Gets the shape to the left.</summary>

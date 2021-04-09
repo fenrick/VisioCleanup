@@ -56,7 +56,6 @@ namespace Serilog.Sinks.WinForm
 
                 base.Enqueue(item);
                 return;
-
             }
 
             base.Enqueue(item);

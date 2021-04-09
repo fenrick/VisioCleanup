@@ -39,12 +39,6 @@ namespace VisioCleanup.Core.Services
             DiagramShape.AppConfig = this.AppConfig;
         }
 
-        /// <inheritdoc />
-        public Collection<DiagramShape> AllShapes { get; protected set; } = new();
-
-        /// <inheritdoc />
-        public DiagramShape? MasterShape { get; protected set; }
-
         /// <summary>Gets application configuration.</summary>
         protected AppConfig AppConfig { get; }
 
@@ -53,6 +47,12 @@ namespace VisioCleanup.Core.Services
 
         /// <summary>Gets visio processing engine.</summary>
         protected IVisioApplication VisioApplication { get; }
+
+        /// <inheritdoc />
+        public Collection<DiagramShape> AllShapes { get; protected set; } = new();
+
+        /// <inheritdoc />
+        public DiagramShape? MasterShape { get; protected set; }
 
         /// <inheritdoc />
         public Task LayoutDataSet()

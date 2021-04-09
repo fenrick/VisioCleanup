@@ -38,6 +38,13 @@ namespace Serilog.Sinks.WinForm
             Sinks.Add(this);
         }
 
+        /// <inheritdoc />
+        public void Emit(LogEvent logEvent)
+        {
+            this.unprocessedLogEvents.Enqueue(logEvent);
+            this.FlushQueue();
+        }
+
         /// <summary>
         /// Add list box to <see cref="Serilog.Sinks.WinForm.WinFormSink.Sinks" /> as output destination. Will flush any
         /// outstanding event queue.
@@ -63,13 +70,6 @@ namespace Serilog.Sinks.WinForm
             {
                 sink.FlushQueue();
             }
-        }
-
-        /// <inheritdoc />
-        public void Emit(LogEvent logEvent)
-        {
-            this.unprocessedLogEvents.Enqueue(logEvent);
-            this.FlushQueue();
         }
 
         private void FlushQueue()
