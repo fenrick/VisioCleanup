@@ -19,6 +19,7 @@ namespace VisioCleanup.UI.Forms
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models.Config;
 
+    /// <inheritdoc />
     /// <summary>Main application form.</summary>
     public partial class MainForm : Form
     {
@@ -39,7 +40,8 @@ namespace VisioCleanup.UI.Forms
         /// <summary>The processing service.</summary>
         private IProcessingService? processingService;
 
-        /// <summary>Initialises a new instance of the <see cref="MainForm" /> class.</summary>
+        /// <inheritdoc />
+        /// <summary>Initialises a new instance of the <see cref="T:VisioCleanup.UI.Forms.MainForm" /> class.</summary>
         /// <param name="logger">The <paramref name="logger" /> .</param>
         /// <param name="options">The app config.</param>
         /// <param name="excelService">The excel service.</param>
@@ -80,13 +82,15 @@ namespace VisioCleanup.UI.Forms
 
             this.selectSQLStatementComboBox.SelectedIndex = 0;
 
-            if (this.appConfig.DatabaseQueries is not null)
+            if (this.appConfig.DatabaseQueries is null)
             {
-                foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
-                {
-                    this.sqlStatementTextBox.Text = databaseQuery["Query"];
-                    this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
-                }
+                return;
+            }
+
+            foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
+            {
+                this.sqlStatementTextBox.Text = databaseQuery["Query"];
+                this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
             }
         }
 
@@ -99,16 +103,13 @@ namespace VisioCleanup.UI.Forms
             {
                 this.logger.LogDebug("Processing Service is not defined");
                 this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               MessageBox.Show(
-                                                   @"Unable to layout dataset, none is loaded.",
-                                                   @"Error",
-                                                   MessageBoxButtons.OK,
-                                                   MessageBoxIcon.Error,
-                                                   MessageBoxDefaultButton.Button1,
-                                                   MessageBoxOptions.ServiceNotification);
-                                           }));
+                    (MethodInvoker)(() => MessageBox.Show(
+                                           @"Unable to layout dataset, none is loaded.",
+                                           @"Error",
+                                           MessageBoxButtons.OK,
+                                           MessageBoxIcon.Error,
+                                           MessageBoxDefaultButton.Button1,
+                                           MessageBoxOptions.ServiceNotification)));
                 return;
             }
 
@@ -179,7 +180,7 @@ namespace VisioCleanup.UI.Forms
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
-                                               this.logger.LogDebug("Updating dataset.");
+                                               this.logger.LogDebug("Updating dataset");
                                                this.dataSetBindingSource.DataSource = this.databaseService.AllShapes;
                                                this.processingService = this.databaseService;
 
@@ -238,7 +239,7 @@ namespace VisioCleanup.UI.Forms
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
-                                               this.logger.LogDebug("Updating data set.");
+                                               this.logger.LogDebug("Updating data set");
                                                this.dataSetBindingSource.DataSource = this.visioService.AllShapes;
                                                this.processingService = this.visioService;
 
@@ -299,7 +300,7 @@ namespace VisioCleanup.UI.Forms
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
-                                               this.logger.LogDebug("Updating dataset.");
+                                               this.logger.LogDebug("Updating dataset");
                                                this.dataSetBindingSource.DataSource = this.excelService.AllShapes;
                                                this.processingService = this.excelService;
 
@@ -339,14 +340,16 @@ namespace VisioCleanup.UI.Forms
 
         private void SelectSqlStatementComboBoxSelectionChangeCommitted(object sender, EventArgs e)
         {
-            if (this.appConfig.DatabaseQueries is not null)
+            if (this.appConfig.DatabaseQueries is null)
             {
-                foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
-                {
-                    this.sqlStatementTextBox.Text = databaseQuery["Query"];
+                return;
+            }
 
-                    this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
-                }
+            foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
+            {
+                this.sqlStatementTextBox.Text = databaseQuery["Query"];
+
+                this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
             }
         }
 
@@ -359,16 +362,13 @@ namespace VisioCleanup.UI.Forms
             {
                 this.logger.LogDebug("Processing Service is not defined");
                 this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               MessageBox.Show(
-                                                   @"Unable to layout dataset, none is loaded.",
-                                                   @"Error",
-                                                   MessageBoxButtons.OK,
-                                                   MessageBoxIcon.Error,
-                                                   MessageBoxDefaultButton.Button1,
-                                                   MessageBoxOptions.ServiceNotification);
-                                           }));
+                    (MethodInvoker)(() => MessageBox.Show(
+                                           @"Unable to layout dataset, none is loaded.",
+                                           @"Error",
+                                           MessageBoxButtons.OK,
+                                           MessageBoxIcon.Error,
+                                           MessageBoxDefaultButton.Button1,
+                                           MessageBoxOptions.ServiceNotification)));
                 return;
             }
 

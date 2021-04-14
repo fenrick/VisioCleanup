@@ -292,12 +292,9 @@ namespace VisioCleanup.Core.Models
             var result = this.FixPosition();
 
             // depth first correction process
-            foreach (var diagramShape in this.Children)
+            foreach (var diagramShape in this.Children.Where(diagramShape => diagramShape.CorrectDiagram()))
             {
-                if (diagramShape.CorrectDiagram())
-                {
-                    result = true;
-                }
+                result = true;
             }
 
             // resize shape

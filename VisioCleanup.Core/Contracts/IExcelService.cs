@@ -9,6 +9,7 @@ namespace VisioCleanup.Core.Contracts
 {
     using System.Threading.Tasks;
 
+    /// <inheritdoc />
     /// <summary>The ExcelService interface.</summary>
     public interface IExcelService : IProcessingService
     {

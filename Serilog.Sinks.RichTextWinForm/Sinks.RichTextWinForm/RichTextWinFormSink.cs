@@ -9,6 +9,7 @@ namespace Serilog.Sinks.RichTextWinForm
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Windows.Forms;
 
     using Serilog.Core;
@@ -64,13 +65,8 @@ namespace Serilog.Sinks.RichTextWinForm
 
             while (this.unprocessedLogEvents.TryDequeue(out var unprocessedLogEvent))
             {
-                foreach (var richTextBox in RichTextField)
+                foreach (var richTextBox in RichTextField.Where(richTextBox => !richTextBox.IsDisposed))
                 {
-                    if (richTextBox.IsDisposed)
-                    {
-                        continue;
-                    }
-
                     if (richTextBox.InvokeRequired)
                     {
                         var @event = unprocessedLogEvent;

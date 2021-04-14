@@ -9,6 +9,7 @@ namespace Serilog.Sinks.WinForm
 {
     using System.Collections.ObjectModel;
     using System.IO;
+    using System.Linq;
     using System.Windows.Forms;
 
     using Serilog.Core;
@@ -90,16 +91,11 @@ namespace Serilog.Sinks.WinForm
                 this.formatter.Format(unprocessedLogEvent, buffer);
 
                 // textBoxes
-                foreach (var textBox in TextBoxes)
+                foreach (var textBox in TextBoxes.Where(textBox => !textBox.IsDisposed))
                 {
-                    if (textBox.IsDisposed)
-                    {
-                        continue;
-                    }
-
                     if (textBox.InvokeRequired)
                     {
-                        textBox.Invoke((MethodInvoker)(() => { textBox.AppendText(buffer.ToString()); }));
+                        textBox.Invoke((MethodInvoker)(() => textBox.AppendText(buffer.ToString())));
                         continue;
                     }
 
@@ -107,16 +103,11 @@ namespace Serilog.Sinks.WinForm
                 }
 
                 // listViews
-                foreach (var listBox in ListBoxes)
+                foreach (var listBox in ListBoxes.Where(listBox => !listBox.IsDisposed))
                 {
-                    if (listBox.IsDisposed)
-                    {
-                        continue;
-                    }
-
                     if (listBox.InvokeRequired)
                     {
-                        listBox.Invoke((MethodInvoker)(() => { listBox.Items.Add(buffer.ToString()); }));
+                        listBox.Invoke((MethodInvoker)(() => listBox.Items.Add(buffer.ToString())));
                         continue;
                     }
 

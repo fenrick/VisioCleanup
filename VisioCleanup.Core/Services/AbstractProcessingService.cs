@@ -19,6 +19,7 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
 
+    /// <inheritdoc />
     /// <summary>Abstract implementation of common code for processing services.</summary>
     public abstract class AbstractProcessingService : IProcessingService
     {

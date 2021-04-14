@@ -428,7 +428,7 @@ namespace VisioCleanup.Core.Services
             var documentStencil = this.visioApplication.ActiveDocument.Masters;
             {
                 documentStencil.GetNames(out var masterNames);
-                if (masterNames is not null && (masterNames.Length > 0))
+                if (masterNames?.Length > 0)
                 {
                     var result = (masterNames as string[]).Contains(key);
                     if (result)
@@ -444,14 +444,8 @@ namespace VisioCleanup.Core.Services
                 return null;
             }
 
-            foreach (var stencilName in stencilNames)
+            foreach (var stencil in from object? stencilName in stencilNames where stencilName?.Equals(string.Empty) == false select this.visioApplication.Documents[stencilName])
             {
-                if (stencilName is null || stencilName.Equals(string.Empty))
-                {
-                    continue;
-                }
-
-                var stencil = this.visioApplication.Documents[stencilName];
                 stencil.Masters.GetNames(out var masterNames);
                 if (masterNames is null || (masterNames.Length <= 0))
                 {

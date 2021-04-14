@@ -170,17 +170,17 @@ namespace VisioCleanup.Core.Services
                 {
                     var value = header.GetValue(1, i);
 
-                    if (value is not null && value.Equals(fieldName))
+                    if (value?.Equals(fieldName) == true)
                     {
                         mappings[FieldType.ShapeText] = i;
                     }
 
-                    if (value is not null && value.Equals(sortFieldName))
+                    if (value?.Equals(sortFieldName) == true)
                     {
                         mappings[FieldType.SortValue] = i;
                     }
 
-                    if (value is not null && value.Equals(shapeFieldName))
+                    if (value?.Equals(shapeFieldName) == true)
                     {
                         mappings[FieldType.ShapeType] = i;
                     }

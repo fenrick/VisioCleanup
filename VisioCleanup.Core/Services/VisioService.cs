@@ -20,10 +20,12 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
 
+    /// <inheritdoc />
     /// <summary>The visio service.</summary>
     public class VisioService : AbstractProcessingService, IVisioService
     {
-        /// <summary>Initialises a new instance of the <see cref="VisioService" /> class.</summary>
+        /// <inheritdoc />
+        /// <summary>Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.VisioService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="options">Application configuration being passed in.</param>

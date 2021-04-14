@@ -9,6 +9,7 @@ namespace VisioCleanup.Core.Contracts
 {
     using System.Threading.Tasks;
 
+    /// <inheritdoc />
     /// <summary>The IDatabase interface.</summary>
     public interface IDatabaseService : IProcessingService
     {
