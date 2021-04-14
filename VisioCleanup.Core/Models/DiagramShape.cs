@@ -39,8 +39,11 @@ namespace VisioCleanup.Core.Models
             this.Children = new Collection<DiagramShape>();
             this.TopSide = ConvertMeasurement(AppConfig!.Height);
             this.LeftSide = 0;
-            this.RightSide = ConvertMeasurement(AppConfig!.Width);
+            this.RightSide = ConvertMeasurement(AppConfig.Width);
             this.BaseSide = 0;
+            this.Master = string.Empty;
+            this.ShapeText = string.Empty;
+            this.SortValue = string.Empty;
         }
 
         /// <summary>Gets the shape above.</summary>
@@ -63,7 +66,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.Below, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Below, movement);
                         this.Below.MoveVertical(movement);
                     }
                 }
@@ -81,7 +84,7 @@ namespace VisioCleanup.Core.Models
                     return;
                 }
 
-                this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.Right, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Right, movement);
                 this.Right.MoveVertical(movement);
             }
         }
@@ -114,7 +117,7 @@ namespace VisioCleanup.Core.Models
 
                 if (movement != 0)
                 {
-                    this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.below, movement);
+                    this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.below, movement);
                     this.below.MoveHorizontal(movement);
                 }
 
@@ -126,7 +129,7 @@ namespace VisioCleanup.Core.Models
                     return;
                 }
 
-                this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.below, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} vertical", this.below, movement);
                 this.below.MoveVertical(movement);
             }
         }
@@ -144,7 +147,7 @@ namespace VisioCleanup.Core.Models
         public int LeftSide { get; set; }
 
         /// <summary>Gets the stencil used for drawing shape.</summary>
-        public string? Master { get; init; }
+        public string Master { get; init; }
 
         /// <summary>Gets parent shape of curent shape.</summary>
         public DiagramShape? ParentShape { get; private set; }
@@ -177,7 +180,7 @@ namespace VisioCleanup.Core.Models
 
                 if (movement != 0)
                 {
-                    this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.right, movement);
+                    this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.right, movement);
                     this.right.MoveHorizontal(movement);
                 }
 
@@ -188,7 +191,7 @@ namespace VisioCleanup.Core.Models
                     return;
                 }
 
-                this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.right, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} vertical", this.right, movement);
                 this.right.MoveVertical(movement);
             }
         }
@@ -210,7 +213,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.Right, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Right, movement);
                         this.Right.MoveHorizontal(movement);
                     }
                 }
@@ -229,26 +232,26 @@ namespace VisioCleanup.Core.Models
                     return;
                 }
 
-                this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.Below, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Below, movement);
                 this.Below.MoveHorizontal(movement);
             }
         }
 
-        /// <summary>Gets or sets a unique shape identifier.</summary>
-        public string? ShapeIdentifier { get; set; }
+        /// <summary>Gets a unique shape identifier.</summary>
+        public string? ShapeIdentifier { get; init; }
 
         /// <summary>Gets the shape text.</summary>
-        public string? ShapeText { get; init; }
+        public string ShapeText { get; init; }
 
         /// <summary>Gets or sets the shape type.</summary>
         public ShapeType ShapeType { get; set; }
 
-        /// <summary>Gets or sets value used to sort shapes.</summary>
+        /// <summary>Gets value used to sort shapes.</summary>
         public string? SortValue
         {
             get;
             [UsedImplicitly]
-            set;
+            init;
         }
 
         /// <summary>Gets or sets top of the shape.</summary>
@@ -322,20 +325,18 @@ namespace VisioCleanup.Core.Models
             int height;
             if (this.Children.Count > 0)
             {
-                var children = this.Children;
-
-                var minLeftSide = children.Select(shape => shape.LeftSide).Min() - ConvertMeasurement(AppConfig!.Left);
-                var maxRightSide = children.Select(shape => shape.RightSide).Max() + ConvertMeasurement(AppConfig!.Right);
+                var minLeftSide = this.Children.Select(shape => shape.LeftSide).Min() - ConvertMeasurement(AppConfig!.Left);
+                var maxRightSide = this.Children.Select(shape => shape.RightSide).Max() + ConvertMeasurement(AppConfig.Right);
                 width = maxRightSide - minLeftSide;
 
-                var minBaseSide = children.Select(shape => shape.BaseSide).Min() - ConvertMeasurement(AppConfig!.Base);
-                var maxTopSide = children.Select(shape => shape.TopSide).Max() + ConvertMeasurement(AppConfig!.Top);
+                var minBaseSide = this.Children.Select(shape => shape.BaseSide).Min() - ConvertMeasurement(AppConfig.Base);
+                var maxTopSide = this.Children.Select(shape => shape.TopSide).Max() + ConvertMeasurement(AppConfig.Top);
                 height = maxTopSide - minBaseSide;
             }
             else
             {
                 height = ConvertMeasurement(AppConfig!.Height);
-                width = ConvertMeasurement(AppConfig!.Width);
+                width = ConvertMeasurement(AppConfig.Width);
             }
 
             var newBaseSide = this.TopSide - height;
@@ -376,10 +377,8 @@ namespace VisioCleanup.Core.Models
             var children = this.Children;
             foreach (var child in children)
             {
-                // child.Above = null;
-                // child.below = null;
-                // child.Left = null;
-                // child.right = null;
+                child.Right = null;
+                child.Below = null;
             }
 
             const double Tolerance = 5000;
@@ -477,7 +476,7 @@ namespace VisioCleanup.Core.Models
             if (this.Above is null && this.Left is null)
             {
                 var newLeft = this.ParentShape.LeftSide + ConvertMeasurement(AppConfig!.Left);
-                var newTop = this.ParentShape.TopSide - ConvertMeasurement(AppConfig!.Top);
+                var newTop = this.ParentShape.TopSide - ConvertMeasurement(AppConfig.Top);
 
                 var topMovement = this.TopSide - newTop;
 
@@ -485,14 +484,14 @@ namespace VisioCleanup.Core.Models
 
                 if (topMovement != 0)
                 {
-                    this.logger.Debug("Aligning {Shape} to {Parent}.", this, this.ParentShape);
+                    this.logger.Debug("Aligning {Shape} to {Parent}", this, this.ParentShape);
                     this.MoveVertical(topMovement);
                     this.MoveHorizontal(leftMovement);
                     result = true;
                 }
                 else if (leftMovement != 0)
                 {
-                    this.logger.Debug("Aligning {Shape} to {Parent}.", this, this.ParentShape);
+                    this.logger.Debug("Aligning {Shape} to {Parent}", this, this.ParentShape);
                     this.MoveVertical(topMovement);
                     this.MoveHorizontal(leftMovement);
                     result = true;
@@ -508,7 +507,7 @@ namespace VisioCleanup.Core.Models
 
                 if (movement != 0)
                 {
-                    this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.Right, movement);
+                    this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Right, movement);
                     this.Right.MoveHorizontal(movement);
                     result = true;
                 }
@@ -517,7 +516,7 @@ namespace VisioCleanup.Core.Models
                 movement = this.Right.TopSide - this.TopSide;
                 if (movement != 0)
                 {
-                    this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.Right, movement);
+                    this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Right, movement);
                     this.Right.MoveVertical(movement);
                     result = true;
                 }
@@ -534,7 +533,7 @@ namespace VisioCleanup.Core.Models
 
             if (movement != 0)
             {
-                this.logger.Debug("Moving {Shape} by {Movement} horizontal.", this.Below, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Below, movement);
                 this.Below.MoveHorizontal(movement);
                 result = true;
             }
@@ -547,7 +546,7 @@ namespace VisioCleanup.Core.Models
                 return result;
             }
 
-            this.logger.Debug("Moving {Shape} by {Movement} vertical.", this.Below, movement);
+            this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Below, movement);
             this.Below.MoveVertical(movement);
             return true;
         }

@@ -53,34 +53,40 @@ namespace VisioCleanup.UI.Forms
             this.visioService = visioService ?? throw new ArgumentNullException(nameof(visioService));
             this.databaseService = databaseService ?? throw new ArgumentNullException(nameof(databaseService));
 
-            this.logger.LogDebug("Initialising form components.");
+            this.logger.LogDebug("Initialising form components");
             this.InitializeComponent();
 
-            this.logger.LogDebug("Setting log output.");
+            this.logger.LogDebug("Setting log output");
             RichTextWinFormSink.AddRichTextBox(this.richTextLogBox);
 
-            this.logger.LogDebug("Binding appConfig to data grid.");
+            this.logger.LogDebug("Binding appConfig to data grid");
             this.parametersBindingSource.Add(this.appConfig);
             this.parametersDataGridView.AutoGenerateColumns = true;
             this.parametersDataGridView.DataSource = this.parametersBindingSource;
 
-            this.logger.LogDebug("Preparing data set to data grid binding.");
+            this.logger.LogDebug("Preparing data set to data grid binding");
             this.dataGridView1.DataSource = this.dataSetBindingSource;
             this.dataGridView1.AutoGenerateColumns = true;
 
             this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
 
-            foreach (var queryName in this.appConfig.DatabaseQueries.Select(databaseQuery => databaseQuery["Name"]))
+            if (this.appConfig.DatabaseQueries is not null)
             {
-                this.selectSQLStatementComboBox.Items.Add(queryName);
+                foreach (var queryName in this.appConfig.DatabaseQueries.Select(databaseQuery => databaseQuery["Name"]))
+                {
+                    this.selectSQLStatementComboBox.Items.Add(queryName);
+                }
             }
 
             this.selectSQLStatementComboBox.SelectedIndex = 0;
 
-            foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
+            if (this.appConfig.DatabaseQueries is not null)
             {
-                this.sqlStatementTextBox.Text = databaseQuery["Query"];
-                this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
+                foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
+                {
+                    this.sqlStatementTextBox.Text = databaseQuery["Query"];
+                    this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
+                }
             }
         }
 
@@ -91,7 +97,7 @@ namespace VisioCleanup.UI.Forms
         {
             if (this.processingService is null)
             {
-                this.logger.LogDebug("Processing Service is not defined.");
+                this.logger.LogDebug("Processing Service is not defined");
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
@@ -115,7 +121,7 @@ namespace VisioCleanup.UI.Forms
                                                this.dataSetBindingSource.DataSource = null;
                                            }));
 
-                this.logger.LogDebug("Laying out data set.");
+                this.logger.LogDebug("Laying out data set");
 
                 await this.processingService!.LayoutDataSet().ConfigureAwait(false);
 
@@ -166,7 +172,7 @@ namespace VisioCleanup.UI.Forms
                                                this.processingService = null;
                                            }));
 
-                this.logger.LogDebug("Loading objects from database.");
+                this.logger.LogDebug("Loading objects from database");
 
                 await this.databaseService.ProcessDataSet(this.sqlStatementTextBox.Text).ConfigureAwait(false);
 
@@ -226,7 +232,7 @@ namespace VisioCleanup.UI.Forms
                                                this.processingService = null;
                                            }));
 
-                this.logger.LogDebug("Loading objects from visio.");
+                this.logger.LogDebug("Loading objects from visio");
                 await this.visioService.LoadVisioObjectModel().ConfigureAwait(false);
 
                 this.Invoke(
@@ -286,7 +292,7 @@ namespace VisioCleanup.UI.Forms
                                                this.processingService = null;
                                            }));
 
-                this.logger.LogDebug("Loading objects from excel.");
+                this.logger.LogDebug("Loading objects from excel");
 
                 await this.excelService.ProcessDataSet().ConfigureAwait(false);
 
@@ -333,11 +339,14 @@ namespace VisioCleanup.UI.Forms
 
         private void SelectSqlStatementComboBoxSelectionChangeCommitted(object sender, EventArgs e)
         {
-            foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
+            if (this.appConfig.DatabaseQueries is not null)
             {
-                this.sqlStatementTextBox.Text = databaseQuery["Query"];
+                foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
+                {
+                    this.sqlStatementTextBox.Text = databaseQuery["Query"];
 
-                this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
+                    this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
+                }
             }
         }
 
@@ -348,7 +357,7 @@ namespace VisioCleanup.UI.Forms
         {
             if (this.processingService is null)
             {
-                this.logger.LogDebug("Processing Service is not defined.");
+                this.logger.LogDebug("Processing Service is not defined");
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
@@ -372,7 +381,7 @@ namespace VisioCleanup.UI.Forms
                                                this.dataSetBindingSource.DataSource = null;
                                            }));
 
-                this.logger.LogDebug("Drawing visio.");
+                this.logger.LogDebug("Drawing visio");
 
                 await this.processingService!.UpdateVisio().ConfigureAwait(false);
 

@@ -17,12 +17,6 @@ namespace VisioCleanup.Core.Contracts
         /// <summary><see cref="Close" /> visio session and shutdown.</summary>
         void Close();
 
-        /// <summary>Execute the dropping of shapes onto the visio page.</summary>
-        void CompleteDrops();
-
-        /// <summary>Execute the updating of shapes onto the visio page.</summary>
-        void CompleteUpdates();
-
         /// <summary>Create new shape on Visio diagram.</summary>
         /// <param name="diagramShape">Shape to be created.</param>
         void CreateShape(DiagramShape diagramShape);

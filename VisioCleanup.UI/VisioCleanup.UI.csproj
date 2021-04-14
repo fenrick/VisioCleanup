@@ -52,9 +52,9 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
-
+ 
     <ItemGroup>
-        <Content Include="appsettings.Development.json">
+        <Content Include="appsettings.Development.json" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <TransformOnBuild>true</TransformOnBuild>
         </Content>

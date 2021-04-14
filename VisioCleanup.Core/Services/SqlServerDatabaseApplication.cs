@@ -71,33 +71,29 @@ namespace VisioCleanup.Core.Services
         public IEnumerable<DiagramShape> RetrieveRecords(string sqlCommand)
         {
             using SqlCommand command = new(sqlCommand, this.databaseConnection);
-            using SqlDataReader reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
 
             Dictionary<string, DiagramShape> allShapes = new();
 
             // map columns
-            SortedList<int, Dictionary<FieldType, int>> columnMapping = this.MapColumns(reader.GetColumnSchema());
+            var columnMapping = this.MapColumns(reader.GetColumnSchema());
 
             while (reader.Read())
             {
-                Dictionary<int, Dictionary<FieldType, string?>> rowResults = new();
+                Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
                 foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
                 {
-                    Dictionary<FieldType, string?> values = new();
+                    Dictionary<FieldType, string> values = new();
 
                     foreach (var (key, value) in columnMapping[cellIndex])
                     {
-                        if (!reader.IsDBNull(value))
-                        {
-                            values[key] = reader.GetFieldValue<string>(value);
-                        }
+                        values[key] = !reader.IsDBNull(value) ? reader.GetFieldValue<string>(value) : string.Empty;
                     }
 
                     rowResults.Add(cellIndex, values);
                 }
 
-                var previousShape = Enumerable.Range(1, columnMapping.Count)
-                    .Aggregate<int, DiagramShape?>(null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
+                Enumerable.Range(1, columnMapping.Count).Aggregate<int, DiagramShape?>(null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
             }
 
             Collection<DiagramShape> shapes = new();
@@ -109,13 +105,13 @@ namespace VisioCleanup.Core.Services
             return shapes;
         }
 
-        private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string?> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
+        private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
         {
-            var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : null;
+            var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : string.Empty;
             var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
-            var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : null;
+            var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : string.Empty;
 
-            if (shapeText is null)
+            if (string.IsNullOrEmpty(shapeText))
             {
                 return previousShape;
             }
@@ -143,7 +139,7 @@ namespace VisioCleanup.Core.Services
             return shape;
         }
 
-        private SortedList<int, Dictionary<FieldType, int>> MapColumns(ReadOnlyCollection<DbColumn> columnSchema)
+        private SortedList<int, Dictionary<FieldType, int>> MapColumns(IReadOnlyCollection<DbColumn> columnSchema)
         {
             SortedList<int, Dictionary<FieldType, int>> columnMapping = new();
             var level = 0;

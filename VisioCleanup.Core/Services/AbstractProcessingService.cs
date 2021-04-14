@@ -23,7 +23,7 @@ namespace VisioCleanup.Core.Services
     public abstract class AbstractProcessingService : IProcessingService
     {
         /// <summary>Store for converted app config right measure.</summary>
-        protected int ConvertedAppConfigRight;
+        protected int convertedAppConfigRight;
 
         /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
         /// <param name="logger">Logger.</param>
@@ -39,6 +39,12 @@ namespace VisioCleanup.Core.Services
             DiagramShape.AppConfig = this.AppConfig;
         }
 
+        /// <inheritdoc />
+        public Collection<DiagramShape> AllShapes { get; protected set; } = new();
+
+        /// <inheritdoc />
+        public DiagramShape? MasterShape { get; protected set; }
+
         /// <summary>Gets application configuration.</summary>
         protected AppConfig AppConfig { get; }
 
@@ -47,12 +53,6 @@ namespace VisioCleanup.Core.Services
 
         /// <summary>Gets visio processing engine.</summary>
         protected IVisioApplication VisioApplication { get; }
-
-        /// <inheritdoc />
-        public Collection<DiagramShape> AllShapes { get; protected set; } = new();
-
-        /// <inheritdoc />
-        public DiagramShape? MasterShape { get; protected set; }
 
         /// <inheritdoc />
         public Task LayoutDataSet()
@@ -69,7 +69,7 @@ namespace VisioCleanup.Core.Services
 
                         do
                         {
-                            this.Logger.LogInformation("Correcting diagram: pass {Count}.", counter++);
+                            this.Logger.LogInformation("Correcting diagram: pass {Count}", counter++);
                         }
                         while (this.MasterShape.CorrectDiagram());
                     });
@@ -90,7 +90,7 @@ namespace VisioCleanup.Core.Services
                         {
                             this.VisioApplication.Open();
                             this.VisioApplication.VisualChanges(false);
-                            this.Logger.LogInformation("Modelling changes to visio.");
+                            this.Logger.LogInformation("Modelling changes to visio");
 
                             // update each shape
                             foreach (var diagramShape in this.AllShapes)
@@ -110,23 +110,19 @@ namespace VisioCleanup.Core.Services
                                         this.Logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
                                         break;
                                     default:
-                                        throw new InvalidOperationException("ShapeType not matched.");
+                                        throw new InvalidOperationException("ShapeType not matched");
                                 }
                             }
-
-                            this.Logger.LogInformation("Executing changes to visio.");
-                            this.VisioApplication.CompleteDrops();
-                            this.VisioApplication.CompleteUpdates();
 
                             // iterate down the tree setting shapes to the foreground
                             // this.VisioApplication.SetForeground(this.MasterShape);
                         }
                         finally
                         {
-                            this.Logger.LogInformation("Recalculating diagrams.");
+                            this.Logger.LogInformation("Recalculating diagrams");
                             this.VisioApplication.VisualChanges(true);
                             this.VisioApplication.Close();
-                            this.Logger.LogInformation("Visio closed.");
+                            this.Logger.LogInformation("Visio closed");
                         }
                     });
         }
@@ -136,7 +132,7 @@ namespace VisioCleanup.Core.Services
         /// <param name="maxRight">Maximum right side.</param>
         protected void SortChildren(DiagramShape diagramShape, int maxRight)
         {
-            var internalMaxRight = maxRight - this.ConvertedAppConfigRight;
+            var internalMaxRight = maxRight - this.convertedAppConfigRight;
 
             var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
                 shape =>
@@ -147,7 +143,8 @@ namespace VisioCleanup.Core.Services
                         }
 
                         return shape.SortValue;
-                    });
+                    }).ThenBy(shape => shape.ShapeText);
+
             var children = orderedChildren.ToList();
 
             foreach (var child in children.Where(child => child.Children.Count > 0))
@@ -160,9 +157,10 @@ namespace VisioCleanup.Core.Services
             {
                 maxLine = Math.Round(Math.Sqrt(children.Count), MidpointRounding.ToPositiveInfinity);
                 var drawLines = children.Count / maxLine;
-                if (drawLines > 5)
+                var appConfigMaxBoxLines = this.AppConfig.MaxBoxLines ?? 5d;
+                if (drawLines > appConfigMaxBoxLines)
                 {
-                    maxLine = Math.Round(children.Count / 5d, MidpointRounding.ToPositiveInfinity);
+                    maxLine = Math.Round(children.Count / appConfigMaxBoxLines, MidpointRounding.ToPositiveInfinity);
                 }
             }
             else
@@ -220,7 +218,7 @@ namespace VisioCleanup.Core.Services
                         {
                             if (childShape.ChildrenDepth < currentMaxDepth)
                             {
-                                this.SortChildrenByLines(childShape, currentMaxDepth);
+                                SortChildrenByLines(childShape, currentMaxDepth);
                             }
                         }
 
@@ -263,7 +261,7 @@ namespace VisioCleanup.Core.Services
             diagramShape.CorrectDiagram();
         }
 
-        private void SortChildrenByLines(DiagramShape diagramShape, int drawLines)
+        private static void SortChildrenByLines(DiagramShape diagramShape, int drawLines)
         {
             var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
                 shape =>
@@ -274,7 +272,7 @@ namespace VisioCleanup.Core.Services
                         }
 
                         return shape.SortValue;
-                    });
+                    }).ThenBy(shape => shape.ShapeText);
             var children = orderedChildren.ToList();
 
             // clear existing relationships.

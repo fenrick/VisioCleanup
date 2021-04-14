@@ -30,11 +30,7 @@ namespace VisioCleanup.Core.Services
 
         private readonly ConcurrentDictionary<int, Shape> shapeCache = new();
 
-        private readonly List<Dictionary<string, object>> shapeUpdates = new();
-
         private readonly ConcurrentDictionary<string, Master?> stencilCache = new();
-
-        private readonly List<Dictionary<string, object>> toDrop = new();
 
         private Page? activePage;
 
@@ -52,127 +48,28 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void Close()
         {
-            this.logger.LogDebug("Clearning shape cache.");
+            this.logger.LogDebug("Clearning shape cache");
             this.shapeCache.Clear();
 
-            this.logger.LogDebug("Clearing stencil cache.");
+            this.logger.LogDebug("Clearing stencil cache");
             this.stencilCache.Clear();
 
-            this.logger.LogDebug("Releasing active page.");
+            this.logger.LogDebug("Releasing active page");
             this.activePage = null;
 
-            this.logger.LogDebug("Releasing visio application.");
+            this.logger.LogDebug("Releasing visio application");
             this.visioApplication = null;
 
-            this.logger.LogDebug("Cleaning up.");
+            this.logger.LogDebug("Cleaning up");
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
             GC.WaitForPendingFinalizers();
-        }
-
-        /// <inheritdoc />
-        public void CompleteDrops()
-        {
-            if (this.visioApplication is null)
-            {
-                throw new InvalidOperationException("System not initialised.");
-            }
-
-            var dropCount = this.toDrop.Count;
-            if (dropCount == 0)
-            {
-                return;
-            }
-
-            var objectsToInstance = new object[dropCount];
-            var xyArray = new double[dropCount * 2];
-            for (var i = 0; i < dropCount; i++)
-            {
-                var dropDetails = this.toDrop[i];
-                objectsToInstance[i] = dropDetails["master"];
-                xyArray[i * 2] = (double)dropDetails["x"];
-                xyArray[(i * 2) + 1] = (double)dropDetails["y"];
-            }
-
-            this.visioApplication.ActivePage.DropMany(objectsToInstance, xyArray, out var idArray);
-
-            if (idArray is null)
-            {
-                throw new InvalidOperationException("Unable to drop shapes.");
-            }
-
-            this.LoadShapeCache();
-
-            for (var i = 0; i < dropCount; i++)
-            {
-                var dropDetails = this.toDrop[i];
-                if (dropDetails["shape"] is not DiagramShape shape)
-                {
-                    throw new InvalidOperationException("Unable to load shape.");
-                }
-
-                var shapeId = (ushort)(short)idArray.GetValue(i)!;
-
-                shape.VisioId = shapeId;
-                shape.ShapeType = ShapeType.Existing;
-
-                var visioShape = this.GetShape(shape.VisioId);
-                visioShape.Text = shape.ShapeText;
-
-                this.UpdateShape(shape);
-            }
-
-            this.toDrop.Clear();
-        }
-
-        /// <inheritdoc />
-        public void CompleteUpdates()
-        {
-            if (this.visioApplication is null)
-            {
-                throw new InvalidOperationException("System not initialised.");
-            }
-
-            var shapeUpdatesCount = this.shapeUpdates.Count;
-            if (shapeUpdatesCount == 0)
-            {
-                this.logger.LogDebug("No changes found.");
-                return;
-            }
-
-            this.logger.LogDebug("Updating shape.");
-
-            // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
-            var srcStream = new short[shapeUpdatesCount * 4];
-            var unitsArray = new object[shapeUpdatesCount];
-            var resultsArray = new object[shapeUpdatesCount];
-            for (var i = 0; i < shapeUpdatesCount; i++)
-            {
-                var item = this.shapeUpdates[i];
-                srcStream[(i * 4) + 0] = Convert.ToInt16(item["sheetID"]);
-                srcStream[(i * 4) + 1] = Convert.ToInt16(item["section"]);
-                srcStream[(i * 4) + 2] = Convert.ToInt16(item["row"]);
-                srcStream[(i * 4) + 3] = Convert.ToInt16(item["cell"]);
-                resultsArray[i] = item["result"];
-                unitsArray[i] = item["unit"];
-            }
-
-            // EXECUTE THE REQUEST
-            const short Flags = 0;
-            var result = this.visioApplication.ActivePage.SetResults(srcStream, unitsArray, resultsArray, Flags);
-
-            this.shapeUpdates.Clear();
         }
 
         /// <inheritdoc />
         public void CreateShape(DiagramShape diagramShape)
         {
-            if (this.visioApplication is null)
-            {
-                throw new InvalidOperationException("System not initialised.");
-            }
-
             var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
             var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
             var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
@@ -180,7 +77,7 @@ namespace VisioCleanup.Core.Services
 
             var shapeMaster = "Rectangle";
 
-            if (diagramShape.Master is not null)
+            if (!string.IsNullOrEmpty(diagramShape.Master))
             {
                 shapeMaster = diagramShape.Master;
             }
@@ -193,7 +90,11 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("Unable to find matching stencil.");
             }
 
-            // this.toDrop.Add(new Dictionary<string, object> { { "shape", diagramShape }, { "master", master }, { "x", newPinX }, { "y", newPinY } });
+            if (this.visioApplication is null)
+            {
+                throw new InvalidOperationException("System not initialised.");
+            }
+
             var shape = this.visioApplication.ActivePage.Drop(master, newPinX, newPinY);
 
             diagramShape.VisioId = shape.ID;
@@ -256,7 +157,7 @@ namespace VisioCleanup.Core.Services
         {
             try
             {
-                this.logger.LogDebug("Opening connection to visio.");
+                this.logger.LogDebug("Opening connection to visio");
                 this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application ?? throw new InvalidOperationException();
                 this.activePage = this.visioApplication.ActivePage;
 
@@ -281,8 +182,9 @@ namespace VisioCleanup.Core.Services
 
             // get selection.
             var selection = this.visioApplication.ActiveWindow.Selection;
+            this.LoadShapeCache();
 
-            this.logger.LogDebug("Found {Count} selected shapes.", selection.Count);
+            this.logger.LogDebug("Found {Count} selected shapes", selection.Count);
             foreach (var selected in selection.Cast<Shape>().Where(selected => selected is not null))
             {
                 this.logger.LogDebug("Processing shape: {ShapeID} - {ShapeText}", selected.ID, selected.Text);
@@ -290,7 +192,7 @@ namespace VisioCleanup.Core.Services
                 var sheetId = selected.ID;
                 if (allShapes.ContainsKey(sheetId))
                 {
-                    this.logger.LogDebug("Shape already processed.");
+                    this.logger.LogDebug("Shape already processed");
                     continue;
                 }
 
@@ -304,11 +206,11 @@ namespace VisioCleanup.Core.Services
                                                     TopSide = this.CalculateTopSide(sheetId),
                                                     BaseSide = this.CalculateBaseSide(sheetId),
                                                 };
-                this.logger.LogDebug("Adding shape to collection.");
+                this.logger.LogDebug("Adding shape to collection");
                 allShapes.Add(sheetId, diagramShape);
             }
 
-            this.logger.LogDebug("Processed a total of {Count} shapes.", allShapes.Count);
+            this.logger.LogDebug("Processed a total of {Count} shapes", allShapes.Count);
 
             // generate final collection
             Collection<DiagramShape> shapes = new();
@@ -399,8 +301,8 @@ namespace VisioCleanup.Core.Services
                               };
 
             // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
-            var srcStreamFields = 3;
-            var srcStream = new short[updates.Count * srcStreamFields];
+            const int SrcStreamFields = 3;
+            var srcStream = new short[updates.Count * SrcStreamFields];
             var unitsArray = new object[updates.Count];
             var resultsArray = new object[updates.Count];
             for (var i = 0; i < updates.Count; i++)
@@ -409,16 +311,16 @@ namespace VisioCleanup.Core.Services
                 var srcStreamTracker = 0;
 
                 // srcStream[(i * srcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["sheetID"]);
-                srcStream[(i * srcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["section"]);
-                srcStream[(i * srcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["row"]);
-                srcStream[(i * srcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["cell"]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["section"]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["row"]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["cell"]);
                 resultsArray[i] = item["result"];
                 unitsArray[i] = item["unit"];
             }
 
             // EXECUTE THE REQUEST
             const short Flags = 0;
-            var result = this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, Flags);
+            this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, Flags);
         }
 
         /// <exception cref="System.InvalidOperationException">System not initialised.</exception>
@@ -528,7 +430,7 @@ namespace VisioCleanup.Core.Services
                 documentStencil.GetNames(out var masterNames);
                 if (masterNames is not null && (masterNames.Length > 0))
                 {
-                    var result = (masterNames as string[])!.Contains(key);
+                    var result = (masterNames as string[]).Contains(key);
                     if (result)
                     {
                         return documentStencil[key];
@@ -556,7 +458,7 @@ namespace VisioCleanup.Core.Services
                     continue;
                 }
 
-                var result = (masterNames as string[])!.Contains(key);
+                var result = (masterNames as string[]).Contains(key);
                 if (result)
                 {
                     return stencil.Masters[key];

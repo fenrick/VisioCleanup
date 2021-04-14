@@ -22,7 +22,6 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models.Config;
 
     using Marshal = VisioCleanup.Core.Marshal;
-    using Range = Microsoft.Office.Interop.Excel.Range;
 
     /// <inheritdoc />
     internal class ExcelApplication : IExcelApplication
@@ -45,10 +44,10 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void Close()
         {
-            this.logger.LogDebug("Releasing excel application.");
+            this.logger.LogDebug("Releasing excel application");
             this.excelApplication = null;
 
-            this.logger.LogDebug("Cleaning up.");
+            this.logger.LogDebug("Cleaning up");
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
@@ -58,7 +57,7 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void Open()
         {
-            this.logger.LogDebug("Opening connection to excel.");
+            this.logger.LogDebug("Opening connection to excel");
             try
             {
                 this.excelApplication = Marshal.GetActiveObject("Excel.Application") as Application ?? throw new InvalidOperationException("Excel must be running.");
@@ -87,29 +86,28 @@ namespace VisioCleanup.Core.Services
             Dictionary<string, DiagramShape> allShapes = new();
 
             // find headers
-            SortedList<int, Dictionary<FieldType, int>> columnMapping = this.FindHeaders(dataTable);
+            var columnMapping = this.FindHeaders(dataTable);
 
             // process rows
-            Range rows = dataTable.DataBodyRange.Rows;
+            var rows = dataTable.DataBodyRange.Rows;
             this.logger.LogDebug("getting values");
             object[,] data = rows.Value;
             foreach (var rowNumber in Enumerable.Range(1, data.GetLength(0)))
             {
-                Dictionary<int, Dictionary<FieldType, string?>> rowResults = new();
+                Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
                 foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
                 {
-                    Dictionary<FieldType, string?> values = new();
+                    Dictionary<FieldType, string> values = new();
 
                     foreach (var (key, value) in columnMapping[cellIndex])
                     {
-                        values[key] = data.GetValue(rowNumber, value)?.ToString();
+                        values[key] = data.GetValue(rowNumber, value)?.ToString() ?? string.Empty;
                     }
 
                     rowResults.Add(cellIndex, values);
                 }
 
-                var previousShape = Enumerable.Range(1, columnMapping.Count)
-                    .Aggregate<int, DiagramShape?>(null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
+                Enumerable.Range(1, columnMapping.Count).Aggregate<int, DiagramShape?>(null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
             }
 
             Collection<DiagramShape> shapes = new();
@@ -121,13 +119,13 @@ namespace VisioCleanup.Core.Services
             return shapes;
         }
 
-        private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string?> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
+        private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
         {
-            var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : null;
+            var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : string.Empty;
             var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
-            var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : null;
+            var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : string.Empty;
 
-            if (shapeText is null)
+            if (string.IsNullOrEmpty(shapeText))
             {
                 return previousShape;
             }

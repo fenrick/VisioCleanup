@@ -50,7 +50,7 @@ namespace VisioCleanup.Core.Services
                             List<DiagramShape> shapes = new();
 
                             // master shape
-                            this.Logger.LogInformation("Create a fake parent shape.");
+                            this.Logger.LogInformation("Create a fake parent shape");
                             this.MasterShape = new DiagramShape(0)
                                                    {
                                                        ShapeText = "FAKE MASTER",
@@ -61,10 +61,10 @@ namespace VisioCleanup.Core.Services
                             shapes.Add(this.MasterShape);
 
                             var maxRight = this.VisioApplication.GetPageRightSide() - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
-                            this.ConvertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+                            this.convertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
 
                             // retrieve records
-                            this.Logger.LogInformation("Loading excel data.");
+                            this.Logger.LogInformation("Loading excel data");
                             shapes.AddRange(this.excelApplication.RetrieveRecords());
 
                             if (shapes.Count == 1)
@@ -74,22 +74,22 @@ namespace VisioCleanup.Core.Services
 
                             this.AllShapes = new Collection<DiagramShape>(shapes);
 
-                            this.Logger.LogInformation("Assigning fake parent.");
+                            this.Logger.LogInformation("Assigning fake parent");
                             foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
                             {
                                 this.MasterShape.AddChildShape(shape);
                             }
 
                             // need to set children relationships.
-                            this.Logger.LogInformation("Sorting shapes into lines.");
+                            this.Logger.LogInformation("Sorting shapes into lines");
                             this.SortChildren(this.MasterShape, maxRight);
                         }
                         finally
                         {
-                            this.Logger.LogInformation("Closing connection to visio.");
+                            this.Logger.LogInformation("Closing connection to visio");
                             this.VisioApplication.Close();
 
-                            this.Logger.LogInformation("Closing connection to excel.");
+                            this.Logger.LogInformation("Closing connection to excel");
                             this.excelApplication.Close();
                         }
                     });

@@ -92,6 +92,14 @@ namespace VisioCleanup.Core.Models.Config
             set;
         }
 
+        /// <summary>Gets or sets the max number of box lines.</summary>
+        public double? MaxBoxLines
+        {
+            get;
+            [UsedImplicitly]
+            set;
+        }
+
         /// <summary>Gets or sets the right.</summary>
         /// <value>The right.</value>
         public double Right
