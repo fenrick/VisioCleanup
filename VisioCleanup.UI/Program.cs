@@ -10,8 +10,6 @@ namespace VisioCleanup.UI
     using System;
     using System.Runtime.InteropServices;
 
-    using WindowsFormsGenericHost;
-
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
 
@@ -19,6 +17,8 @@ namespace VisioCleanup.UI
 
     using VisioCleanup.Core;
     using VisioCleanup.UI.Forms;
+
+    using WindowsFormsGenericHost;
 
     /// <summary>Main execution point.</summary>
     [Guid("E259A812-31F7-4456-BD56-EEDA53E99D7E")]
