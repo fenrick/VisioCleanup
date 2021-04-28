@@ -320,7 +320,14 @@ namespace VisioCleanup.Core.Services
 
             // EXECUTE THE REQUEST
             const short Flags = 0;
-            this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, Flags);
+            try
+            {
+                this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, Flags);
+            }
+            catch (COMException e)
+            {
+                this.logger.LogError(e, "Error occured during updating {Shape}", diagramShape);
+            }
         }
 
         /// <exception cref="System.InvalidOperationException">System not initialised.</exception>
