@@ -378,7 +378,7 @@ namespace VisioCleanup.Core.Models
                 child.Below = null;
             }
 
-            const double Tolerance = 5000;
+            double Tolerance = ConvertMeasurement(AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) / 2;
 
             var lines = children.OrderBy(shape => shape.LeftSide).Select(shape => shape.LeftSide);
             foreach (var line in lines.Distinct())
