@@ -71,6 +71,11 @@ namespace VisioCleanup.Core.Services
                         do
                         {
                             this.Logger.LogInformation("Correcting diagram: pass {Count}", counter++);
+
+                            if (counter > 10)
+                            {
+                                break;
+                            }
                         }
                         while (this.MasterShape.CorrectDiagram());
                     });
