@@ -11,15 +11,17 @@
   ],
   "settings": {
     "documentationRules": {
-      "companyName": "Jolyon Suthers",
-      "copyrightText":
-        "Copyright (c) {companyName}. All rights reserved.\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information.",
-      "variables": {
-        "licenseName": "MIT",
-        "licenseFile": "LICENSE"
-      },
-      "headerDecoration": "-----------------------------------------------------------------------",
-      "documentationCulture": "en-GB"
+        "companyName": "Jolyon Suthers",
+        "copyrightText": "Copyright (c) {companyName}. All rights reserved.\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information.",
+        "variables": {
+            "licenseName": "MIT",
+            "licenseFile": "LICENSE"
+        },
+        "headerDecoration": "-----------------------------------------------------------------------",
+        "documentationCulture": "en-GB"
+    },
+    "layoutRules": {
+        "newlineAtEndOfFile": "require"
     }
   }
 }
