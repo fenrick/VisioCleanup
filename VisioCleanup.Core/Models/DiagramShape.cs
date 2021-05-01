@@ -339,12 +339,9 @@ namespace VisioCleanup.Core.Models
             var newBaseSide = this.TopSide - height;
             var newRightSide = this.LeftSide + width;
 
-            if (this.RightSide == newRightSide)
+            if (this.RightSide == newRightSide && this.BaseSide == newBaseSide)
             {
-                if (this.BaseSide == newBaseSide)
-                {
-                    return false;
-                }
+                return false;
             }
 
             this.logger.Debug("Resizing: {Shape}", this);
