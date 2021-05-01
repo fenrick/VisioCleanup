@@ -486,7 +486,8 @@ namespace VisioCleanup.Core.Models
                     this.MoveHorizontal(leftMovement);
                     result = true;
                 }
-                else if (leftMovement != 0)
+
+                if (leftMovement != 0)
                 {
                     this.logger.Debug("Aligning {Shape} to {Parent}", this, this.ParentShape);
                     this.MoveVertical(topMovement);
