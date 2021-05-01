@@ -20,14 +20,12 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
 
-    /// <inheritdoc />
     /// <summary>The excel service.</summary>
     public class ExcelService : AbstractProcessingService, IExcelService
     {
         private readonly IExcelApplication excelApplication;
 
-        /// <inheritdoc />
-        /// <summary>Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.ExcelService" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="ExcelService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="excelApplication">Excel application handler.</param>

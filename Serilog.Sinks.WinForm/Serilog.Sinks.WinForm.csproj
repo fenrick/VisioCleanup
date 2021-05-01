@@ -18,10 +18,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <None Remove="SonarLint.xml" />
         <None Remove="stylecop.json" />
     </ItemGroup>
 
     <ItemGroup>
+        <AdditionalFiles Include="SonarLint.xml" />
         <AdditionalFiles Include="stylecop.json" />
     </ItemGroup>
 

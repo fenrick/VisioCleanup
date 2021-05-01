@@ -58,11 +58,6 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public Task LayoutDataSet()
         {
-            if (this.MasterShape is null)
-            {
-                throw new ArgumentNullException(nameof(this.MasterShape));
-            }
-
             return Task.Run(
                 () =>
                     {
@@ -77,18 +72,13 @@ namespace VisioCleanup.Core.Services
                                 break;
                             }
                         }
-                        while (this.MasterShape.CorrectDiagram());
+                        while (this.MasterShape!.CorrectDiagram());
                     });
         }
 
         /// <inheritdoc />
         public Task UpdateVisio()
         {
-            if (this.MasterShape is null)
-            {
-                throw new ArgumentNullException(nameof(this.MasterShape));
-            }
-
             return Task.Run(
                 () =>
                     {
@@ -119,9 +109,6 @@ namespace VisioCleanup.Core.Services
                                         throw new InvalidOperationException("ShapeType not matched");
                                 }
                             }
-
-                            // iterate down the tree setting shapes to the foreground
-                            // this.VisioApplication.SetForeground(this.MasterShape);
                         }
                         finally
                         {
@@ -220,12 +207,9 @@ namespace VisioCleanup.Core.Services
 
                         diagramShape.CorrectDiagram();
 
-                        if (childShape.Children.Count > 0)
+                        if (childShape.Children.Count > 0 && childShape.ChildrenDepth < currentMaxDepth)
                         {
-                            if (childShape.ChildrenDepth < currentMaxDepth)
-                            {
-                                SortChildrenByLines(childShape, currentMaxDepth);
-                            }
+                            SortChildrenByLines(childShape, currentMaxDepth);
                         }
 
                         continue;

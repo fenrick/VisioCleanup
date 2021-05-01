@@ -23,10 +23,12 @@
     <ItemGroup>
         <None Remove="appsettings.Development.json" />
         <None Remove="appsettings.json" />
+        <None Remove="SonarLint.xml" />
         <None Remove="stylecop.json" />
     </ItemGroup>
 
     <ItemGroup>
+      <AdditionalFiles Include="SonarLint.xml" />
       <AdditionalFiles Include="stylecop.json" />
     </ItemGroup>
 

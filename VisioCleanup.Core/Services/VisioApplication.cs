@@ -304,10 +304,11 @@ namespace VisioCleanup.Core.Services
                 var item = updates[i];
                 var srcStreamTracker = 0;
 
-                // srcStream[(i * srcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["sheetID"]);
-                srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["section"]);
-                srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["row"]);
-                srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["cell"]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["section"]);
+                srcStreamTracker++;
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["row"]);
+                srcStreamTracker++;
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["cell"]);
                 resultsArray[i] = item["result"];
                 unitsArray[i] = item["unit"];
             }
@@ -427,15 +428,13 @@ namespace VisioCleanup.Core.Services
             }
 
             var documentStencil = this.visioApplication.ActiveDocument.Masters;
+            documentStencil.GetNames(out var masterNames);
+            if (masterNames is string[] strings)
             {
-                documentStencil.GetNames(out var masterNames);
-                if (masterNames?.Length > 0)
+                var result = strings.Contains(key);
+                if (result)
                 {
-                    var result = (masterNames as string[]).Contains(key);
-                    if (result)
-                    {
-                        return documentStencil[key];
-                    }
+                    return documentStencil[key];
                 }
             }
 
@@ -447,13 +446,13 @@ namespace VisioCleanup.Core.Services
 
             foreach (var stencil in from object? stencilName in stencilNames where stencilName?.Equals(string.Empty) == false select this.visioApplication.Documents[stencilName])
             {
-                stencil.Masters.GetNames(out var masterNames);
-                if (masterNames is null || (masterNames.Length <= 0))
+                stencil.Masters.GetNames(out var names);
+                if (names is not string[] nameArray)
                 {
                     continue;
                 }
 
-                var result = (masterNames as string[]).Contains(key);
+                var result = nameArray.Contains(key);
                 if (result)
                 {
                     return stencil.Masters[key];
