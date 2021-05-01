@@ -22,6 +22,28 @@ namespace Serilog
 
         /// <summary>Writes log events to a <see cref="System.Windows.Forms.TextBox" /> .</summary>
         /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration WinForm(
+            this LoggerSinkConfiguration loggerSinkConfiguration) =>
+            WinForm(loggerSinkConfiguration, DefaultOutputTemplate);
+
+        /// <summary>Writes log events to a <see cref="System.Windows.Forms.TextBox" /> .</summary>
+        /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
+        /// <param name="outputTemplate">
+        /// A message template describing the format used to write to the sink. The default is
+        /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration WinForm(
+            this LoggerSinkConfiguration loggerSinkConfiguration,
+            string outputTemplate) =>
+            WinForm(loggerSinkConfiguration, outputTemplate, LevelAlias.Minimum, null, null);
+
+        /// <summary>Writes log events to a <see cref="System.Windows.Forms.TextBox" /> .</summary>
+        /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
         /// <param name="outputTemplate">
         /// A message template describing the format used to write to the sink. The default is
         /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
@@ -37,10 +59,10 @@ namespace Serilog
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration WinForm(
             this LoggerSinkConfiguration loggerSinkConfiguration,
-            string outputTemplate = DefaultOutputTemplate,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            IFormatProvider? formatProvider = null,
-            LoggingLevelSwitch? levelSwitch = null)
+            string outputTemplate,
+            LogEventLevel restrictedToMinimumLevel,
+            IFormatProvider? formatProvider,
+            LoggingLevelSwitch? levelSwitch)
         {
             if (loggerSinkConfiguration is null)
             {
