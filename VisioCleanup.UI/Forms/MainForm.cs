@@ -81,22 +81,10 @@ namespace VisioCleanup.UI.Forms
 
             this.selectSQLStatementComboBox.SelectedIndex = 0;
 
-            if (this.appConfig.DatabaseQueries is null)
-            {
-                return;
-            }
-
-            foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => databaseQuery["Name"] == this.selectSQLStatementComboBox.Text))
-            {
-                this.sqlStatementTextBox.Text = databaseQuery["Query"];
-                this.sqlStatementTextBox.ReadOnly = this.sqlStatementTextBox.Text.Length > 0;
-            }
+            this.SelectSqlStatementComboBoxSelectionChangeCommitted(null, null);
         }
 
-        /// <summary>The layout data set_ click.</summary>
-        /// <param name="sender">The <paramref name="sender" /> .</param>
-        /// <param name="eventArgs">The event args.</param>
-        private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
+        private bool CheckProcessingService()
         {
             if (this.processingService is null)
             {
@@ -109,6 +97,19 @@ namespace VisioCleanup.UI.Forms
                                            MessageBoxIcon.Error,
                                            MessageBoxDefaultButton.Button1,
                                            MessageBoxOptions.ServiceNotification)));
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>The layout data set_ click.</summary>
+        /// <param name="sender">The <paramref name="sender" /> .</param>
+        /// <param name="eventArgs">The event args.</param>
+        private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
+        {
+            if (this.CheckProcessingService())
+            {
                 return;
             }
 
@@ -357,17 +358,8 @@ namespace VisioCleanup.UI.Forms
         /// <param name="e">The DPI change details.</param>
         private async void UpdateVisioDrawing_Click(object sender, EventArgs e)
         {
-            if (this.processingService is null)
+            if (this.CheckProcessingService())
             {
-                this.logger.LogDebug("Processing Service is not defined");
-                this.Invoke(
-                    (MethodInvoker)(() => MessageBox.Show(
-                                           @"Unable to layout dataset, none is loaded.",
-                                           @"Error",
-                                           MessageBoxButtons.OK,
-                                           MessageBoxIcon.Error,
-                                           MessageBoxDefaultButton.Button1,
-                                           MessageBoxOptions.ServiceNotification)));
                 return;
             }
 
