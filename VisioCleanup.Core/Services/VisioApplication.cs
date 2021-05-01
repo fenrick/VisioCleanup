@@ -59,12 +59,6 @@ namespace VisioCleanup.Core.Services
 
             this.logger.LogDebug("Releasing visio application");
             this.visioApplication = null;
-
-            this.logger.LogDebug("Cleaning up");
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
         }
 
         /// <inheritdoc />
