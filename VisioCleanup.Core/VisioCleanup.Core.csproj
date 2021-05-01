@@ -19,11 +19,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="SonarLint.xml" />
       <None Remove="stylecop.json" />
     </ItemGroup>
 
     <ItemGroup>
       <AdditionalFiles Include="stylecop.json" />
+      <AdditionalFiles Include="SonarLink.xml"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -52,7 +54,7 @@
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0-preview1.21075.2" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0-preview2.21106.5" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-preview.3.21201.4" />
         <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
@@ -64,6 +66,10 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="SonarLint.xml" />
     </ItemGroup>
 
 </Project>
