@@ -304,9 +304,11 @@ namespace VisioCleanup.Core.Services
                 var item = updates[i];
                 var srcStreamTracker = 0;
 
-                srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["section"]);
-                srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["row"]);
-                srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["cell"]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["section"]);
+                srcStreamTracker++;
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["row"]);
+                srcStreamTracker++;
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["cell"]);
                 resultsArray[i] = item["result"];
                 unitsArray[i] = item["unit"];
             }
