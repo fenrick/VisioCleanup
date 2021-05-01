@@ -304,7 +304,6 @@ namespace VisioCleanup.Core.Services
                 var item = updates[i];
                 var srcStreamTracker = 0;
 
-                // srcStream[(i * srcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["sheetID"]);
                 srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["section"]);
                 srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["row"]);
                 srcStream[(i * SrcStreamFields) + srcStreamTracker++] = Convert.ToInt16(item["cell"]);
