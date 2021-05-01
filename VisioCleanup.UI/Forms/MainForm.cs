@@ -40,8 +40,7 @@ namespace VisioCleanup.UI.Forms
         /// <summary>The processing service.</summary>
         private IProcessingService? processingService;
 
-        /// <inheritdoc />
-        /// <summary>Initialises a new instance of the <see cref="T:VisioCleanup.UI.Forms.MainForm" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="MainForm" /> class.</summary>
         /// <param name="logger">The <paramref name="logger" /> .</param>
         /// <param name="options">The app config.</param>
         /// <param name="excelService">The excel service.</param>
