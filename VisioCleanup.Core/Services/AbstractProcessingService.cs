@@ -58,11 +58,6 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public Task LayoutDataSet()
         {
-            if (this.MasterShape is null)
-            {
-                throw new ArgumentNullException(nameof(this.MasterShape));
-            }
-
             return Task.Run(
                 () =>
                     {
@@ -77,18 +72,13 @@ namespace VisioCleanup.Core.Services
                                 break;
                             }
                         }
-                        while (this.MasterShape.CorrectDiagram());
+                        while (this.MasterShape!.CorrectDiagram());
                     });
         }
 
         /// <inheritdoc />
         public Task UpdateVisio()
         {
-            if (this.MasterShape is null)
-            {
-                throw new ArgumentNullException(nameof(this.MasterShape));
-            }
-
             return Task.Run(
                 () =>
                     {
@@ -119,9 +109,6 @@ namespace VisioCleanup.Core.Services
                                         throw new InvalidOperationException("ShapeType not matched");
                                 }
                             }
-
-                            // iterate down the tree setting shapes to the foreground
-                            // this.VisioApplication.SetForeground(this.MasterShape);
                         }
                         finally
                         {
