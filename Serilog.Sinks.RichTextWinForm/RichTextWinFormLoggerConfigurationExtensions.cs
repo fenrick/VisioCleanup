@@ -23,6 +23,66 @@ namespace Serilog
 
         /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
         /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration RichTextWinForm(
+            this LoggerSinkConfiguration loggerSinkConfiguration) =>
+            RichTextWinForm(loggerSinkConfiguration, DefaultOutputTemplate);
+
+        /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
+        /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
+        /// <param name="outputTemplate">
+        /// A message template describing the format used to write to the sink. The default is
+        /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration RichTextWinForm(
+            this LoggerSinkConfiguration loggerSinkConfiguration,
+            string outputTemplate) =>
+            RichTextWinForm(loggerSinkConfiguration, outputTemplate, RichTextThemes.Default);
+
+        /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
+        /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
+        /// <param name="outputTemplate">
+        /// A message template describing the format used to write to the sink. The default is
+        /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
+        /// </param>
+        /// <param name="theme">The richTextTheme to apply to the styled output.</param>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration RichTextWinForm(
+            this LoggerSinkConfiguration loggerSinkConfiguration,
+            string outputTemplate,
+            RichTextTheme theme) =>
+            RichTextWinForm(loggerSinkConfiguration, outputTemplate, theme, LevelAlias.Minimum);
+
+        /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
+        /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
+        /// <param name="outputTemplate">
+        /// A message template describing the format used to write to the sink. The default is
+        /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
+        /// </param>
+        /// <param name="theme">The richTextTheme to apply to the styled output.</param>
+        /// <param name="restrictedToMinimumLevel">
+        /// The minimum level for events passed through the sink. Ignored when
+        /// <paramref name="levelSwitch" /> is specified.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration RichTextWinForm(
+            this LoggerSinkConfiguration loggerSinkConfiguration,
+            string outputTemplate,
+            RichTextTheme theme,
+            LogEventLevel restrictedToMinimumLevel) =>
+            RichTextWinForm(loggerSinkConfiguration, outputTemplate, theme, restrictedToMinimumLevel, null, null);
+        
+        /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
+        /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
         /// <param name="outputTemplate">
         /// A message template describing the format used to write to the sink. The default is
         /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
@@ -39,25 +99,13 @@ namespace Serilog
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration RichTextWinForm(
             this LoggerSinkConfiguration loggerSinkConfiguration,
-            string outputTemplate = DefaultOutputTemplate,
-            RichTextTheme? theme = null,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            IFormatProvider? formatProvider = null,
-            LoggingLevelSwitch? levelSwitch = null)
+            string outputTemplate,
+            RichTextTheme theme,
+            LogEventLevel restrictedToMinimumLevel,
+            IFormatProvider? formatProvider,
+            LoggingLevelSwitch? levelSwitch)
         {
-            if (loggerSinkConfiguration is null)
-            {
-                throw new ArgumentNullException(nameof(loggerSinkConfiguration));
-            }
-
-            if (outputTemplate is null)
-            {
-                throw new ArgumentNullException(nameof(outputTemplate));
-            }
-
-            var appliedTheme = theme ?? RichTextThemes.Default;
-
-            OutputTemplateRenderer formatter = new(appliedTheme, outputTemplate, formatProvider);
+            OutputTemplateRenderer formatter = new(theme, outputTemplate, formatProvider);
 
             return loggerSinkConfiguration.Sink(new RichTextWinFormSink(formatter), restrictedToMinimumLevel, levelSwitch);
         }
