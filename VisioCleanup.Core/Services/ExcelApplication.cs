@@ -101,7 +101,11 @@ namespace VisioCleanup.Core.Services
                     rowResults.Add(cellIndex, values);
                 }
 
-                Enumerable.Range(1, columnMapping.Count).Aggregate<int, DiagramShape?>(null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
+                DiagramShape? result = null;
+                foreach (var i in Enumerable.Range(1, columnMapping.Count))
+                {
+                    result = this.CreateShape(rowResults[i], allShapes, result);
+                }
             }
 
             Collection<DiagramShape> shapes = new();
