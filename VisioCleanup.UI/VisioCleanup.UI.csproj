@@ -42,6 +42,10 @@
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.22.0.31243">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="WindowsFormsGenericHost" Version="0.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0-preview.3.21201.4" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0-preview.3.21201.4" />
