@@ -20,14 +20,12 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
 
-    /// <inheritdoc />
     /// <summary>The database service.</summary>
     public class DatabaseService : AbstractProcessingService, IDatabaseService
     {
         private readonly ISqlServerDatabaseApplication iserverDatabaseApplication;
 
-        /// <inheritdoc />
-        /// <summary>Initialises a new instance of the <see cref="T:VisioCleanup.Core.Services.DatabaseService" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="DatabaseService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="iserverDatabaseApplication">iServer Database application handler.</param>
