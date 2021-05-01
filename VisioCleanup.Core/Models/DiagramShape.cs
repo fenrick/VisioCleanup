@@ -378,7 +378,7 @@ namespace VisioCleanup.Core.Models
                 child.Below = null;
             }
 
-            double Tolerance = ConvertMeasurement(AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) / 2;
+            double tolerance = ConvertMeasurement(AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) / 2;
 
             var lines = children.OrderBy(shape => shape.LeftSide).Select(shape => shape.LeftSide);
             foreach (var line in lines.Distinct())
@@ -386,7 +386,7 @@ namespace VisioCleanup.Core.Models
                 bool AbsoluteShapeSize(DiagramShape shape)
                 {
                     var side = shape.LeftSide - line;
-                    return Math.Abs(side) < Tolerance;
+                    return Math.Abs(side) < tolerance;
                 }
 
                 var diagramShapes = children.Where(AbsoluteShapeSize);
@@ -403,7 +403,7 @@ namespace VisioCleanup.Core.Models
                             continue;
                         case not null when currentShape.BaseSide >= shape.BaseSide:
                             continue;
-                        case not null when (shape.BaseSide - currentShape.TopSide) < (Tolerance * 2):
+                        case not null when (shape.BaseSide - currentShape.TopSide) < (tolerance * 2):
                             shape.Below = currentShape;
 
                             currentShape = shape;
@@ -421,7 +421,7 @@ namespace VisioCleanup.Core.Models
                 bool AbsoluteShapeSize(DiagramShape shape)
                 {
                     var side = shape.TopSide - line;
-                    return Math.Abs(side) < Tolerance;
+                    return Math.Abs(side) < tolerance;
                 }
 
                 var diagramShapes = children.Where(AbsoluteShapeSize);
@@ -438,7 +438,7 @@ namespace VisioCleanup.Core.Models
                             continue;
                         case not null when currentShape.LeftSide >= shape.LeftSide:
                             continue;
-                        case not null when (shape.LeftSide - currentShape.RightSide) < (Tolerance * 2):
+                        case not null when (shape.LeftSide - currentShape.RightSide) < (tolerance * 2):
                             currentShape.Right = shape;
 
                             currentShape = shape;
