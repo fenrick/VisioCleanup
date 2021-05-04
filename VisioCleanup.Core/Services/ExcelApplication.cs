@@ -70,7 +70,7 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("Excel must be running.");
             }
 
-            Worksheet excelApplicationActiveSheet = this.excelApplication.ActiveSheet;
+            Worksheet excelApplicationActiveSheet = this.excelApplication.ActiveSheet as Worksheet;
             if (excelApplicationActiveSheet.ListObjects.Count == 0)
             {
                 throw new InvalidOperationException("Excel not setup correctly.");
