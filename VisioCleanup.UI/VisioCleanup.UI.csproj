@@ -34,7 +34,7 @@
     <!-- SonarLink Analyzers configuration -->
     <ItemGroup>
         <PackageReference Include="SonarAnalyzer.CSharp" Version="8.22.0.31243" PrivateAssets="all" />
-        <AdditionalFiles Include="$(SolutionDir)SonarLink.xml" Link="SonarLink.xml" />
+        <AdditionalFiles Include="$(SolutionDir)SonarLint.xml" Link="SonarLint.xml" />
     </ItemGroup>
 
     <!-- GCop Analyzers configuration -->
