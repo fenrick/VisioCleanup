@@ -23,7 +23,7 @@
 
     <!-- StyleCop Analyzers configuration -->
     <PropertyGroup>
-        <CodeAnalysisRuleSet>..\VisioCleanup.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>VisioCleanup.UI.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>
@@ -32,10 +32,10 @@
     </ItemGroup>
 
     <!-- SonarLink Analyzers configuration -->
-    <ItemGroup>
+<!--    <ItemGroup>
         <PackageReference Include="SonarAnalyzer.CSharp" Version="8.22.0.31243" PrivateAssets="all" />
         <AdditionalFiles Include="$(SolutionDir)SonarLint.xml" Link="SonarLint.xml" />
-    </ItemGroup>
+    </ItemGroup> -->
 
     <!-- GCop Analyzers configuration -->
     <ItemGroup>
@@ -68,6 +68,7 @@
     </ItemGroup>
  
     <ItemGroup>
+        <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
         <Content Include="appsettings.Development.json" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <TransformOnBuild>true</TransformOnBuild>

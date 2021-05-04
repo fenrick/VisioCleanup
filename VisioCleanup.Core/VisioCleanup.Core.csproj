@@ -20,7 +20,7 @@
 
     <!-- StyleCop Analyzers configuration -->
     <PropertyGroup>
-        <CodeAnalysisRuleSet>..\VisioCleanup.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>VisioCleanup.Core.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>
@@ -30,11 +30,15 @@
     <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
     </ItemGroup>
 
-    <!-- SonarLink Analyzers configuration -->
     <ItemGroup>
+      <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+    </ItemGroup>
+
+    <!-- SonarLink Analyzers configuration -->
+    <!--    <ItemGroup>
         <PackageReference Include="SonarAnalyzer.CSharp" Version="8.22.0.31243" PrivateAssets="all" />
         <AdditionalFiles Include="$(SolutionDir)SonarLint.xml" Link="SonarLint.xml" />
-    </ItemGroup>
+    </ItemGroup> -->
 
     <!-- GCop Analyzers configuration -->
     <ItemGroup>

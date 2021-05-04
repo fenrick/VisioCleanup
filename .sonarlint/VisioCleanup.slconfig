@@ -1,0 +1,15 @@
+{
+  "ServerUri": "https://sonarcloud.io/",
+  "Organization": {
+    "Key": "fenrick",
+    "Name": "Jolyon Suthers"
+  },
+  "ProjectKey": "fenrick_VisioCleanup",
+  "ProjectName": "VisioCleanup",
+  "Profiles": {
+    "CSharp": {
+      "ProfileKey": "AXk3aZyzOV_jRKJJNADN",
+      "ProfileTimestamp": "2021-05-04T12:49:59Z"
+    }
+  }
+}
