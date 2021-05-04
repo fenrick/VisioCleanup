@@ -48,7 +48,7 @@ dotnet_style_qualification_for_field = true:suggestion
 dotnet_style_qualification_for_method = true:suggestion
 dotnet_style_qualification_for_property = true:suggestion
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
-file_header_template = -----------------------------------------------------------------------\n<copyright file="{fileName}" company="$USER_NAME$">\nCopyright (c) $USER_NAME$. All rights reserved.\nLicensed under the MIT license. See LICENSE file in the project root for full license information.\n</copyright>\n-----------------------------------------------------------------------
+file_header_template = -----------------------------------------------------------------------\n<copyright file="{fileName}" company="Jolyon Suthers">\nCopyright (c) Jolyon Suthers. All rights reserved.\nLicensed under the MIT license. See LICENSE file in the project root for full license information.\n</copyright>\n-----------------------------------------------------------------------
 
 # ReSharper properties
 resharper_align_linq_query = true

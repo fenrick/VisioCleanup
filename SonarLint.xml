@@ -1,4 +1,5 @@
-﻿<AnalysisInput>
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<AnalysisInput>
     <Settings>
         <Setting>
             <Key>sonar.cs.ignoreHeaderComments</Key>
@@ -12,8 +13,7 @@
                 <Parameter>
                     <Key>headerFormat</Key>
                     <Value>
-                        <![CDATA[// (-*)\s// <copyright file="[a-z,A-Z,0-9]*.cs" company="([a-z,A-Z, ,]*)">\s// Copyright \(c\) \2. All rights reserved.\s// Licensed under the MIT license. See LICENSE file in the project root for full license information.\s// </copyright>\s// \1\s
-]]>
+                        <![CDATA[// [-]*[[:space:]]// <copyright file="[a-z,A-Z,0-9]*.cs" company="Jolyon Suthers">[[:space:]]// Copyright \(c\) Jolyon Suthers. All rights reserved.[[:space:]]// Licensed under the MIT license. See LICENSE file in the project root for full license information.[[:space:]]// </copyright>[[:space:]]// [-]*[[:space:]]]]>
                     </Value>
                 </Parameter>
                 <Parameter>
