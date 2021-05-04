@@ -1,3 +1,28 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<AnalysisInput>
+﻿<AnalysisInput>
+    <Settings>
+        <Setting>
+            <Key>sonar.cs.ignoreHeaderComments</Key>
+            <Value>true</Value>
+        </Setting>
+    </Settings>
+    <Rules>
+        <Rule>
+            <Key>S1451</Key>
+            <Parameters>
+                <Parameter>
+                    <Key>headerFormat</Key>
+                    <Value>
+                        <![CDATA[// (-*)\s// <copyright file="[a-z,A-Z,0-9]*.cs" company="([a-z,A-Z, ,]*)">\s// Copyright \(c\) \2. All rights reserved.\s// Licensed under the MIT license. See LICENSE file in the project root for full license information.\s// </copyright>\s// \1\s
+]]>
+                    </Value>
+                </Parameter>
+                <Parameter>
+                    <Key>isRegularExpression</Key>
+                    <Value>true</Value>
+                </Parameter>
+            </Parameters>
+        </Rule>
+    </Rules>
+    <Files>
+    </Files>
 </AnalysisInput>
