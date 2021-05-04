@@ -16,7 +16,8 @@ namespace VisioCleanup.Core.Services
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
-    using Microsoft.Office.Interop.Visio;
+    using NetOffice.VisioApi;
+    using NetOffice.VisioApi.Enums;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
@@ -28,11 +29,11 @@ namespace VisioCleanup.Core.Services
     {
         private readonly ILogger<VisioApplication> logger;
 
-        private readonly ConcurrentDictionary<int, Shape> shapeCache = new();
+        private readonly ConcurrentDictionary<int, IVShape> shapeCache = new();
 
-        private readonly ConcurrentDictionary<string, Master?> stencilCache = new();
+        private readonly ConcurrentDictionary<string, IVMaster?> stencilCache = new();
 
-        private Page? activePage;
+        private IVPage? activePage;
 
         private Application? visioApplication;
 
@@ -342,8 +343,8 @@ namespace VisioCleanup.Core.Services
 
         private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
         {
-            var shapeCell = shape.CellsSRC[(short)sectionIndex, (short)rowIndex, (short)cellIndex];
-            return shapeCell.Result[VisUnitCodes.visMillimeters];
+            var shapeCell = shape.CellsSRC((short)sectionIndex, (short)rowIndex, (short)cellIndex);
+            return shapeCell.Result(VisUnitCodes.visMillimeters);
         }
 
         private int CalculateBaseSide(int visioId)
@@ -388,14 +389,14 @@ namespace VisioCleanup.Core.Services
             return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
         }
 
-        private Shape GetShape(int visioId)
+        private IVShape GetShape(int visioId)
         {
             if (this.visioApplication is null || this.activePage is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID[sheetId]);
+            return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID(sheetId));
         }
 
         private void LoadShapeCache()
@@ -420,7 +421,7 @@ namespace VisioCleanup.Core.Services
             }
         }
 
-        private Master? StencilValueFactory(string key)
+        private IVMaster? StencilValueFactory(string key)
         {
             if (this.visioApplication is null)
             {
