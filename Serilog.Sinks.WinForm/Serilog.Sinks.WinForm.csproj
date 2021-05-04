@@ -17,31 +17,35 @@
         <DocumentationFile>C:\Users\s770439\source\repos\VisioCleanup\Serilog.Sinks.WinForm\Serilog.Sinks.WinForm.xml</DocumentationFile>
     </PropertyGroup>
 
+    <!-- StyleCop Analyzers configuration -->
+    <PropertyGroup>
+        <CodeAnalysisRuleSet>..\VisioCleanup.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
+
     <ItemGroup>
-        <None Remove="SonarLint.xml" />
-        <None Remove="stylecop.json" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" PrivateAssets="all" />
+        <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
+    </ItemGroup>
+
+    <!-- SonarLink Analyzers configuration -->
+    <ItemGroup>
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.22.0.31243" PrivateAssets="all" />
+        <AdditionalFiles Include="$(SolutionDir)SonarLint.xml" Link="SonarLint.xml" />
+    </ItemGroup>
+
+    <!-- GCop Analyzers configuration -->
+    <ItemGroup>
+        <PackageReference Include="GCop.All.Common" Version="2.7.6" PrivateAssets="all" />
+    </ItemGroup>
+
+    <!-- Serilog Analyzers configuration -->
+    <ItemGroup>
+        <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
-        <AdditionalFiles Include="SonarLint.xml" />
-        <AdditionalFiles Include="stylecop.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="GCop.All.Common" Version="2.7.6">
-          <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
         <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
         <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
-        <PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.22.0.31243">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
 </Project>

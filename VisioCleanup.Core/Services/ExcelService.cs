@@ -61,7 +61,7 @@ namespace VisioCleanup.Core.Services
                             shapes.Add(this.MasterShape);
 
                             var maxRight = this.VisioApplication.GetPageRightSide() - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
-                            this.convertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+                            this.ConvertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
 
                             // retrieve records
                             this.Logger.LogInformation("Loading excel data");
