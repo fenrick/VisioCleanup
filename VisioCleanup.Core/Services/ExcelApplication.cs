@@ -15,7 +15,7 @@ namespace VisioCleanup.Core.Services
 
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using Microsoft.Office.Interop.Excel;
+    using NetOffice.ExcelApi;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
@@ -85,7 +85,7 @@ namespace VisioCleanup.Core.Services
             // process rows
             var rows = dataTable.DataBodyRange.Rows;
             this.logger.LogDebug("getting values");
-            object[,] data = rows.Value;
+            object[,] data = rows.Value as object[,];
             foreach (var rowNumber in Enumerable.Range(1, data.GetLength(0)))
             {
                 Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
@@ -155,7 +155,7 @@ namespace VisioCleanup.Core.Services
         {
             var columnMapping = new SortedList<int, Dictionary<FieldType, int>>();
             var level = 0;
-            object[,] header = dataTable.HeaderRowRange.Value;
+            object[,] header = dataTable.HeaderRowRange.Value as object[,];
             do
             {
                 var mappings = new Dictionary<FieldType, int>();
