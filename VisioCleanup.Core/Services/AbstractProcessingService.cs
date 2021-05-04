@@ -24,7 +24,7 @@ namespace VisioCleanup.Core.Services
     public abstract class AbstractProcessingService : IProcessingService
     {
         /// <summary>Store for converted app config right measure.</summary>
-        protected int convertedAppConfigRight;
+        protected int ConvertedAppConfigRight;
 
         /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
         /// <param name="logger">Logger.</param>
@@ -125,7 +125,7 @@ namespace VisioCleanup.Core.Services
         /// <param name="maxRight">Maximum right side.</param>
         protected void SortChildren(DiagramShape diagramShape, int maxRight)
         {
-            var internalMaxRight = maxRight - this.convertedAppConfigRight;
+            var internalMaxRight = maxRight - this.ConvertedAppConfigRight;
 
             var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
                 shape =>
