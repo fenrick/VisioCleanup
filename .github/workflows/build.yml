@@ -65,5 +65,5 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"fenrick_VisioCleanup" /o:"fenrick" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+          msbuild $env:Solution_Name /t:Clean,Restore,Build /p:Configuration=$env:Configuration
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
