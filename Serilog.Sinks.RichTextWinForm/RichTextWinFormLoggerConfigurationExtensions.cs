@@ -34,7 +34,6 @@ namespace Serilog
         /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
         /// </param>
         /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
-        /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration RichTextWinForm(this LoggerSinkConfiguration loggerSinkConfiguration, string outputTemplate) =>
             RichTextWinForm(loggerSinkConfiguration, outputTemplate, RichTextThemes.Default);
