@@ -440,7 +440,7 @@ namespace VisioCleanup.Core.Services
                     }
                 }
             }
-            
+
             this.visioApplication.ActiveWindow.DockedStencils(out var stencilNames);
             if (stencilNames is null)
             {
