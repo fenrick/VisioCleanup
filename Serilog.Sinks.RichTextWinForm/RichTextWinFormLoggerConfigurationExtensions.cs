@@ -58,6 +58,22 @@ namespace Serilog
         /// A message template describing the format used to write to the sink. The default is
         /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
         /// </param>
+        /// <param name="restrictedToMinimumLevel">
+        /// The minimum level for events passed through the sink. Ignored when
+        /// <paramref name="levelSwitch" /> is specified.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
+        /// <returns>Configuration object allowing method chaining.</returns>
+        public static LoggerConfiguration RichTextWinForm(this LoggerSinkConfiguration loggerSinkConfiguration, string outputTemplate, LogEventLevel restrictedToMinimumLevel) =>
+            RichTextWinForm(loggerSinkConfiguration, outputTemplate, RichTextThemes.Default, restrictedToMinimumLevel);
+
+        /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
+        /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
+        /// <param name="outputTemplate">
+        /// A message template describing the format used to write to the sink. The default is
+        /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
+        /// </param>
         /// <param name="theme">The richTextTheme to apply to the styled output.</param>
         /// <param name="restrictedToMinimumLevel">The minimum level for events passed through the sink.</param>
         /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
