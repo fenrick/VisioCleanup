@@ -8,6 +8,7 @@
 namespace Serilog.Sinks.RichTextWinForm.Formatting
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Windows.Forms;
 
@@ -75,7 +76,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
                         {
-                            output.AppendText(b.ToString());
+                            output.AppendText(b.ToString(CultureInfo.CurrentUICulture));
                         }
 
                         break;
@@ -86,7 +87,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                         using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                         {
                             output.AppendText("\'");
-                            output.AppendText(ch.ToString());
+                            output.AppendText(ch.ToString(CultureInfo.CurrentUICulture));
                             output.AppendText("\'");
                         }
 
