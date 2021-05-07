@@ -16,8 +16,7 @@ namespace VisioCleanup.Core.Services
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
-    using NetOffice.VisioApi;
-    using NetOffice.VisioApi.Enums;
+    using Microsoft.Office.Interop.Visio;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
@@ -153,7 +152,7 @@ namespace VisioCleanup.Core.Services
             try
             {
                 this.logger.LogDebug("Opening connection to visio");
-                this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application ?? throw new InvalidOperationException();
+                this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application ?? throw new InvalidOperationException("Visio must be running.");
                 this.activePage = this.visioApplication.ActivePage;
 
                 this.stencilCache.Clear();
@@ -343,8 +342,8 @@ namespace VisioCleanup.Core.Services
 
         private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
         {
-            var shapeCell = shape.CellsSRC((short)sectionIndex, (short)rowIndex, (short)cellIndex);
-            return shapeCell.Result(VisUnitCodes.visMillimeters);
+            var shapeCell = shape.CellsSRC[(short)sectionIndex, (short)rowIndex, (short)cellIndex];
+            return shapeCell.Result[VisUnitCodes.visMillimeters];
         }
 
         private int CalculateBaseSide(int visioId)
@@ -396,7 +395,7 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID(sheetId));
+            return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID[sheetId]);
         }
 
         private void LoadShapeCache()
@@ -429,13 +428,16 @@ namespace VisioCleanup.Core.Services
             }
 
             var documentStencil = this.visioApplication.ActiveDocument.Masters;
-            documentStencil.GetNames(out var masterNames);
-            if (masterNames is string[] strings)
+            if (documentStencil.Count > 0)
             {
-                var result = strings.Contains(key);
-                if (result)
+                documentStencil.GetNames(out var masterNames);
+                if (masterNames is string[] strings)
                 {
-                    return documentStencil[key];
+                    var result = strings.Contains(key);
+                    if (result)
+                    {
+                        return documentStencil[key];
+                    }
                 }
             }
 

@@ -24,8 +24,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NetOffice.Excel" Version="1.7.4.11" />
-        <PackageReference Include="NetOffice.Visio" Version="1.7.4.11" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" PrivateAssets="all" />
     <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
     </ItemGroup>
@@ -55,6 +53,21 @@
         <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0-preview2.21106.5" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-preview.3.21201.4" />
         <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Office.Interop.Excel">
+        <HintPath>$(MSBuildProgramFiles32)\Microsoft Visual Studio\Shared\Visual Studio Tools for Office\PIA\Office15\Microsoft.Office.Interop.Excel.dll</HintPath>
+        <EmbedInteropTypes>true</EmbedInteropTypes>
+        <Private>true</Private>
+        <SpecificVersion>false</SpecificVersion>
+      </Reference>
+      <Reference Include="Microsoft.Office.Interop.Visio">
+        <HintPath>$(MSBuildProgramFiles32)\Microsoft Visual Studio\Shared\Visual Studio Tools for Office\PIA\Office15\Microsoft.Office.Interop.Visio.dll</HintPath>
+        <Private>true</Private>
+        <EmbedInteropTypes>true</EmbedInteropTypes>
+        <SpecificVersion>false</SpecificVersion>
+      </Reference>
     </ItemGroup>
 
 </Project>

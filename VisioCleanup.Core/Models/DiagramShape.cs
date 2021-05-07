@@ -480,14 +480,12 @@ namespace VisioCleanup.Core.Models
                 {
                     this.logger.Debug("Aligning {Shape} to {Parent}", this, this.ParentShape);
                     this.MoveVertical(topMovement);
-                    this.MoveHorizontal(leftMovement);
                     result = true;
                 }
 
                 if (leftMovement != 0)
                 {
                     this.logger.Debug("Aligning {Shape} to {Parent}", this, this.ParentShape);
-                    this.MoveVertical(topMovement);
                     this.MoveHorizontal(leftMovement);
                     result = true;
                 }
