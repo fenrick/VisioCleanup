@@ -24,7 +24,6 @@ namespace Serilog
         /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
         /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
         /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
-        /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration RichTextWinForm(
             this LoggerSinkConfiguration loggerSinkConfiguration) =>
@@ -80,7 +79,7 @@ namespace Serilog
             RichTextTheme theme,
             LogEventLevel restrictedToMinimumLevel) =>
             RichTextWinForm(loggerSinkConfiguration, outputTemplate, theme, restrictedToMinimumLevel, null, null);
-        
+
         /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
         /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
         /// <param name="outputTemplate">
