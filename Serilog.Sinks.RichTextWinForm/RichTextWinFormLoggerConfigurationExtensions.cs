@@ -80,8 +80,10 @@ namespace Serilog
             this LoggerSinkConfiguration loggerSinkConfiguration,
             string outputTemplate,
             RichTextTheme theme,
-            LogEventLevel restrictedToMinimumLevel) =>
-            RichTextWinForm(loggerSinkConfiguration, outputTemplate, theme, restrictedToMinimumLevel, null, null);
+            LogEventLevel restrictedToMinimumLevel)
+        {
+            return RichTextWinForm(loggerSinkConfiguration, outputTemplate, theme, restrictedToMinimumLevel, null, null);
+        }
 
         /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
         /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
