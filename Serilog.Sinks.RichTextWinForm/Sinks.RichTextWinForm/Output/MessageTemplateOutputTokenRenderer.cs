@@ -32,13 +32,10 @@ namespace Serilog.Sinks.RichTextWinForm.Output
                     {
                         isLiteral = true;
                     }
-                    else if (character == 'j')
+
+                    if (character == 'j')
                     {
                         isJson = true;
-                    }
-                    else
-                    {
-                        continue;
                     }
                 }
             }
