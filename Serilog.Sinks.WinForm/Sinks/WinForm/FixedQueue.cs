@@ -40,6 +40,7 @@ namespace Serilog.Sinks.WinForm
             this.Capacity = collection.Count();
 
         /// <summary>Gets or sets capacity of queue.</summary>
+        /// <value>Capacity of queue.</value>
         public int Capacity { get; set; }
 
         /// <summary>Adds <paramref name="item" /> to the tail of the queue. Removin from head as required.</summary>
