@@ -15,7 +15,7 @@ namespace VisioCleanup.Core.Services
 
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using NetOffice.ExcelApi;
+    using Microsoft.Office.Interop.Excel;
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
