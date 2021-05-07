@@ -22,7 +22,8 @@ namespace Serilog.Sinks.RichTextWinForm.Output
 
         public MessageTemplateOutputTokenRenderer(RichTextTheme theme, PropertyToken token, IFormatProvider? formatProvider)
         {
-            bool isLiteral = false, isJson = false;
+            var isLiteral = false;
+            var isJson = false;
 
             if (token.Format != null)
             {
