@@ -14,6 +14,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
     using Serilog.Events;
     using Serilog.Formatting.Json;
+    using Serilog.Sinks.RichTextWinForm.Resources;
     using Serilog.Sinks.RichTextWinForm.Themes;
 
     internal class ThemedDisplayValueFormatter : ThemedValueFormatter
@@ -34,7 +35,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Null))
                         {
-                            output.AppendText("null");
+                            output.AppendText(en_AU.ThemedDisplayValueFormatter_null);
                         }
 
                         break;
@@ -86,9 +87,9 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                         {
-                            output.AppendText("\'");
+                            output.AppendText(en_AU.ThemedDisplayValueFormatter_SingleQuote);
                             output.AppendText(ch.ToString(CultureInfo.CurrentUICulture));
-                            output.AppendText("\'");
+                            output.AppendText(en_AU.ThemedDisplayValueFormatter_SingleQuote);
                         }
 
                         break;
@@ -114,7 +115,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("{");
+                state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_LeftCurlyBracket);
             }
 
             var delim = string.Empty;
@@ -132,7 +133,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
-                    state.Output.AppendText("[");
+                    state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_LeftSquareBracket);
                 }
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.String))
@@ -142,7 +143,8 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
-                    state.Output.AppendText("]=");
+                    state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_RightSquareBracket);
+                    state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_Equals);
                 }
 
                 count += this.Visit(state.Nest(), logEventPropertyValue);
@@ -150,7 +152,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("}");
+                state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_RightCurlyBracket);
             }
 
             return count;
@@ -176,7 +178,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("[");
+                state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_LeftSquareBracket);
             }
 
             var delim = string.Empty;
@@ -196,7 +198,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("]");
+                state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_RightSquareBracket);
             }
 
             return 0;
@@ -213,12 +215,12 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     state.Output.AppendText(structure.TypeTag);
                 }
 
-                state.Output.AppendText(" ");
+                state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_Space);
             }
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("{");
+                state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_LeftCurlyBracket);
             }
 
             var delim = string.Empty;
@@ -243,7 +245,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
-                    state.Output.AppendText("=");
+                    state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_Equals);
                 }
 
                 count += this.Visit(state.Nest(), property.Value);
@@ -251,7 +253,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("}");
+                state.Output.AppendText(en_AU.ThemedDisplayValueFormatter_RightCurlyBracket);
             }
 
             return count;
