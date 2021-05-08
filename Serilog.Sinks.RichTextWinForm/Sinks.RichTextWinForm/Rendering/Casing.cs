@@ -10,8 +10,8 @@ namespace Serilog.Sinks.RichTextWinForm.Rendering
     internal static class Casing
     {
         /// <summary>
-        /// Apply upper or lower casing to <paramref name="value" /> when <paramref name="formatString" /> is provided. Returns
-        /// <paramref name="value" /> when no or invalid <paramref name="formatString" /> provided.
+        /// Apply upper or lower casing to <paramref name="value" /> when <paramref name="formatString" /> is provided.
+        /// Returns <paramref name="value" /> when no or invalid <paramref name="formatString" /> provided.
         /// </summary>
         /// <param name="value">Provided string for formatting.</param>
         /// <param name="formatString"><see cref="Casing.Format" /> string.</param>
