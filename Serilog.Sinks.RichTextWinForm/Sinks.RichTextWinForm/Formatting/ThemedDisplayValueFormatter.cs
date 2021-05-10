@@ -73,7 +73,6 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     }
 
                 case ValueType when value is ulong || value is decimal || value is byte:
-                
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {
