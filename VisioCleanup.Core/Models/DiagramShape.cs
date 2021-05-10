@@ -20,6 +20,8 @@ namespace VisioCleanup.Core.Models
     /// <summary>Representation of a single shape in a visio diagram.</summary>
     public class DiagramShape
     {
+        private const int ConversionFactor = 1000;
+
         private readonly ILogger logger;
 
         private int baseSide;
@@ -265,12 +267,12 @@ namespace VisioCleanup.Core.Models
         /// <summary>Convert a visio <paramref name="measurement" /> into an easier mathematical model.</summary>
         /// <param name="measurement">Measurement from visio.</param>
         /// <returns>Easier <see langword="internal" /> measurement.</returns>
-        public static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, 3, MidpointRounding.AwayFromZero) * 1000);
+        public static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, 3, MidpointRounding.AwayFromZero) * ConversionFactor);
 
         /// <summary>Convert an easier <paramref name="measurement" /> back to visio model.</summary>
         /// <param name="measurement">Easier <see langword="internal" /> measurement.</param>
         /// <returns>Measurement for visio.</returns>
-        public static double ConvertMeasurement(int measurement) => (double)measurement / 1000;
+        public static double ConvertMeasurement(int measurement) => (double)measurement / ConversionFactor;
 
         /// <summary>Add child shape to parent.</summary>
         /// <param name="childShape">New child shape of this shape.</param>
@@ -375,7 +377,7 @@ namespace VisioCleanup.Core.Models
                 child.Below = null;
             }
 
-            double tolerance = ConvertMeasurement(AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) / 2;
+            var tolerance = ((AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) * ConversionFactor) / 2d;
 
             var lines = children.OrderBy(shape => shape.LeftSide).Select(shape => shape.LeftSide);
             foreach (var line in lines.Distinct())
