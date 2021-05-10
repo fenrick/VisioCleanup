@@ -20,6 +20,8 @@ namespace VisioCleanup.Core.Models
     /// <summary>Representation of a single shape in a visio diagram.</summary>
     public class DiagramShape
     {
+        private const int ConversionDigits = 3;
+
         private const int ConversionFactor = 1000;
 
         private readonly ILogger logger;
@@ -284,7 +286,7 @@ namespace VisioCleanup.Core.Models
         /// <summary>Convert a visio <paramref name="measurement" /> into an easier mathematical model.</summary>
         /// <param name="measurement">Measurement from visio.</param>
         /// <returns>Easier <see langword="internal" /> measurement.</returns>
-        public static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, 3, MidpointRounding.AwayFromZero) * ConversionFactor);
+        public static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, ConversionDigits, MidpointRounding.AwayFromZero) * ConversionFactor);
 
         /// <summary>Convert an easier <paramref name="measurement" /> back to visio model.</summary>
         /// <param name="measurement">Easier <see langword="internal" /> measurement.</param>
