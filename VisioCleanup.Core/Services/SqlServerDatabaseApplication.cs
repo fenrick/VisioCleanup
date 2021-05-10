@@ -49,7 +49,7 @@ namespace VisioCleanup.Core.Services
             }
 
             this.databaseConnection.Close();
-            this.databaseConnection.Dispose();
+            this.Dispose();
         }
 
         /// <inheritdoc />
