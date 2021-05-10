@@ -32,9 +32,15 @@ namespace VisioCleanup.Core.Services
         /// <param name="visioApplication">Visio Application engine.</param>
         protected AbstractProcessingService(ILogger logger, IOptions<AppConfig> options, IVisioApplication visioApplication)
         {
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.VisioApplication = visioApplication ?? throw new ArgumentNullException(nameof(visioApplication));
-            this.AppConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
+
+            this.AppConfig = options.Value;
 
             // setup DiagramShape
             DiagramShape.AppConfig = this.AppConfig;
