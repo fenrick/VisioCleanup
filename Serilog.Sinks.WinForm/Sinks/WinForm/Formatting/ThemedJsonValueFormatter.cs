@@ -168,8 +168,21 @@ namespace Serilog.Sinks.WinForm.Formatting
                         break;
                     }
 
-                case ValueType when value is int || value is uint || value is long || value is ulong || value is decimal || value is byte || value is byte || value is short
-                                    || value is ushort:
+                case ValueType when value is int || value is uint || value is long:
+                    {
+                        output.Write(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+
+                        break;
+                    }
+
+                case ValueType when value is ulong || value is decimal || value is byte:
+                    {
+                        output.Write(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+
+                        break;
+                    }
+
+                case ValueType when value is short || value is ushort:
                     {
                         output.Write(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
 
