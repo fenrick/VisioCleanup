@@ -36,8 +36,13 @@ namespace VisioCleanup.Core.Services
         /// <param name="options">Configuration options.</param>
         public SqlServerDatabaseApplication(ILogger<SqlServerDatabaseApplication> logger, IOptions<AppConfig> options)
         {
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
+            this.appConfig = options.Value;
         }
 
         /// <inheritdoc />

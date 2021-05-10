@@ -34,7 +34,7 @@ namespace VisioCleanup.Core.Models.Config
 
         /// <summary>Gets or sets the list of database queries.</summary>
         /// <value>Database queries.</value>
-        public List<Dictionary<string, string>>? DatabaseQueries
+        public IReadOnlyCollection<Dictionary<string, string>>? DatabaseQueries
         {
             get;
             [UsedImplicitly]

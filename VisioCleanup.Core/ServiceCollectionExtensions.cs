@@ -7,6 +7,8 @@
 
 namespace VisioCleanup.Core
 {
+    using System;
+
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +25,11 @@ namespace VisioCleanup.Core
         /// <returns>The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> .</returns>
         public static IServiceCollection AddVisioCleanupCore(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
+            if (configuration is null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
             serviceCollection.Configure<AppConfig>(configuration.GetSection("VisioCleanup:Core"));
             serviceCollection.AddSingleton<IVisioApplication, VisioApplication>();
             serviceCollection.AddSingleton<IExcelApplication, ExcelApplication>();

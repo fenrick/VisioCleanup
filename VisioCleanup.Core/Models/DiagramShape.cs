@@ -297,6 +297,11 @@ namespace VisioCleanup.Core.Models
         /// <param name="childShape">New child shape of this shape.</param>
         public void AddChildShape(DiagramShape childShape)
         {
+            if (childShape is null)
+            {
+                throw new ArgumentNullException(nameof(childShape));
+            }
+
             if (!this.Children.Contains(childShape))
             {
                 this.Children.Add(childShape);

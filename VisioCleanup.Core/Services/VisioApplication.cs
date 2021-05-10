@@ -64,6 +64,11 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void CreateShape(DiagramShape diagramShape)
         {
+            if (diagramShape is null)
+            {
+                throw new ArgumentNullException(nameof(diagramShape));
+            }
+
             var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
             var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
             var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
