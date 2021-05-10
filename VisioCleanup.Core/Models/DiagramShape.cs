@@ -339,7 +339,7 @@ namespace VisioCleanup.Core.Models
             var newBaseSide = this.TopSide - height;
             var newRightSide = this.LeftSide + width;
 
-            if (this.RightSide == newRightSide && this.BaseSide == newBaseSide)
+            if ((this.RightSide == newRightSide) && (this.BaseSide == newBaseSide))
             {
                 return false;
             }

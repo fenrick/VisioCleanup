@@ -207,7 +207,7 @@ namespace VisioCleanup.Core.Services
 
                         diagramShape.CorrectDiagram();
 
-                        if (childShape.Children.Count > 0 && childShape.ChildrenDepth < currentMaxDepth)
+                        if ((childShape.Children.Count > 0) && (childShape.ChildrenDepth < currentMaxDepth))
                         {
                             SortChildrenByLines(childShape, currentMaxDepth);
                         }
