@@ -10,6 +10,7 @@
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <Nullable>enable</Nullable>
         <RootNamespace>Serilog</RootNamespace>
+        <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
         <NeutralLanguage>en-AU</NeutralLanguage>
     </PropertyGroup>
@@ -18,7 +19,6 @@
         <DocumentationFile>C:\Users\s770439\source\repos\VisioCleanup\Serilog.Sinks.WinForm\Serilog.Sinks.WinForm.xml</DocumentationFile>
     </PropertyGroup>
 
-    <!-- StyleCop Analyzers configuration -->
     <PropertyGroup>
         <CodeAnalysisRuleSet>Serilog.Sinks.WinForm.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
@@ -26,29 +26,9 @@
     <ItemGroup>
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" PrivateAssets="all" />
         <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-    </ItemGroup>
-
-    <!-- SonarLink Analyzers configuration -->
-    <!--    <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.22.0.31243" PrivateAssets="all" />
-        <AdditionalFiles Include="$(SolutionDir)SonarLint.xml" Link="SonarLint.xml" />
-    </ItemGroup> -->
-
-    <!-- GCop Analyzers configuration -->
-    <ItemGroup>
+        <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
         <PackageReference Include="GCop.All.Common" Version="2.7.6" PrivateAssets="all" />
-    </ItemGroup>
-
-    <!-- Serilog Analyzers configuration -->
-    <ItemGroup>
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="all" />
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
         <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
     </ItemGroup>
