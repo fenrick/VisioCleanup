@@ -20,9 +20,9 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
         protected ThemedValueFormatter(RichTextTheme theme) => this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
 
-        public void Format(LogEventPropertyValue value, RichTextBox output, string format, bool literalTopLevel = false)
+        public void Format(LogEventPropertyValue value, RichTextBox output, string formatString, bool literalTopLevel = false)
         {
-            this.Visit(new ThemedValueFormatterState { Output = output, Format = format, IsTopLevel = literalTopLevel }, value);
+            this.Visit(new ThemedValueFormatterState { Output = output, Format = formatString, IsTopLevel = literalTopLevel }, value);
         }
 
         protected StyleReset ApplyStyle(RichTextBox output, RichTextThemeStyle style) => this.theme.Apply(output, style);
