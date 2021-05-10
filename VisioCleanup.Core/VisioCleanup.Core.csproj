@@ -12,6 +12,7 @@
         <AnalysisLevel>preview</AnalysisLevel>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <LangVersion>default</LangVersion>
+        <NeutralLanguage>en-AU</NeutralLanguage>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
