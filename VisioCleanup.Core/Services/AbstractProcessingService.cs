@@ -47,12 +47,15 @@ namespace VisioCleanup.Core.Services
         public DiagramShape? MasterShape { get; protected set; }
 
         /// <summary>Gets application configuration.</summary>
+        /// <value>Configuration.</value>
         protected AppConfig AppConfig { get; }
 
         /// <summary>Gets logging environment.</summary>
+        /// <value>Logger.</value>
         protected ILogger Logger { get; }
 
         /// <summary>Gets visio processing engine.</summary>
+        /// <value>Visio execution environment.</value>
         protected IVisioApplication VisioApplication { get; }
 
         /// <inheritdoc />

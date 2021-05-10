@@ -20,6 +20,10 @@ namespace VisioCleanup.Core.Models
     /// <summary>Representation of a single shape in a visio diagram.</summary>
     public class DiagramShape
     {
+        private const int ConversionDigits = 3;
+
+        private const int ConversionFactor = 1000;
+
         private readonly ILogger logger;
 
         private int baseSide;
@@ -47,9 +51,11 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <summary>Gets the shape above.</summary>
+        /// <value>Shape above.</value>
         public DiagramShape? Above { get; private set; }
 
         /// <summary>Gets or sets base of the shape.</summary>
+        /// <value>Bottom of shape.</value>
         public int BaseSide
         {
             get => this.baseSide;
@@ -90,6 +96,7 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <summary>Gets or sets the shape below.</summary>
+        /// <value>Shape below.</value>
         public DiagramShape? Below
         {
             get => this.below;
@@ -135,24 +142,31 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <summary>Gets collection of child shapes.</summary>
+        /// <value>child shapes.</value>
         public Collection<DiagramShape> Children { get; }
 
         /// <summary>Gets or sets how deep is the rendered children.</summary>
+        /// <value>depth of children.</value>
         public int ChildrenDepth { get; set; }
 
         /// <summary>Gets the shape to the left.</summary>
+        /// <value>Left shape.</value>
         public DiagramShape? Left { get; private set; }
 
         /// <summary>Gets or sets left side of the shape.</summary>
+        /// <value>Left side of shape.</value>
         public int LeftSide { get; set; }
 
         /// <summary>Gets the stencil used for drawing shape.</summary>
+        /// <value>Master shape stencil.</value>
         public string Master { get; init; }
 
         /// <summary>Gets parent shape of curent shape.</summary>
+        /// <value>Parent shape.</value>
         public DiagramShape? ParentShape { get; private set; }
 
         /// <summary>Gets or sets the shape to the right.</summary>
+        /// <value>Shape to right.</value>
         public DiagramShape? Right
         {
             get => this.right;
@@ -197,6 +211,7 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <summary>Gets or sets <see cref="VisioCleanup.Core.Models.DiagramShape.right" /> side of the shape.</summary>
+        /// <value>Right side of shape.</value>
         public int RightSide
         {
             get => this.rightSide;
@@ -238,15 +253,19 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <summary>Gets a unique shape identifier.</summary>
+        /// <value>Unique identifer.</value>
         public string? ShapeIdentifier { get; init; }
 
         /// <summary>Gets the shape text.</summary>
+        /// <value>Shape text.</value>
         public string ShapeText { get; init; }
 
         /// <summary>Gets or sets the shape type.</summary>
+        /// <value>Shape type.</value>
         public ShapeType ShapeType { get; set; }
 
         /// <summary>Gets value used to sort shapes.</summary>
+        /// <value>Sort value.</value>
         public string? SortValue
         {
             get;
@@ -255,9 +274,11 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <summary>Gets or sets top of the shape.</summary>
+        /// <value>Top side of shape.</value>
         public int TopSide { get; set; }
 
         /// <summary>Gets or sets visio shape id.</summary>
+        /// <value>Visio identifer.</value>
         public int VisioId { get; set; }
 
         internal static AppConfig? AppConfig { get; set; }
@@ -265,12 +286,12 @@ namespace VisioCleanup.Core.Models
         /// <summary>Convert a visio <paramref name="measurement" /> into an easier mathematical model.</summary>
         /// <param name="measurement">Measurement from visio.</param>
         /// <returns>Easier <see langword="internal" /> measurement.</returns>
-        public static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, 3, MidpointRounding.AwayFromZero) * 1000);
+        public static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, ConversionDigits, MidpointRounding.AwayFromZero) * ConversionFactor);
 
         /// <summary>Convert an easier <paramref name="measurement" /> back to visio model.</summary>
         /// <param name="measurement">Easier <see langword="internal" /> measurement.</param>
         /// <returns>Measurement for visio.</returns>
-        public static double ConvertMeasurement(int measurement) => (double)measurement / 1000;
+        public static double ConvertMeasurement(int measurement) => (double)measurement / ConversionFactor;
 
         /// <summary>Add child shape to parent.</summary>
         /// <param name="childShape">New child shape of this shape.</param>
@@ -375,7 +396,7 @@ namespace VisioCleanup.Core.Models
                 child.Below = null;
             }
 
-            double tolerance = ConvertMeasurement(AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) / 2d;
+            var tolerance = ((AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) * ConversionFactor) / 2d;
 
             var lines = children.OrderBy(shape => shape.LeftSide).Select(shape => shape.LeftSide);
             foreach (var line in lines.Distinct())

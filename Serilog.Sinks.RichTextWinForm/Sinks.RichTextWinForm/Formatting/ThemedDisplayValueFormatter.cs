@@ -72,7 +72,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                         break;
                     }
 
-                case ValueType when  value is ulong || value is decimal || value is byte:
+                case ValueType when value is ulong || value is decimal || value is byte:
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {
@@ -84,7 +84,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                         break;
                     }
 
-                case ValueType when  value is sbyte || value is short || value is ushort:
+                case ValueType when value is sbyte || value is short || value is ushort:
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {
@@ -96,7 +96,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                         break;
                     }
 
-                case ValueType when  value is float || value is double:
+                case ValueType when value is float || value is double:
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {

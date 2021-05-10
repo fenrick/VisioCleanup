@@ -24,6 +24,7 @@ namespace VisioCleanup.Core.Models.Config
         }
 
         /// <summary>Gets or sets the database catalog.</summary>
+        /// <value>Database catalog.</value>
         public string? DatabaseCatalog
         {
             get;
@@ -32,6 +33,7 @@ namespace VisioCleanup.Core.Models.Config
         }
 
         /// <summary>Gets or sets the list of database queries.</summary>
+        /// <value>Database queries.</value>
         public List<Dictionary<string, string>>? DatabaseQueries
         {
             get;
@@ -40,6 +42,7 @@ namespace VisioCleanup.Core.Models.Config
         }
 
         /// <summary>Gets or sets the database server name.</summary>
+        /// <value>Database server.</value>
         public string? DatabaseServer
         {
             get;
@@ -93,6 +96,7 @@ namespace VisioCleanup.Core.Models.Config
         }
 
         /// <summary>Gets or sets the max number of box lines.</summary>
+        /// <value>maximum box lines.</value>
         public double? MaxBoxLines
         {
             get;
