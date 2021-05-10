@@ -60,8 +60,43 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                         }
                     }
 
-                case ValueType when value is int || value is uint || value is long || value is ulong || value is decimal || value is byte || value is sbyte || value is short
-                                    || value is ushort || value is float || value is double:
+                case ValueType when value is int || value is uint || value is long:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+                        {
+                            using StringWriter buffer = new();
+                            scalar.Render(buffer, format, this.formatProvider);
+                            output.AppendText(buffer.ToString());
+                        }
+
+                        break;
+                    }
+
+                case ValueType when  value is ulong || value is decimal || value is byte:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+                        {
+                            using StringWriter buffer = new();
+                            scalar.Render(buffer, format, this.formatProvider);
+                            output.AppendText(buffer.ToString());
+                        }
+
+                        break;
+                    }
+
+                case ValueType when  value is sbyte || value is short || value is ushort:
+                    {
+                        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+                        {
+                            using StringWriter buffer = new();
+                            scalar.Render(buffer, format, this.formatProvider);
+                            output.AppendText(buffer.ToString());
+                        }
+
+                        break;
+                    }
+
+                case ValueType when  value is float || value is double:
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {
