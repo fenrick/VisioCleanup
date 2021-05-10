@@ -14,9 +14,9 @@ namespace Serilog.Sinks.WinForm.Formatting
 
     internal abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<ThemedValueFormatterState, int>
     {
-        public void Format(LogEventPropertyValue value, TextWriter output, string format, bool literalTopLevel = false)
+        public void Format(LogEventPropertyValue value, TextWriter output, string formatString, bool literalTopLevel = false)
         {
-            this.Visit(new ThemedValueFormatterState { Output = output, Format = format, IsTopLevel = literalTopLevel }, value);
+            this.Visit(new ThemedValueFormatterState { Output = output, Format = formatString, IsTopLevel = literalTopLevel }, value);
         }
     }
 }
