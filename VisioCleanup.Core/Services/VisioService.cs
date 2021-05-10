@@ -96,9 +96,14 @@ namespace VisioCleanup.Core.Services
 
         private DiagramShape? FindClosestOverlap(DiagramShape diagramShape)
         {
+            var diagramShapeTopSide = diagramShape.TopSide;
+            var diagramShapeLeftSide = diagramShape.LeftSide;
+            var diagramShapeRightSide = diagramShape.RightSide;
+            var diagramShapeBaseSide = diagramShape.BaseSide;
+
             bool AllSidesOverlap(DiagramShape shape) =>
-                (shape.LeftSide < diagramShape.LeftSide) && (shape.TopSide > diagramShape.TopSide) && (shape.RightSide > diagramShape.RightSide)
-                && (shape.BaseSide < diagramShape.BaseSide);
+                (shape.LeftSide < diagramShapeLeftSide) && (shape.TopSide > diagramShapeTopSide) && (shape.RightSide > diagramShapeRightSide)
+                && (shape.BaseSide < diagramShapeBaseSide);
 
             var allOverlaps = this.AllShapes.Where(AllSidesOverlap);
 
