@@ -14,11 +14,13 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
     /// <summary>Styling applied using the <see cref="System.ConsoleColor" />enumeration.</summary>
     public struct ThemeColours : IEquatable<ThemeColours>
     {
-        /// <summary>The foreground color to apply.</summary>
-        public Color? Foreground { get; init; }
+        /// <summary>Gets the foreground color to apply.</summary>
+        /// <value>Foreground color.</value>
+        internal Color? Foreground { get; init; }
 
-        /// <summary>The background color to apply.</summary>
-        public Color? Background { get; init; }
+        /// <summary>Gets the background color to apply.</summary>
+        /// <value>Background color.</value>
+        internal Color? Background { get; init; }
 
         /// <summary>Are they equal.</summary>
         /// <param name="left">Left.</param>
