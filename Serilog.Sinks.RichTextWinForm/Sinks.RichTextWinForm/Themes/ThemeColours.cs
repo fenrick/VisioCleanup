@@ -15,10 +15,10 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
     public struct ThemeColours : IEquatable<ThemeColours>
     {
         /// <summary>The foreground color to apply.</summary>
-        public Color? Foreground;
+        public Color? Foreground { get; init; }
 
         /// <summary>The background color to apply.</summary>
-        public Color? Background;
+        public Color? Background { get; init; }
 
         /// <summary>Are they equal.</summary>
         /// <param name="left">Left.</param>
