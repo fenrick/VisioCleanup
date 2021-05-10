@@ -117,28 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ThemedDisplayValueFormatter_Equals" xml:space="preserve">
+  <data name="EqualSign" xml:space="preserve">
     <value>=</value>
   </data>
-  <data name="ThemedDisplayValueFormatter_LeftCurlyBracket" xml:space="preserve">
+  <data name="LeftCurlyBracket" xml:space="preserve">
     <value>{</value>
   </data>
-  <data name="ThemedDisplayValueFormatter_LeftSquareBracket" xml:space="preserve">
+  <data name="LeftSquareBracket" xml:space="preserve">
     <value>[</value>
   </data>
-  <data name="ThemedDisplayValueFormatter_null" xml:space="preserve">
+  <data name="NullString" xml:space="preserve">
     <value>null</value>
   </data>
-  <data name="ThemedDisplayValueFormatter_RightCurlyBracket" xml:space="preserve">
+  <data name="RightCurlyBracket" xml:space="preserve">
     <value>}</value>
   </data>
-  <data name="ThemedDisplayValueFormatter_RightSquareBracket" xml:space="preserve">
+  <data name="RightSquareBracket" xml:space="preserve">
     <value>]</value>
   </data>
-  <data name="ThemedDisplayValueFormatter_SingleQuote" xml:space="preserve">
+  <data name="SingleQuote" xml:space="preserve">
     <value>'</value>
   </data>
-  <data name="ThemedDisplayValueFormatter_Space" xml:space="preserve">
+  <data name="Space" xml:space="preserve">
     <value> </value>
   </data>
 </root>

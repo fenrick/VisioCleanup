@@ -63,72 +63,72 @@ namespace Serilog.Sinks.RichTextWinForm.Resources {
         /// <summary>
         ///   Looks up a localized string similar to =.
         /// </summary>
-        internal static string ThemedDisplayValueFormatter_Equals {
+        internal static string EqualSign {
             get {
-                return ResourceManager.GetString("ThemedDisplayValueFormatter_Equals", resourceCulture);
+                return ResourceManager.GetString("EqualSign", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {.
         /// </summary>
-        internal static string ThemedDisplayValueFormatter_LeftCurlyBracket {
+        internal static string LeftCurlyBracket {
             get {
-                return ResourceManager.GetString("ThemedDisplayValueFormatter_LeftCurlyBracket", resourceCulture);
+                return ResourceManager.GetString("LeftCurlyBracket", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to [.
         /// </summary>
-        internal static string ThemedDisplayValueFormatter_LeftSquareBracket {
+        internal static string LeftSquareBracket {
             get {
-                return ResourceManager.GetString("ThemedDisplayValueFormatter_LeftSquareBracket", resourceCulture);
+                return ResourceManager.GetString("LeftSquareBracket", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to null.
         /// </summary>
-        internal static string ThemedDisplayValueFormatter_null {
+        internal static string NullString {
             get {
-                return ResourceManager.GetString("ThemedDisplayValueFormatter_null", resourceCulture);
+                return ResourceManager.GetString("NullString", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to }.
         /// </summary>
-        internal static string ThemedDisplayValueFormatter_RightCurlyBracket {
+        internal static string RightCurlyBracket {
             get {
-                return ResourceManager.GetString("ThemedDisplayValueFormatter_RightCurlyBracket", resourceCulture);
+                return ResourceManager.GetString("RightCurlyBracket", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to ].
         /// </summary>
-        internal static string ThemedDisplayValueFormatter_RightSquareBracket {
+        internal static string RightSquareBracket {
             get {
-                return ResourceManager.GetString("ThemedDisplayValueFormatter_RightSquareBracket", resourceCulture);
+                return ResourceManager.GetString("RightSquareBracket", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &apos;.
         /// </summary>
-        internal static string ThemedDisplayValueFormatter_SingleQuote {
+        internal static string SingleQuote {
             get {
-                return ResourceManager.GetString("ThemedDisplayValueFormatter_SingleQuote", resourceCulture);
+                return ResourceManager.GetString("SingleQuote", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to  .
         /// </summary>
-        internal static string ThemedDisplayValueFormatter_Space {
+        internal static string Space {
             get {
-                return ResourceManager.GetString("ThemedDisplayValueFormatter_Space", resourceCulture);
+                return ResourceManager.GetString("Space", resourceCulture);
             }
         }
     }
