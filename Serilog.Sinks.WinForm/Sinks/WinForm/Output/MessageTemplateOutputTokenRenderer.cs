@@ -21,7 +21,8 @@ namespace Serilog.Sinks.WinForm.Output
 
         public MessageTemplateOutputTokenRenderer(PropertyToken token, IFormatProvider? formatProvider)
         {
-            bool isLiteral = false, isJson = false;
+            var isLiteral = false;
+            var isJson = false;
 
             if (token.Format != null)
             {
