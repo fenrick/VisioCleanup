@@ -31,7 +31,7 @@ namespace Serilog.Sinks.WinForm.Output
                     {
                         isLiteral = true;
                     }
-                    
+
                     if (character == 'j')
                     {
                         isJson = true;
