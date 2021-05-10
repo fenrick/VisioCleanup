@@ -117,8 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Colon" xml:space="preserve">
+    <value>:</value>
+  </data>
+  <data name="DoubleQuote" xml:space="preserve">
+    <value>"</value>
+  </data>
   <data name="EqualSign" xml:space="preserve">
     <value>=</value>
+  </data>
+  <data name="False" xml:space="preserve">
+    <value>false</value>
   </data>
   <data name="LeftCurlyBracket" xml:space="preserve">
     <value>{</value>
@@ -140,5 +149,8 @@
   </data>
   <data name="Space" xml:space="preserve">
     <value> </value>
+  </data>
+  <data name="True" xml:space="preserve">
+    <value>true</value>
   </data>
 </root>

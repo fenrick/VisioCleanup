@@ -14,6 +14,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
     using Serilog.Events;
     using Serilog.Formatting.Json;
+    using Serilog.Sinks.RichTextWinForm.Resources;
     using Serilog.Sinks.RichTextWinForm.Themes;
 
     internal class ThemedJsonValueFormatter : ThemedValueFormatter
@@ -30,7 +31,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("{");
+                state.Output.AppendText(en_AU.LeftCurlyBracket);
             }
 
             var delim = string.Empty;
@@ -51,13 +52,14 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                 using (this.ApplyStyle(state.Output, style))
                 {
                     using StringWriter buffer = new();
-                    JsonValueFormatter.WriteQuotedJsonString((scalarValue.Value ?? "null").ToString(), buffer);
+                    JsonValueFormatter.WriteQuotedJsonString((scalarValue.Value ?? en_AU.NullString).ToString(), buffer);
                     state.Output.AppendText(buffer.ToString());
                 }
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
-                    state.Output.AppendText(": ");
+                    state.Output.AppendText(en_AU.Colon);
+                    state.Output.AppendText(en_AU.Space);
                 }
 
                 count += this.Visit(state.Nest(), logEventPropertyValue);
@@ -65,7 +67,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("}");
+                state.Output.AppendText(en_AU.RightCurlyBracket);
             }
 
             return count;
@@ -98,7 +100,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("[");
+                state.Output.AppendText(en_AU.LeftSquareBracket);
             }
 
             var delim = string.Empty;
@@ -118,7 +120,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("]");
+                state.Output.AppendText(en_AU.RightSquareBracket);
             }
 
             return 0;
@@ -130,7 +132,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("{");
+                state.Output.AppendText(en_AU.LeftCurlyBracket);
             }
 
             var delim = string.Empty;
@@ -157,7 +159,8 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
-                    state.Output.AppendText(": ");
+                    state.Output.AppendText(en_AU.Colon);
+                    state.Output.AppendText(en_AU.Space);
                 }
 
                 count += this.Visit(state.Nest(), property.Value);
@@ -179,7 +182,8 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
                 {
-                    state.Output.AppendText(": ");
+                    state.Output.AppendText(en_AU.Colon);
+                    state.Output.AppendText(en_AU.Space);
                 }
 
                 using (this.ApplyStyle(state.Output, RichTextThemeStyle.String))
@@ -192,7 +196,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
-                state.Output.AppendText("}");
+                state.Output.AppendText(en_AU.RightCurlyBracket);
             }
 
             return count;
@@ -208,7 +212,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Null))
                         {
-                            output.AppendText("null");
+                            output.AppendText(en_AU.NullString);
                         }
 
                         break;
@@ -230,7 +234,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {
-                            output.AppendText(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+                            output.AppendText(((IFormattable)value).ToString(null, CultureInfo.CurrentUICulture));
                         }
 
                         break;
@@ -240,7 +244,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {
-                            output.AppendText(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+                            output.AppendText(((IFormattable)value).ToString(null, CultureInfo.CurrentUICulture));
                         }
 
                         break;
@@ -250,7 +254,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {
-                            output.AppendText(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+                            output.AppendText(((IFormattable)value).ToString(null, CultureInfo.CurrentUICulture));
                         }
 
                         break;
@@ -263,12 +267,12 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             if (double.IsNaN(d) || double.IsInfinity(d))
                             {
                                 using StringWriter buffer = new();
-                                JsonValueFormatter.WriteQuotedJsonString(d.ToString(CultureInfo.InvariantCulture), buffer);
+                                JsonValueFormatter.WriteQuotedJsonString(d.ToString(CultureInfo.CurrentUICulture), buffer);
                                 output.AppendText(buffer.ToString());
                                 break;
                             }
 
-                            output.AppendText(d.ToString("R", CultureInfo.InvariantCulture));
+                            output.AppendText(d.ToString("R", CultureInfo.CurrentUICulture));
                             break;
                         }
                     }
@@ -280,12 +284,12 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                             if (double.IsNaN(f) || double.IsInfinity(f))
                             {
                                 using StringWriter buffer = new();
-                                JsonValueFormatter.WriteQuotedJsonString(f.ToString(CultureInfo.InvariantCulture), buffer);
+                                JsonValueFormatter.WriteQuotedJsonString(f.ToString(CultureInfo.CurrentUICulture), buffer);
                                 output.AppendText(buffer.ToString());
                                 break;
                             }
 
-                            output.AppendText(f.ToString("R", CultureInfo.InvariantCulture));
+                            output.AppendText(f.ToString("R", CultureInfo.CurrentUICulture));
 
                             break;
                         }
@@ -295,7 +299,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
                         {
-                            output.AppendText(b ? "true" : "false");
+                            output.AppendText(b ? en_AU.True : en_AU.False);
                         }
 
                         break;
@@ -306,7 +310,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                         using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                         {
                             using StringWriter buffer = new();
-                            JsonValueFormatter.WriteQuotedJsonString(ch.ToString(), buffer);
+                            JsonValueFormatter.WriteQuotedJsonString(ch.ToString(CultureInfo.CurrentUICulture), buffer);
                             output.AppendText(buffer.ToString());
                         }
 
@@ -317,9 +321,9 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                         {
-                            output.AppendText("\"");
-                            output.AppendText(((IFormattable)value).ToString("O", CultureInfo.InvariantCulture));
-                            output.AppendText("\"");
+                            output.AppendText(en_AU.DoubleQuote);
+                            output.AppendText(((IFormattable)value).ToString("O", CultureInfo.CurrentUICulture));
+                            output.AppendText(en_AU.DoubleQuote);
                         }
 
                         break;

@@ -61,11 +61,38 @@ namespace Serilog.Sinks.RichTextWinForm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to :.
+        /// </summary>
+        internal static string Colon {
+            get {
+                return ResourceManager.GetString("Colon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;.
+        /// </summary>
+        internal static string DoubleQuote {
+            get {
+                return ResourceManager.GetString("DoubleQuote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to =.
         /// </summary>
         internal static string EqualSign {
             get {
                 return ResourceManager.GetString("EqualSign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to false.
+        /// </summary>
+        internal static string False {
+            get {
+                return ResourceManager.GetString("False", resourceCulture);
             }
         }
         
@@ -129,6 +156,15 @@ namespace Serilog.Sinks.RichTextWinForm.Resources {
         internal static string Space {
             get {
                 return ResourceManager.GetString("Space", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to true.
+        /// </summary>
+        internal static string True {
+            get {
+                return ResourceManager.GetString("True", resourceCulture);
             }
         }
     }
