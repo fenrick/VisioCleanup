@@ -49,7 +49,7 @@ namespace VisioCleanup.Core.Contracts
         void UpdateShape(DiagramShape diagramShape);
 
         /// <summary>Change visio updating diagram.</summary>
-        /// <param name="visualChanges">Value to change.</param>
-        void VisualChanges(bool visualChanges);
+        /// <param name="state">Value to change.</param>
+        void VisualChanges(bool state);
     }
 }

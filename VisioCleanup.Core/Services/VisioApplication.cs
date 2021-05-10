@@ -327,17 +327,17 @@ namespace VisioCleanup.Core.Services
 
         /// <exception cref="System.InvalidOperationException">System not initialised.</exception>
         /// <inheritdoc />
-        public void VisualChanges(bool visualChanges)
+        public void VisualChanges(bool state)
         {
             if (this.visioApplication is null)
             {
                 throw new InvalidOperationException("System not initialised.");
             }
 
-            this.visioApplication.ShowChanges = visualChanges;
-            this.visioApplication.UndoEnabled = visualChanges;
-            this.visioApplication.ScreenUpdating = visualChanges ? (short)1 : (short)0;
-            this.visioApplication.DeferRecalc = visualChanges ? (short)1 : (short)0;
+            this.visioApplication.ShowChanges = state;
+            this.visioApplication.UndoEnabled = state;
+            this.visioApplication.ScreenUpdating = state ? (short)1 : (short)0;
+            this.visioApplication.DeferRecalc = state ? (short)1 : (short)0;
         }
 
         private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
