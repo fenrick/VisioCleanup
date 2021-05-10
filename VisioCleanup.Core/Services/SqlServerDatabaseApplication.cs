@@ -23,7 +23,7 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models.Config;
 
     /// <inheritdoc />
-    public class SqlServerDatabaseApplication : ISqlServerDatabaseApplication
+    public class SqlServerDatabaseApplication : ISqlServerDatabaseApplication, IDisposable
     {
         private readonly AppConfig appConfig;
 
@@ -50,6 +50,13 @@ namespace VisioCleanup.Core.Services
 
             this.databaseConnection.Close();
             this.databaseConnection.Dispose();
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc />
@@ -107,6 +114,25 @@ namespace VisioCleanup.Core.Services
             }
 
             return shapes;
+        }
+
+        /// <summary>Native/Managed Dispose</summary>
+        /// <param name="native">Is this a native dispose.</param>
+        protected virtual void Dispose(bool native)
+        {
+            if (!native)
+            {
+                return;
+            }
+
+            if (this.databaseConnection is null)
+            {
+                return;
+            }
+
+            this.databaseConnection.Close();
+            this.databaseConnection.Dispose();
+            this.databaseConnection = null;
         }
 
         private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
