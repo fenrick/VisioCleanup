@@ -20,6 +20,7 @@ namespace VisioCleanup.Core.Services
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
+    using VisioCleanup.Core.Resources;
 
     using Marshal = VisioCleanup.Core.Marshal;
 
@@ -48,16 +49,16 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void Close()
         {
-            this.logger.LogDebug("Clearning shape cache");
+            this.logger.LogDebug(en_AU.VisioApplication_Close_Clearning_shape_cache);
             this.shapeCache.Clear();
 
-            this.logger.LogDebug("Clearing stencil cache");
+            this.logger.LogDebug(en_AU.VisioApplication_Close_Clearing_stencil_cache);
             this.stencilCache.Clear();
 
-            this.logger.LogDebug("Releasing active page");
+            this.logger.LogDebug(en_AU.VisioApplication_Close_Releasing_active_page);
             this.activePage = null;
 
-            this.logger.LogDebug("Releasing visio application");
+            this.logger.LogDebug(en_AU.VisioApplication_Close_Releasing_visio_application);
             this.visioApplication = null;
         }
 
@@ -74,7 +75,7 @@ namespace VisioCleanup.Core.Services
             var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
             var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
 
-            var shapeMaster = "Rectangle";
+            var shapeMaster = en_AU.VisioApplication_CreateShape_Rectangle;
 
             if (!string.IsNullOrEmpty(diagramShape.Master))
             {
@@ -85,13 +86,13 @@ namespace VisioCleanup.Core.Services
 
             if (master is null)
             {
-                this.logger.LogError("Unable to find matching stencil: {StencilName}", shapeMaster);
-                throw new InvalidOperationException("Unable to find matching stencil.");
+                this.logger.LogError(en_AU.VisioApplication_CreateShape_Unable_to_find_matching_stencil___StencilName_, shapeMaster);
+                throw new InvalidOperationException(en_AU.VisioApplication_CreateShape_Unable_to_find_matching_stencil_);
             }
 
             if (this.visioApplication is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
             }
 
             var shape = this.visioApplication.ActivePage.Drop(master, newPinX, newPinY);
@@ -110,7 +111,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
             }
 
             var pageSheet = this.activePage.PageSheet;
@@ -124,7 +125,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
             }
 
             var pageSheet = this.activePage.PageSheet;
@@ -140,7 +141,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
             }
 
             var pageSheet = this.activePage.PageSheet;
@@ -156,8 +157,9 @@ namespace VisioCleanup.Core.Services
         {
             try
             {
-                this.logger.LogDebug("Opening connection to visio");
-                this.visioApplication = Marshal.GetActiveObject("Visio.Application") as Application ?? throw new InvalidOperationException("Visio must be running.");
+                this.logger.LogDebug(en_AU.VisioApplication_Open_Opening_connection_to_visio);
+                this.visioApplication = Marshal.GetActiveObject(en_AU.VisioApplication_Open_Visio_Application) as Application
+                                        ?? throw new InvalidOperationException(en_AU.VisioApplication_Open_Visio_must_be_running_);
                 this.activePage = this.visioApplication.ActivePage;
 
                 this.stencilCache.Clear();
@@ -174,7 +176,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication?.ActiveWindow is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
             }
 
             Dictionary<int, DiagramShape> allShapes = new();
@@ -183,15 +185,15 @@ namespace VisioCleanup.Core.Services
             var selection = this.visioApplication.ActiveWindow.Selection;
             this.LoadShapeCache();
 
-            this.logger.LogDebug("Found {Count} selected shapes", selection.Count);
+            this.logger.LogDebug(en_AU.VisioApplication_RetrieveShapes_Found__Count__selected_shapes, selection.Count);
             foreach (var selected in selection.Cast<Shape>().Where(selected => selected is not null))
             {
-                this.logger.LogDebug("Processing shape: {ShapeID} - {ShapeText}", selected.ID, selected.Text);
+                this.logger.LogDebug(en_AU.VisioApplication_RetrieveShapes_Processing_shape___ShapeID_____ShapeText_, selected.ID, selected.Text);
 
                 var sheetId = selected.ID;
                 if (allShapes.ContainsKey(sheetId))
                 {
-                    this.logger.LogDebug("Shape already processed");
+                    this.logger.LogDebug(en_AU.VisioApplication_RetrieveShapes_Shape_already_processed);
                     continue;
                 }
 
@@ -205,11 +207,11 @@ namespace VisioCleanup.Core.Services
                                                     TopSide = this.CalculateTopSide(sheetId),
                                                     BaseSide = this.CalculateBaseSide(sheetId),
                                                 };
-                this.logger.LogDebug("Adding shape to collection");
+                this.logger.LogDebug(en_AU.VisioApplication_RetrieveShapes_Adding_shape_to_collection);
                 allShapes.Add(sheetId, diagramShape);
             }
 
-            this.logger.LogDebug("Processed a total of {Count} shapes", allShapes.Count);
+            this.logger.LogDebug(en_AU.VisioApplication_RetrieveShapes_Processed_a_total_of__Count__shapes, allShapes.Count);
 
             // generate final collection
             Collection<DiagramShape> shapes = new();
@@ -226,7 +228,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
             }
 
             if (diagramShape is null)
@@ -248,7 +250,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
             }
 
             var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
@@ -263,39 +265,39 @@ namespace VisioCleanup.Core.Services
                               {
                                   new()
                                       {
-                                          { "sheetID", diagramShape.VisioId },
-                                          { "section", (short)VisSectionIndices.visSectionObject },
-                                          { "row", (short)VisRowIndices.visRowXFormOut },
-                                          { "cell", (short)VisCellIndices.visXFormWidth },
-                                          { "unit", VisUnitCodes.visMillimeters },
-                                          { "result", width },
+                                          { en_AU.VisioApplication_UpdateShape_sheetID, diagramShape.VisioId },
+                                          { en_AU.VisioApplication_UpdateShape_section, (short)VisSectionIndices.visSectionObject },
+                                          { en_AU.VisioApplication_UpdateShape_row, (short)VisRowIndices.visRowXFormOut },
+                                          { en_AU.VisioApplication_UpdateShape_cell, (short)VisCellIndices.visXFormWidth },
+                                          { en_AU.VisioApplication_UpdateShape_unit, VisUnitCodes.visMillimeters },
+                                          { en_AU.VisioApplication_UpdateShape_result, width },
                                       },
                                   new()
                                       {
-                                          { "sheetID", diagramShape.VisioId },
-                                          { "section", (short)VisSectionIndices.visSectionObject },
-                                          { "row", (short)VisRowIndices.visRowXFormOut },
-                                          { "cell", (short)VisCellIndices.visXFormHeight },
-                                          { "unit", VisUnitCodes.visMillimeters },
-                                          { "result", height },
+                                          { en_AU.VisioApplication_UpdateShape_sheetID, diagramShape.VisioId },
+                                          { en_AU.VisioApplication_UpdateShape_section, (short)VisSectionIndices.visSectionObject },
+                                          { en_AU.VisioApplication_UpdateShape_row, (short)VisRowIndices.visRowXFormOut },
+                                          { en_AU.VisioApplication_UpdateShape_cell, (short)VisCellIndices.visXFormHeight },
+                                          { en_AU.VisioApplication_UpdateShape_unit, VisUnitCodes.visMillimeters },
+                                          { en_AU.VisioApplication_UpdateShape_result, height },
                                       },
                                   new()
                                       {
-                                          { "sheetID", diagramShape.VisioId },
-                                          { "section", (short)VisSectionIndices.visSectionObject },
-                                          { "row", (short)VisRowIndices.visRowXFormOut },
-                                          { "cell", (short)VisCellIndices.visXFormPinX },
-                                          { "unit", VisUnitCodes.visMillimeters },
-                                          { "result", newPinX },
+                                          { en_AU.VisioApplication_UpdateShape_sheetID, diagramShape.VisioId },
+                                          { en_AU.VisioApplication_UpdateShape_section, (short)VisSectionIndices.visSectionObject },
+                                          { en_AU.VisioApplication_UpdateShape_row, (short)VisRowIndices.visRowXFormOut },
+                                          { en_AU.VisioApplication_UpdateShape_cell, (short)VisCellIndices.visXFormPinX },
+                                          { en_AU.VisioApplication_UpdateShape_unit, VisUnitCodes.visMillimeters },
+                                          { en_AU.VisioApplication_UpdateShape_result, newPinX },
                                       },
                                   new()
                                       {
-                                          { "sheetID", diagramShape.VisioId },
-                                          { "section", (short)VisSectionIndices.visSectionObject },
-                                          { "row", (short)VisRowIndices.visRowXFormOut },
-                                          { "cell", (short)VisCellIndices.visXFormPinY },
-                                          { "unit", VisUnitCodes.visMillimeters },
-                                          { "result", newPinY },
+                                          { en_AU.VisioApplication_UpdateShape_sheetID, diagramShape.VisioId },
+                                          { en_AU.VisioApplication_UpdateShape_section, (short)VisSectionIndices.visSectionObject },
+                                          { en_AU.VisioApplication_UpdateShape_row, (short)VisRowIndices.visRowXFormOut },
+                                          { en_AU.VisioApplication_UpdateShape_cell, (short)VisCellIndices.visXFormPinY },
+                                          { en_AU.VisioApplication_UpdateShape_unit, VisUnitCodes.visMillimeters },
+                                          { en_AU.VisioApplication_UpdateShape_result, newPinY },
                                       },
                               };
 
@@ -309,13 +311,13 @@ namespace VisioCleanup.Core.Services
                 var item = updates[i];
                 var srcStreamTracker = 0;
 
-                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["section"]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[en_AU.VisioApplication_UpdateShape_section]);
                 srcStreamTracker++;
-                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["row"]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[en_AU.VisioApplication_UpdateShape_row]);
                 srcStreamTracker++;
-                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["cell"]);
-                resultsArray[i] = item["result"];
-                unitsArray[i] = item["unit"];
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[en_AU.VisioApplication_UpdateShape_cell]);
+                resultsArray[i] = item[en_AU.VisioApplication_UpdateShape_result];
+                unitsArray[i] = item[en_AU.VisioApplication_UpdateShape_unit];
             }
 
             // EXECUTE THE REQUEST
@@ -326,7 +328,7 @@ namespace VisioCleanup.Core.Services
             }
             catch (COMException e)
             {
-                this.logger.LogError(e, "Error occured during updating {Shape}", diagramShape);
+                this.logger.LogError(e, en_AU.VisioApplication_UpdateShape_Error_occured_during_updating__Shape_, diagramShape);
             }
         }
 
@@ -336,7 +338,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
             }
 
             this.visioApplication.ShowChanges = state;
@@ -397,7 +399,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
             }
 
             return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID[sheetId]);
@@ -407,7 +409,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("Initialise system first");
+                throw new InvalidOperationException(en_AU.VisioApplication_LoadShapeCache_Initialise_system_first);
             }
 
             // clear cache
@@ -429,7 +431,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.visioApplication is null)
             {
-                throw new InvalidOperationException("Initialise system first.");
+                throw new InvalidOperationException(en_AU.VisioApplication_StencilValueFactory_Initialise_system_first_);
             }
 
             var documentStencil = this.visioApplication.ActiveDocument.Masters;

@@ -14,6 +14,7 @@ namespace VisioCleanup.Core
 
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models.Config;
+    using VisioCleanup.Core.Resources;
     using VisioCleanup.Core.Services;
 
     /// <summary>The service collection extensions.</summary>
@@ -30,7 +31,7 @@ namespace VisioCleanup.Core
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            serviceCollection.Configure<AppConfig>(configuration.GetSection("VisioCleanup:Core"));
+            serviceCollection.Configure<AppConfig>(configuration.GetSection(en_AU.ServiceCollectionExtensions_AddVisioCleanupCore_VisioCleanup_Core));
             serviceCollection.AddSingleton<IVisioApplication, VisioApplication>();
             serviceCollection.AddSingleton<IExcelApplication, ExcelApplication>();
             serviceCollection.AddSingleton<ISqlServerDatabaseApplication, SqlServerDatabaseApplication>();

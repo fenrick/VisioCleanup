@@ -8,9 +8,11 @@
 namespace VisioCleanup.Core
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Runtime.Versioning;
     using System.Security;
+
+    using Serilog;
+
+    using VisioCleanup.Core.Resources;
 
     /// <summary>Implementation of .Net Framework 4.6 System.Runtime.InteropServices.Marshal.GetActiveObject().</summary>
     internal static class Marshal
@@ -27,34 +29,18 @@ namespace VisioCleanup.Core
             // CLSIDFromProgIDEx doesn't exist.
             try
             {
-                CLSIDFromProgIDEx(progId, out classId);
+                NativeMethods.CLSIDFromProgIDEx(progId, out classId);
             }
-            catch
+            catch (Exception e)
             {
+                Log.Error(e, en_AU.Marshal_GetActiveObject_Unable_to_find_CLSIDFromProgIDEx);
+
                 // When you catch an exception you should throw exception or at least log error
-                CLSIDFromProgID(progId, out classId);
+                NativeMethods.CLSIDFromProgID(progId, out classId);
             }
 
-            GetActiveObject(ref classId, IntPtr.Zero, out var obj);
+            NativeMethods.GetActiveObject(ref classId, IntPtr.Zero, out var obj);
             return obj;
         }
-
-        [DllImport("ole32.dll", PreserveSig = false)]
-        [ResourceExposure(ResourceScope.None)]
-        [SuppressUnmanagedCodeSecurity]
-        [SecurityCritical] // auto-generated
-        private static extern void CLSIDFromProgID([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
-
-        [DllImport("ole32.dll", PreserveSig = false)]
-        [ResourceExposure(ResourceScope.None)]
-        [SuppressUnmanagedCodeSecurity]
-        [SecurityCritical] // auto-generated
-        private static extern void CLSIDFromProgIDEx([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
-
-        [DllImport("oleaut32.dll", PreserveSig = false)]
-        [ResourceExposure(ResourceScope.None)]
-        [SuppressUnmanagedCodeSecurity]
-        [SecurityCritical] // auto-generated
-        private static extern void GetActiveObject(ref Guid rclsid, IntPtr reserved, [MarshalAs(UnmanagedType.Interface)] out object ppunk);
     }
 }

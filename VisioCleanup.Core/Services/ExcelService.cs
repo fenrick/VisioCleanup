@@ -19,6 +19,7 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
+    using VisioCleanup.Core.Resources;
 
     /// <summary>The excel service.</summary>
     public class ExcelService : AbstractProcessingService, IExcelService
@@ -50,10 +51,10 @@ namespace VisioCleanup.Core.Services
                             List<DiagramShape> shapes = new();
 
                             // master shape
-                            this.Logger.LogInformation("Create a fake parent shape");
+                            this.Logger.LogInformation(en_AU.DatabaseService_ProcessDataSet_Create_a_fake_parent_shape);
                             this.MasterShape = new DiagramShape(0)
                                                    {
-                                                       ShapeText = "FAKE MASTER",
+                                                       ShapeText = en_AU.FAKE_MASTER,
                                                        ShapeType = ShapeType.FakeShape,
                                                        LeftSide = this.VisioApplication.GetPageLeftSide(),
                                                        TopSide = this.VisioApplication.GetPageTopSide() - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
@@ -64,7 +65,7 @@ namespace VisioCleanup.Core.Services
                             this.ConvertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
 
                             // retrieve records
-                            this.Logger.LogInformation("Loading excel data");
+                            this.Logger.LogInformation(en_AU.ExcelService_ProcessDataSet_Loading_excel_data);
                             shapes.AddRange(this.excelApplication.RetrieveRecords());
 
                             if (shapes.Count == 1)
@@ -74,22 +75,22 @@ namespace VisioCleanup.Core.Services
 
                             this.AllShapes = new Collection<DiagramShape>(shapes);
 
-                            this.Logger.LogInformation("Assigning fake parent");
+                            this.Logger.LogInformation(en_AU.DatabaseService_ProcessDataSet_Assigning_fake_parent);
                             foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
                             {
                                 this.MasterShape.AddChildShape(shape);
                             }
 
                             // need to set children relationships.
-                            this.Logger.LogInformation("Sorting shapes into lines");
+                            this.Logger.LogInformation(en_AU.DatabaseService_ProcessDataSet_Sorting_shapes_into_lines);
                             this.SortChildren(this.MasterShape, maxRight);
                         }
                         finally
                         {
-                            this.Logger.LogInformation("Closing connection to visio");
+                            this.Logger.LogInformation(en_AU.DatabaseService_ProcessDataSet_Closing_connection_to_visio);
                             this.VisioApplication.Close();
 
-                            this.Logger.LogInformation("Closing connection to excel");
+                            this.Logger.LogInformation(en_AU.ExcelService_ProcessDataSet_Closing_connection_to_excel);
                             this.excelApplication.Close();
                         }
                     });
