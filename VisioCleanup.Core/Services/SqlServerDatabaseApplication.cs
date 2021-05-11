@@ -122,7 +122,7 @@ namespace VisioCleanup.Core.Services
             return shapes;
         }
 
-        /// <summary>Native/Managed Dispose</summary>
+        /// <summary>Native/Managed Dispose.</summary>
         /// <param name="native">Is this a native dispose.</param>
         protected virtual void Dispose(bool native)
         {

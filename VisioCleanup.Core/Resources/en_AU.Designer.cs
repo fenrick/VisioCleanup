@@ -22,7 +22,7 @@ namespace VisioCleanup.Core.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class en_AU {
+    internal class en_AU {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace VisioCleanup.Core.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("VisioCleanup.Core.Resources.en_AU", typeof(en_AU).Assembly);
@@ -51,7 +51,7 @@ namespace VisioCleanup.Core.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,9 +61,36 @@ namespace VisioCleanup.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Correcting diagram: pass {Count}.
+        /// </summary>
+        internal static string AbstractProcessingService_LayoutDataSet_Correcting_diagram__pass__Count_ {
+            get {
+                return ResourceManager.GetString("AbstractProcessingService_LayoutDataSet_Correcting_diagram__pass__Count_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dropping new shape: {Shape}.
+        /// </summary>
+        internal static string AbstractProcessingService_UpdateVisio_Dropping_new_shape___Shape_ {
+            get {
+                return ResourceManager.GetString("AbstractProcessingService_UpdateVisio_Dropping_new_shape___Shape_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modelling changes to visio.
+        /// </summary>
+        internal static string AbstractProcessingService_UpdateVisio_Modelling_changes_to_visio {
+            get {
+                return ResourceManager.GetString("AbstractProcessingService_UpdateVisio_Modelling_changes_to_visio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assigning fake parent.
         /// </summary>
-        public static string DatabaseService_ProcessDataSet_Assigning_fake_parent {
+        internal static string DatabaseService_ProcessDataSet_Assigning_fake_parent {
             get {
                 return ResourceManager.GetString("DatabaseService_ProcessDataSet_Assigning_fake_parent", resourceCulture);
             }
@@ -72,7 +99,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Closing connection to database.
         /// </summary>
-        public static string DatabaseService_ProcessDataSet_Closing_connection_to_database {
+        internal static string DatabaseService_ProcessDataSet_Closing_connection_to_database {
             get {
                 return ResourceManager.GetString("DatabaseService_ProcessDataSet_Closing_connection_to_database", resourceCulture);
             }
@@ -81,7 +108,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Closing connection to visio.
         /// </summary>
-        public static string DatabaseService_ProcessDataSet_Closing_connection_to_visio {
+        internal static string DatabaseService_ProcessDataSet_Closing_connection_to_visio {
             get {
                 return ResourceManager.GetString("DatabaseService_ProcessDataSet_Closing_connection_to_visio", resourceCulture);
             }
@@ -90,7 +117,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Create a fake parent shape.
         /// </summary>
-        public static string DatabaseService_ProcessDataSet_Create_a_fake_parent_shape {
+        internal static string DatabaseService_ProcessDataSet_Create_a_fake_parent_shape {
             get {
                 return ResourceManager.GetString("DatabaseService_ProcessDataSet_Create_a_fake_parent_shape", resourceCulture);
             }
@@ -99,7 +126,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Loading database data.
         /// </summary>
-        public static string DatabaseService_ProcessDataSet_Loading_database_data {
+        internal static string DatabaseService_ProcessDataSet_Loading_database_data {
             get {
                 return ResourceManager.GetString("DatabaseService_ProcessDataSet_Loading_database_data", resourceCulture);
             }
@@ -108,7 +135,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Sorting shapes into lines.
         /// </summary>
-        public static string DatabaseService_ProcessDataSet_Sorting_shapes_into_lines {
+        internal static string DatabaseService_ProcessDataSet_Sorting_shapes_into_lines {
             get {
                 return ResourceManager.GetString("DatabaseService_ProcessDataSet_Sorting_shapes_into_lines", resourceCulture);
             }
@@ -117,7 +144,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Moving {Shape} by {Movement} vertical.
         /// </summary>
-        public static string DiagramShape_BaseSide_Moving__Shape__by__Movement__vertical {
+        internal static string DiagramShape_BaseSide_Moving__Shape__by__Movement__vertical {
             get {
                 return ResourceManager.GetString("DiagramShape_BaseSide_Moving__Shape__by__Movement__vertical", resourceCulture);
             }
@@ -126,7 +153,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Moving {Shape} by {Movement} horizontal.
         /// </summary>
-        public static string DiagramShape_Below_Moving__Shape__by__Movement__horizontal {
+        internal static string DiagramShape_Below_Moving__Shape__by__Movement__horizontal {
             get {
                 return ResourceManager.GetString("DiagramShape_Below_Moving__Shape__by__Movement__horizontal", resourceCulture);
             }
@@ -135,7 +162,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Top: {0}, Left: {1}, Width: {2}, Height: {3}.
         /// </summary>
-        public static string DiagramShape_CornerString_Top___0___Left___1___Width___2___Height___3_ {
+        internal static string DiagramShape_CornerString_Top___0___Left___1___Width___2___Height___3_ {
             get {
                 return ResourceManager.GetString("DiagramShape_CornerString_Top___0___Left___1___Width___2___Height___3_", resourceCulture);
             }
@@ -144,7 +171,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Weird circumstances, check diagram for overlaps between {Shape} and {Shape2}.
         /// </summary>
-        public static string DiagramShape_FindNeighbours_Weird_circumstances__check_diagram_for_overlaps_between__Shape__and__Shape2_ {
+        internal static string DiagramShape_FindNeighbours_Weird_circumstances__check_diagram_for_overlaps_between__Shape__and__Shape2_ {
             get {
                 return ResourceManager.GetString("DiagramShape_FindNeighbours_Weird_circumstances__check_diagram_for_overlaps_betwe" +
                         "en__Shape__and__Shape2_", resourceCulture);
@@ -154,7 +181,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Aligning {Shape} to {Parent}.
         /// </summary>
-        public static string DiagramShape_FixPosition_Aligning__Shape__to__Parent_ {
+        internal static string DiagramShape_FixPosition_Aligning__Shape__to__Parent_ {
             get {
                 return ResourceManager.GetString("DiagramShape_FixPosition_Aligning__Shape__to__Parent_", resourceCulture);
             }
@@ -163,7 +190,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to New size for {Shape}: {Corners}.
         /// </summary>
-        public static string DiagramShape_ResizeShape_New_size_for__Shape____Corners_ {
+        internal static string DiagramShape_ResizeShape_New_size_for__Shape____Corners_ {
             get {
                 return ResourceManager.GetString("DiagramShape_ResizeShape_New_size_for__Shape____Corners_", resourceCulture);
             }
@@ -172,7 +199,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Resizing: {Shape}.
         /// </summary>
-        public static string DiagramShape_ResizeShape_Resizing___Shape_ {
+        internal static string DiagramShape_ResizeShape_Resizing___Shape_ {
             get {
                 return ResourceManager.GetString("DiagramShape_ResizeShape_Resizing___Shape_", resourceCulture);
             }
@@ -181,7 +208,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0}: {1}.
         /// </summary>
-        public static string DiagramShape_ToString__0____1_ {
+        internal static string DiagramShape_ToString__0____1_ {
             get {
                 return ResourceManager.GetString("DiagramShape_ToString__0____1_", resourceCulture);
             }
@@ -190,7 +217,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Releasing excel application.
         /// </summary>
-        public static string ExcelApplication_Close_Releasing_excel_application {
+        internal static string ExcelApplication_Close_Releasing_excel_application {
             get {
                 return ResourceManager.GetString("ExcelApplication_Close_Releasing_excel_application", resourceCulture);
             }
@@ -199,7 +226,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Creating shape for: {ShapeText}.
         /// </summary>
-        public static string ExcelApplication_CreateShape_Creating_shape_for___ShapeText_ {
+        internal static string ExcelApplication_CreateShape_Creating_shape_for___ShapeText_ {
             get {
                 return ResourceManager.GetString("ExcelApplication_CreateShape_Creating_shape_for___ShapeText_", resourceCulture);
             }
@@ -208,7 +235,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0}.
         /// </summary>
-        public static string ExcelApplication_FindHeaders__0_ {
+        internal static string ExcelApplication_FindHeaders__0_ {
             get {
                 return ResourceManager.GetString("ExcelApplication_FindHeaders__0_", resourceCulture);
             }
@@ -217,7 +244,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0} Shape.
         /// </summary>
-        public static string ExcelApplication_FindHeaders__0__Shape {
+        internal static string ExcelApplication_FindHeaders__0__Shape {
             get {
                 return ResourceManager.GetString("ExcelApplication_FindHeaders__0__Shape", resourceCulture);
             }
@@ -226,7 +253,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0} SortValue.
         /// </summary>
-        public static string ExcelApplication_FindHeaders__0__SortValue {
+        internal static string ExcelApplication_FindHeaders__0__SortValue {
             get {
                 return ResourceManager.GetString("ExcelApplication_FindHeaders__0__SortValue", resourceCulture);
             }
@@ -235,7 +262,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Excel.Application.
         /// </summary>
-        public static string ExcelApplication_Open_Excel_Application {
+        internal static string ExcelApplication_Open_Excel_Application {
             get {
                 return ResourceManager.GetString("ExcelApplication_Open_Excel_Application", resourceCulture);
             }
@@ -244,7 +271,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Excel must be running..
         /// </summary>
-        public static string ExcelApplication_Open_Excel_must_be_running_ {
+        internal static string ExcelApplication_Open_Excel_must_be_running_ {
             get {
                 return ResourceManager.GetString("ExcelApplication_Open_Excel_must_be_running_", resourceCulture);
             }
@@ -253,7 +280,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Opening connection to excel.
         /// </summary>
-        public static string ExcelApplication_Open_Opening_connection_to_excel {
+        internal static string ExcelApplication_Open_Opening_connection_to_excel {
             get {
                 return ResourceManager.GetString("ExcelApplication_Open_Opening_connection_to_excel", resourceCulture);
             }
@@ -262,7 +289,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Excel not setup correctly..
         /// </summary>
-        public static string ExcelApplication_RetrieveRecords_Excel_not_setup_correctly_ {
+        internal static string ExcelApplication_RetrieveRecords_Excel_not_setup_correctly_ {
             get {
                 return ResourceManager.GetString("ExcelApplication_RetrieveRecords_Excel_not_setup_correctly_", resourceCulture);
             }
@@ -271,7 +298,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to getting values.
         /// </summary>
-        public static string ExcelApplication_RetrieveRecords_getting_values {
+        internal static string ExcelApplication_RetrieveRecords_getting_values {
             get {
                 return ResourceManager.GetString("ExcelApplication_RetrieveRecords_getting_values", resourceCulture);
             }
@@ -280,7 +307,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Closing connection to excel.
         /// </summary>
-        public static string ExcelService_ProcessDataSet_Closing_connection_to_excel {
+        internal static string ExcelService_ProcessDataSet_Closing_connection_to_excel {
             get {
                 return ResourceManager.GetString("ExcelService_ProcessDataSet_Closing_connection_to_excel", resourceCulture);
             }
@@ -289,7 +316,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Loading excel data.
         /// </summary>
-        public static string ExcelService_ProcessDataSet_Loading_excel_data {
+        internal static string ExcelService_ProcessDataSet_Loading_excel_data {
             get {
                 return ResourceManager.GetString("ExcelService_ProcessDataSet_Loading_excel_data", resourceCulture);
             }
@@ -298,7 +325,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to FAKE MASTER.
         /// </summary>
-        public static string FAKE_MASTER {
+        internal static string FAKE_MASTER {
             get {
                 return ResourceManager.GetString("FAKE_MASTER", resourceCulture);
             }
@@ -307,7 +334,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Unable to find CLSIDFromProgIDEx.
         /// </summary>
-        public static string Marshal_GetActiveObject_Unable_to_find_CLSIDFromProgIDEx {
+        internal static string Marshal_GetActiveObject_Unable_to_find_CLSIDFromProgIDEx {
             get {
                 return ResourceManager.GetString("Marshal_GetActiveObject_Unable_to_find_CLSIDFromProgIDEx", resourceCulture);
             }
@@ -316,7 +343,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to VisioCleanup:Core.
         /// </summary>
-        public static string ServiceCollectionExtensions_AddVisioCleanupCore_VisioCleanup_Core {
+        internal static string ServiceCollectionExtensions_AddVisioCleanupCore_VisioCleanup_Core {
             get {
                 return ResourceManager.GetString("ServiceCollectionExtensions_AddVisioCleanupCore_VisioCleanup_Core", resourceCulture);
             }
@@ -325,7 +352,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0} {1}:{2}.
         /// </summary>
-        public static string ShapeIdentifierFormat {
+        internal static string ShapeIdentifierFormat {
             get {
                 return ResourceManager.GetString("ShapeIdentifierFormat", resourceCulture);
             }
@@ -334,7 +361,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Open database first..
         /// </summary>
-        public static string SqlServerDatabaseApplication_Close_Open_database_first_ {
+        internal static string SqlServerDatabaseApplication_Close_Open_database_first_ {
             get {
                 return ResourceManager.GetString("SqlServerDatabaseApplication_Close_Open_database_first_", resourceCulture);
             }
@@ -343,7 +370,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0}.
         /// </summary>
-        public static string SqlServerDatabaseApplication_MapColumns__0_ {
+        internal static string SqlServerDatabaseApplication_MapColumns__0_ {
             get {
                 return ResourceManager.GetString("SqlServerDatabaseApplication_MapColumns__0_", resourceCulture);
             }
@@ -352,7 +379,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to column.ColumnOrdinal is not  null.
         /// </summary>
-        public static string SqlServerDatabaseApplication_MapColumns_column_ColumnOrdinal_is_not__null {
+        internal static string SqlServerDatabaseApplication_MapColumns_column_ColumnOrdinal_is_not__null {
             get {
                 return ResourceManager.GetString("SqlServerDatabaseApplication_MapColumns_column_ColumnOrdinal_is_not__null", resourceCulture);
             }
@@ -361,7 +388,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Clearing stencil cache.
         /// </summary>
-        public static string VisioApplication_Close_Clearing_stencil_cache {
+        internal static string VisioApplication_Close_Clearing_stencil_cache {
             get {
                 return ResourceManager.GetString("VisioApplication_Close_Clearing_stencil_cache", resourceCulture);
             }
@@ -370,7 +397,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Clearning shape cache.
         /// </summary>
-        public static string VisioApplication_Close_Clearning_shape_cache {
+        internal static string VisioApplication_Close_Clearning_shape_cache {
             get {
                 return ResourceManager.GetString("VisioApplication_Close_Clearning_shape_cache", resourceCulture);
             }
@@ -379,7 +406,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Releasing active page.
         /// </summary>
-        public static string VisioApplication_Close_Releasing_active_page {
+        internal static string VisioApplication_Close_Releasing_active_page {
             get {
                 return ResourceManager.GetString("VisioApplication_Close_Releasing_active_page", resourceCulture);
             }
@@ -388,7 +415,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Releasing visio application.
         /// </summary>
-        public static string VisioApplication_Close_Releasing_visio_application {
+        internal static string VisioApplication_Close_Releasing_visio_application {
             get {
                 return ResourceManager.GetString("VisioApplication_Close_Releasing_visio_application", resourceCulture);
             }
@@ -397,7 +424,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Rectangle.
         /// </summary>
-        public static string VisioApplication_CreateShape_Rectangle {
+        internal static string VisioApplication_CreateShape_Rectangle {
             get {
                 return ResourceManager.GetString("VisioApplication_CreateShape_Rectangle", resourceCulture);
             }
@@ -406,7 +433,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Unable to find matching stencil..
         /// </summary>
-        public static string VisioApplication_CreateShape_Unable_to_find_matching_stencil_ {
+        internal static string VisioApplication_CreateShape_Unable_to_find_matching_stencil_ {
             get {
                 return ResourceManager.GetString("VisioApplication_CreateShape_Unable_to_find_matching_stencil_", resourceCulture);
             }
@@ -415,7 +442,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Unable to find matching stencil: {StencilName}.
         /// </summary>
-        public static string VisioApplication_CreateShape_Unable_to_find_matching_stencil___StencilName_ {
+        internal static string VisioApplication_CreateShape_Unable_to_find_matching_stencil___StencilName_ {
             get {
                 return ResourceManager.GetString("VisioApplication_CreateShape_Unable_to_find_matching_stencil___StencilName_", resourceCulture);
             }
@@ -424,7 +451,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to System not initialised..
         /// </summary>
-        public static string VisioApplication_GetPageLeftSide_System_not_initialised_ {
+        internal static string VisioApplication_GetPageLeftSide_System_not_initialised_ {
             get {
                 return ResourceManager.GetString("VisioApplication_GetPageLeftSide_System_not_initialised_", resourceCulture);
             }
@@ -433,7 +460,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Initialise system first.
         /// </summary>
-        public static string VisioApplication_LoadShapeCache_Initialise_system_first {
+        internal static string VisioApplication_LoadShapeCache_Initialise_system_first {
             get {
                 return ResourceManager.GetString("VisioApplication_LoadShapeCache_Initialise_system_first", resourceCulture);
             }
@@ -442,7 +469,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Opening connection to visio.
         /// </summary>
-        public static string VisioApplication_Open_Opening_connection_to_visio {
+        internal static string VisioApplication_Open_Opening_connection_to_visio {
             get {
                 return ResourceManager.GetString("VisioApplication_Open_Opening_connection_to_visio", resourceCulture);
             }
@@ -451,7 +478,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Visio.Application.
         /// </summary>
-        public static string VisioApplication_Open_Visio_Application {
+        internal static string VisioApplication_Open_Visio_Application {
             get {
                 return ResourceManager.GetString("VisioApplication_Open_Visio_Application", resourceCulture);
             }
@@ -460,7 +487,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Visio must be running..
         /// </summary>
-        public static string VisioApplication_Open_Visio_must_be_running_ {
+        internal static string VisioApplication_Open_Visio_must_be_running_ {
             get {
                 return ResourceManager.GetString("VisioApplication_Open_Visio_must_be_running_", resourceCulture);
             }
@@ -469,7 +496,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Adding shape to collection.
         /// </summary>
-        public static string VisioApplication_RetrieveShapes_Adding_shape_to_collection {
+        internal static string VisioApplication_RetrieveShapes_Adding_shape_to_collection {
             get {
                 return ResourceManager.GetString("VisioApplication_RetrieveShapes_Adding_shape_to_collection", resourceCulture);
             }
@@ -478,7 +505,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Found {Count} selected shapes.
         /// </summary>
-        public static string VisioApplication_RetrieveShapes_Found__Count__selected_shapes {
+        internal static string VisioApplication_RetrieveShapes_Found__Count__selected_shapes {
             get {
                 return ResourceManager.GetString("VisioApplication_RetrieveShapes_Found__Count__selected_shapes", resourceCulture);
             }
@@ -487,7 +514,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Processed a total of {Count} shapes.
         /// </summary>
-        public static string VisioApplication_RetrieveShapes_Processed_a_total_of__Count__shapes {
+        internal static string VisioApplication_RetrieveShapes_Processed_a_total_of__Count__shapes {
             get {
                 return ResourceManager.GetString("VisioApplication_RetrieveShapes_Processed_a_total_of__Count__shapes", resourceCulture);
             }
@@ -496,7 +523,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Processing shape: {ShapeID} - {ShapeText}.
         /// </summary>
-        public static string VisioApplication_RetrieveShapes_Processing_shape___ShapeID_____ShapeText_ {
+        internal static string VisioApplication_RetrieveShapes_Processing_shape___ShapeID_____ShapeText_ {
             get {
                 return ResourceManager.GetString("VisioApplication_RetrieveShapes_Processing_shape___ShapeID_____ShapeText_", resourceCulture);
             }
@@ -505,7 +532,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Shape already processed.
         /// </summary>
-        public static string VisioApplication_RetrieveShapes_Shape_already_processed {
+        internal static string VisioApplication_RetrieveShapes_Shape_already_processed {
             get {
                 return ResourceManager.GetString("VisioApplication_RetrieveShapes_Shape_already_processed", resourceCulture);
             }
@@ -514,7 +541,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Initialise system first..
         /// </summary>
-        public static string VisioApplication_StencilValueFactory_Initialise_system_first_ {
+        internal static string VisioApplication_StencilValueFactory_Initialise_system_first_ {
             get {
                 return ResourceManager.GetString("VisioApplication_StencilValueFactory_Initialise_system_first_", resourceCulture);
             }
@@ -523,7 +550,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to cell.
         /// </summary>
-        public static string VisioApplication_UpdateShape_cell {
+        internal static string VisioApplication_UpdateShape_cell {
             get {
                 return ResourceManager.GetString("VisioApplication_UpdateShape_cell", resourceCulture);
             }
@@ -532,7 +559,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Error occured during updating {Shape}.
         /// </summary>
-        public static string VisioApplication_UpdateShape_Error_occured_during_updating__Shape_ {
+        internal static string VisioApplication_UpdateShape_Error_occured_during_updating__Shape_ {
             get {
                 return ResourceManager.GetString("VisioApplication_UpdateShape_Error_occured_during_updating__Shape_", resourceCulture);
             }
@@ -541,7 +568,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to result.
         /// </summary>
-        public static string VisioApplication_UpdateShape_result {
+        internal static string VisioApplication_UpdateShape_result {
             get {
                 return ResourceManager.GetString("VisioApplication_UpdateShape_result", resourceCulture);
             }
@@ -550,7 +577,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to row.
         /// </summary>
-        public static string VisioApplication_UpdateShape_row {
+        internal static string VisioApplication_UpdateShape_row {
             get {
                 return ResourceManager.GetString("VisioApplication_UpdateShape_row", resourceCulture);
             }
@@ -559,7 +586,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to section.
         /// </summary>
-        public static string VisioApplication_UpdateShape_section {
+        internal static string VisioApplication_UpdateShape_section {
             get {
                 return ResourceManager.GetString("VisioApplication_UpdateShape_section", resourceCulture);
             }
@@ -568,7 +595,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to sheetID.
         /// </summary>
-        public static string VisioApplication_UpdateShape_sheetID {
+        internal static string VisioApplication_UpdateShape_sheetID {
             get {
                 return ResourceManager.GetString("VisioApplication_UpdateShape_sheetID", resourceCulture);
             }
@@ -577,7 +604,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to unit.
         /// </summary>
-        public static string VisioApplication_UpdateShape_unit {
+        internal static string VisioApplication_UpdateShape_unit {
             get {
                 return ResourceManager.GetString("VisioApplication_UpdateShape_unit", resourceCulture);
             }
@@ -586,7 +613,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Finding parent shapes.
         /// </summary>
-        public static string VisioService_LoadVisioObjectModel_Finding_parent_shapes {
+        internal static string VisioService_LoadVisioObjectModel_Finding_parent_shapes {
             get {
                 return ResourceManager.GetString("VisioService_LoadVisioObjectModel_Finding_parent_shapes", resourceCulture);
             }
@@ -595,7 +622,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Finding shape neighours.
         /// </summary>
-        public static string VisioService_LoadVisioObjectModel_Finding_shape_neighours {
+        internal static string VisioService_LoadVisioObjectModel_Finding_shape_neighours {
             get {
                 return ResourceManager.GetString("VisioService_LoadVisioObjectModel_Finding_shape_neighours", resourceCulture);
             }
@@ -604,7 +631,7 @@ namespace VisioCleanup.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Retrieving selected shapes.
         /// </summary>
-        public static string VisioService_LoadVisioObjectModel_Retrieving_selected_shapes {
+        internal static string VisioService_LoadVisioObjectModel_Retrieving_selected_shapes {
             get {
                 return ResourceManager.GetString("VisioService_LoadVisioObjectModel_Retrieving_selected_shapes", resourceCulture);
             }

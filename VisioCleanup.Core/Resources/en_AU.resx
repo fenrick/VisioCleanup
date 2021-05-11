@@ -281,4 +281,13 @@
     <data name="VisioService_LoadVisioObjectModel_Finding_shape_neighours" xml:space="preserve">
         <value>Finding shape neighours</value>
     </data>
+    <data name="AbstractProcessingService_LayoutDataSet_Correcting_diagram__pass__Count_" xml:space="preserve">
+        <value>Correcting diagram: pass {Count}</value>
+    </data>
+    <data name="AbstractProcessingService_UpdateVisio_Modelling_changes_to_visio" xml:space="preserve">
+        <value>Modelling changes to visio</value>
+    </data>
+    <data name="AbstractProcessingService_UpdateVisio_Dropping_new_shape___Shape_" xml:space="preserve">
+        <value>Dropping new shape: {Shape}</value>
+    </data>
 </root>

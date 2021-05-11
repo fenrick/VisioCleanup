@@ -72,8 +72,8 @@ namespace VisioCleanup.Core.Services
                 throw new InvalidOperationException(en_AU.ExcelApplication_Open_Excel_must_be_running_);
             }
 
-            Worksheet excelApplicationActiveSheet = this.excelApplication.ActiveSheet as Worksheet;
-            if (excelApplicationActiveSheet.ListObjects.Count == 0)
+            var excelApplicationActiveSheet = this.excelApplication!.ActiveSheet as Worksheet;
+            if (excelApplicationActiveSheet!.ListObjects.Count == 0)
             {
                 throw new InvalidOperationException(en_AU.ExcelApplication_RetrieveRecords_Excel_not_setup_correctly_);
             }
@@ -87,7 +87,7 @@ namespace VisioCleanup.Core.Services
             // process rows
             var rows = dataTable.DataBodyRange.Rows;
             this.logger.LogDebug(en_AU.ExcelApplication_RetrieveRecords_getting_values);
-            object[,] data = rows.Value as object[,];
+            var data = rows.Value as object[,];
             foreach (var rowNumber in Enumerable.Range(1, data.GetLength(0)))
             {
                 Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
@@ -157,7 +157,7 @@ namespace VisioCleanup.Core.Services
         {
             var columnMapping = new SortedList<int, Dictionary<FieldType, int>>();
             var level = 0;
-            object[,] header = dataTable.HeaderRowRange.Value as object[,];
+            var header = dataTable.HeaderRowRange.Value as object[,];
             do
             {
                 var mappings = new Dictionary<FieldType, int>();
