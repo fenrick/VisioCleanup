@@ -134,7 +134,7 @@ namespace VisioCleanup.Core.Services
         /// <param name="maxRight">Maximum right side.</param>
         protected void SortChildren(DiagramShape diagramShape, int maxRight)
         {
-            var internalMaxRight = maxRight - this.ConvertedAppConfigRight;
+            var internalMaxRight = maxRight - this.convertedAppConfigRight;
 
             var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
                 shape =>
