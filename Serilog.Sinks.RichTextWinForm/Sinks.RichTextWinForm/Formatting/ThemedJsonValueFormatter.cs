@@ -230,27 +230,9 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                         break;
                     }
 
-                case ValueType when value is int || value is uint || value is long:
-                    {
-                        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
-                        {
-                            output.AppendText(((IFormattable)value).ToString(null, CultureInfo.CurrentUICulture));
-                        }
-
-                        break;
-                    }
-
-                case ValueType when value is ulong || value is decimal || value is byte:
-                    {
-                        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
-                        {
-                            output.AppendText(((IFormattable)value).ToString(null, CultureInfo.CurrentUICulture));
-                        }
-
-                        break;
-                    }
-
-                case ValueType when value is sbyte || value is short || value is ushort:
+                case ValueType and (int or uint or long):
+                case ValueType and (ulong or decimal or byte):
+                case ValueType and (sbyte or short or ushort):
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                         {
@@ -317,7 +299,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
                         break;
                     }
 
-                case ValueType when value is DateTime || value is DateTimeOffset:
+                case ValueType and (DateTime or DateTimeOffset):
                     {
                         using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                         {
