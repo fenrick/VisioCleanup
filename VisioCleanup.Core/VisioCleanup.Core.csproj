@@ -28,7 +28,7 @@
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" PrivateAssets="all" />
         <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
         <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-        <PackageReference Include="GCop.All.Common" Version="2.7.6" PrivateAssets="all" />
+        <PackageReference Include="GCop.All.Common" Version="2.7.8" PrivateAssets="all" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="all" />
         <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0-preview2.21106.5" />
