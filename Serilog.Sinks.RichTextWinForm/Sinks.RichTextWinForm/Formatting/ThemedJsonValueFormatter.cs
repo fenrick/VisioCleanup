@@ -47,7 +47,15 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
 
                 delim = ", ";
 
-                var style = scalarValue.Value == null ? RichTextThemeStyle.Null : scalarValue.Value is string ? RichTextThemeStyle.String : RichTextThemeStyle.Scalar;
+                RichTextThemeStyle style;
+                if (scalarValue.Value == null)
+                {
+                    style = RichTextThemeStyle.Null;
+                }
+                else
+                {
+                    style = scalarValue.Value is string ? RichTextThemeStyle.String : RichTextThemeStyle.Scalar;
+                }
 
                 using (this.ApplyStyle(state.Output, style))
                 {
