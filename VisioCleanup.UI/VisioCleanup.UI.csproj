@@ -38,10 +38,10 @@
         <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
         <PackageReference Include="GCop.All.Common" Version="2.7.8" PrivateAssets="all" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="all" />
-        <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
+        <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
         <PackageReference Include="Serilog.Enrichers.Thread" Version="3.2.0-dev-00750" />
         <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
-        <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0-dev-00269" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0" />
         <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
