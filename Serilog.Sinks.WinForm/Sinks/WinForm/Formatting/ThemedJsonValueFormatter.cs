@@ -168,21 +168,9 @@ namespace Serilog.Sinks.WinForm.Formatting
                         break;
                     }
 
-                case ValueType when value is int || value is uint || value is long:
-                    {
-                        output.Write(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
-
-                        break;
-                    }
-
-                case ValueType when value is ulong || value is decimal || value is byte:
-                    {
-                        output.Write(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
-
-                        break;
-                    }
-
-                case ValueType when value is short || value is ushort:
+                case ValueType and (int or uint or long):
+                case ValueType and (ulong or decimal or byte):
+                case ValueType and (short or ushort):
                     {
                         output.Write(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
 
@@ -234,7 +222,7 @@ namespace Serilog.Sinks.WinForm.Formatting
                         break;
                     }
 
-                case ValueType when value is DateTime || value is DateTimeOffset:
+                case ValueType and (DateTime or DateTimeOffset):
                     {
                         output.Write("\"");
                         output.Write(((IFormattable)value).ToString("O", CultureInfo.InvariantCulture));
