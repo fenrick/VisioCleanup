@@ -14,7 +14,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DocumentationFile>erilog.Sinks.RichTextWinForm.xml</DocumentationFile>
+        <DocumentationFile>Serilog.Sinks.RichTextWinForm.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup>
