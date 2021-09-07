@@ -10,6 +10,7 @@ namespace VisioCleanup.Core.Services
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.Linq;
     using System.Runtime.InteropServices;
 
@@ -125,9 +126,9 @@ namespace VisioCleanup.Core.Services
             do
             {
                 var mappings = new Dictionary<FieldType, int>();
-                var fieldName = string.Format(this.AppConfig.FieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0_, level);
-                var sortFieldName = string.Format(this.AppConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
-                var shapeFieldName = string.Format(this.AppConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
+                var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0_, level);
+                var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
+                var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
 
                 level++;
                 for (var i = 1; i <= header.GetLength(1); i++)

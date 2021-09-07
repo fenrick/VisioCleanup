@@ -9,6 +9,7 @@ namespace VisioCleanup.Core.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
 
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -72,7 +73,7 @@ namespace VisioCleanup.Core.Services
                 return previousShape;
             }
 
-            var shapeIdentifier = string.Format(en_AU.ShapeIdentifierFormat, previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
+            var shapeIdentifier = string.Format(CultureInfo.CurrentCulture, en_AU.ShapeIdentifierFormat, previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
 
             if (!allShapes.ContainsKey(shapeIdentifier))
             {
