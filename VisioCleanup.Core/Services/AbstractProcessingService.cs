@@ -18,13 +18,16 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
+    using VisioCleanup.Core.Resources;
 
     /// <inheritdoc />
     /// <summary>Abstract implementation of common code for processing services.</summary>
     public abstract class AbstractProcessingService : IProcessingService
     {
+        private const int MaxCorrectRuns = 10;
+
         /// <summary>Store for converted app config right measure.</summary>
-        protected int ConvertedAppConfigRight;
+        protected int convertedAppConfigRight;
 
         /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
         /// <param name="logger">Logger.</param>
@@ -70,9 +73,9 @@ namespace VisioCleanup.Core.Services
             return Task.Run(
                 () =>
                     {
-                        for (var counter = 1; counter <= 10; counter++)
+                        for (var counter = 1; counter <= MaxCorrectRuns; counter++)
                         {
-                            this.Logger.LogInformation("Correcting diagram: pass {Count}", counter);
+                            this.Logger.LogInformation(en_AU.AbstractProcessingService_LayoutDataSet_Correcting_diagram__pass__Count_, counter);
 
                             if (this.MasterShape!.CorrectDiagram())
                             {
@@ -131,7 +134,7 @@ namespace VisioCleanup.Core.Services
         /// <param name="maxRight">Maximum right side.</param>
         protected void SortChildren(DiagramShape diagramShape, int maxRight)
         {
-            var internalMaxRight = maxRight - this.ConvertedAppConfigRight;
+            var internalMaxRight = maxRight - this.convertedAppConfigRight;
 
             var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
                 shape =>

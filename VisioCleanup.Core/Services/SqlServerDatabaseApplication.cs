@@ -21,6 +21,7 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
+    using VisioCleanup.Core.Resources;
 
     /// <inheritdoc />
     public class SqlServerDatabaseApplication : ISqlServerDatabaseApplication, IDisposable
@@ -50,7 +51,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.databaseConnection is null)
             {
-                throw new InvalidOperationException("Open database first.");
+                throw new InvalidOperationException(en_AU.SqlServerDatabaseApplication_Close_Open_database_first_);
             }
 
             this.databaseConnection.Close();
@@ -121,7 +122,7 @@ namespace VisioCleanup.Core.Services
             return shapes;
         }
 
-        /// <summary>Native/Managed Dispose</summary>
+        /// <summary>Native/Managed Dispose.</summary>
         /// <param name="native">Is this a native dispose.</param>
         protected virtual void Dispose(bool native)
         {
@@ -151,11 +152,11 @@ namespace VisioCleanup.Core.Services
                 return previousShape;
             }
 
-            var shapeIdentifier = $"{previousShape?.ShapeIdentifier} {shapeText}:{shapeType}".Trim();
+            var shapeIdentifier = string.Format(en_AU.ShapeIdentifierFormat, previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
 
             if (!allShapes.ContainsKey(shapeIdentifier))
             {
-                this.logger.LogDebug("Creating shape for: {ShapeText}", shapeText);
+                this.logger.LogDebug(en_AU.ExcelApplication_CreateShape_Creating_shape_for___ShapeText_, shapeText);
                 allShapes.Add(
                     shapeIdentifier,
                     new DiagramShape(0)
@@ -181,15 +182,15 @@ namespace VisioCleanup.Core.Services
             do
             {
                 Dictionary<FieldType, int> mappings = new();
-                var fieldName = string.Format(this.appConfig.FieldLabelFormat ?? "{0}", level);
-                var sortFieldName = string.Format(this.appConfig.SortFieldLabelFormat ?? "{0} SortValue", level);
-                var shapeFieldName = string.Format(this.appConfig.ShapeTypeLabelFormat ?? "{0} Shape", level);
+                var fieldName = string.Format(this.appConfig.FieldLabelFormat ?? en_AU.SqlServerDatabaseApplication_MapColumns__0_, level);
+                var sortFieldName = string.Format(this.appConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
+                var shapeFieldName = string.Format(this.appConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
 
                 level++;
 
                 foreach (var column in columnSchema)
                 {
-                    Debug.Assert(column.ColumnOrdinal is not null, "column.ColumnOrdinal is not  null");
+                    Debug.Assert(column.ColumnOrdinal is not null, en_AU.SqlServerDatabaseApplication_MapColumns_column_ColumnOrdinal_is_not__null);
                     var columnColumnOrdinal = (int)column.ColumnOrdinal;
                     var columnColumnName = column.ColumnName;
                     FieldType? fieldMapping = null;
