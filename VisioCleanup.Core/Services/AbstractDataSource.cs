@@ -17,15 +17,23 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models.Config;
     using VisioCleanup.Core.Resources;
 
+    /// <summary>
+    /// Abstract data source.
+    /// </summary>
     public abstract class AbstractDataSource
     {
         /// <summary>Initialises a new instance of the <see cref="AbstractDataSource" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="options">Application configuration settings.</param>
-        public AbstractDataSource(ILogger logger, IOptions<AppConfig> options)
+        protected AbstractDataSource(ILogger logger, IOptions<AppConfig> options)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.AppConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
+            this.AppConfig = options.Value;
         }
 
         /// <summary>Gets application configuration.</summary>
@@ -36,8 +44,25 @@ namespace VisioCleanup.Core.Services
         /// <value>Logger.</value>
         protected ILogger Logger { get; }
 
+        /// <summary>
+        /// Create a new shape object.
+        /// </summary>
+        /// <param name="rowResult">Data set row.</param>
+        /// <param name="allShapes">set of all shapes.</param>
+        /// <param name="previousShape">Parent shape.</param>
+        /// <returns>New shape object.</returns>
         protected DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
         {
+            if (rowResult == null)
+            {
+                throw new ArgumentNullException(nameof(rowResult));
+            }
+
+            if (allShapes == null)
+            {
+                throw new ArgumentNullException(nameof(allShapes));
+            }
+
             var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : string.Empty;
             var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
             var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : string.Empty;
@@ -48,6 +73,7 @@ namespace VisioCleanup.Core.Services
             }
 
             var shapeIdentifier = string.Format(en_AU.ShapeIdentifierFormat, previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
+
 
             if (!allShapes.ContainsKey(shapeIdentifier))
             {
