@@ -10,6 +10,7 @@ namespace VisioCleanup.Core.Services
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.Linq;
     using System.Runtime.InteropServices;
 
@@ -25,21 +26,16 @@ namespace VisioCleanup.Core.Services
     using Marshal = VisioCleanup.Core.Marshal;
 
     /// <inheritdoc />
-    internal class ExcelDataSource : IExcelDataSource
+    internal class ExcelDataSource : AbstractDataSource, IExcelDataSource
     {
-        private readonly AppConfig appConfig;
-
-        private readonly ILogger<ExcelDataSource> logger;
-
         private Application? excelApplication;
 
         /// <summary>Initialises a new instance of the <see cref="ExcelDataSource" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="options">Application configuration settings.</param>
         public ExcelDataSource(ILogger<ExcelDataSource> logger, IOptions<AppConfig> options)
+            : base(logger, options)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <inheritdoc />
@@ -48,14 +44,14 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void Close()
         {
-            this.logger.LogDebug(en_AU.ExcelApplication_Close_Releasing_excel_application);
+            this.Logger.LogDebug(en_AU.ExcelApplication_Close_Releasing_excel_application);
             this.excelApplication = null;
         }
 
         /// <inheritdoc />
         public void Open()
         {
-            this.logger.LogDebug(en_AU.ExcelApplication_Open_Opening_connection_to_excel);
+            this.Logger.LogDebug(en_AU.ExcelApplication_Open_Opening_connection_to_excel);
             try
             {
                 this.excelApplication = Marshal.GetActiveObject(en_AU.ExcelApplication_Open_Excel_Application) as Application
@@ -89,7 +85,7 @@ namespace VisioCleanup.Core.Services
 
             // process rows
             var rows = dataTable.DataBodyRange.Rows;
-            this.logger.LogDebug(en_AU.ExcelApplication_RetrieveRecords_getting_values);
+            this.Logger.LogDebug(en_AU.ExcelApplication_RetrieveRecords_getting_values);
             var data = rows.Value as object[,];
             foreach (var rowNumber in Enumerable.Range(1, data.GetLength(0)))
             {
@@ -122,40 +118,6 @@ namespace VisioCleanup.Core.Services
             return shapes;
         }
 
-        private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
-        {
-            var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : string.Empty;
-            var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
-            var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : string.Empty;
-
-            if (string.IsNullOrEmpty(shapeText))
-            {
-                return previousShape;
-            }
-
-            var shapeIdentifier = string.Format(en_AU.ShapeIdentifierFormat, previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
-
-            if (!allShapes.ContainsKey(shapeIdentifier))
-            {
-                this.logger.LogDebug(en_AU.ExcelApplication_CreateShape_Creating_shape_for___ShapeText_, shapeText);
-                allShapes.Add(
-                    shapeIdentifier,
-                    new DiagramShape(0)
-                        {
-                            ShapeText = shapeText,
-                            ShapeType = ShapeType.NewShape,
-                            SortValue = sortValue,
-                            Master = shapeType,
-                            ShapeIdentifier = shapeIdentifier,
-                        });
-            }
-
-            var shape = allShapes[shapeIdentifier];
-
-            previousShape?.AddChildShape(shape);
-            return shape;
-        }
-
         private SortedList<int, Dictionary<FieldType, int>> FindHeaders(ListObject dataTable)
         {
             var columnMapping = new SortedList<int, Dictionary<FieldType, int>>();
@@ -164,9 +126,9 @@ namespace VisioCleanup.Core.Services
             do
             {
                 var mappings = new Dictionary<FieldType, int>();
-                var fieldName = string.Format(this.appConfig.FieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0_, level);
-                var sortFieldName = string.Format(this.appConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
-                var shapeFieldName = string.Format(this.appConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
+                var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0_, level);
+                var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
+                var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
 
                 level++;
                 for (var i = 1; i <= header.GetLength(1); i++)

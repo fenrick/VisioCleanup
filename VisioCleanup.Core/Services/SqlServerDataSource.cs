@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SQLServerDataSource.cs" company="Jolyon Suthers">
+// <copyright file="SqlServerDataSource.cs" company="Jolyon Suthers">
 // Copyright (c) Jolyon Suthers. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -12,6 +12,7 @@ namespace VisioCleanup.Core.Services
     using System.Collections.ObjectModel;
     using System.Data.Common;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Linq;
 
     using Microsoft.Data.SqlClient;
@@ -24,26 +25,16 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Resources;
 
     /// <inheritdoc />
-    public class SQLServerDataSource : ISQLServerDataSource, IDisposable
+    public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDisposable
     {
-        private readonly AppConfig appConfig;
-
-        private readonly ILogger<SQLServerDataSource> logger;
-
         private SqlConnection? databaseConnection;
 
-        /// <summary>Initialises a new instance of the <see cref="SQLServerDataSource" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="SqlServerDataSource" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="options">Configuration options.</param>
-        public SQLServerDataSource(ILogger<SQLServerDataSource> logger, IOptions<AppConfig> options)
+        public SqlServerDataSource(ILogger<SqlServerDataSource> logger, IOptions<AppConfig> options)
+            : base(logger, options)
         {
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.appConfig = options.Value;
         }
 
         /// <inheritdoc />
@@ -73,9 +64,9 @@ namespace VisioCleanup.Core.Services
         {
             SqlConnectionStringBuilder builder = new()
                                                      {
-                                                         DataSource = this.appConfig.DatabaseServer,
+                                                         DataSource = this.AppConfig.DatabaseServer,
                                                          Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated,
-                                                         InitialCatalog = this.appConfig.DatabaseCatalog,
+                                                         InitialCatalog = this.AppConfig.DatabaseCatalog,
                                                          ApplicationIntent = ApplicationIntent.ReadOnly,
                                                      };
 
@@ -144,40 +135,6 @@ namespace VisioCleanup.Core.Services
             this.databaseConnection = null;
         }
 
-        private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
-        {
-            var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : string.Empty;
-            var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
-            var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : string.Empty;
-
-            if (string.IsNullOrEmpty(shapeText))
-            {
-                return previousShape;
-            }
-
-            var shapeIdentifier = string.Format(en_AU.ShapeIdentifierFormat, previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
-
-            if (!allShapes.ContainsKey(shapeIdentifier))
-            {
-                this.logger.LogDebug(en_AU.ExcelApplication_CreateShape_Creating_shape_for___ShapeText_, shapeText);
-                allShapes.Add(
-                    shapeIdentifier,
-                    new DiagramShape(0)
-                        {
-                            ShapeText = shapeText,
-                            ShapeType = ShapeType.NewShape,
-                            SortValue = sortValue,
-                            Master = shapeType,
-                            ShapeIdentifier = shapeIdentifier,
-                        });
-            }
-
-            var shape = allShapes[shapeIdentifier];
-
-            previousShape?.AddChildShape(shape);
-            return shape;
-        }
-
         private SortedList<int, Dictionary<FieldType, int>> MapColumns(IReadOnlyCollection<DbColumn> columnSchema)
         {
             SortedList<int, Dictionary<FieldType, int>> columnMapping = new();
@@ -185,9 +142,9 @@ namespace VisioCleanup.Core.Services
             do
             {
                 Dictionary<FieldType, int> mappings = new();
-                var fieldName = string.Format(this.appConfig.FieldLabelFormat ?? en_AU.SqlServerDatabaseApplication_MapColumns__0_, level);
-                var sortFieldName = string.Format(this.appConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
-                var shapeFieldName = string.Format(this.appConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
+                var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? en_AU.SqlServerDatabaseApplication_MapColumns__0_, level);
+                var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
+                var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
 
                 level++;
 
