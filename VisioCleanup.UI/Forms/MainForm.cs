@@ -134,20 +134,9 @@ namespace VisioCleanup.UI.Forms
                                                this.controlsFlowPanel.Enabled = true;
                                            }));
             }
-            catch (InvalidOperationException invalidOperationException)
+            catch (Exception e) when (e is InvalidOperationException || e is ArgumentNullException)
             {
-                this.logger.LogError(invalidOperationException, invalidOperationException.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
-                                           }));
-            }
-            catch (ArgumentNullException argumentNullException)
-            {
-                this.logger.LogError(argumentNullException, argumentNullException.Message);
+                this.logger.LogError(e, e.Message);
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
@@ -187,9 +176,9 @@ namespace VisioCleanup.UI.Forms
                                                this.controlsFlowPanel.Enabled = true;
                                            }));
             }
-            catch (InvalidOperationException invalidOperationException)
+            catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
             {
-                this.logger.LogError(invalidOperationException, invalidOperationException.Message);
+                this.logger.LogError(exception, exception.Message);
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
@@ -203,17 +192,6 @@ namespace VisioCleanup.UI.Forms
                                                    MessageBoxIcon.Error,
                                                    MessageBoxDefaultButton.Button1,
                                                    MessageBoxOptions.ServiceNotification);
-                                           }));
-            }
-            catch (ArgumentNullException argumentNullException)
-            {
-                this.logger.LogError(argumentNullException, argumentNullException.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
                                            }));
             }
         }
@@ -246,20 +224,9 @@ namespace VisioCleanup.UI.Forms
                                                this.controlsFlowPanel.Enabled = true;
                                            }));
             }
-            catch (InvalidOperationException invalidOperationException)
+            catch (Exception e) when (e is InvalidOperationException || e is ArgumentNullException)
             {
-                this.logger.LogError(invalidOperationException, invalidOperationException.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
-                                           }));
-            }
-            catch (ArgumentNullException argumentNullException)
-            {
-                this.logger.LogError(argumentNullException, argumentNullException.Message);
+                this.logger.LogError(e, e.Message);
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
@@ -307,9 +274,9 @@ namespace VisioCleanup.UI.Forms
                                                this.controlsFlowPanel.Enabled = true;
                                            }));
             }
-            catch (InvalidOperationException invalidOperationException)
+            catch (Exception e) when (e is InvalidOperationException || e is ArgumentNullException)
             {
-                this.logger.LogError(invalidOperationException, invalidOperationException.Message);
+                this.logger.LogError(e, e.Message);
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
@@ -323,17 +290,6 @@ namespace VisioCleanup.UI.Forms
                                                    MessageBoxIcon.Error,
                                                    MessageBoxDefaultButton.Button1,
                                                    MessageBoxOptions.ServiceNotification);
-                                           }));
-            }
-            catch (ArgumentNullException argumentNullException)
-            {
-                this.logger.LogError(argumentNullException, argumentNullException.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
                                            }));
             }
         }
@@ -384,9 +340,9 @@ namespace VisioCleanup.UI.Forms
                                                this.controlsFlowPanel.Enabled = true;
                                            }));
             }
-            catch (InvalidOperationException invalidOperationException)
+            catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
             {
-                this.logger.LogError(invalidOperationException, invalidOperationException.Message);
+                this.logger.LogError(exception, exception.Message);
                 this.Invoke(
                     (MethodInvoker)(() =>
                                            {
@@ -400,17 +356,6 @@ namespace VisioCleanup.UI.Forms
                                                    MessageBoxIcon.Error,
                                                    MessageBoxDefaultButton.Button1,
                                                    MessageBoxOptions.ServiceNotification);
-                                           }));
-            }
-            catch (ArgumentNullException argumentNullException)
-            {
-                this.logger.LogError(argumentNullException, argumentNullException.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
                                            }));
             }
         }
