@@ -428,7 +428,7 @@ namespace VisioCleanup.Core.Models
                             continue;
                         case not null when currentShape.BaseSide >= shape.BaseSide:
                             continue;
-                        case not null when (shape.BaseSide - currentShape.TopSide) < (tolerance * 2):
+                        case not null when (shape.BaseSide - currentShape.TopSide) < (tolerance + tolerance):
                             shape.Below = currentShape;
 
                             currentShape = shape;
