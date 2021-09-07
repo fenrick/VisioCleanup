@@ -103,6 +103,25 @@ namespace VisioCleanup.UI.Forms
             return false;
         }
 
+        private void HandleException(Exception exception, string messageText)
+        {
+            this.logger.LogError(exception, exception.Message);
+            this.Invoke(
+                (MethodInvoker)(() =>
+                                       {
+                                           this.processingService = null;
+                                           this.dataSetBindingSource.DataSource = null;
+                                           this.controlsFlowPanel.Enabled = true;
+                                           MessageBox.Show(
+                                               messageText,
+                                               @"Error",
+                                               MessageBoxButtons.OK,
+                                               MessageBoxIcon.Error,
+                                               MessageBoxDefaultButton.Button1,
+                                               MessageBoxOptions.ServiceNotification);
+                                       }));
+        }
+
         /// <summary>The layout data set_ click.</summary>
         /// <param name="sender">The <paramref name="sender" /> .</param>
         /// <param name="eventArgs">The event args.</param>
@@ -136,14 +155,7 @@ namespace VisioCleanup.UI.Forms
             }
             catch (Exception e) when (e is InvalidOperationException || e is ArgumentNullException)
             {
-                this.logger.LogError(e, e.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
-                                           }));
+                this.HandleException(e, "@Processing error.");
             }
         }
 
@@ -178,21 +190,7 @@ namespace VisioCleanup.UI.Forms
             }
             catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
             {
-                this.logger.LogError(exception, exception.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
-                                               MessageBox.Show(
-                                                   @"Database and visio need to be setup for this to work.",
-                                                   @"Error",
-                                                   MessageBoxButtons.OK,
-                                                   MessageBoxIcon.Error,
-                                                   MessageBoxDefaultButton.Button1,
-                                                   MessageBoxOptions.ServiceNotification);
-                                           }));
+                this.HandleException(exception, @"Database and visio need to be setup for this to work.");
             }
         }
 
@@ -226,14 +224,7 @@ namespace VisioCleanup.UI.Forms
             }
             catch (Exception e) when (e is InvalidOperationException || e is ArgumentNullException)
             {
-                this.logger.LogError(e, e.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
-                                           }));
+                this.HandleException(e, @"Visio need to be setup for this to work.");
             }
         }
 
@@ -276,21 +267,7 @@ namespace VisioCleanup.UI.Forms
             }
             catch (Exception e) when (e is InvalidOperationException || e is ArgumentNullException)
             {
-                this.logger.LogError(e, e.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
-                                               MessageBox.Show(
-                                                   @"Excel and visio need to be setup for this to work.",
-                                                   @"Error",
-                                                   MessageBoxButtons.OK,
-                                                   MessageBoxIcon.Error,
-                                                   MessageBoxDefaultButton.Button1,
-                                                   MessageBoxOptions.ServiceNotification);
-                                           }));
+                this.HandleException(e, @"Excel and visio need to be setup for this to work.");
             }
         }
 
@@ -342,21 +319,7 @@ namespace VisioCleanup.UI.Forms
             }
             catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
             {
-                this.logger.LogError(exception, exception.Message);
-                this.Invoke(
-                    (MethodInvoker)(() =>
-                                           {
-                                               this.processingService = null;
-                                               this.dataSetBindingSource.DataSource = null;
-                                               this.controlsFlowPanel.Enabled = true;
-                                               MessageBox.Show(
-                                                   @"Visio needs to be setup for this to work.",
-                                                   @"Error",
-                                                   MessageBoxButtons.OK,
-                                                   MessageBoxIcon.Error,
-                                                   MessageBoxDefaultButton.Button1,
-                                                   MessageBoxOptions.ServiceNotification);
-                                           }));
+                this.HandleException(exception, @"Visio need to be setup for this to work.");
             }
         }
     }
