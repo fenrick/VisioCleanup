@@ -9,6 +9,7 @@ namespace VisioCleanup.Core.Models
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.Linq;
 
     using JetBrains.Annotations;
@@ -379,7 +380,7 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <inheritdoc />
-        public override string ToString() => string.Format(en_AU.DiagramShape_ToString__0____1_, this.VisioId, this.ShapeText);
+        public override string ToString() => string.Format(CultureInfo.CurrentCulture, en_AU.DiagramShape_ToString__0____1_, this.VisioId, this.ShapeText);
 
         /// <summary>Calculate the width of the shape.</summary>
         /// <returns>Width.</returns>
@@ -481,7 +482,7 @@ namespace VisioCleanup.Core.Models
         }
 
         private string CornerString() =>
-            string.Format(
+            string.Format(CultureInfo.CurrentCulture,
                 en_AU.DiagramShape_CornerString_Top___0___Left___1___Width___2___Height___3_,
                 ConvertMeasurement(this.TopSide),
                 ConvertMeasurement(this.LeftSide),
