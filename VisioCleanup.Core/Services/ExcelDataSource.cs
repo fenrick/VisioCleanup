@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="ExcelApplication.cs" company="Jolyon Suthers">
+// <copyright file="ExcelDataSource.cs" company="Jolyon Suthers">
 // Copyright (c) Jolyon Suthers. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -25,22 +25,25 @@ namespace VisioCleanup.Core.Services
     using Marshal = VisioCleanup.Core.Marshal;
 
     /// <inheritdoc />
-    internal class ExcelApplication : IExcelApplication
+    internal class ExcelDataSource : IExcelDataSource
     {
         private readonly AppConfig appConfig;
 
-        private readonly ILogger<ExcelApplication> logger;
+        private readonly ILogger<ExcelDataSource> logger;
 
         private Application? excelApplication;
 
-        /// <summary>Initialises a new instance of the <see cref="ExcelApplication" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="ExcelDataSource" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="options">Application configuration settings.</param>
-        public ExcelApplication(ILogger<ExcelApplication> logger, IOptions<AppConfig> options)
+        public ExcelDataSource(ILogger<ExcelDataSource> logger, IOptions<AppConfig> options)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.appConfig = options.Value ?? throw new ArgumentNullException(nameof(options));
         }
+
+        /// <inheritdoc />
+        public string Name => "Excel";
 
         /// <inheritdoc />
         public void Close()
@@ -65,7 +68,7 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        public IEnumerable<DiagramShape> RetrieveRecords()
+        public IEnumerable<DiagramShape> RetrieveRecords(string parameter)
         {
             if (this.excelApplication?.ActiveSheet is null)
             {

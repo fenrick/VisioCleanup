@@ -8,6 +8,7 @@
 namespace VisioCleanup.Core.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
@@ -125,6 +126,66 @@ namespace VisioCleanup.Core.Services
                             this.VisioApplication.VisualChanges(true);
                             this.VisioApplication.Close();
                             this.Logger.LogInformation("Visio closed");
+                        }
+                    });
+        }
+
+        protected Task ProcessDataSetInternal(IDataSource dataSource, string parameters)
+        {
+            return Task.Run(
+                () =>
+                    {
+                        try
+                        {
+                            // open connection to excel
+                            dataSource.Open();
+
+                            // open connection to visio
+                            this.VisioApplication.Open();
+                            List<DiagramShape> shapes = new();
+
+                            // master shape
+                            this.Logger.LogInformation("Create a fake parent shape");
+                            this.MasterShape = new DiagramShape(0)
+                                                   {
+                                                       ShapeText = "FAKE MASTER",
+                                                       ShapeType = ShapeType.FakeShape,
+                                                       LeftSide = this.VisioApplication.GetPageLeftSide(),
+                                                       TopSide = this.VisioApplication.GetPageTopSide() - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                                                   };
+                            shapes.Add(this.MasterShape);
+
+                            var maxRight = this.VisioApplication.GetPageRightSide() - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
+                            this.ConvertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+
+                            // retrieve records
+                            this.Logger.LogInformation("Loading {dataSource} data", dataSource.Name);
+                            shapes.AddRange(dataSource.RetrieveRecords(parameters));
+
+                            if (shapes.Count == 1)
+                            {
+                                return;
+                            }
+
+                            this.AllShapes = new Collection<DiagramShape>(shapes);
+
+                            this.Logger.LogInformation("Assigning fake parent");
+                            foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
+                            {
+                                this.MasterShape.AddChildShape(shape);
+                            }
+
+                            // need to set children relationships.
+                            this.Logger.LogInformation("Sorting shapes into lines");
+                            this.SortChildren(this.MasterShape, maxRight);
+                        }
+                        finally
+                        {
+                            this.Logger.LogInformation("Closing connection to visio");
+                            this.VisioApplication.Close();
+
+                            this.Logger.LogInformation("Closing connection to excel");
+                            dataSource.Close();
                         }
                     });
         }

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SqlServerDatabaseApplication.cs" company="Jolyon Suthers">
+// <copyright file="SQLServerDataSource.cs" company="Jolyon Suthers">
 // Copyright (c) Jolyon Suthers. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -24,18 +24,18 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Resources;
 
     /// <inheritdoc />
-    public class SqlServerDatabaseApplication : ISqlServerDatabaseApplication, IDisposable
+    public class SQLServerDataSource : ISQLServerDataSource, IDisposable
     {
         private readonly AppConfig appConfig;
 
-        private readonly ILogger<SqlServerDatabaseApplication> logger;
+        private readonly ILogger<SQLServerDataSource> logger;
 
         private SqlConnection? databaseConnection;
 
-        /// <summary>Initialises a new instance of the <see cref="SqlServerDatabaseApplication" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="SQLServerDataSource" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="options">Configuration options.</param>
-        public SqlServerDatabaseApplication(ILogger<SqlServerDatabaseApplication> logger, IOptions<AppConfig> options)
+        public SQLServerDataSource(ILogger<SQLServerDataSource> logger, IOptions<AppConfig> options)
         {
             if (options is null)
             {
@@ -45,6 +45,9 @@ namespace VisioCleanup.Core.Services
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.appConfig = options.Value;
         }
+
+        /// <inheritdoc />
+        public string Name => "SQL Server";
 
         /// <inheritdoc />
         public void Close()
@@ -81,9 +84,9 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
-        public IEnumerable<DiagramShape> RetrieveRecords(string sqlCommand)
+        public IEnumerable<DiagramShape> RetrieveRecords(string parameter)
         {
-            using SqlCommand command = new(sqlCommand, this.databaseConnection);
+            using SqlCommand command = new(parameter, this.databaseConnection);
             using var reader = command.ExecuteReader();
 
             Dictionary<string, DiagramShape> allShapes = new();
