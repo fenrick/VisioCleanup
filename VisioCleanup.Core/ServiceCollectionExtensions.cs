@@ -33,8 +33,8 @@ namespace VisioCleanup.Core
 
             serviceCollection.Configure<AppConfig>(configuration.GetSection(en_AU.ServiceCollectionExtensions_AddVisioCleanupCore_VisioCleanup_Core));
             serviceCollection.AddSingleton<IVisioApplication, VisioApplication>();
-            serviceCollection.AddSingleton<IExcelApplication, ExcelApplication>();
-            serviceCollection.AddSingleton<ISqlServerDatabaseApplication, SqlServerDatabaseApplication>();
+            serviceCollection.AddSingleton<IExcelDataSource, ExcelDataSource>();
+            serviceCollection.AddSingleton<ISQLServerDataSource, SQLServerDataSource>();
             serviceCollection.AddSingleton<IVisioService, VisioService>();
             serviceCollection.AddSingleton<IExcelService, ExcelService>();
             serviceCollection.AddSingleton<IDatabaseService, DatabaseService>();
