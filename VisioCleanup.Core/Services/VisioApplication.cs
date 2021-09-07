@@ -11,6 +11,7 @@ namespace VisioCleanup.Core.Services
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Threading.Tasks;
@@ -311,11 +312,11 @@ namespace VisioCleanup.Core.Services
                 var item = updates[i];
                 var srcStreamTracker = 0;
 
-                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[en_AU.VisioApplication_UpdateShape_section]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[en_AU.VisioApplication_UpdateShape_section], CultureInfo.CurrentCulture);
                 srcStreamTracker++;
-                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[en_AU.VisioApplication_UpdateShape_row]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[en_AU.VisioApplication_UpdateShape_row], CultureInfo.CurrentCulture);
                 srcStreamTracker++;
-                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[en_AU.VisioApplication_UpdateShape_cell]);
+                srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[en_AU.VisioApplication_UpdateShape_cell], CultureInfo.CurrentCulture);
                 resultsArray[i] = item[en_AU.VisioApplication_UpdateShape_result];
                 unitsArray[i] = item[en_AU.VisioApplication_UpdateShape_unit];
             }

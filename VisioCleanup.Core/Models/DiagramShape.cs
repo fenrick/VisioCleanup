@@ -9,6 +9,7 @@ namespace VisioCleanup.Core.Models
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.Linq;
 
     using JetBrains.Annotations;
@@ -379,7 +380,10 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <inheritdoc />
-        public override string ToString() => string.Format(en_AU.DiagramShape_ToString__0____1_, this.VisioId, this.ShapeText);
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.CurrentCulture, en_AU.DiagramShape_ToString__0____1_, this.VisioId, this.ShapeText);
+        }
 
         /// <summary>Calculate the width of the shape.</summary>
         /// <returns>Width.</returns>
@@ -427,7 +431,7 @@ namespace VisioCleanup.Core.Models
                             continue;
                         case not null when currentShape.BaseSide >= shape.BaseSide:
                             continue;
-                        case not null when (shape.BaseSide - currentShape.TopSide) < (tolerance * 2):
+                        case not null when (shape.BaseSide - currentShape.TopSide) < (tolerance + tolerance):
                             shape.Below = currentShape;
 
                             currentShape = shape;
@@ -462,7 +466,7 @@ namespace VisioCleanup.Core.Models
                             continue;
                         case not null when currentShape.LeftSide >= shape.LeftSide:
                             continue;
-                        case not null when (shape.LeftSide - currentShape.RightSide) < (tolerance * 2):
+                        case not null when (shape.LeftSide - currentShape.RightSide) < (tolerance + tolerance):
                             currentShape.Right = shape;
 
                             currentShape = shape;
@@ -482,6 +486,7 @@ namespace VisioCleanup.Core.Models
 
         private string CornerString() =>
             string.Format(
+                CultureInfo.CurrentCulture,
                 en_AU.DiagramShape_CornerString_Top___0___Left___1___Width___2___Height___3_,
                 ConvertMeasurement(this.TopSide),
                 ConvertMeasurement(this.LeftSide),
