@@ -380,7 +380,10 @@ namespace VisioCleanup.Core.Models
         }
 
         /// <inheritdoc />
-        public override string ToString() => string.Format(CultureInfo.CurrentCulture, en_AU.DiagramShape_ToString__0____1_, this.VisioId, this.ShapeText);
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.CurrentCulture, en_AU.DiagramShape_ToString__0____1_, this.VisioId, this.ShapeText);
+        }
 
         /// <summary>Calculate the width of the shape.</summary>
         /// <returns>Width.</returns>
