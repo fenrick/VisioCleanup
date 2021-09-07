@@ -482,7 +482,8 @@ namespace VisioCleanup.Core.Models
         }
 
         private string CornerString() =>
-            string.Format(CultureInfo.CurrentCulture,
+            string.Format(
+                CultureInfo.CurrentCulture,
                 en_AU.DiagramShape_CornerString_Top___0___Left___1___Width___2___Height___3_,
                 ConvertMeasurement(this.TopSide),
                 ConvertMeasurement(this.LeftSide),
