@@ -107,10 +107,11 @@ namespace VisioCleanup.UI.Forms
             ((ISupportInitialize)this.parametersBindingSource).BeginInit();
             ((ISupportInitialize)this.dataSetBindingSource).BeginInit();
             this.SuspendLayout();
+            var buttonPadding = new Padding(0, 0, 0, 26);
 
             // processExcelDataSet
             processExcelDataSet.Location = new Point(22, 100);
-            processExcelDataSet.Margin = new Padding(0, 0, 0, 26);
+            processExcelDataSet.Margin = buttonPadding;
             processExcelDataSet.Name = "processExcelDataSet";
             processExcelDataSet.Size = new Size(268, 48);
             processExcelDataSet.TabIndex = 2;
@@ -120,7 +121,7 @@ namespace VisioCleanup.UI.Forms
 
             // loadVisioObjects
             loadVisioObjects.Location = new Point(22, 174);
-            loadVisioObjects.Margin = new Padding(0, 0, 0, 26);
+            loadVisioObjects.Margin = buttonPadding;
             loadVisioObjects.Name = "loadVisioObjects";
             loadVisioObjects.Size = new Size(268, 48);
             loadVisioObjects.TabIndex = 3;
@@ -180,7 +181,7 @@ namespace VisioCleanup.UI.Forms
 
             // loadFromIServerButton
             this.loadFromIServerButton.Location = new Point(22, 26);
-            this.loadFromIServerButton.Margin = new Padding(0, 0, 0, 26);
+            this.loadFromIServerButton.Margin = buttonPadding;
             this.loadFromIServerButton.Name = "loadFromIServerButton";
             this.loadFromIServerButton.Size = new Size(268, 48);
             this.loadFromIServerButton.TabIndex = 1;
@@ -190,7 +191,7 @@ namespace VisioCleanup.UI.Forms
 
             // layoutDataSet
             this.layoutDataSet.Location = new Point(22, 248);
-            this.layoutDataSet.Margin = new Padding(0, 0, 0, 26);
+            this.layoutDataSet.Margin = buttonPadding;
             this.layoutDataSet.Name = "layoutDataSet";
             this.layoutDataSet.Size = new Size(268, 48);
             this.layoutDataSet.TabIndex = 4;
@@ -200,7 +201,7 @@ namespace VisioCleanup.UI.Forms
 
             // updateVisioDrawing
             this.updateVisioDrawing.Location = new Point(22, 322);
-            this.updateVisioDrawing.Margin = new Padding(0, 0, 0, 26);
+            this.updateVisioDrawing.Margin = buttonPadding;
             this.updateVisioDrawing.Name = "updateVisioDrawing";
             this.updateVisioDrawing.Size = new Size(268, 48);
             this.updateVisioDrawing.TabIndex = 5;
