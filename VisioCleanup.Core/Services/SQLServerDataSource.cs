@@ -24,26 +24,16 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Resources;
 
     /// <inheritdoc />
-    public class SQLServerDataSource : ISQLServerDataSource, IDisposable
+    public class SQLServerDataSource : AbstractDataSource, ISQLServerDataSource, IDisposable
     {
-        private readonly AppConfig appConfig;
-
-        private readonly ILogger<SQLServerDataSource> logger;
-
         private SqlConnection? databaseConnection;
 
         /// <summary>Initialises a new instance of the <see cref="SQLServerDataSource" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="options">Configuration options.</param>
         public SQLServerDataSource(ILogger<SQLServerDataSource> logger, IOptions<AppConfig> options)
+            : base(logger, options)
         {
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.appConfig = options.Value;
         }
 
         /// <inheritdoc />
@@ -73,9 +63,9 @@ namespace VisioCleanup.Core.Services
         {
             SqlConnectionStringBuilder builder = new()
                                                      {
-                                                         DataSource = this.appConfig.DatabaseServer,
+                                                         DataSource = this.AppConfig.DatabaseServer,
                                                          Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated,
-                                                         InitialCatalog = this.appConfig.DatabaseCatalog,
+                                                         InitialCatalog = this.AppConfig.DatabaseCatalog,
                                                          ApplicationIntent = ApplicationIntent.ReadOnly,
                                                      };
 
@@ -159,7 +149,7 @@ namespace VisioCleanup.Core.Services
 
             if (!allShapes.ContainsKey(shapeIdentifier))
             {
-                this.logger.LogDebug(en_AU.ExcelApplication_CreateShape_Creating_shape_for___ShapeText_, shapeText);
+                this.Logger.LogDebug(en_AU.ExcelApplication_CreateShape_Creating_shape_for___ShapeText_, shapeText);
                 allShapes.Add(
                     shapeIdentifier,
                     new DiagramShape(0)
@@ -185,9 +175,9 @@ namespace VisioCleanup.Core.Services
             do
             {
                 Dictionary<FieldType, int> mappings = new();
-                var fieldName = string.Format(this.appConfig.FieldLabelFormat ?? en_AU.SqlServerDatabaseApplication_MapColumns__0_, level);
-                var sortFieldName = string.Format(this.appConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
-                var shapeFieldName = string.Format(this.appConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
+                var fieldName = string.Format(this.AppConfig.FieldLabelFormat ?? en_AU.SqlServerDatabaseApplication_MapColumns__0_, level);
+                var sortFieldName = string.Format(this.AppConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
+                var shapeFieldName = string.Format(this.AppConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
 
                 level++;
 
