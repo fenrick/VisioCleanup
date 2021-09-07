@@ -18,9 +18,7 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Models.Config;
     using VisioCleanup.Core.Resources;
 
-    /// <summary>
-    /// Abstract data source.
-    /// </summary>
+    /// <summary>Abstract data source.</summary>
     public class AbstractDataSource
     {
         /// <summary>Initialises a new instance of the <see cref="AbstractDataSource" /> class.</summary>
@@ -45,9 +43,7 @@ namespace VisioCleanup.Core.Services
         /// <value>Logger.</value>
         protected ILogger Logger { get; }
 
-        /// <summary>
-        /// Create a new shape object.
-        /// </summary>
+        /// <summary>Create a new shape object.</summary>
         /// <param name="rowResult">Data set row.</param>
         /// <param name="allShapes">set of all shapes.</param>
         /// <param name="previousShape">Parent shape.</param>

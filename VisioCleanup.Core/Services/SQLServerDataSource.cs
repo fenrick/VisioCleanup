@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SQLServerDataSource.cs" company="Jolyon Suthers">
+// <copyright file="SqlServerDataSource.cs" company="Jolyon Suthers">
 // Copyright (c) Jolyon Suthers. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -25,14 +25,14 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Resources;
 
     /// <inheritdoc />
-    public class SQLServerDataSource : AbstractDataSource, ISQLServerDataSource, IDisposable
+    public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDisposable
     {
         private SqlConnection? databaseConnection;
 
-        /// <summary>Initialises a new instance of the <see cref="SQLServerDataSource" /> class.</summary>
+        /// <summary>Initialises a new instance of the <see cref="SqlServerDataSource" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="options">Configuration options.</param>
-        public SQLServerDataSource(ILogger<SQLServerDataSource> logger, IOptions<AppConfig> options)
+        public SqlServerDataSource(ILogger<SqlServerDataSource> logger, IOptions<AppConfig> options)
             : base(logger, options)
         {
         }

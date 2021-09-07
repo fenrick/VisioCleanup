@@ -19,14 +19,14 @@ namespace VisioCleanup.Core.Services
     /// <summary>The database service.</summary>
     public class DatabaseService : AbstractProcessingService, IDatabaseService
     {
-        private readonly ISQLServerDataSource iserverDatabaseApplication;
+        private readonly ISqlServerDataSource iserverDatabaseApplication;
 
         /// <summary>Initialises a new instance of the <see cref="DatabaseService" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
         /// <param name="visioApplication">Visio application handler.</param>
         /// <param name="iserverDatabaseApplication">iServer Database application handler.</param>
         /// <param name="options">Application configuration being passed in.</param>
-        public DatabaseService(ILogger<DatabaseService> logger, IVisioApplication visioApplication, ISQLServerDataSource iserverDatabaseApplication, IOptions<AppConfig> options)
+        public DatabaseService(ILogger<DatabaseService> logger, IVisioApplication visioApplication, ISqlServerDataSource iserverDatabaseApplication, IOptions<AppConfig> options)
             : base(logger, options, visioApplication) =>
             this.iserverDatabaseApplication = iserverDatabaseApplication ?? throw new ArgumentNullException(nameof(iserverDatabaseApplication));
 
