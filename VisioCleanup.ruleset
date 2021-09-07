@@ -6,8 +6,10 @@
   </Localization>
   <Rules AnalyzerId="GCop.Common" RuleNamespace="GCop.Common">
     <Rule Id="GCop111" Action="Warning" />
+    <Rule Id="GCop132" Action="None" />
     <Rule Id="GCop187" Action="Warning" />
     <Rule Id="GCop205" Action="Warning" />
+    <Rule Id="GCop209" Action="None" />
     <Rule Id="GCop212" Action="Warning" />
     <Rule Id="GCop403" Action="Warning" />
     <Rule Id="GCop434" Action="Warning" />
@@ -78,9 +80,6 @@
     <Rule Id="CA2240" Action="Warning" />
     <Rule Id="CA2241" Action="Warning" />
     <Rule Id="CA2242" Action="Warning" />
-  </Rules>
-  <Rules AnalyzerId="SerilogAnalyzer" RuleNamespace="SerilogAnalyzer">
-    <Rule Id="Serilog004" Action="None" />
   </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA1305" Action="Warning" />

@@ -68,7 +68,7 @@ namespace Serilog.Sinks.RichTextWinForm.Output
                 default:
                     {
                         var index = (int)value;
-                        if ((index < 0) || (index > (int)LogEventLevel.Fatal))
+                        if (index is < 0 or > (int)LogEventLevel.Fatal)
                         {
                             return Casing.Format(value.ToString(), format);
                         }

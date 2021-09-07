@@ -48,42 +48,6 @@ namespace Serilog.Sinks.WinForm.Formatting
                         break;
                     }
 
-                case ValueType when value is int || value is uint || value is long:
-                    {
-                        using StringWriter buffer = new();
-                        scalar.Render(buffer, format, this.formatProvider);
-                        output.Write(buffer.ToString());
-
-                        break;
-                    }
-
-                case ValueType when value is ulong || value is decimal || value is byte:
-                    {
-                        using StringWriter buffer = new();
-                        scalar.Render(buffer, format, this.formatProvider);
-                        output.Write(buffer.ToString());
-
-                        break;
-                    }
-
-                case ValueType when value is sbyte || value is short || value is ushort:
-                    {
-                        using StringWriter buffer = new();
-                        scalar.Render(buffer, format, this.formatProvider);
-                        output.Write(buffer.ToString());
-
-                        break;
-                    }
-
-                case ValueType when value is float || value is double:
-                    {
-                        using StringWriter buffer = new();
-                        scalar.Render(buffer, format, this.formatProvider);
-                        output.Write(buffer.ToString());
-
-                        break;
-                    }
-
                 case bool b:
                     {
                         output.Write(b.ToString());

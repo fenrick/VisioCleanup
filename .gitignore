@@ -397,3 +397,6 @@ VisioCleanup.Core/VisioCleanup.Core.xml
 
 # sonarlint
 .sonarlint/
+
+# mac crap
+.DS_Store

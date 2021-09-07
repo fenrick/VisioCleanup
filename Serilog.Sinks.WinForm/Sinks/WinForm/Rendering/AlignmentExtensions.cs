@@ -11,6 +11,6 @@ namespace Serilog.Sinks.WinForm.Rendering
 
     internal static class AlignmentExtensions
     {
-        public static Alignment Widen(this Alignment alignment, int amount) => new(alignment.Direction, alignment.Width + amount);
+        public static Alignment Widen(this Alignment alignment, int amount) => new Alignment(alignment.Direction, alignment.Width + amount);
     }
 }
