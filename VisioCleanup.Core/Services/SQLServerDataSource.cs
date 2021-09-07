@@ -134,40 +134,6 @@ namespace VisioCleanup.Core.Services
             this.databaseConnection = null;
         }
 
-        private DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
-        {
-            var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : string.Empty;
-            var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
-            var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : string.Empty;
-
-            if (string.IsNullOrEmpty(shapeText))
-            {
-                return previousShape;
-            }
-
-            var shapeIdentifier = string.Format(en_AU.ShapeIdentifierFormat, previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
-
-            if (!allShapes.ContainsKey(shapeIdentifier))
-            {
-                this.Logger.LogDebug(en_AU.ExcelApplication_CreateShape_Creating_shape_for___ShapeText_, shapeText);
-                allShapes.Add(
-                    shapeIdentifier,
-                    new DiagramShape(0)
-                        {
-                            ShapeText = shapeText,
-                            ShapeType = ShapeType.NewShape,
-                            SortValue = sortValue,
-                            Master = shapeType,
-                            ShapeIdentifier = shapeIdentifier,
-                        });
-            }
-
-            var shape = allShapes[shapeIdentifier];
-
-            previousShape?.AddChildShape(shape);
-            return shape;
-        }
-
         private SortedList<int, Dictionary<FieldType, int>> MapColumns(IReadOnlyCollection<DbColumn> columnSchema)
         {
             SortedList<int, Dictionary<FieldType, int>> columnMapping = new();
