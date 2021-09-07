@@ -74,7 +74,6 @@ namespace VisioCleanup.Core.Services
 
             var shapeIdentifier = string.Format(en_AU.ShapeIdentifierFormat, previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
 
-
             if (!allShapes.ContainsKey(shapeIdentifier))
             {
                 this.Logger.LogDebug(en_AU.ExcelApplication_CreateShape_Creating_shape_for___ShapeText_, shapeText);
