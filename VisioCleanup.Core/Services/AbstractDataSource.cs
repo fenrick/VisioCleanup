@@ -20,7 +20,7 @@ namespace VisioCleanup.Core.Services
     /// <summary>
     /// Abstract data source.
     /// </summary>
-    public abstract class AbstractDataSource
+    public class AbstractDataSource
     {
         /// <summary>Initialises a new instance of the <see cref="AbstractDataSource" /> class.</summary>
         /// <param name="logger">Logging instance.</param>
