@@ -19,8 +19,6 @@ namespace VisioCleanup.UI.Forms
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models.Config;
 
-    /// <inheritdoc />
-    /// <summary>Main application form.</summary>
     public partial class MainForm : Form
     {
         private readonly AppConfig appConfig;
@@ -69,7 +67,7 @@ namespace VisioCleanup.UI.Forms
             this.dataGridView1.DataSource = this.dataSetBindingSource;
             this.dataGridView1.AutoGenerateColumns = true;
 
-            this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
+            //this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
 
             if (this.appConfig.DatabaseQueries is not null)
             {
@@ -233,7 +231,7 @@ namespace VisioCleanup.UI.Forms
         /// <param name="dpiChangedEventArgs">The dpi Changed Event Args.</param>
         private void MainForm_DpiChanged(object sender, DpiChangedEventArgs dpiChangedEventArgs)
         {
-            this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
+            //this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
         }
 
         /// <summary>Activate the processing of Excel data set.</summary>
