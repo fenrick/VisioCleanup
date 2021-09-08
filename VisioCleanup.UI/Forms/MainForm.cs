@@ -19,6 +19,9 @@ namespace VisioCleanup.UI.Forms
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models.Config;
 
+    /// <summary>
+    /// Main form for system.
+    /// </summary>
     public partial class MainForm : Form
     {
         private readonly AppConfig appConfig;
