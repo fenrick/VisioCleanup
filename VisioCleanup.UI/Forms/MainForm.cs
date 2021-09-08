@@ -67,8 +67,6 @@ namespace VisioCleanup.UI.Forms
             this.dataGridView1.DataSource = this.dataSetBindingSource;
             this.dataGridView1.AutoGenerateColumns = true;
 
-            //this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
-
             if (this.appConfig.DatabaseQueries is not null)
             {
                 foreach (var queryName in this.appConfig.DatabaseQueries.Select(databaseQuery => databaseQuery["Name"]))
@@ -224,14 +222,6 @@ namespace VisioCleanup.UI.Forms
             {
                 this.HandleException(e, @"Visio need to be setup for this to work.");
             }
-        }
-
-        /// <summary>The main form_ dpi changed.</summary>
-        /// <param name="sender">The <paramref name="sender" /> .</param>
-        /// <param name="dpiChangedEventArgs">The dpi Changed Event Args.</param>
-        private void MainForm_DpiChanged(object sender, DpiChangedEventArgs dpiChangedEventArgs)
-        {
-            //this.controlSplitContainer.SplitterDistance = this.updateVisioDrawing.Width + this.controlsFlowPanel.Padding.Left + this.controlsFlowPanel.Padding.Right;
         }
 
         /// <summary>Activate the processing of Excel data set.</summary>
