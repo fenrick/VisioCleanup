@@ -28,7 +28,7 @@ namespace VisioCleanup.Core.Services
         private const int MaxCorrectRuns = 10;
 
         /// <summary>Store for converted app config right measure.</summary>
-        protected int convertedAppConfigRight;
+        private int convertedAppConfigRight;
 
         /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
         /// <param name="logger">Logger.</param>
