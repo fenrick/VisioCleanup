@@ -370,7 +370,7 @@ namespace VisioCleanup.Core.Services
                 // are we below line count?
                 if (lineCount < maxLine)
                 {
-                    children[i - 2].Right = childShape;
+                    children[i - 1 - 1].Right = childShape;
                     lineCount++;
 
                     diagramShape.CorrectDiagram();
@@ -379,7 +379,7 @@ namespace VisioCleanup.Core.Services
                 }
 
                 // find start of line.
-                var shape = children[i - 2];
+                var shape = children[i - 1 - 1];
                 while (shape.Left is not null)
                 {
                     shape = shape.Left;
