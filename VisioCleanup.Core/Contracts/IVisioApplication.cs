@@ -14,6 +14,18 @@ namespace VisioCleanup.Core.Contracts
     /// <summary>Handle creation and management of visio.</summary>
     public interface IVisioApplication
     {
+        /// <summary>Gets the left hand side of the page.</summary>
+        /// <value>position of left hand side of page.</value>
+        int PageLeftSide { get; }
+
+        /// <summary>Gets the right hand side of the page.</summary>
+        /// <value>position of right hand side of page.</value>
+        int PageRightSide { get; }
+
+        /// <summary>Gets the top side of the page.</summary>
+        /// <value>position of top of the page.</value>
+        int PageTopSide { get; }
+
         /// <summary><see cref="Close" /> visio session and shutdown.</summary>
         void Close();
 
@@ -21,22 +33,10 @@ namespace VisioCleanup.Core.Contracts
         /// <param name="diagramShape">Shape to be created.</param>
         void CreateShape(DiagramShape diagramShape);
 
-        /// <summary>Calculate the left hand side of the page.</summary>
-        /// <returns>Integer representing it.</returns>
-        int GetPageLeftSide();
-
-        /// <summary>Calculate the right hand side of the page.</summary>
-        /// <returns>Integer representing it.</returns>
-        int GetPageRightSide();
-
-        /// <summary>Calculate the top side of the page.</summary>
-        /// <returns>Integer representing it.</returns>
-        int GetPageTopSide();
-
         /// <summary><see cref="Open" /> visio session.</summary>
         void Open();
 
-        /// <summary>Retrieve hierachy of shapes from Visio.</summary>
+        /// <summary>Retrieve hierarchy of shapes from Visio.</summary>
         /// <returns>Enumerable of DiagramShapes.</returns>
         IEnumerable<DiagramShape> RetrieveShapes();
 

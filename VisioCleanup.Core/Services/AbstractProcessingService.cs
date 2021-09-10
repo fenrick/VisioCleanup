@@ -23,12 +23,9 @@ namespace VisioCleanup.Core.Services
 
     /// <inheritdoc />
     /// <summary>Abstract implementation of common code for processing services.</summary>
-    public abstract class AbstractProcessingService : IProcessingService
+    public class AbstractProcessingService : IProcessingService
     {
         private const int MaxCorrectRuns = 10;
-
-        /// <summary>Store for converted app config right measure.</summary>
-        protected int convertedAppConfigRight;
 
         /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
         /// <param name="logger">Logger.</param>
@@ -130,6 +127,10 @@ namespace VisioCleanup.Core.Services
                     });
         }
 
+        /// <summary>Internal process data sets.</summary>
+        /// <param name="dataSource">Data source to process.</param>
+        /// <param name="parameters">Parameters for process.</param>
+        /// <returns>Task tracking progress.</returns>
         protected Task ProcessDataSetInternal(IDataSource dataSource, string parameters)
         {
             return Task.Run(
@@ -150,13 +151,12 @@ namespace VisioCleanup.Core.Services
                                                    {
                                                        ShapeText = "FAKE MASTER",
                                                        ShapeType = ShapeType.FakeShape,
-                                                       LeftSide = this.VisioApplication.GetPageLeftSide(),
-                                                       TopSide = this.VisioApplication.GetPageTopSide() - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                                                       LeftSide = this.VisioApplication.PageLeftSide,
+                                                       TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
                                                    };
                             shapes.Add(this.MasterShape);
 
-                            var maxRight = this.VisioApplication.GetPageRightSide() - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
-                            this.convertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+                            var maxRight = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
 
                             // retrieve records
                             this.Logger.LogInformation("Loading {dataSource} data", dataSource.Name);
@@ -195,7 +195,8 @@ namespace VisioCleanup.Core.Services
         /// <param name="maxRight">Maximum right side.</param>
         protected void SortChildren(DiagramShape diagramShape, int maxRight)
         {
-            var internalMaxRight = maxRight - this.convertedAppConfigRight;
+            var internalMaxRight = maxRight - DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+            
 
             var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
                 shape =>
@@ -265,26 +266,21 @@ namespace VisioCleanup.Core.Services
 
                 // are we below line count?
                 var leftByTwo = i - 1 - 1;
-                if (lineCount < maxLine)
+                if ((lineCount < maxLine) && ((children[leftByTwo].RightSide + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing))
+                                              < internalMaxRight))
                 {
-                    // width if placed on right.
-                    var rightWidth = children[leftByTwo].RightSide + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing);
-
                     // can we place on right
-                    if (rightWidth < internalMaxRight)
+                    children[leftByTwo].Right = childShape;
+                    lineCount++;
+
+                    diagramShape.CorrectDiagram();
+
+                    if ((childShape.Children.Count > 0) && (childShape.ChildrenDepth < currentMaxDepth))
                     {
-                        children[leftByTwo].Right = childShape;
-                        lineCount++;
-
-                        diagramShape.CorrectDiagram();
-
-                        if ((childShape.Children.Count > 0) && (childShape.ChildrenDepth < currentMaxDepth))
-                        {
-                            SortChildrenByLines(childShape, currentMaxDepth);
-                        }
-
-                        continue;
+                        SortChildrenByLines(childShape, currentMaxDepth);
                     }
+
+                    continue;
                 }
 
                 // find start of line.
@@ -294,7 +290,7 @@ namespace VisioCleanup.Core.Services
                     shape = shape.Left;
                 }
 
-                // are we relating to ourself?
+                // are we relating to our self?
                 if (shape == childShape)
                 {
                     lineCount++;
@@ -366,7 +362,7 @@ namespace VisioCleanup.Core.Services
                 // are we below line count?
                 if (lineCount < maxLine)
                 {
-                    children[i - 2].Right = childShape;
+                    children[i - 1 - 1].Right = childShape;
                     lineCount++;
 
                     diagramShape.CorrectDiagram();
@@ -375,7 +371,7 @@ namespace VisioCleanup.Core.Services
                 }
 
                 // find start of line.
-                var shape = children[i - 2];
+                var shape = children[i - 1 - 1];
                 while (shape.Left is not null)
                 {
                     shape = shape.Left;
