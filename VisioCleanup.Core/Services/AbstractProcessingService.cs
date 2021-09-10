@@ -27,9 +27,6 @@ namespace VisioCleanup.Core.Services
     {
         private const int MaxCorrectRuns = 10;
 
-        /// <summary>Store for converted app config right measure.</summary>
-        private int convertedAppConfigRight;
-
         /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
         /// <param name="logger">Logger.</param>
         /// <param name="options">Application configuration being passed in.</param>
@@ -160,7 +157,6 @@ namespace VisioCleanup.Core.Services
                             shapes.Add(this.MasterShape);
 
                             var maxRight = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
-                            this.convertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
 
                             // retrieve records
                             this.Logger.LogInformation("Loading {dataSource} data", dataSource.Name);
@@ -199,7 +195,8 @@ namespace VisioCleanup.Core.Services
         /// <param name="maxRight">Maximum right side.</param>
         protected void SortChildren(DiagramShape diagramShape, int maxRight)
         {
-            var internalMaxRight = maxRight - this.convertedAppConfigRight;
+            var internalMaxRight = maxRight - DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+            
 
             var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
                 shape =>
