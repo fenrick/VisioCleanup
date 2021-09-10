@@ -23,7 +23,7 @@ namespace VisioCleanup.Core.Services
 
     /// <inheritdoc />
     /// <summary>Abstract implementation of common code for processing services.</summary>
-    public abstract class AbstractProcessingService : IProcessingService
+    public class AbstractProcessingService : IProcessingService
     {
         private const int MaxCorrectRuns = 10;
 
