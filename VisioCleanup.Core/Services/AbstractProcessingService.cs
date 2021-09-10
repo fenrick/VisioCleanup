@@ -298,7 +298,7 @@ namespace VisioCleanup.Core.Services
                     shape = shape.Left;
                 }
 
-                // are we relating to ourself?
+                // are we relating to our self?
                 if (shape == childShape)
                 {
                     lineCount++;
