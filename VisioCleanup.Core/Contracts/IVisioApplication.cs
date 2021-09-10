@@ -15,15 +15,15 @@ namespace VisioCleanup.Core.Contracts
     public interface IVisioApplication
     {
         /// <summary>Gets the left hand side of the page.</summary>
-        /// <returns>Integer representing it.</returns>
+        /// <value>position of left hand side of page.</value>
         int PageLeftSide { get; }
 
         /// <summary>Gets the right hand side of the page.</summary>
-        /// <returns>Integer representing it.</returns>
+        /// <value>position of right hand side of page.</value>
         int PageRightSide { get; }
 
         /// <summary>Gets the top side of the page.</summary>
-        /// <returns>Integer representing it.</returns>
+        /// <value>position of top of the page.</value>
         int PageTopSide { get; }
 
         /// <summary><see cref="Close" /> visio session and shutdown.</summary>
