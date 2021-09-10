@@ -153,28 +153,26 @@ namespace VisioCleanup.Core.Services
                     Debug.Assert(column.ColumnOrdinal is not null, en_AU.SqlServerDatabaseApplication_MapColumns_column_ColumnOrdinal_is_not__null);
                     var columnColumnOrdinal = (int)column.ColumnOrdinal;
                     var columnColumnName = column.ColumnName;
-                    FieldType? fieldMapping = null;
+                    FieldType fieldMapping;
+
                     if (columnColumnName.Equals(fieldName, StringComparison.Ordinal))
                     {
                         fieldMapping = FieldType.ShapeText;
                     }
-
-                    if (columnColumnName.Equals(sortFieldName, StringComparison.Ordinal))
+                    else if (columnColumnName.Equals(sortFieldName, StringComparison.Ordinal))
                     {
                         fieldMapping = FieldType.SortValue;
                     }
-
-                    if (columnColumnName.Equals(shapeFieldName, StringComparison.Ordinal))
+                    else if (columnColumnName.Equals(shapeFieldName, StringComparison.Ordinal))
                     {
                         fieldMapping = FieldType.ShapeType;
                     }
-
-                    if (fieldMapping is null)
+                    else
                     {
                         continue;
                     }
 
-                    mappings.Add((FieldType)fieldMapping, columnColumnOrdinal);
+                    mappings.Add(fieldMapping, columnColumnOrdinal);
                 }
 
                 if (mappings.ContainsKey(FieldType.ShapeText))
