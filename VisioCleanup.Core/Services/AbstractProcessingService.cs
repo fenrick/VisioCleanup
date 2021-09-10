@@ -130,6 +130,10 @@ namespace VisioCleanup.Core.Services
                     });
         }
 
+        /// <summary>Internal process data sets.</summary>
+        /// <param name="dataSource">Data source to process.</param>
+        /// <param name="parameters">Parameters for process.</param>
+        /// <returns>Task tracking progress.</returns>
         protected Task ProcessDataSetInternal(IDataSource dataSource, string parameters)
         {
             return Task.Run(
@@ -150,12 +154,12 @@ namespace VisioCleanup.Core.Services
                                                    {
                                                        ShapeText = "FAKE MASTER",
                                                        ShapeType = ShapeType.FakeShape,
-                                                       LeftSide = this.VisioApplication.GetPageLeftSide(),
-                                                       TopSide = this.VisioApplication.GetPageTopSide() - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                                                       LeftSide = this.VisioApplication.PageLeftSide,
+                                                       TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
                                                    };
                             shapes.Add(this.MasterShape);
 
-                            var maxRight = this.VisioApplication.GetPageRightSide() - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
+                            var maxRight = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
                             this.convertedAppConfigRight = DiagramShape.ConvertMeasurement(this.AppConfig.Right);
 
                             // retrieve records

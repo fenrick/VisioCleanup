@@ -48,6 +48,61 @@ namespace VisioCleanup.Core.Services
         }
 
         /// <inheritdoc />
+        public int PageLeftSide
+        {
+            get
+            {
+                if (this.visioApplication is null || this.activePage is null)
+                {
+                    throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
+                }
+
+                var pageSheet = this.activePage.PageSheet;
+
+                return DiagramShape.ConvertMeasurement(
+                    GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesLeftMargin));
+            }
+        }
+
+        /// <inheritdoc />
+        public int PageRightSide
+        {
+            get
+            {
+                if (this.visioApplication is null || this.activePage is null)
+                {
+                    throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
+                }
+
+                var pageSheet = this.activePage.PageSheet;
+
+                var rightMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesRightMargin);
+                var width = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageWidth);
+
+                return DiagramShape.ConvertMeasurement(width - rightMargin);
+            }
+        }
+
+        /// <inheritdoc />
+        public int PageTopSide
+        {
+            get
+            {
+                if (this.visioApplication is null || this.activePage is null)
+                {
+                    throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
+                }
+
+                var pageSheet = this.activePage.PageSheet;
+
+                var height = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageHeight);
+                var topMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPrintPropertiesTopMargin);
+
+                return DiagramShape.ConvertMeasurement(height - topMargin);
+            }
+        }
+
+        /// <inheritdoc />
         public void Close()
         {
             this.logger.LogDebug(en_AU.VisioApplication_Close_Clearning_shape_cache);
@@ -105,52 +160,6 @@ namespace VisioCleanup.Core.Services
             visioShape.Text = diagramShape.ShapeText;
 
             this.UpdateShape(diagramShape);
-        }
-
-        /// <inheritdoc />
-        public int GetPageLeftSide()
-        {
-            if (this.visioApplication is null || this.activePage is null)
-            {
-                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
-            }
-
-            var pageSheet = this.activePage.PageSheet;
-
-            return DiagramShape.ConvertMeasurement(
-                GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesLeftMargin));
-        }
-
-        /// <inheritdoc />
-        public int GetPageRightSide()
-        {
-            if (this.visioApplication is null || this.activePage is null)
-            {
-                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
-            }
-
-            var pageSheet = this.activePage.PageSheet;
-
-            var rightMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesRightMargin);
-            var width = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageWidth);
-
-            return DiagramShape.ConvertMeasurement(width - rightMargin);
-        }
-
-        /// <inheritdoc />
-        public int GetPageTopSide()
-        {
-            if (this.visioApplication is null || this.activePage is null)
-            {
-                throw new InvalidOperationException(en_AU.VisioApplication_GetPageLeftSide_System_not_initialised_);
-            }
-
-            var pageSheet = this.activePage.PageSheet;
-
-            var height = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageHeight);
-            var topMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPrintPropertiesTopMargin);
-
-            return DiagramShape.ConvertMeasurement(height - topMargin);
         }
 
         /// <inheritdoc />
