@@ -269,26 +269,21 @@ namespace VisioCleanup.Core.Services
 
                 // are we below line count?
                 var leftByTwo = i - 1 - 1;
-                if (lineCount < maxLine)
+                if ((lineCount < maxLine) && ((children[leftByTwo].RightSide + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing))
+                                              < internalMaxRight))
                 {
-                    // width if placed on right.
-                    var rightWidth = children[leftByTwo].RightSide + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing);
-
                     // can we place on right
-                    if (rightWidth < internalMaxRight)
+                    children[leftByTwo].Right = childShape;
+                    lineCount++;
+
+                    diagramShape.CorrectDiagram();
+
+                    if ((childShape.Children.Count > 0) && (childShape.ChildrenDepth < currentMaxDepth))
                     {
-                        children[leftByTwo].Right = childShape;
-                        lineCount++;
-
-                        diagramShape.CorrectDiagram();
-
-                        if ((childShape.Children.Count > 0) && (childShape.ChildrenDepth < currentMaxDepth))
-                        {
-                            SortChildrenByLines(childShape, currentMaxDepth);
-                        }
-
-                        continue;
+                        SortChildrenByLines(childShape, currentMaxDepth);
                     }
+
+                    continue;
                 }
 
                 // find start of line.
