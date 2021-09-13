@@ -17,7 +17,6 @@ namespace VisioCleanup.Core.Models
     using Serilog;
 
     using VisioCleanup.Core.Models.Config;
-    using VisioCleanup.Core.Resources;
 
     /// <summary>Representation of a single shape in a visio diagram.</summary>
     public class DiagramShape
@@ -74,7 +73,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug(en_AU.DiagramShape_BaseSide_Moving__Shape__by__Movement__vertical, this.Below, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Below, movement);
                         this.Below.MoveVertical(movement);
                     }
                 }
@@ -92,7 +91,7 @@ namespace VisioCleanup.Core.Models
                     return;
                 }
 
-                this.logger.Debug(en_AU.DiagramShape_BaseSide_Moving__Shape__by__Movement__vertical, this.Right, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Right, movement);
                 this.Right.MoveVertical(movement);
             }
         }
@@ -126,7 +125,7 @@ namespace VisioCleanup.Core.Models
 
                 if (movement != 0)
                 {
-                    this.logger.Debug(en_AU.DiagramShape_Below_Moving__Shape__by__Movement__horizontal, this.below, movement);
+                    this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.below, movement);
                     this.below.MoveHorizontal(movement);
                 }
 
@@ -138,7 +137,7 @@ namespace VisioCleanup.Core.Models
                     return;
                 }
 
-                this.logger.Debug(en_AU.DiagramShape_BaseSide_Moving__Shape__by__Movement__vertical, this.below, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} vertical", this.below, movement);
                 this.below.MoveVertical(movement);
             }
         }
@@ -196,7 +195,7 @@ namespace VisioCleanup.Core.Models
 
                 if (movement != 0)
                 {
-                    this.logger.Debug(en_AU.DiagramShape_Below_Moving__Shape__by__Movement__horizontal, this.right, movement);
+                    this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.right, movement);
                     this.right.MoveHorizontal(movement);
                 }
 
@@ -207,7 +206,7 @@ namespace VisioCleanup.Core.Models
                     return;
                 }
 
-                this.logger.Debug(en_AU.DiagramShape_BaseSide_Moving__Shape__by__Movement__vertical, this.right, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} vertical", this.right, movement);
                 this.right.MoveVertical(movement);
             }
         }
@@ -230,7 +229,7 @@ namespace VisioCleanup.Core.Models
 
                     if (movement != 0)
                     {
-                        this.logger.Debug(en_AU.DiagramShape_Below_Moving__Shape__by__Movement__horizontal, this.Right, movement);
+                        this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Right, movement);
                         this.Right.MoveHorizontal(movement);
                     }
                 }
@@ -249,7 +248,7 @@ namespace VisioCleanup.Core.Models
                     return;
                 }
 
-                this.logger.Debug(en_AU.DiagramShape_Below_Moving__Shape__by__Movement__horizontal, this.Below, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Below, movement);
                 this.Below.MoveHorizontal(movement);
             }
         }
@@ -372,18 +371,15 @@ namespace VisioCleanup.Core.Models
                 return false;
             }
 
-            this.logger.Debug(en_AU.DiagramShape_ResizeShape_Resizing___Shape_, this);
+            this.logger.Debug("Resizing: {Shape}", this);
             this.RightSide = newRightSide;
             this.BaseSide = newBaseSide;
-            this.logger.Debug(en_AU.DiagramShape_ResizeShape_New_size_for__Shape____Corners_, this, this.CornerString());
+            this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
             return true;
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.CurrentCulture, en_AU.DiagramShape_ToString__0____1_, this.VisioId, this.ShapeText);
-        }
+        public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
 
         /// <summary>Calculate the width of the shape.</summary>
         /// <returns>Width.</returns>
@@ -427,7 +423,7 @@ namespace VisioCleanup.Core.Models
                     {
                         case not null when currentShape.BaseSide.Equals(shape.BaseSide):
                             // overlap!
-                            this.logger.Error(en_AU.DiagramShape_FindNeighbours_Weird_circumstances__check_diagram_for_overlaps_between__Shape__and__Shape2_, currentShape, shape);
+                            this.logger.Error("Weird circumstances, check diagram for overlaps between {Shape} and {Shape2}", currentShape, shape);
                             continue;
                         case not null when currentShape.BaseSide >= shape.BaseSide:
                             continue;
@@ -462,7 +458,7 @@ namespace VisioCleanup.Core.Models
                     {
                         case not null when currentShape.LeftSide.Equals(shape.LeftSide):
                             // overlap!
-                            this.logger.Error(en_AU.DiagramShape_FindNeighbours_Weird_circumstances__check_diagram_for_overlaps_between__Shape__and__Shape2_, currentShape, shape);
+                            this.logger.Error("Weird circumstances, check diagram for overlaps between {Shape} and {Shape2}", currentShape, shape);
                             continue;
                         case not null when currentShape.LeftSide >= shape.LeftSide:
                             continue;
@@ -487,7 +483,7 @@ namespace VisioCleanup.Core.Models
         private string CornerString() =>
             string.Format(
                 CultureInfo.CurrentCulture,
-                en_AU.DiagramShape_CornerString_Top___0___Left___1___Width___2___Height___3_,
+                "Top: {0}, Left: {1}, Width: {2}, Height: {3}",
                 ConvertMeasurement(this.TopSide),
                 ConvertMeasurement(this.LeftSide),
                 ConvertMeasurement(this.Width()),
@@ -515,14 +511,14 @@ namespace VisioCleanup.Core.Models
 
                 if (topMovement != 0)
                 {
-                    this.logger.Debug(en_AU.DiagramShape_FixPosition_Aligning__Shape__to__Parent_, this, this.ParentShape);
+                    this.logger.Debug("Aligning {Shape} to {Parent}", this, this.ParentShape);
                     this.MoveVertical(topMovement);
                     result = true;
                 }
 
                 if (leftMovement != 0)
                 {
-                    this.logger.Debug(en_AU.DiagramShape_FixPosition_Aligning__Shape__to__Parent_, this, this.ParentShape);
+                    this.logger.Debug("Aligning {Shape} to {Parent}", this, this.ParentShape);
                     this.MoveHorizontal(leftMovement);
                     result = true;
                 }
@@ -537,7 +533,7 @@ namespace VisioCleanup.Core.Models
 
                 if (movement != 0)
                 {
-                    this.logger.Debug(en_AU.DiagramShape_Below_Moving__Shape__by__Movement__horizontal, this.Right, movement);
+                    this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Right, movement);
                     this.Right.MoveHorizontal(movement);
                     result = true;
                 }
@@ -546,7 +542,7 @@ namespace VisioCleanup.Core.Models
                 movement = this.Right.TopSide - this.TopSide;
                 if (movement != 0)
                 {
-                    this.logger.Debug(en_AU.DiagramShape_BaseSide_Moving__Shape__by__Movement__vertical, this.Right, movement);
+                    this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Right, movement);
                     this.Right.MoveVertical(movement);
                     result = true;
                 }
@@ -563,7 +559,7 @@ namespace VisioCleanup.Core.Models
 
             if (movement != 0)
             {
-                this.logger.Debug(en_AU.DiagramShape_Below_Moving__Shape__by__Movement__horizontal, this.Below, movement);
+                this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Below, movement);
                 this.Below.MoveHorizontal(movement);
                 result = true;
             }
@@ -576,7 +572,7 @@ namespace VisioCleanup.Core.Models
                 return result;
             }
 
-            this.logger.Debug(en_AU.DiagramShape_BaseSide_Moving__Shape__by__Movement__vertical, this.Below, movement);
+            this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Below, movement);
             this.Below.MoveVertical(movement);
             return true;
         }

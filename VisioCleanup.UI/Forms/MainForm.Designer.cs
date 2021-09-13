@@ -105,7 +105,7 @@ namespace VisioCleanup.UI.Forms
             ((ISupportInitialize)this.dataSetBindingSource).BeginInit();
             ((ISupportInitialize)this.parametersBindingSource).BeginInit();
             this.SuspendLayout();
-            
+
             var buttonSize = new Size(130, 25);
 
             // processExcelDataSet
@@ -312,7 +312,7 @@ namespace VisioCleanup.UI.Forms
             logSplitContainer.Panel2.ResumeLayout(false);
             ((ISupportInitialize)logSplitContainer).EndInit();
             logSplitContainer.ResumeLayout(false);
-            
+
             controlsTableLayoutPanel.ResumeLayout(false);
             controlsTableLayoutPanel.PerformLayout();
             groupBox.ResumeLayout(false);

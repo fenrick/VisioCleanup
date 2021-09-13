@@ -12,8 +12,6 @@ namespace VisioCleanup.Core
 
     using Serilog;
 
-    using VisioCleanup.Core.Resources;
-
     /// <summary>Implementation of .Net Framework 4.6 System.Runtime.InteropServices.Marshal.GetActiveObject().</summary>
     internal static class Marshal
     {
@@ -33,7 +31,7 @@ namespace VisioCleanup.Core
             }
             catch (Exception e)
             {
-                Log.Error(e, en_AU.Marshal_GetActiveObject_Unable_to_find_CLSIDFromProgIDEx);
+                Log.Error(e, "Unable to find CLSIDFromProgIDEx");
 
                 // When you catch an exception you should throw exception or at least log error
                 NativeMethods.CLSIDFromProgID(progId, out classId);

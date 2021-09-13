@@ -22,7 +22,6 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
-    using VisioCleanup.Core.Resources;
 
     /// <inheritdoc />
     public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDisposable
@@ -45,7 +44,7 @@ namespace VisioCleanup.Core.Services
         {
             if (this.databaseConnection is null)
             {
-                throw new InvalidOperationException(en_AU.SqlServerDatabaseApplication_Close_Open_database_first_);
+                throw new InvalidOperationException("Open database first.");
             }
 
             this.databaseConnection.Close();
@@ -142,15 +141,15 @@ namespace VisioCleanup.Core.Services
             do
             {
                 Dictionary<FieldType, int> mappings = new();
-                var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? en_AU.SqlServerDatabaseApplication_MapColumns__0_, level);
-                var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
-                var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
+                var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? "{0}", level);
+                var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? "{0} SortValue", level);
+                var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? "{0} Shape", level);
 
                 level++;
 
                 foreach (var column in columnSchema)
                 {
-                    Debug.Assert(column.ColumnOrdinal is not null, en_AU.SqlServerDatabaseApplication_MapColumns_column_ColumnOrdinal_is_not__null);
+                    Debug.Assert(column.ColumnOrdinal is not null, "column.ColumnOrdinal is not  null");
                     var columnColumnOrdinal = (int)column.ColumnOrdinal;
                     var columnColumnName = column.ColumnName;
                     FieldType fieldMapping;

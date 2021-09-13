@@ -19,7 +19,6 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
-    using VisioCleanup.Core.Resources;
 
     /// <summary>The visio service.</summary>
     public class VisioService : AbstractProcessingService, IVisioService
@@ -46,11 +45,11 @@ namespace VisioCleanup.Core.Services
 
                             List<DiagramShape> shapes = new();
 
-                            this.Logger.LogInformation(en_AU.DatabaseService_ProcessDataSet_Create_a_fake_parent_shape);
-                            this.MasterShape = new DiagramShape(0) { ShapeText = en_AU.FAKE_MASTER, ShapeType = ShapeType.FakeShape };
+                            this.Logger.LogInformation("Create a fake parent shape");
+                            this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE MASTER", ShapeType = ShapeType.FakeShape };
                             shapes.Add(this.MasterShape);
 
-                            this.Logger.LogInformation(en_AU.VisioService_LoadVisioObjectModel_Retrieving_selected_shapes);
+                            this.Logger.LogInformation("Retrieving selected shapes");
                             shapes.AddRange(this.VisioApplication.RetrieveShapes());
 
                             if (shapes.Count == 1)
@@ -61,7 +60,7 @@ namespace VisioCleanup.Core.Services
                             this.AllShapes = new Collection<DiagramShape>(shapes);
 
                             // turn overlaps into parents
-                            this.Logger.LogInformation(en_AU.VisioService_LoadVisioObjectModel_Finding_parent_shapes);
+                            this.Logger.LogInformation("Finding parent shapes");
                             foreach (var diagramShape in this.AllShapes)
                             {
                                 var parentShape = this.FindClosestOverlap(diagramShape);
@@ -69,7 +68,7 @@ namespace VisioCleanup.Core.Services
                             }
 
                             // add children to master shape.
-                            this.Logger.LogInformation(en_AU.DatabaseService_ProcessDataSet_Assigning_fake_parent);
+                            this.Logger.LogInformation("Assigning fake parent");
                             foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
                             {
                                 this.MasterShape!.AddChildShape(shape);
@@ -81,7 +80,7 @@ namespace VisioCleanup.Core.Services
 
                             this.MasterShape.ResizeShape();
 
-                            this.Logger.LogInformation(en_AU.VisioService_LoadVisioObjectModel_Finding_shape_neighours);
+                            this.Logger.LogInformation("Finding shape neighours");
                             foreach (var shape in this.AllShapes)
                             {
                                 shape.FindNeighbours();
@@ -89,7 +88,7 @@ namespace VisioCleanup.Core.Services
                         }
                         finally
                         {
-                            this.Logger.LogInformation(en_AU.DatabaseService_ProcessDataSet_Closing_connection_to_visio);
+                            this.Logger.LogInformation("Closing connection to visio");
                             this.VisioApplication.Close();
                         }
                     });
