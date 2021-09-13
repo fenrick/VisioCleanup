@@ -21,7 +21,6 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
-    using VisioCleanup.Core.Resources;
 
     using Marshal = VisioCleanup.Core.Marshal;
 
@@ -44,22 +43,21 @@ namespace VisioCleanup.Core.Services
         /// <inheritdoc />
         public void Close()
         {
-            this.Logger.LogDebug(en_AU.ExcelApplication_Close_Releasing_excel_application);
+            this.Logger.LogDebug("Releasing excel application");
             this.excelApplication = null;
         }
 
         /// <inheritdoc />
         public void Open()
         {
-            this.Logger.LogDebug(en_AU.ExcelApplication_Open_Opening_connection_to_excel);
+            this.Logger.LogDebug("Opening connection to excel");
             try
             {
-                this.excelApplication = Marshal.GetActiveObject(en_AU.ExcelApplication_Open_Excel_Application) as Application
-                                        ?? throw new InvalidOperationException(en_AU.ExcelApplication_Open_Excel_must_be_running_);
+                this.excelApplication = Marshal.GetActiveObject("Excel.Application") as Application ?? throw new InvalidOperationException("Excel must be running.");
             }
             catch (COMException)
             {
-                throw new InvalidOperationException(en_AU.ExcelApplication_Open_Excel_must_be_running_);
+                throw new InvalidOperationException("Excel must be running.");
             }
         }
 
@@ -68,13 +66,13 @@ namespace VisioCleanup.Core.Services
         {
             if (this.excelApplication?.ActiveSheet is null)
             {
-                throw new InvalidOperationException(en_AU.ExcelApplication_Open_Excel_must_be_running_);
+                throw new InvalidOperationException("Excel must be running.");
             }
 
             var excelApplicationActiveSheet = this.excelApplication!.ActiveSheet as Worksheet;
             if (excelApplicationActiveSheet!.ListObjects.Count == 0)
             {
-                throw new InvalidOperationException(en_AU.ExcelApplication_RetrieveRecords_Excel_not_setup_correctly_);
+                throw new InvalidOperationException("Excel not setup correctly.");
             }
 
             var dataTable = excelApplicationActiveSheet.ListObjects[1];
@@ -85,7 +83,7 @@ namespace VisioCleanup.Core.Services
 
             // process rows
             var rows = dataTable.DataBodyRange.Rows;
-            this.Logger.LogDebug(en_AU.ExcelApplication_RetrieveRecords_getting_values);
+            this.Logger.LogDebug("getting values");
             var data = rows.Value as object[,];
             foreach (var rowNumber in Enumerable.Range(1, data.GetLength(0)))
             {
@@ -126,9 +124,9 @@ namespace VisioCleanup.Core.Services
             do
             {
                 var mappings = new Dictionary<FieldType, int>();
-                var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0_, level);
-                var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__SortValue, level);
-                var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? en_AU.ExcelApplication_FindHeaders__0__Shape, level);
+                var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? "{0}", level);
+                var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? "{0} SortValue", level);
+                var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? "{0} Shape", level);
 
                 level++;
                 for (var i = 1; i <= header.GetLength(1); i++)

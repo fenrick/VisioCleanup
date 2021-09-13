@@ -31,19 +31,4 @@
         <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Compile Update="Sinks.RichTextWinForm\Resources\en-AU.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>en-AU.resx</DependentUpon>
-        </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Update="Sinks.RichTextWinForm\Resources\en-AU.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>en-AU.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-    </ItemGroup>
-
 </Project>

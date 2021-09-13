@@ -19,9 +19,7 @@ namespace VisioCleanup.UI.Forms
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models.Config;
 
-    /// <summary>
-    /// Main form for system.
-    /// </summary>
+    /// <summary>Main form for system.</summary>
     public partial class MainForm : Form
     {
         private readonly AppConfig appConfig;
@@ -55,7 +53,7 @@ namespace VisioCleanup.UI.Forms
             this.visioService = visioService ?? throw new ArgumentNullException(nameof(visioService));
             this.databaseService = databaseService ?? throw new ArgumentNullException(nameof(databaseService));
 
-            this.logger.LogDebug("Initialising form components");
+            this.logger.LogDebug("Initializing form components");
             this.InitializeComponent();
 
             this.logger.LogDebug("Setting log output");

@@ -5,6 +5,14 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using AbstractProcessingService_Res = VisioCleanup.Core.Services.AbstractProcessingService_Resources;
+
+// -----------------------------------------------------------------------
+// <copyright file="AbstractProcessingService.cs" company="Jolyon Suthers">
+// Copyright (c) Jolyon Suthers. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
 namespace VisioCleanup.Core.Services
 {
     using System;
@@ -19,7 +27,6 @@ namespace VisioCleanup.Core.Services
     using VisioCleanup.Core.Contracts;
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
-    using VisioCleanup.Core.Resources;
 
     /// <inheritdoc />
     /// <summary>Abstract implementation of common code for processing services.</summary>
@@ -73,7 +80,7 @@ namespace VisioCleanup.Core.Services
                     {
                         for (var counter = 1; counter <= MaxCorrectRuns; counter++)
                         {
-                            this.Logger.LogInformation(en_AU.AbstractProcessingService_LayoutDataSet_Correcting_diagram__pass__Count_, counter);
+                            this.Logger.LogInformation("Correcting diagram: pass {Count}", counter);
 
                             if (this.MasterShape!.CorrectDiagram())
                             {
@@ -93,7 +100,7 @@ namespace VisioCleanup.Core.Services
                         {
                             this.VisioApplication.Open();
                             this.VisioApplication.VisualChanges(false);
-                            this.Logger.LogInformation("Modelling changes to visio");
+                            this.Logger.LogInformation(AbstractProcessingService_Res.Modelling_changes_to_visio);
 
                             // update each shape
                             foreach (var diagramShape in this.AllShapes)
@@ -101,28 +108,28 @@ namespace VisioCleanup.Core.Services
                                 switch (diagramShape.ShapeType)
                                 {
                                     case ShapeType.NewShape:
-                                        this.Logger.LogDebug("Dropping new shape: {Shape}", diagramShape);
+                                        this.Logger.LogDebug(AbstractProcessingService_Res.Dropping_new_shape_Shape, diagramShape);
                                         this.VisioApplication.CreateShape(diagramShape);
                                         break;
                                     case ShapeType.Existing:
-                                        this.Logger.LogDebug("Updating shape: {Shape}", diagramShape);
+                                        this.Logger.LogDebug(AbstractProcessingService_Res.Updating_shape_Shape, diagramShape);
                                         this.VisioApplication.UpdateShape(diagramShape);
                                         break;
                                     case ShapeType.FakeShape:
                                         // we don't draw this!
-                                        this.Logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
+                                        this.Logger.LogDebug(AbstractProcessingService_Res.Skipping_fake_shape_Shape, diagramShape);
                                         break;
                                     default:
-                                        throw new InvalidOperationException("ShapeType not matched");
+                                        throw new InvalidOperationException(AbstractProcessingService_Res.ShapeType_not_matched);
                                 }
                             }
                         }
                         finally
                         {
-                            this.Logger.LogInformation("Recalculating diagrams");
+                            this.Logger.LogInformation(AbstractProcessingService_Res.Recalculating_diagrams);
                             this.VisioApplication.VisualChanges(true);
                             this.VisioApplication.Close();
-                            this.Logger.LogInformation("Visio closed");
+                            this.Logger.LogInformation(AbstractProcessingService_Res.Visio_closed);
                         }
                     });
         }
@@ -146,10 +153,10 @@ namespace VisioCleanup.Core.Services
                             List<DiagramShape> shapes = new();
 
                             // master shape
-                            this.Logger.LogInformation("Create a fake parent shape");
+                            this.Logger.LogInformation(AbstractProcessingService_Res.Create_a_fake_parent_shape);
                             this.MasterShape = new DiagramShape(0)
                                                    {
-                                                       ShapeText = "FAKE MASTER",
+                                                       ShapeText = AbstractProcessingService_Res.FAKE_MASTER,
                                                        ShapeType = ShapeType.FakeShape,
                                                        LeftSide = this.VisioApplication.PageLeftSide,
                                                        TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
@@ -159,7 +166,7 @@ namespace VisioCleanup.Core.Services
                             var maxRight = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
 
                             // retrieve records
-                            this.Logger.LogInformation("Loading {dataSource} data", dataSource.Name);
+                            this.Logger.LogInformation(AbstractProcessingService_Res.Loading_dataSource_data, dataSource.Name);
                             shapes.AddRange(dataSource.RetrieveRecords(parameters));
 
                             if (shapes.Count == 1)
@@ -169,22 +176,22 @@ namespace VisioCleanup.Core.Services
 
                             this.AllShapes = new Collection<DiagramShape>(shapes);
 
-                            this.Logger.LogInformation("Assigning fake parent");
+                            this.Logger.LogInformation(AbstractProcessingService_Res.Assigning_fake_parent);
                             foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
                             {
                                 this.MasterShape.AddChildShape(shape);
                             }
 
                             // need to set children relationships.
-                            this.Logger.LogInformation("Sorting shapes into lines");
+                            this.Logger.LogInformation(AbstractProcessingService_Res.Sorting_shapes_into_lines);
                             this.SortChildren(this.MasterShape, maxRight);
                         }
                         finally
                         {
-                            this.Logger.LogInformation("Closing connection to visio");
+                            this.Logger.LogInformation(AbstractProcessingService_Res.Closing_connection_to_visio);
                             this.VisioApplication.Close();
 
-                            this.Logger.LogInformation("Closing connection to excel");
+                            this.Logger.LogInformation(AbstractProcessingService_Res.Closing_connection_to_excel);
                             dataSource.Close();
                         }
                     });
@@ -196,7 +203,6 @@ namespace VisioCleanup.Core.Services
         protected void SortChildren(DiagramShape diagramShape, int maxRight)
         {
             var internalMaxRight = maxRight - DiagramShape.ConvertMeasurement(this.AppConfig.Right);
-            
 
             var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
                 shape =>

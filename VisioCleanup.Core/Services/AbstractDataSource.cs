@@ -16,7 +16,6 @@ namespace VisioCleanup.Core.Services
 
     using VisioCleanup.Core.Models;
     using VisioCleanup.Core.Models.Config;
-    using VisioCleanup.Core.Resources;
 
     /// <summary>Abstract data source.</summary>
     public class AbstractDataSource
@@ -69,11 +68,11 @@ namespace VisioCleanup.Core.Services
                 return previousShape;
             }
 
-            var shapeIdentifier = string.Format(CultureInfo.CurrentCulture, en_AU.ShapeIdentifierFormat, previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
+            var shapeIdentifier = string.Format(CultureInfo.CurrentCulture, "{0} {1}:{2}", previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
 
             if (!allShapes.ContainsKey(shapeIdentifier))
             {
-                this.Logger.LogDebug(en_AU.ExcelApplication_CreateShape_Creating_shape_for___ShapeText_, shapeText);
+                this.Logger.LogDebug("Creating shape for: {ShapeText}", shapeText);
                 allShapes.Add(
                     shapeIdentifier,
                     new DiagramShape(0)

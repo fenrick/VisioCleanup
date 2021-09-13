@@ -48,4 +48,19 @@
         </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Services\AbstractProcessingService.Resources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AbstractProcessingService.Resources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Services\AbstractProcessingService.Resources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>AbstractProcessingService.Resources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
