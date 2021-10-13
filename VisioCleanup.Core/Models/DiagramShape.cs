@@ -160,7 +160,7 @@ namespace VisioCleanup.Core.Models
 
         /// <summary>Gets the stencil used for drawing shape.</summary>
         /// <value>Master shape stencil.</value>
-        public string Master { get; init; }
+        public string Master { get; set; }
 
         /// <summary>Gets parent shape of curent shape.</summary>
         /// <value>Parent shape.</value>
@@ -255,11 +255,11 @@ namespace VisioCleanup.Core.Models
 
         /// <summary>Gets a unique shape identifier.</summary>
         /// <value>Unique identifer.</value>
-        public string? ShapeIdentifier { get; init; }
+        public string? ShapeIdentifier { get; set; }
 
         /// <summary>Gets the shape text.</summary>
         /// <value>Shape text.</value>
-        public string ShapeText { get; init; }
+        public string ShapeText { get; set; }
 
         /// <summary>Gets or sets the shape type.</summary>
         /// <value>Shape type.</value>
@@ -271,7 +271,7 @@ namespace VisioCleanup.Core.Models
         {
             get;
             [UsedImplicitly]
-            init;
+            set;
         }
 
         /// <summary>Gets or sets top of the shape.</summary>

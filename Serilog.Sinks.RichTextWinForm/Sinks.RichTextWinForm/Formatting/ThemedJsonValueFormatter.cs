@@ -8,6 +8,7 @@
 namespace Serilog.Sinks.RichTextWinForm.Formatting
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Windows.Forms;
@@ -34,8 +35,11 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting
             }
 
             var delim = string.Empty;
-            foreach (var (scalarValue, logEventPropertyValue) in dictionary.Elements)
+            foreach (KeyValuePair<ScalarValue, LogEventPropertyValue> pair in dictionary.Elements)
             {
+                var scalarValue = pair.Key;
+                var logEventPropertyValue = pair.Value;
+
                 if (delim.Length != 0)
                 {
                     using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))

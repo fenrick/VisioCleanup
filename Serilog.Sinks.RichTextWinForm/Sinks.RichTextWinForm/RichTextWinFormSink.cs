@@ -7,7 +7,7 @@
 
 namespace Serilog.Sinks.RichTextWinForm
 {
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows.Forms;
@@ -27,7 +27,7 @@ namespace Serilog.Sinks.RichTextWinForm
 
         private readonly OutputTemplateRenderer formatter;
 
-        private readonly Queue<LogEvent> unprocessedLogEvents = new();
+        private readonly ConcurrentQueue<LogEvent> unprocessedLogEvents = new();
 
         /// <summary>Initialises a new instance of the <see cref="RichTextWinFormSink" /> class.</summary>
         /// <param name="formatter">Formatter.</param>
@@ -35,6 +35,13 @@ namespace Serilog.Sinks.RichTextWinForm
         {
             this.formatter = formatter;
             Sinks.Add(this);
+        }
+
+        /// <inheritdoc />
+        public void Emit(LogEvent logEvent)
+        {
+            this.unprocessedLogEvents.Enqueue(logEvent);
+            this.FlushQueue();
         }
 
         /// <summary>Add a new rich text box to the sink.</summary>
@@ -47,13 +54,6 @@ namespace Serilog.Sinks.RichTextWinForm
             {
                 sink.FlushQueue();
             }
-        }
-
-        /// <inheritdoc />
-        public void Emit(LogEvent logEvent)
-        {
-            this.unprocessedLogEvents.Enqueue(logEvent);
-            this.FlushQueue();
         }
 
         private void FlushQueue()

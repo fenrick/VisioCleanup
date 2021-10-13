@@ -54,12 +54,6 @@ namespace VisioCleanup.Core.Services
             DiagramShape.AppConfig = this.AppConfig;
         }
 
-        /// <inheritdoc />
-        public Collection<DiagramShape> AllShapes { get; protected set; } = new();
-
-        /// <inheritdoc />
-        public DiagramShape? MasterShape { get; protected set; }
-
         /// <summary>Gets application configuration.</summary>
         /// <value>Configuration.</value>
         protected AppConfig AppConfig { get; }
@@ -71,6 +65,12 @@ namespace VisioCleanup.Core.Services
         /// <summary>Gets visio processing engine.</summary>
         /// <value>Visio execution environment.</value>
         protected IVisioApplication VisioApplication { get; }
+
+        /// <inheritdoc />
+        public Collection<DiagramShape> AllShapes { get; protected set; } = new();
+
+        /// <inheritdoc />
+        public DiagramShape? MasterShape { get; protected set; }
 
         /// <inheritdoc />
         public Task LayoutDataSet()
@@ -225,12 +225,12 @@ namespace VisioCleanup.Core.Services
             double maxLine;
             if (children.Count == (diagramShape.TotalChildrenCount() - 1))
             {
-                maxLine = Math.Round(Math.Sqrt(children.Count), MidpointRounding.ToPositiveInfinity);
+                maxLine = Math.Round(Math.Sqrt(children.Count), MidpointRounding.AwayFromZero);
                 var drawLines = children.Count / maxLine;
                 var appConfigMaxBoxLines = this.AppConfig.MaxBoxLines ?? 5d;
                 if (drawLines > appConfigMaxBoxLines)
                 {
-                    maxLine = Math.Round(children.Count / appConfigMaxBoxLines, MidpointRounding.ToPositiveInfinity);
+                    maxLine = Math.Round(children.Count / appConfigMaxBoxLines, MidpointRounding.AwayFromZero);
                 }
             }
             else
@@ -347,7 +347,7 @@ namespace VisioCleanup.Core.Services
 
             var lineCount = 0;
             var lines = 1;
-            var maxLine = Math.Round(children.Count / (double)drawLines, MidpointRounding.ToPositiveInfinity);
+            var maxLine = Math.Round(children.Count / (double)drawLines, MidpointRounding.AwayFromZero);
 
             for (var i = 1; i <= children.Count; i++)
             {

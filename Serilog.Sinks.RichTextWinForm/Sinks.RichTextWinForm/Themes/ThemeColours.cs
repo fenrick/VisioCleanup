@@ -16,11 +16,11 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
     {
         /// <summary>Gets the foreground color to apply.</summary>
         /// <value>Foreground color.</value>
-        internal Color? Foreground { get; init; }
+        internal Color? Foreground { get; set; }
 
         /// <summary>Gets the background color to apply.</summary>
         /// <value>Background color.</value>
-        internal Color? Background { get; init; }
+        internal Color? Background { get; set; }
 
         /// <summary>Are they equal.</summary>
         /// <param name="left">Left.</param>
@@ -42,6 +42,6 @@ namespace Serilog.Sinks.RichTextWinForm.Themes
             EqualityComparer<Color?>.Default.Equals(this.Foreground, other.Foreground) && EqualityComparer<Color?>.Default.Equals(this.Background, other.Background);
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(this.Foreground, this.Background);
+        public override int GetHashCode() => this.Foreground.GetHashCode() + this.Background.GetHashCode();
     }
 }

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net5.0-windows</TargetFramework>
+        <TargetFramework>net48</TargetFramework>
         <RootNamespace>VisioCleanup.UI</RootNamespace>
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -34,22 +34,22 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" PrivateAssets="all" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="all" />
         <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
         <PackageReference Include="GCop.All.Common" Version="2.7.8" PrivateAssets="all" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="all" />
         <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
-        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.2.0-dev-00750" />
+        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
         <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
-        <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
         <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="WindowsFormsGenericHost" Version="0.2.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0-preview.3.21201.4" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0-preview.3.21201.4" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-preview.3.21201.4" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0-preview.3.21201.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
         <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
     </ItemGroup>
 

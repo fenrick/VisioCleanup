@@ -114,6 +114,7 @@ namespace VisioCleanup.UI.Forms
             processExcelDataSet.Size = buttonSize;
             processExcelDataSet.TabIndex = 2;
             processExcelDataSet.Text = "Process Excel DataSet";
+            processExcelDataSet.Click += this.ProcessExcelDataSet_Click;
 
             // loadVisioObjects
             loadVisioObjects.AutoSize = true;
@@ -121,6 +122,7 @@ namespace VisioCleanup.UI.Forms
             loadVisioObjects.Size = buttonSize;
             loadVisioObjects.TabIndex = 3;
             loadVisioObjects.Text = "Load Visio Objects";
+            loadVisioObjects.Click += this.LoadVisioObjects_Click;
 
             // logSplitContainer
             logSplitContainer.Cursor = Cursors.HSplit;
@@ -172,18 +174,21 @@ namespace VisioCleanup.UI.Forms
             loadFromIServerButton.Size = buttonSize;
             loadFromIServerButton.TabIndex = 1;
             loadFromIServerButton.Text = "Load from iServer";
+            loadFromIServerButton.Click += this.LoadFromIServer_Click;
 
             // layoutDataSet
             layoutDataSet.AutoSize = true;
             layoutDataSet.Size = buttonSize;
             layoutDataSet.TabIndex = 4;
             layoutDataSet.Text = "Layout Data Set";
+            layoutDataSet.Click += this.LayoutDataSet_Click;
 
             // updateVisioDrawing
             updateVisioDrawing.AutoSize = true;
             updateVisioDrawing.Size = buttonSize;
             updateVisioDrawing.TabIndex = 5;
             updateVisioDrawing.Text = "Update Visio Drawing";
+            updateVisioDrawing.Click += this.UpdateVisioDrawing_Click;
 
             // tabControl1
             tabControl1.Controls.Add(dataSetTab);
@@ -272,6 +277,7 @@ namespace VisioCleanup.UI.Forms
             this.selectSQLStatementComboBox.Dock = DockStyle.Fill;
             this.selectSQLStatementComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             this.selectSQLStatementComboBox.TabIndex = 0;
+            this.selectSQLStatementComboBox.SelectionChangeCommitted += this.SelectSqlStatementComboBoxSelectionChangeCommitted;
 
             // sqlStatementTextBox
             this.sqlStatementTextBox.AcceptsReturn = true;

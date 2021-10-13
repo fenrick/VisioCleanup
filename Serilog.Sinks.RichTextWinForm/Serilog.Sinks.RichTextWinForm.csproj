@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net5.0-windows</TargetFramework>
+        <TargetFramework>net48</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <Authors>Jolyon Suthers</Authors>
         <Product>Serilog Sink RichTextWinForms</Product>
@@ -22,9 +22,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" PrivateAssets="all" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="all" />
         <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
-        <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
+        <PackageReference Include="Serilog" Version="2.10.0" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="all" />
         <PackageReference Include="GCop.All.Common" Version="2.7.8" PrivateAssets="all" />
         <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />

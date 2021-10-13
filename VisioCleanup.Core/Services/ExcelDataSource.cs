@@ -92,8 +92,10 @@ namespace VisioCleanup.Core.Services
                 {
                     Dictionary<FieldType, string> values = new();
 
-                    foreach (var (key, value) in columnMapping[cellIndex])
+                    foreach (var pair in columnMapping[cellIndex])
                     {
+                        var key = pair.Key;
+                        var value = pair.Value;
                         values[key] = data.GetValue(rowNumber, value)?.ToString() ?? string.Empty;
                     }
 
@@ -108,7 +110,7 @@ namespace VisioCleanup.Core.Services
             }
 
             Collection<DiagramShape> shapes = new();
-            foreach (var (_, value) in allShapes)
+            foreach (var value in allShapes.Values)
             {
                 shapes.Add(value);
             }

@@ -223,7 +223,8 @@ namespace VisioCleanup.Core.Services
 
             // generate final collection
             Collection<DiagramShape> shapes = new();
-            foreach (var (_, value) in allShapes)
+
+            foreach (var value in allShapes.Values)
             {
                 shapes.Add(value);
             }
