@@ -5,14 +5,13 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Output
+namespace Serilog.Sinks.RichTextWinForm.Output;
+
+using System.Windows.Forms;
+
+using Serilog.Events;
+
+internal abstract class OutputTemplateTokenRenderer
 {
-    using System.Windows.Forms;
-
-    using Serilog.Events;
-
-    internal abstract class OutputTemplateTokenRenderer
-    {
-        public abstract void Render(LogEvent logEvent, RichTextBox output);
-    }
+    public abstract void Render(LogEvent logEvent, RichTextBox output);
 }

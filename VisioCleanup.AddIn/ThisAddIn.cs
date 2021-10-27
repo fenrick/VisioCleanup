@@ -1,35 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using Visio = Microsoft.Office.Interop.Visio;
-using Office = Microsoft.Office.Core;
+﻿namespace VisioCleanup.AddIn;
 
-namespace VisioCleanup.AddIn
+using System;
+using System.Windows.Forms;
+
+public partial class ThisAddIn
 {
-    public partial class ThisAddIn
+    private PanelManager _panelManager;
+
+    /// <summary>A simple command</summary>
+    public void Command1()
     {
-        private void ThisAddIn_Startup(object sender, System.EventArgs e)
-        {
-        }
+        MessageBox.Show("Hello from command 1!", "VisioCleanup.AddIn");
+    }
 
-        private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
-        {
-        }
+    public void TogglePanel()
+    {
+        this._panelManager.TogglePanel(this.Application.ActiveWindow);
+    }
 
-        #region VSTO generated code
+    /// <summary>Required method for Designer support - do not modify the contents of this method with the code editor.</summary>
+    private void InternalStartup()
+    {
+        this.Startup += this.ThisAddIn_Startup;
+        this.Shutdown += this.ThisAddIn_Shutdown;
+    }
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InternalStartup()
-        {
-            this.Startup += new System.EventHandler(ThisAddIn_Startup);
-            this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
-        }
-        
-        #endregion
+    private void ThisAddIn_Shutdown(object sender, EventArgs e)
+    {
+        this._panelManager.Dispose();
+    }
+
+    private void ThisAddIn_Startup(object sender, EventArgs e)
+    {
+        this._panelManager = new PanelManager(this);
     }
 }

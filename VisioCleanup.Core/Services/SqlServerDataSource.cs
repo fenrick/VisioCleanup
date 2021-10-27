@@ -5,184 +5,183 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core.Services
+namespace VisioCleanup.Core.Services;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+using VisioCleanup.Core.Contracts;
+using VisioCleanup.Core.Models;
+using VisioCleanup.Core.Models.Config;
+
+/// <inheritdoc />
+public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDisposable
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Data.Common;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.Linq;
+    private SqlConnection? databaseConnection;
 
-    using Microsoft.Data.SqlClient;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-
-    using VisioCleanup.Core.Contracts;
-    using VisioCleanup.Core.Models;
-    using VisioCleanup.Core.Models.Config;
+    /// <summary>Initialises a new instance of the <see cref="SqlServerDataSource" /> class.</summary>
+    /// <param name="logger">Logging instance.</param>
+    /// <param name="options">Configuration options.</param>
+    public SqlServerDataSource(ILogger<SqlServerDataSource> logger, IOptions<AppConfig> options)
+        : base(logger, options)
+    {
+    }
 
     /// <inheritdoc />
-    public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDisposable
+    public string Name => "SQL Server";
+
+    /// <inheritdoc />
+    public void Close()
     {
-        private SqlConnection? databaseConnection;
-
-        /// <summary>Initialises a new instance of the <see cref="SqlServerDataSource" /> class.</summary>
-        /// <param name="logger">Logging instance.</param>
-        /// <param name="options">Configuration options.</param>
-        public SqlServerDataSource(ILogger<SqlServerDataSource> logger, IOptions<AppConfig> options)
-            : base(logger, options)
+        if (this.databaseConnection is null)
         {
+            throw new InvalidOperationException("Open database first.");
         }
 
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        this.databaseConnection.Close();
+        this.Dispose();
+    }
 
-        /// <inheritdoc />
-        public string Name => "SQL Server";
+    /// <inheritdoc />
+    public void Open()
+    {
+        SqlConnectionStringBuilder builder = new()
+                                                 {
+                                                     DataSource = this.AppConfig.DatabaseServer,
+                                                     Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated,
+                                                     InitialCatalog = this.AppConfig.DatabaseCatalog,
+                                                     ApplicationIntent = ApplicationIntent.ReadOnly,
+                                                 };
 
-        /// <inheritdoc />
-        public void Close()
+        this.databaseConnection = new SqlConnection(builder.ConnectionString);
+        this.databaseConnection.Open();
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<DiagramShape> RetrieveRecords(string parameter)
+    {
+        using SqlCommand command = new(parameter, this.databaseConnection);
+        using var reader = command.ExecuteReader();
+
+        Dictionary<string, DiagramShape> allShapes = new();
+
+        // map columns
+        var columnMapping = this.MapColumns(reader.GetColumnSchema());
+
+        while (reader.Read())
         {
-            if (this.databaseConnection is null)
+            Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
+            foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
             {
-                throw new InvalidOperationException("Open database first.");
-            }
-
-            this.databaseConnection.Close();
-            this.Dispose();
-        }
-
-        /// <inheritdoc />
-        public void Open()
-        {
-            SqlConnectionStringBuilder builder = new()
-                                                     {
-                                                         DataSource = this.AppConfig.DatabaseServer,
-                                                         Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated,
-                                                         InitialCatalog = this.AppConfig.DatabaseCatalog,
-                                                         ApplicationIntent = ApplicationIntent.ReadOnly,
-                                                     };
-
-            this.databaseConnection = new SqlConnection(builder.ConnectionString);
-            this.databaseConnection.Open();
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<DiagramShape> RetrieveRecords(string parameter)
-        {
-            using SqlCommand command = new(parameter, this.databaseConnection);
-            using var reader = command.ExecuteReader();
-
-            Dictionary<string, DiagramShape> allShapes = new();
-
-            // map columns
-            var columnMapping = this.MapColumns(reader.GetColumnSchema());
-
-            while (reader.Read())
-            {
-                Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
-                foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
+                Dictionary<FieldType, string> values = new();
+                foreach (var pair in columnMapping[cellIndex])
                 {
-                    Dictionary<FieldType, string> values = new();
-                    foreach (var pair in columnMapping[cellIndex])
-                    {
-                        var key = pair.Key;
-                        var value = pair.Value;
-                        values[key] = !reader.IsDBNull(value) ? reader.GetFieldValue<string>(value) : string.Empty;
-                    }
-
-                    rowResults.Add(cellIndex, values);
+                    var key = pair.Key;
+                    var value = pair.Value;
+                    values[key] = !reader.IsDBNull(value) ? reader.GetFieldValue<string>(value) : string.Empty;
                 }
 
-                DiagramShape? result = null;
-                foreach (var i in Enumerable.Range(1, columnMapping.Count))
-                {
-                    result = this.CreateShape(rowResults[i], allShapes, result);
-                }
+                rowResults.Add(cellIndex, values);
             }
 
-            Collection<DiagramShape> shapes = new();
-            foreach (var value in allShapes.Values)
+            DiagramShape? result = null;
+            foreach (var i in Enumerable.Range(1, columnMapping.Count))
             {
-                shapes.Add(value);
+                result = this.CreateShape(rowResults[i], allShapes, result);
             }
-
-            return shapes;
         }
 
-        /// <summary>Native/Managed Dispose.</summary>
-        /// <param name="native">Is this a native dispose.</param>
-        protected virtual void Dispose(bool native)
+        Collection<DiagramShape> shapes = new();
+        foreach (var value in allShapes.Values)
         {
-            if (!native)
-            {
-                return;
-            }
-
-            if (this.databaseConnection is null)
-            {
-                return;
-            }
-
-            this.databaseConnection.Close();
-            this.databaseConnection.Dispose();
-            this.databaseConnection = null;
+            shapes.Add(value);
         }
 
-        private SortedList<int, Dictionary<FieldType, int>> MapColumns(IReadOnlyCollection<DbColumn> columnSchema)
+        return shapes;
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>Native/Managed Dispose.</summary>
+    /// <param name="native">Is this a native dispose.</param>
+    protected virtual void Dispose(bool native)
+    {
+        if (!native)
         {
-            SortedList<int, Dictionary<FieldType, int>> columnMapping = new();
-            var level = 0;
-            do
-            {
-                Dictionary<FieldType, int> mappings = new();
-                var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? "{0}", level);
-                var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? "{0} SortValue", level);
-                var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? "{0} Shape", level);
-
-                level++;
-
-                foreach (var column in columnSchema)
-                {
-                    Debug.Assert(column.ColumnOrdinal is not null, "column.ColumnOrdinal is not  null");
-                    var columnColumnOrdinal = (int)column.ColumnOrdinal;
-                    var columnColumnName = column.ColumnName;
-                    FieldType fieldMapping;
-
-                    if (columnColumnName.Equals(fieldName, StringComparison.Ordinal))
-                    {
-                        fieldMapping = FieldType.ShapeText;
-                    }
-                    else if (columnColumnName.Equals(sortFieldName, StringComparison.Ordinal))
-                    {
-                        fieldMapping = FieldType.SortValue;
-                    }
-                    else if (columnColumnName.Equals(shapeFieldName, StringComparison.Ordinal))
-                    {
-                        fieldMapping = FieldType.ShapeType;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-
-                    mappings.Add(fieldMapping, columnColumnOrdinal);
-                }
-
-                if (mappings.ContainsKey(FieldType.ShapeText))
-                {
-                    columnMapping.Add(level, mappings);
-                }
-            }
-            while (columnMapping.ContainsKey(level));
-
-            return columnMapping;
+            return;
         }
+
+        if (this.databaseConnection is null)
+        {
+            return;
+        }
+
+        this.databaseConnection.Close();
+        this.databaseConnection.Dispose();
+        this.databaseConnection = null;
+    }
+
+    private SortedList<int, Dictionary<FieldType, int>> MapColumns(IReadOnlyCollection<DbColumn> columnSchema)
+    {
+        SortedList<int, Dictionary<FieldType, int>> columnMapping = new();
+        var level = 0;
+        do
+        {
+            Dictionary<FieldType, int> mappings = new();
+            var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? "{0}", level);
+            var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? "{0} SortValue", level);
+            var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? "{0} Shape", level);
+
+            level++;
+
+            foreach (var column in columnSchema)
+            {
+                Debug.Assert(column.ColumnOrdinal is not null, "column.ColumnOrdinal is not  null");
+                var columnColumnOrdinal = (int)column.ColumnOrdinal;
+                var columnColumnName = column.ColumnName;
+                FieldType fieldMapping;
+
+                if (columnColumnName.Equals(fieldName, StringComparison.Ordinal))
+                {
+                    fieldMapping = FieldType.ShapeText;
+                }
+                else if (columnColumnName.Equals(sortFieldName, StringComparison.Ordinal))
+                {
+                    fieldMapping = FieldType.SortValue;
+                }
+                else if (columnColumnName.Equals(shapeFieldName, StringComparison.Ordinal))
+                {
+                    fieldMapping = FieldType.ShapeType;
+                }
+                else
+                {
+                    continue;
+                }
+
+                mappings.Add(fieldMapping, columnColumnOrdinal);
+            }
+
+            if (mappings.ContainsKey(FieldType.ShapeText))
+            {
+                columnMapping.Add(level, mappings);
+            }
+        }
+        while (columnMapping.ContainsKey(level));
+
+        return columnMapping;
     }
 }

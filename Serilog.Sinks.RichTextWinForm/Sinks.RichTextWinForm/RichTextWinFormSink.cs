@@ -5,80 +5,79 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm
+namespace Serilog.Sinks.RichTextWinForm;
+
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows.Forms;
+
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Sinks.RichTextWinForm.Output;
+
+/// <summary>Sink log events to the monitoring rich text form element.</summary>
+public class RichTextWinFormSink : ILogEventSink
 {
-    using System.Collections.Concurrent;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Windows.Forms;
+    /// <summary>Gets a collection of rich text fields.</summary>
+    /// <value>A collection of rich text fields.</value>
+    private static readonly Collection<RichTextBox> RichTextField = new();
 
-    using Serilog.Core;
-    using Serilog.Events;
-    using Serilog.Sinks.RichTextWinForm.Output;
+    private static readonly Collection<RichTextWinFormSink> Sinks = new();
 
-    /// <summary>Sink log events to the monitoring rich text form element.</summary>
-    public class RichTextWinFormSink : ILogEventSink
+    private readonly OutputTemplateRenderer formatter;
+
+    private readonly ConcurrentQueue<LogEvent> unprocessedLogEvents = new();
+
+    /// <summary>Initialises a new instance of the <see cref="RichTextWinFormSink" /> class.</summary>
+    /// <param name="formatter">Formatter.</param>
+    public RichTextWinFormSink(OutputTemplateRenderer formatter)
     {
-        /// <summary>Gets a collection of rich text fields.</summary>
-        /// <value>A collection of rich text fields.</value>
-        private static readonly Collection<RichTextBox> RichTextField = new();
+        this.formatter = formatter;
+        Sinks.Add(this);
+    }
 
-        private static readonly Collection<RichTextWinFormSink> Sinks = new();
+    /// <summary>Add a new rich text box to the sink.</summary>
+    /// <param name="richTextBox">RichTextBox to add.</param>
+    public static void AddRichTextBox(RichTextBox richTextBox)
+    {
+        RichTextField.Add(richTextBox);
 
-        private readonly OutputTemplateRenderer formatter;
-
-        private readonly ConcurrentQueue<LogEvent> unprocessedLogEvents = new();
-
-        /// <summary>Initialises a new instance of the <see cref="RichTextWinFormSink" /> class.</summary>
-        /// <param name="formatter">Formatter.</param>
-        public RichTextWinFormSink(OutputTemplateRenderer formatter)
+        foreach (var sink in Sinks)
         {
-            this.formatter = formatter;
-            Sinks.Add(this);
+            sink.FlushQueue();
+        }
+    }
+
+    /// <inheritdoc />
+    public void Emit(LogEvent logEvent)
+    {
+        this.unprocessedLogEvents.Enqueue(logEvent);
+        this.FlushQueue();
+    }
+
+    private void FlushQueue()
+    {
+        if (RichTextField.Count <= 0)
+        {
+            return;
         }
 
-        /// <inheritdoc />
-        public void Emit(LogEvent logEvent)
+        while (this.unprocessedLogEvents.TryDequeue(out var unprocessedLogEvent))
         {
-            this.unprocessedLogEvents.Enqueue(logEvent);
-            this.FlushQueue();
-        }
-
-        /// <summary>Add a new rich text box to the sink.</summary>
-        /// <param name="richTextBox">RichTextBox to add.</param>
-        public static void AddRichTextBox(RichTextBox richTextBox)
-        {
-            RichTextField.Add(richTextBox);
-
-            foreach (var sink in Sinks)
+            foreach (var richTextBox in RichTextField.Where(richTextBox => !richTextBox.IsDisposed))
             {
-                sink.FlushQueue();
-            }
-        }
-
-        private void FlushQueue()
-        {
-            if (RichTextField.Count <= 0)
-            {
-                return;
-            }
-
-            while (this.unprocessedLogEvents.TryDequeue(out var unprocessedLogEvent))
-            {
-                foreach (var richTextBox in RichTextField.Where(richTextBox => !richTextBox.IsDisposed))
+                if (richTextBox.InvokeRequired)
                 {
-                    if (richTextBox.InvokeRequired)
-                    {
-                        var @event = unprocessedLogEvent;
-                        richTextBox.Invoke((MethodInvoker)(() => this.formatter.Format(@event, richTextBox)));
-                        continue;
-                    }
-
-                    this.formatter.Format(unprocessedLogEvent, richTextBox);
+                    var @event = unprocessedLogEvent;
+                    richTextBox.Invoke((MethodInvoker)(() => this.formatter.Format(@event, richTextBox)));
+                    continue;
                 }
-            }
 
-            Application.DoEvents();
+                this.formatter.Format(unprocessedLogEvent, richTextBox);
+            }
         }
+
+        Application.DoEvents();
     }
 }

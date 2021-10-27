@@ -5,12 +5,14 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Rendering
-{
-    using Serilog.Parsing;
+namespace Serilog.Sinks.RichTextWinForm.Rendering;
 
-    internal static class AlignmentExtensions
+using Serilog.Parsing;
+
+internal static class AlignmentExtensions
+{
+    public static Alignment Widen(this Alignment alignment, int amount)
     {
-        public static Alignment Widen(this Alignment alignment, int amount) => new(alignment.Direction, alignment.Width + amount);
+        return new Alignment(alignment.Direction, alignment.Width + amount);
     }
 }

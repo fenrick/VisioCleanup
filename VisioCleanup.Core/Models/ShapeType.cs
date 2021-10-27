@@ -5,18 +5,17 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core.Models
+namespace VisioCleanup.Core.Models;
+
+/// <summary>Type of diagram shape.</summary>
+public enum ShapeType
 {
-    /// <summary>Type of diagram shape.</summary>
-    public enum ShapeType
-    {
-        /// <summary><see cref="VisioCleanup.Core.Models.ShapeType.Existing" /> diagram shape.</summary>
-        Existing,
+    /// <summary><see cref="VisioCleanup.Core.Models.ShapeType.Existing" /> diagram shape.</summary>
+    Existing,
 
-        /// <summary>New shape needed to be created.</summary>
-        NewShape,
+    /// <summary>New shape needed to be created.</summary>
+    NewShape,
 
-        /// <summary>Fake shape.</summary>
-        FakeShape,
-    }
+    /// <summary>Fake shape.</summary>
+    FakeShape,
 }

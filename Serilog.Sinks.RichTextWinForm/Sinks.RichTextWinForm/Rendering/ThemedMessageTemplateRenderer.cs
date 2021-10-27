@@ -5,94 +5,93 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Rendering
+namespace Serilog.Sinks.RichTextWinForm.Rendering;
+
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+
+using Serilog.Events;
+using Serilog.Parsing;
+using Serilog.Sinks.RichTextWinForm.Formatting;
+using Serilog.Sinks.RichTextWinForm.Themes;
+
+internal class ThemedMessageTemplateRenderer
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Windows.Forms;
+    private readonly bool isLiteral;
 
-    using Serilog.Events;
-    using Serilog.Parsing;
-    using Serilog.Sinks.RichTextWinForm.Formatting;
-    using Serilog.Sinks.RichTextWinForm.Themes;
+    private readonly RichTextTheme theme;
 
-    internal class ThemedMessageTemplateRenderer
+    private readonly ThemedValueFormatter valueFormatter;
+
+    public ThemedMessageTemplateRenderer(RichTextTheme theme, ThemedValueFormatter valueFormatter, bool isLiteral)
     {
-        private readonly bool isLiteral;
+        this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
+        this.valueFormatter = valueFormatter;
+        this.isLiteral = isLiteral;
+    }
 
-        private readonly RichTextTheme theme;
-
-        private readonly ThemedValueFormatter valueFormatter;
-
-        public ThemedMessageTemplateRenderer(RichTextTheme theme, ThemedValueFormatter valueFormatter, bool isLiteral)
+    public void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, RichTextBox output)
+    {
+        foreach (var token in template.Tokens)
         {
-            this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
-            this.valueFormatter = valueFormatter;
-            this.isLiteral = isLiteral;
-        }
-
-        public void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, RichTextBox output)
-        {
-            foreach (var token in template.Tokens)
+            if (token is TextToken tt)
             {
-                if (token is TextToken tt)
-                {
-                    this.RenderTextToken(tt, output);
-                    continue;
-                }
-
-                var pt = (PropertyToken)token;
-                this.RenderPropertyToken(pt, properties, output);
+                this.RenderTextToken(tt, output);
+                continue;
             }
+
+            var pt = (PropertyToken)token;
+            this.RenderPropertyToken(pt, properties, output);
+        }
+    }
+
+    private void RenderAlignedPropertyTokenUnbuffered(PropertyToken pt, RichTextBox output, LogEventPropertyValue propertyValue)
+    {
+        this.RenderValue(this.theme, this.valueFormatter, propertyValue, output, pt.Format);
+    }
+
+    private void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, RichTextBox output)
+    {
+        if (!properties.TryGetValue(pt.PropertyName, out var propertyValue))
+        {
+            using (this.theme.Apply(output, RichTextThemeStyle.Invalid))
+            {
+                output.AppendText(pt.ToString());
+            }
+
+            return;
         }
 
-        private void RenderAlignedPropertyTokenUnbuffered(PropertyToken pt, RichTextBox output, LogEventPropertyValue propertyValue)
+        if (!pt.Alignment.HasValue)
         {
             this.RenderValue(this.theme, this.valueFormatter, propertyValue, output, pt.Format);
+            return;
         }
 
-        private void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, RichTextBox output)
+        this.RenderAlignedPropertyTokenUnbuffered(pt, output, propertyValue);
+    }
+
+    private void RenderTextToken(TextToken tt, RichTextBox output)
+    {
+        using (this.theme.Apply(output, RichTextThemeStyle.Text))
         {
-            if (!properties.TryGetValue(pt.PropertyName, out var propertyValue))
-            {
-                using (this.theme.Apply(output, RichTextThemeStyle.Invalid))
-                {
-                    output.AppendText(pt.ToString());
-                }
-
-                return;
-            }
-
-            if (!pt.Alignment.HasValue)
-            {
-                this.RenderValue(this.theme, this.valueFormatter, propertyValue, output, pt.Format);
-                return;
-            }
-
-            this.RenderAlignedPropertyTokenUnbuffered(pt, output, propertyValue);
+            output.AppendText(tt.Text);
         }
+    }
 
-        private void RenderTextToken(TextToken tt, RichTextBox output)
+    private void RenderValue(RichTextTheme richTextTheme, ThemedValueFormatter themedValueFormatter, LogEventPropertyValue propertyValue, RichTextBox output, string format)
+    {
+        if (this.isLiteral && propertyValue is ScalarValue { Value: string } sv)
         {
-            using (this.theme.Apply(output, RichTextThemeStyle.Text))
+            using (richTextTheme.Apply(output, RichTextThemeStyle.String))
             {
-                output.AppendText(tt.Text);
-            }
-        }
-
-        private void RenderValue(RichTextTheme richTextTheme, ThemedValueFormatter themedValueFormatter, LogEventPropertyValue propertyValue, RichTextBox output, string format)
-        {
-            if (this.isLiteral && propertyValue is ScalarValue { Value: string } sv)
-            {
-                using (richTextTheme.Apply(output, RichTextThemeStyle.String))
-                {
-                    output.AppendText(sv.Value.ToString() ?? string.Empty);
-                }
-
-                return;
+                output.AppendText(sv.Value.ToString() ?? string.Empty);
             }
 
-            themedValueFormatter.Format(propertyValue, output, format, this.isLiteral);
+            return;
         }
+
+        themedValueFormatter.Format(propertyValue, output, format, this.isLiteral);
     }
 }

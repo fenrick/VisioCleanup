@@ -5,20 +5,22 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Themes
+namespace Serilog.Sinks.RichTextWinForm.Themes;
+
+using System;
+using System.Windows.Forms;
+
+internal readonly struct StyleReset : IDisposable
 {
-    using System;
-    using System.Windows.Forms;
+    private readonly RichTextBox output;
 
-    internal readonly struct StyleReset : IDisposable
+    public StyleReset(RichTextBox output)
     {
-        private readonly RichTextBox output;
+        this.output = output;
+    }
 
-        public StyleReset(RichTextBox output) => this.output = output;
-
-        public void Dispose()
-        {
-            RichTextTheme.Reset(this.output);
-        }
+    public void Dispose()
+    {
+        RichTextTheme.Reset(this.output);
     }
 }

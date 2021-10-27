@@ -5,18 +5,17 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core.Models
+namespace VisioCleanup.Core.Models;
+
+/// <summary>Fields within an excel data table.</summary>
+public enum FieldType
 {
-    /// <summary>Fields within an excel data table.</summary>
-    public enum FieldType
-    {
-        /// <summary><see cref="VisioCleanup.Core.Models.FieldType.ShapeText" /> field.</summary>
-        ShapeText,
+    /// <summary><see cref="VisioCleanup.Core.Models.FieldType.ShapeText" /> field.</summary>
+    ShapeText,
 
-        /// <summary>Sorting field.</summary>
-        SortValue,
+    /// <summary>Sorting field.</summary>
+    SortValue,
 
-        /// <summary>ShapeType field.</summary>
-        ShapeType,
-    }
+    /// <summary>ShapeType field.</summary>
+    ShapeType,
 }

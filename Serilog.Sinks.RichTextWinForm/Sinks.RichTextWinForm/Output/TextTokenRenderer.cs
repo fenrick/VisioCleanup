@@ -5,31 +5,30 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Output
+namespace Serilog.Sinks.RichTextWinForm.Output;
+
+using System.Windows.Forms;
+
+using Serilog.Events;
+using Serilog.Sinks.RichTextWinForm.Themes;
+
+internal class TextTokenRenderer : OutputTemplateTokenRenderer
 {
-    using System.Windows.Forms;
+    private readonly string text;
 
-    using Serilog.Events;
-    using Serilog.Sinks.RichTextWinForm.Themes;
+    private readonly RichTextTheme theme;
 
-    internal class TextTokenRenderer : OutputTemplateTokenRenderer
+    public TextTokenRenderer(RichTextTheme theme, string text)
     {
-        private readonly string text;
+        this.theme = theme;
+        this.text = text;
+    }
 
-        private readonly RichTextTheme theme;
-
-        public TextTokenRenderer(RichTextTheme theme, string text)
+    public override void Render(LogEvent logEvent, RichTextBox output)
+    {
+        using (this.theme.Apply(output, RichTextThemeStyle.TertiaryText))
         {
-            this.theme = theme;
-            this.text = text;
-        }
-
-        public override void Render(LogEvent logEvent, RichTextBox output)
-        {
-            using (this.theme.Apply(output, RichTextThemeStyle.TertiaryText))
-            {
-                output.AppendText(this.text);
-            }
+            output.AppendText(this.text);
         }
     }
 }

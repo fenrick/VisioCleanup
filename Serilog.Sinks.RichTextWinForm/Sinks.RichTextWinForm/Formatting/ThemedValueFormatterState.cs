@@ -5,18 +5,20 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Formatting
+namespace Serilog.Sinks.RichTextWinForm.Formatting;
+
+using System.Windows.Forms;
+
+internal struct ThemedValueFormatterState
 {
-    using System.Windows.Forms;
+    public RichTextBox Output;
 
-    internal struct ThemedValueFormatterState
+    public string Format;
+
+    public bool IsTopLevel;
+
+    public ThemedValueFormatterState Nest()
     {
-        public RichTextBox Output;
-
-        public string Format;
-
-        public bool IsTopLevel;
-
-        public ThemedValueFormatterState Nest() => new() { Output = this.Output };
+        return new ThemedValueFormatterState { Output = this.Output };
     }
 }

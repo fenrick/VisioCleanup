@@ -5,12 +5,11 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.TextWriter
-{
-    using System.IO;
+namespace Serilog.Sinks.RichTextWinForm.TextWriter;
 
-    /// <summary>Coloured String Writer.</summary>
-    public class ColouredStringWriter : StringWriter
-    {
-    }
+using System.IO;
+
+/// <summary>Coloured String Writer.</summary>
+public class ColouredStringWriter : StringWriter
+{
 }

@@ -5,36 +5,38 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Output
+namespace Serilog.Sinks.RichTextWinForm.Output;
+
+using System;
+using System.IO;
+using System.Windows.Forms;
+
+using Serilog.Events;
+using Serilog.Parsing;
+using Serilog.Sinks.RichTextWinForm.Rendering;
+
+using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
+
+internal class NewLineTokenRenderer : OutputTemplateTokenRenderer
 {
-    using System;
-    using System.IO;
-    using System.Windows.Forms;
+    private readonly Alignment? alignment;
 
-    using Serilog.Events;
-    using Serilog.Parsing;
-    using Serilog.Sinks.RichTextWinForm.Rendering;
-
-    using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
-
-    internal class NewLineTokenRenderer : OutputTemplateTokenRenderer
+    public NewLineTokenRenderer(Alignment? alignment)
     {
-        private readonly Alignment? alignment;
+        this.alignment = alignment;
+    }
 
-        public NewLineTokenRenderer(Alignment? alignment) => this.alignment = alignment;
-
-        public override void Render(LogEvent logEvent, RichTextBox output)
+    public override void Render(LogEvent logEvent, RichTextBox output)
+    {
+        if (this.alignment.HasValue)
         {
-            if (this.alignment.HasValue)
-            {
-                Padding.Apply(output, Environment.NewLine, this.alignment.Value.Widen(Environment.NewLine.Length));
-            }
-            else
-            {
-                using StringWriter buffer = new();
-                buffer.WriteLine();
-                output.AppendText(buffer.ToString());
-            }
+            Padding.Apply(output, Environment.NewLine, this.alignment.Value.Widen(Environment.NewLine.Length));
+        }
+        else
+        {
+            using StringWriter buffer = new();
+            buffer.WriteLine();
+            output.AppendText(buffer.ToString());
         }
     }
 }

@@ -5,32 +5,36 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core.Services
+namespace VisioCleanup.Core.Services;
+
+using System;
+using System.Threading.Tasks;
+
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+using VisioCleanup.Core.Contracts;
+using VisioCleanup.Core.Models.Config;
+
+/// <summary>The excel service.</summary>
+public class ExcelService : AbstractProcessingService, IExcelService
 {
-    using System;
-    using System.Threading.Tasks;
+    private readonly IExcelDataSource dataSource;
 
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-
-    using VisioCleanup.Core.Contracts;
-    using VisioCleanup.Core.Models.Config;
-
-    /// <summary>The excel service.</summary>
-    public class ExcelService : AbstractProcessingService, IExcelService
+    /// <summary>Initialises a new instance of the <see cref="ExcelService" /> class.</summary>
+    /// <param name="logger">Logging instance.</param>
+    /// <param name="visioApplication">Visio application handler.</param>
+    /// <param name="dataSource">Excel application handler.</param>
+    /// <param name="options">Application configuration being passed in.</param>
+    public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication, IExcelDataSource dataSource, IOptions<AppConfig> options)
+        : base(logger, options, visioApplication)
     {
-        private readonly IExcelDataSource dataSource;
+        this.dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+    }
 
-        /// <summary>Initialises a new instance of the <see cref="ExcelService" /> class.</summary>
-        /// <param name="logger">Logging instance.</param>
-        /// <param name="visioApplication">Visio application handler.</param>
-        /// <param name="dataSource">Excel application handler.</param>
-        /// <param name="options">Application configuration being passed in.</param>
-        public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication, IExcelDataSource dataSource, IOptions<AppConfig> options)
-            : base(logger, options, visioApplication) =>
-            this.dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-
-        /// <inheritdoc />
-        public Task ProcessDataSet() => this.ProcessDataSetInternal(this.dataSource, string.Empty);
+    /// <inheritdoc />
+    public Task ProcessDataSet()
+    {
+        return this.ProcessDataSetInternal(this.dataSource, string.Empty);
     }
 }

@@ -5,10 +5,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core.Contracts
+namespace VisioCleanup.Core.Contracts;
+
+/// <inheritdoc />
+public interface ISqlServerDataSource : IDataSource
 {
-    /// <inheritdoc />
-    public interface ISqlServerDataSource : IDataSource
-    {
-    }
 }

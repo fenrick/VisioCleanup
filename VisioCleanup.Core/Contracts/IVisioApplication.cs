@@ -5,51 +5,50 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core.Contracts
+namespace VisioCleanup.Core.Contracts;
+
+using System.Collections.Generic;
+
+using VisioCleanup.Core.Models;
+
+/// <summary>Handle creation and management of visio.</summary>
+public interface IVisioApplication
 {
-    using System.Collections.Generic;
+    /// <summary>Gets the left hand side of the page.</summary>
+    /// <value>position of left hand side of page.</value>
+    int PageLeftSide { get; }
 
-    using VisioCleanup.Core.Models;
+    /// <summary>Gets the right hand side of the page.</summary>
+    /// <value>position of right hand side of page.</value>
+    int PageRightSide { get; }
 
-    /// <summary>Handle creation and management of visio.</summary>
-    public interface IVisioApplication
-    {
-        /// <summary>Gets the left hand side of the page.</summary>
-        /// <value>position of left hand side of page.</value>
-        int PageLeftSide { get; }
+    /// <summary>Gets the top side of the page.</summary>
+    /// <value>position of top of the page.</value>
+    int PageTopSide { get; }
 
-        /// <summary>Gets the right hand side of the page.</summary>
-        /// <value>position of right hand side of page.</value>
-        int PageRightSide { get; }
+    /// <summary><see cref="Close" /> visio session and shutdown.</summary>
+    void Close();
 
-        /// <summary>Gets the top side of the page.</summary>
-        /// <value>position of top of the page.</value>
-        int PageTopSide { get; }
+    /// <summary>Create new shape on Visio diagram.</summary>
+    /// <param name="diagramShape">Shape to be created.</param>
+    void CreateShape(DiagramShape diagramShape);
 
-        /// <summary><see cref="Close" /> visio session and shutdown.</summary>
-        void Close();
+    /// <summary><see cref="Open" /> visio session.</summary>
+    void Open();
 
-        /// <summary>Create new shape on Visio diagram.</summary>
-        /// <param name="diagramShape">Shape to be created.</param>
-        void CreateShape(DiagramShape diagramShape);
+    /// <summary>Retrieve hierarchy of shapes from Visio.</summary>
+    /// <returns>Enumerable of DiagramShapes.</returns>
+    IEnumerable<DiagramShape> RetrieveShapes();
 
-        /// <summary><see cref="Open" /> visio session.</summary>
-        void Open();
+    /// <summary>If shape exists on Visio diagram, move to foreground.</summary>
+    /// <param name="diagramShape">Shape to be moved.</param>
+    void SetForeground(DiagramShape diagramShape);
 
-        /// <summary>Retrieve hierarchy of shapes from Visio.</summary>
-        /// <returns>Enumerable of DiagramShapes.</returns>
-        IEnumerable<DiagramShape> RetrieveShapes();
+    /// <summary>Update shape on Visio diagram, moving, resizing, etc.</summary>
+    /// <param name="diagramShape">Shape to be updated.</param>
+    void UpdateShape(DiagramShape diagramShape);
 
-        /// <summary>If shape exists on Visio diagram, move to foreground.</summary>
-        /// <param name="diagramShape">Shape to be moved.</param>
-        void SetForeground(DiagramShape diagramShape);
-
-        /// <summary>Update shape on Visio diagram, moving, resizing, etc.</summary>
-        /// <param name="diagramShape">Shape to be updated.</param>
-        void UpdateShape(DiagramShape diagramShape);
-
-        /// <summary>Change visio updating diagram.</summary>
-        /// <param name="state">Value to change.</param>
-        void VisualChanges(bool state);
-    }
+    /// <summary>Change visio updating diagram.</summary>
+    /// <param name="state">Value to change.</param>
+    void VisualChanges(bool state);
 }
