@@ -78,7 +78,7 @@ public partial class MainForm : Form
 
         this.selectSQLStatementComboBox.SelectedIndex = 0;
 
-        this.SelectSqlStatementComboBoxSelectionChangeCommitted(null, null);
+        this.SelectSqlStatementComboBoxSelectionChangeCommitted(sender:null, e:null);
     }
 
     private bool CheckProcessingService()

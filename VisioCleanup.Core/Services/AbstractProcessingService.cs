@@ -93,7 +93,7 @@ public class AbstractProcessingService : IProcessingService
                     try
                     {
                         this.VisioApplication.Open();
-                        this.VisioApplication.VisualChanges(false);
+                        this.VisioApplication.VisualChanges(state: false);
                         this.Logger.LogInformation(AbstractProcessingService_Res.Modelling_changes_to_visio);
 
                         // update each shape
@@ -121,7 +121,7 @@ public class AbstractProcessingService : IProcessingService
                     finally
                     {
                         this.Logger.LogInformation(AbstractProcessingService_Res.Recalculating_diagrams);
-                        this.VisioApplication.VisualChanges(true);
+                        this.VisioApplication.VisualChanges(state: true);
                         this.VisioApplication.Close();
                         this.Logger.LogInformation(AbstractProcessingService_Res.Visio_closed);
                     }

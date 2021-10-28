@@ -246,7 +246,7 @@ public class ThemedJsonValueFormatter : ThemedValueFormatter
                 {
                     using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                     {
-                        output.AppendText(((IFormattable)value).ToString(null, CultureInfo.CurrentUICulture));
+                        output.AppendText(((IFormattable)value).ToString(format: null, CultureInfo.CurrentUICulture));
                     }
 
                     break;

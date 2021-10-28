@@ -112,7 +112,7 @@ public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDi
     /// <inheritdoc />
     public void Dispose()
     {
-        this.Dispose(true);
+        this.Dispose(native: true);
         GC.SuppressFinalize(this);
     }
 
