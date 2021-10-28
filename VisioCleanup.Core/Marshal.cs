@@ -35,6 +35,8 @@ public static class Marshal
 
             // When you catch an exception you should throw exception or at least log error
             NativeMethods.CLSIDFromProgID(progId, out classId);
+
+            throw;
         }
 
         NativeMethods.GetActiveObject(ref classId, IntPtr.Zero, out var obj);

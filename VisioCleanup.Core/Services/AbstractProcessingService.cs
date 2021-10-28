@@ -49,7 +49,7 @@ public class AbstractProcessingService : IProcessingService
     }
 
     /// <inheritdoc />
-    public Collection<DiagramShape> AllShapes { get; protected set; } = new();
+    public Collection<DiagramShape> AllShapes { get; } = new();
 
     /// <inheritdoc />
     public DiagramShape? MasterShape { get; protected set; }
@@ -163,7 +163,11 @@ public class AbstractProcessingService : IProcessingService
                             return;
                         }
 
-                        this.AllShapes = new Collection<DiagramShape>(shapes);
+                        this.AllShapes.Clear();
+                        foreach (var diagramShape in shapes)
+                        {
+                            this.AllShapes.Add(diagramShape);
+                        }
 
                         this.Logger.LogInformation(AbstractProcessingService_Res.Assigning_fake_parent);
                         foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))

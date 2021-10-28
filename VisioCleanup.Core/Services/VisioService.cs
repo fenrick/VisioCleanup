@@ -56,7 +56,11 @@ public class VisioService : AbstractProcessingService, IVisioService
                             return;
                         }
 
-                        this.AllShapes = new Collection<DiagramShape>(shapes);
+                        this.AllShapes.Clear();
+                        foreach (var diagramShape in shapes)
+                        {
+                            this.AllShapes.Add(diagramShape);
+                        }
 
                         // turn overlaps into parents
                         this.Logger.LogInformation("Finding parent shapes");
