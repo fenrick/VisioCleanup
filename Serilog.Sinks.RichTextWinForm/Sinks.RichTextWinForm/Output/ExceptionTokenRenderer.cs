@@ -13,16 +13,13 @@ using System.Windows.Forms;
 using Serilog.Events;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal class ExceptionTokenRenderer : OutputTemplateTokenRenderer
+public class ExceptionTokenRenderer : OutputTemplateTokenRenderer
 {
     private const string StackFrameLinePrefix = "   ";
 
     private readonly RichTextTheme theme;
 
-    public ExceptionTokenRenderer(RichTextTheme theme)
-    {
-        this.theme = theme;
-    }
+    public ExceptionTokenRenderer(RichTextTheme theme) => this.theme = theme;
 
     public override void Render(LogEvent logEvent, RichTextBox output)
     {

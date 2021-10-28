@@ -25,9 +25,9 @@ public interface IProcessingService
 
     /// <summary>Lays outs the diagramshapes based on appconfig.</summary>
     /// <returns>A task.</returns>
-    Task LayoutDataSet();
+    Task LayoutDataSetAsync();
 
     /// <summary>Draws new data set onto visio.</summary>
     /// <returns>A task.</returns>
-    Task UpdateVisio();
+    Task UpdateVisioAsync();
 }

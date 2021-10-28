@@ -13,7 +13,7 @@ using System.Security;
 using Serilog;
 
 /// <summary>Implementation of .Net Framework 4.6 System.Runtime.InteropServices.Marshal.GetActiveObject().</summary>
-internal static class Marshal
+public static class Marshal
 {
     /// <summary>Copy of System.Runtime.InteropServices.Marshal.GetActiveObject().</summary>
     /// <param name="progId">String program identifier.</param>

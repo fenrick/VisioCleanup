@@ -25,10 +25,7 @@ public static class RichTextWinFormLoggerConfigurationExtensions
     /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
     /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
     /// <returns>Configuration object allowing method chaining.</returns>
-    public static LoggerConfiguration RichTextWinForm(this LoggerSinkConfiguration loggerSinkConfiguration)
-    {
-        return RichTextWinForm(loggerSinkConfiguration, DefaultOutputTemplate);
-    }
+    public static LoggerConfiguration RichTextWinForm(this LoggerSinkConfiguration loggerSinkConfiguration) => RichTextWinForm(loggerSinkConfiguration, DefaultOutputTemplate);
 
     /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
     /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
@@ -38,10 +35,8 @@ public static class RichTextWinFormLoggerConfigurationExtensions
     /// </param>
     /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
     /// <returns>Configuration object allowing method chaining.</returns>
-    public static LoggerConfiguration RichTextWinForm(this LoggerSinkConfiguration loggerSinkConfiguration, string outputTemplate)
-    {
-        return RichTextWinForm(loggerSinkConfiguration, outputTemplate, RichTextThemes.Default);
-    }
+    public static LoggerConfiguration RichTextWinForm(this LoggerSinkConfiguration loggerSinkConfiguration, string outputTemplate) =>
+        RichTextWinForm(loggerSinkConfiguration, outputTemplate, RichTextThemes.Default);
 
     /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
     /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
@@ -53,10 +48,8 @@ public static class RichTextWinFormLoggerConfigurationExtensions
     /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
     /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
     /// <returns>Configuration object allowing method chaining.</returns>
-    public static LoggerConfiguration RichTextWinForm(this LoggerSinkConfiguration loggerSinkConfiguration, string outputTemplate, RichTextTheme theme)
-    {
-        return RichTextWinForm(loggerSinkConfiguration, outputTemplate, theme, LevelAlias.Minimum);
-    }
+    public static LoggerConfiguration RichTextWinForm(this LoggerSinkConfiguration loggerSinkConfiguration, string outputTemplate, RichTextTheme theme) =>
+        RichTextWinForm(loggerSinkConfiguration, outputTemplate, theme, LevelAlias.Minimum);
 
     /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
     /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>

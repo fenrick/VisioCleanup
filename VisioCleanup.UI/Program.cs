@@ -22,29 +22,23 @@ using WindowsFormsGenericHost;
 
 /// <summary>Main execution point.</summary>
 [Guid("E259A812-31F7-4456-BD56-EEDA53E99D7E")]
-internal static class Program
+public static class Program
 {
     /// <summary>The main entry point for the application.</summary>
     /// <param name="args">Arguments.</param>
     [STAThread]
-    public static void Main(string[] args)
-    {
+    public static void Main(string[] args) =>
         Host.CreateDefaultBuilder(args).UseSerilog(ConfigureSerilog).ConfigureServices(ConfigureApplicationServices).UseWindowsFormsLifetime<MainForm>().Build().Run();
-    }
 
     /// <summary>Configure services.</summary>
     /// <param name="hostBuilderContext">The host builder context.</param>
     /// <param name="serviceCollection">The service collection.</param>
-    private static void ConfigureApplicationServices(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection)
-    {
+    private static void ConfigureApplicationServices(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection) =>
         serviceCollection.AddVisioCleanupCore(hostBuilderContext.Configuration).AddForms();
-    }
 
     /// <summary>Configure Serilog.</summary>
     /// <param name="hostBuilderContext">The host builder context.</param>
     /// <param name="loggerConfiguration">The logger configuration.</param>
-    private static void ConfigureSerilog(HostBuilderContext hostBuilderContext, LoggerConfiguration loggerConfiguration)
-    {
+    private static void ConfigureSerilog(HostBuilderContext hostBuilderContext, LoggerConfiguration loggerConfiguration) =>
         loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration);
-    }
 }

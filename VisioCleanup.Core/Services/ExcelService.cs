@@ -27,14 +27,9 @@ public class ExcelService : AbstractProcessingService, IExcelService
     /// <param name="dataSource">Excel application handler.</param>
     /// <param name="options">Application configuration being passed in.</param>
     public ExcelService(ILogger<ExcelService> logger, IVisioApplication visioApplication, IExcelDataSource dataSource, IOptions<AppConfig> options)
-        : base(logger, options, visioApplication)
-    {
+        : base(logger, options, visioApplication) =>
         this.dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-    }
 
     /// <inheritdoc />
-    public Task ProcessDataSet()
-    {
-        return this.ProcessDataSetInternal(this.dataSource, string.Empty);
-    }
+    public Task ProcessDataSetAsync() => this.ProcessDataSetInternalAsync(this.dataSource, string.Empty);
 }

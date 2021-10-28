@@ -67,9 +67,8 @@ public class AbstractProcessingService : IProcessingService
     protected IVisioApplication VisioApplication { get; }
 
     /// <inheritdoc />
-    public Task LayoutDataSet()
-    {
-        return Task.Run(
+    public Task LayoutDataSetAsync() =>
+        Task.Run(
             () =>
                 {
                     for (var counter = 1; counter <= MaxCorrectRuns; counter++)
@@ -82,12 +81,10 @@ public class AbstractProcessingService : IProcessingService
                         }
                     }
                 });
-    }
 
     /// <inheritdoc />
-    public Task UpdateVisio()
-    {
-        return Task.Run(
+    public Task UpdateVisioAsync() =>
+        Task.Run(
             () =>
                 {
                     try
@@ -126,15 +123,13 @@ public class AbstractProcessingService : IProcessingService
                         this.Logger.LogInformation(AbstractProcessingService_Res.Visio_closed);
                     }
                 });
-    }
 
     /// <summary>Internal process data sets.</summary>
     /// <param name="dataSource">Data source to process.</param>
     /// <param name="parameters">Parameters for process.</param>
     /// <returns>Task tracking progress.</returns>
-    protected Task ProcessDataSetInternal(IDataSource dataSource, string parameters)
-    {
-        return Task.Run(
+    protected Task ProcessDataSetInternalAsync(IDataSource dataSource, string parameters) =>
+        Task.Run(
             () =>
                 {
                     try
@@ -189,7 +184,6 @@ public class AbstractProcessingService : IProcessingService
                         dataSource.Close();
                     }
                 });
-    }
 
     /// <summary>Sort the children of the diagram shape.</summary>
     /// <param name="diagramShape">Shape that's children are to be sorted.</param>

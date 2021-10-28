@@ -25,6 +25,12 @@ public class DiagramShape
 
     private const int ConversionFactor = 1000;
 
+    private const string MovingShapeByMovementDirection = "Moving {Shape} by {Movement} {Direction}";
+
+    private const string VerticalDirection = "vertical";
+
+    private const string HorizontalDirection = "horizontal";
+
     private readonly ILogger logger;
 
     private int baseSide;
@@ -77,7 +83,7 @@ public class DiagramShape
 
                 if (movement != 0)
                 {
-                    this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Below, movement);
+                    this.logger.Debug(MovingShapeByMovementDirection, this.Below, movement, VerticalDirection);
                     this.Below.MoveVertical(movement);
                 }
             }
@@ -95,7 +101,7 @@ public class DiagramShape
                 return;
             }
 
-            this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Right, movement);
+            this.logger.Debug(MovingShapeByMovementDirection, this.Right, movement, VerticalDirection);
             this.Right.MoveVertical(movement);
         }
     }
@@ -129,7 +135,7 @@ public class DiagramShape
 
             if (movement != 0)
             {
-                this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.below, movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.below, movement, HorizontalDirection);
                 this.below.MoveHorizontal(movement);
             }
 
@@ -141,7 +147,7 @@ public class DiagramShape
                 return;
             }
 
-            this.logger.Debug("Moving {Shape} by {Movement} vertical", this.below, movement);
+            this.logger.Debug(MovingShapeByMovementDirection, this.below, movement, VerticalDirection);
             this.below.MoveVertical(movement);
         }
     }
@@ -195,7 +201,7 @@ public class DiagramShape
 
             if (movement != 0)
             {
-                this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.right, movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.right, movement, HorizontalDirection);
                 this.right.MoveHorizontal(movement);
             }
 
@@ -206,7 +212,7 @@ public class DiagramShape
                 return;
             }
 
-            this.logger.Debug("Moving {Shape} by {Movement} vertical", this.right, movement);
+            this.logger.Debug(MovingShapeByMovementDirection, this.right, movement, VerticalDirection);
             this.right.MoveVertical(movement);
         }
     }
@@ -229,7 +235,7 @@ public class DiagramShape
 
                 if (movement != 0)
                 {
-                    this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Right, movement);
+                    this.logger.Debug(MovingShapeByMovementDirection, this.Right, movement, HorizontalDirection);
                     this.Right.MoveHorizontal(movement);
                 }
             }
@@ -248,7 +254,7 @@ public class DiagramShape
                 return;
             }
 
-            this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Below, movement);
+            this.logger.Debug(MovingShapeByMovementDirection, this.Below, movement, HorizontalDirection);
             this.Below.MoveHorizontal(movement);
         }
     }
@@ -287,18 +293,12 @@ public class DiagramShape
     /// <summary>Convert a visio <paramref name="measurement" /> into an easier mathematical model.</summary>
     /// <param name="measurement">Measurement from visio.</param>
     /// <returns>Easier <see langword="internal" /> measurement.</returns>
-    public static int ConvertMeasurement(double measurement)
-    {
-        return (int)(Math.Round(measurement, ConversionDigits, MidpointRounding.AwayFromZero) * ConversionFactor);
-    }
+    public static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, ConversionDigits, MidpointRounding.AwayFromZero) * ConversionFactor);
 
     /// <summary>Convert an easier <paramref name="measurement" /> back to visio model.</summary>
     /// <param name="measurement">Easier <see langword="internal" /> measurement.</param>
     /// <returns>Measurement for visio.</returns>
-    public static double ConvertMeasurement(int measurement)
-    {
-        return (double)measurement / ConversionFactor;
-    }
+    public static double ConvertMeasurement(int measurement) => (double)measurement / ConversionFactor;
 
     /// <summary>Add child shape to parent.</summary>
     /// <param name="childShape">New child shape of this shape.</param>
@@ -361,24 +361,15 @@ public class DiagramShape
     }
 
     /// <inheritdoc />
-    public override int GetHashCode()
-    {
-        return this.ShapeText.GetHashCode();
-    }
+    public override int GetHashCode() => this.ShapeText.GetHashCode();
 
     /// <summary>Does this shape have a parent.</summary>
     /// <returns>True if a parent.</returns>
-    public bool HasParent()
-    {
-        return this.ParentShape is not null;
-    }
+    public bool HasParent() => this.ParentShape is not null;
 
     /// <summary>Calculate the height of the shape.</summary>
     /// <returns>Height.</returns>
-    public int Height()
-    {
-        return this.TopSide - this.BaseSide;
-    }
+    public int Height() => this.TopSide - this.BaseSide;
 
     /// <summary>Resize the shape based on appconfig.</summary>
     /// <returns>If shape changed.</returns>
@@ -418,17 +409,11 @@ public class DiagramShape
     }
 
     /// <inheritdoc />
-    public override string ToString()
-    {
-        return string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
-    }
+    public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
 
     /// <summary>Calculate the width of the shape.</summary>
     /// <returns>Width.</returns>
-    public int Width()
-    {
-        return this.RightSide - this.LeftSide;
-    }
+    public int Width() => this.RightSide - this.LeftSide;
 
     /// <summary>Map all neighbour shapes within tolerance of 10.</summary>
     /// <exception cref="System.NotImplementedException">No idea what to do yet with this.</exception>
@@ -520,10 +505,7 @@ public class DiagramShape
         }
     }
 
-    internal int TotalChildrenCount()
-    {
-        return !this.Children.Any() ? 1 : 1 + this.Children.Sum(child => child.TotalChildrenCount());
-    }
+    internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Sum(child => child.TotalChildrenCount());
 
     private string CornerString()
     {
@@ -580,7 +562,7 @@ public class DiagramShape
 
             if (movement != 0)
             {
-                this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Right, movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.Right, movement, HorizontalDirection);
                 this.Right.MoveHorizontal(movement);
                 result = true;
             }
@@ -589,7 +571,7 @@ public class DiagramShape
             movement = this.Right.TopSide - this.TopSide;
             if (movement != 0)
             {
-                this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Right, movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.Right, movement, VerticalDirection);
                 this.Right.MoveVertical(movement);
                 result = true;
             }
@@ -606,7 +588,7 @@ public class DiagramShape
 
         if (movement != 0)
         {
-            this.logger.Debug("Moving {Shape} by {Movement} horizontal", this.Below, movement);
+            this.logger.Debug(MovingShapeByMovementDirection, this.Below, movement, HorizontalDirection);
             this.Below.MoveHorizontal(movement);
             result = true;
         }
@@ -619,7 +601,7 @@ public class DiagramShape
             return result;
         }
 
-        this.logger.Debug("Moving {Shape} by {Movement} vertical", this.Below, movement);
+        this.logger.Debug(MovingShapeByMovementDirection, this.Below, movement, VerticalDirection);
         this.Below.MoveVertical(movement);
         return true;
     }

@@ -16,7 +16,7 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextWinForm.Formatting;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal class PropertiesTokenRenderer : OutputTemplateTokenRenderer
+public class PropertiesTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly MessageTemplate outputTemplate;
 

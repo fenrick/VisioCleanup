@@ -26,25 +26,16 @@ public struct ThemeColours : IEquatable<ThemeColours>
     /// <param name="left">Left.</param>
     /// <param name="right">Right.</param>
     /// <returns>Equality.</returns>
-    public static bool operator ==(ThemeColours left, ThemeColours right)
-    {
-        return left.Equals(right);
-    }
+    public static bool operator ==(ThemeColours left, ThemeColours right) => left.Equals(right);
 
     /// <summary>Are they not equal.</summary>
     /// <param name="left">Left.</param>
     /// <param name="right">Right.</param>
     /// <returns>Inequality.</returns>
-    public static bool operator !=(ThemeColours left, ThemeColours right)
-    {
-        return !(left == right);
-    }
+    public static bool operator !=(ThemeColours left, ThemeColours right) => !(left == right);
 
     /// <inheritdoc />
-    public override readonly bool Equals(object? obj)
-    {
-        return obj is ThemeColours colours && this.Equals(colours);
-    }
+    public override readonly bool Equals(object? obj) => obj is ThemeColours colours && this.Equals(colours);
 
     /// <inheritdoc />
     public readonly bool Equals(ThemeColours other)
@@ -53,8 +44,5 @@ public struct ThemeColours : IEquatable<ThemeColours>
     }
 
     /// <inheritdoc />
-    public override readonly int GetHashCode()
-    {
-        return this.Foreground.GetHashCode() + this.Background.GetHashCode();
-    }
+    public override readonly int GetHashCode() => this.Foreground.GetHashCode() + this.Background.GetHashCode();
 }

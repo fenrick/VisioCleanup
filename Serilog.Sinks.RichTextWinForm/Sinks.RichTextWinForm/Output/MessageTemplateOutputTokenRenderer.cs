@@ -16,7 +16,7 @@ using Serilog.Sinks.RichTextWinForm.Formatting;
 using Serilog.Sinks.RichTextWinForm.Rendering;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
+public class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly ThemedMessageTemplateRenderer renderer;
 
@@ -54,8 +54,5 @@ internal class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
         this.renderer = new ThemedMessageTemplateRenderer(theme, valueFormatter, isLiteral);
     }
 
-    public override void Render(LogEvent logEvent, RichTextBox output)
-    {
-        this.renderer.Render(logEvent.MessageTemplate, logEvent.Properties, output);
-    }
+    public override void Render(LogEvent logEvent, RichTextBox output) => this.renderer.Render(logEvent.MessageTemplate, logEvent.Properties, output);
 }

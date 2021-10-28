@@ -17,7 +17,7 @@ using Serilog.Sinks.RichTextWinForm.Themes;
 
 using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
 
-internal class TimestampTokenRenderer : OutputTemplateTokenRenderer
+public class TimestampTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly IFormatProvider? formatProvider;
 

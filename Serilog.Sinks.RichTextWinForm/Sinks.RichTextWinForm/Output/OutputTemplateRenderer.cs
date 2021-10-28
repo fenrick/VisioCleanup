@@ -77,10 +77,7 @@ public class OutputTemplateRenderer : ITextFormatter
     }
 
     /// <inheritdoc />
-    public void Format(LogEvent logEvent, TextWriter output)
-    {
-        throw new InvalidOperationException("Not valid for this Sink!");
-    }
+    public void Format(LogEvent logEvent, TextWriter output) => throw new InvalidOperationException("Not valid for this Sink!");
 
     /// <summary>Render log events to a richtextbox.</summary>
     /// <param name="logEvent"><see cref="Log" /> event.</param>

@@ -14,7 +14,7 @@ using Serilog.Sinks.RichTextWinForm.Rendering;
 /// Implements the {Level} element. can now have a fixed width applied to it, as well as casing rules. Width is
 /// set through formats like "u3" (uppercase three chars), "w1" (one lowercase char), or "t4" (title case four chars).
 /// </summary>
-internal static class LevelOutputFormat
+public static class LevelOutputFormat
 {
     private static readonly string[][] LowercaseLevelMap =
         {

@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 using Serilog.Parsing;
 
-internal static class Padding
+public static class Padding
 {
     private static readonly char[] PaddingChars = new string(' ', 80).ToCharArray();
 

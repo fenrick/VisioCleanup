@@ -18,7 +18,7 @@ using Serilog.Sinks.RichTextWinForm.Themes;
 
 using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
 
-internal class EventPropertyTokenRenderer : OutputTemplateTokenRenderer
+public class EventPropertyTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly IFormatProvider? formatProvider;
 

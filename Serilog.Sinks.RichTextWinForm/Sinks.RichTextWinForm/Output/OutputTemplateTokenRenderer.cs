@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 using Serilog.Events;
 
-internal abstract class OutputTemplateTokenRenderer
+public abstract class OutputTemplateTokenRenderer
 {
     public abstract void Render(LogEvent logEvent, RichTextBox output);
 }

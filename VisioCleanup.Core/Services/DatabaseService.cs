@@ -27,14 +27,9 @@ public class DatabaseService : AbstractProcessingService, IDatabaseService
     /// <param name="iserverDatabaseApplication">iServer Database application handler.</param>
     /// <param name="options">Application configuration being passed in.</param>
     public DatabaseService(ILogger<DatabaseService> logger, IVisioApplication visioApplication, ISqlServerDataSource iserverDatabaseApplication, IOptions<AppConfig> options)
-        : base(logger, options, visioApplication)
-    {
+        : base(logger, options, visioApplication) =>
         this.iserverDatabaseApplication = iserverDatabaseApplication ?? throw new ArgumentNullException(nameof(iserverDatabaseApplication));
-    }
 
     /// <inheritdoc />
-    public Task ProcessDataSet(string sqlCommand)
-    {
-        return this.ProcessDataSetInternal(this.iserverDatabaseApplication, sqlCommand);
-    }
+    public Task ProcessDataSetAsync(string sqlCommand) => this.ProcessDataSetInternalAsync(this.iserverDatabaseApplication, sqlCommand);
 }

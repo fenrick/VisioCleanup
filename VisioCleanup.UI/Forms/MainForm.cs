@@ -140,7 +140,7 @@ public partial class MainForm : Form
 
             this.logger.LogDebug("Laying out data set");
 
-            await this.processingService!.LayoutDataSet().ConfigureAwait(false);
+            await this.processingService!.LayoutDataSetAsync().ConfigureAwait(false);
 
             this.Invoke(
                 (MethodInvoker)(() =>
@@ -173,7 +173,7 @@ public partial class MainForm : Form
 
             this.logger.LogDebug("Loading objects from database");
 
-            await this.databaseService.ProcessDataSet(this.sqlStatementTextBox.Text).ConfigureAwait(false);
+            await this.databaseService.ProcessDataSetAsync(this.sqlStatementTextBox.Text).ConfigureAwait(false);
 
             this.Invoke(
                 (MethodInvoker)(() =>
@@ -207,7 +207,7 @@ public partial class MainForm : Form
                                        }));
 
             this.logger.LogDebug("Loading objects from visio");
-            await this.visioService.LoadVisioObjectModel().ConfigureAwait(false);
+            await this.visioService.LoadVisioObjectModelAsync().ConfigureAwait(false);
 
             this.Invoke(
                 (MethodInvoker)(() =>
@@ -242,7 +242,7 @@ public partial class MainForm : Form
 
             this.logger.LogDebug("Loading objects from excel");
 
-            await this.excelService.ProcessDataSet().ConfigureAwait(false);
+            await this.excelService.ProcessDataSetAsync().ConfigureAwait(false);
 
             this.Invoke(
                 (MethodInvoker)(() =>
@@ -267,7 +267,8 @@ public partial class MainForm : Form
             return;
         }
 
-        foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(databaseQuery => string.Equals(databaseQuery["Name"], this.selectSQLStatementComboBox.Text, StringComparison.Ordinal)))
+        foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(
+                     databaseQuery => string.Equals(databaseQuery["Name"], this.selectSQLStatementComboBox.Text, StringComparison.Ordinal)))
         {
             this.sqlStatementTextBox.Text = databaseQuery["Query"];
 
@@ -296,7 +297,7 @@ public partial class MainForm : Form
 
             this.logger.LogDebug("Drawing visio");
 
-            await this.processingService!.UpdateVisio().ConfigureAwait(false);
+            await this.processingService!.UpdateVisioAsync().ConfigureAwait(false);
 
             this.Invoke(
                 (MethodInvoker)(() =>

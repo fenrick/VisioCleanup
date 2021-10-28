@@ -25,7 +25,7 @@ using VisioCleanup.Core.Models.Config;
 using Marshal = VisioCleanup.Core.Marshal;
 
 /// <inheritdoc />
-internal class ExcelDataSource : AbstractDataSource, IExcelDataSource
+public class ExcelDataSource : AbstractDataSource, IExcelDataSource
 {
     private Application? excelApplication;
 
@@ -92,21 +92,15 @@ internal class ExcelDataSource : AbstractDataSource, IExcelDataSource
             {
                 Dictionary<FieldType, string> values = new();
 
-                foreach (var pair in columnMapping[cellIndex])
+                foreach (var (key, value) in columnMapping[cellIndex])
                 {
-                    var key = pair.Key;
-                    var value = pair.Value;
                     values[key] = data.GetValue(rowNumber, value)?.ToString() ?? string.Empty;
                 }
 
                 rowResults.Add(cellIndex, values);
             }
 
-            DiagramShape? result = null;
-            foreach (var i in Enumerable.Range(1, columnMapping.Count))
-            {
-                result = this.CreateShape(rowResults[i], allShapes, result);
-            }
+            var result = Enumerable.Range(1, columnMapping.Count).Aggregate<int, DiagramShape?>(null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
         }
 
         Collection<DiagramShape> shapes = new();
@@ -123,37 +117,41 @@ internal class ExcelDataSource : AbstractDataSource, IExcelDataSource
         var columnMapping = new SortedList<int, Dictionary<FieldType, int>>();
         var level = 0;
         var header = dataTable.HeaderRowRange.Value as object[,];
+
+        if (this.AppConfig.FieldLabelFormat is null || this.AppConfig.SortFieldLabelFormat is null || this.AppConfig.ShapeTypeLabelFormat is null)
+        {
+            throw new InvalidOperationException("Excel parameters not set in configuration.");
+        }
+
         do
         {
             var mappings = new Dictionary<FieldType, int>();
-            var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? "{0}", level);
-            var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? "{0} SortValue", level);
-            var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? "{0} Shape", level);
+            var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat, level);
+            var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat, level);
+            var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat, level);
 
             level++;
-            for (var i = 1; i <= header.GetLength(1); i++)
+            for (var i = 1; i <= header?.GetLength(1); i++)
             {
                 var value = header.GetValue(1, i);
 
-                if (value?.Equals(fieldName) == true)
+                if (value!.Equals(fieldName))
                 {
                     mappings[FieldType.ShapeText] = i;
+                    columnMapping.Add(level, mappings);
                 }
-
-                if (value?.Equals(sortFieldName) == true)
+                else if (value.Equals(sortFieldName))
                 {
                     mappings[FieldType.SortValue] = i;
                 }
-
-                if (value?.Equals(shapeFieldName) == true)
+                else if (value.Equals(shapeFieldName))
                 {
                     mappings[FieldType.ShapeType] = i;
                 }
-            }
-
-            if (mappings.ContainsKey(FieldType.ShapeText))
-            {
-                columnMapping.Add(level, mappings);
+                else
+                {
+                    // ignoring value
+                }
             }
         }
         while (columnMapping.ContainsKey(level));

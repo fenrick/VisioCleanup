@@ -8,7 +8,6 @@
 namespace Serilog.Sinks.RichTextWinForm.Formatting;
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
@@ -17,15 +16,13 @@ using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal class ThemedJsonValueFormatter : ThemedValueFormatter
+public class ThemedJsonValueFormatter : ThemedValueFormatter
 {
     private readonly ThemedDisplayValueFormatter displayFormatter;
 
     public ThemedJsonValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
-        : base(theme)
-    {
+        : base(theme) =>
         this.displayFormatter = new ThemedDisplayValueFormatter(theme, formatProvider);
-    }
 
     protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
     {

@@ -16,7 +16,7 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextWinForm.Formatting;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal class ThemedMessageTemplateRenderer
+public class ThemedMessageTemplateRenderer
 {
     private readonly bool isLiteral;
 
@@ -46,10 +46,8 @@ internal class ThemedMessageTemplateRenderer
         }
     }
 
-    private void RenderAlignedPropertyTokenUnbuffered(PropertyToken pt, RichTextBox output, LogEventPropertyValue propertyValue)
-    {
+    private void RenderAlignedPropertyTokenUnbuffered(PropertyToken pt, RichTextBox output, LogEventPropertyValue propertyValue) =>
         this.RenderValue(this.theme, this.valueFormatter, propertyValue, output, pt.Format);
-    }
 
     private void RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, RichTextBox output)
     {

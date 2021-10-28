@@ -14,22 +14,14 @@ using Serilog.Data;
 using Serilog.Events;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<ThemedValueFormatterState, int>
+public abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<ThemedValueFormatterState, int>
 {
     private readonly RichTextTheme theme;
 
-    protected ThemedValueFormatter(RichTextTheme theme)
-    {
-        this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
-    }
+    protected ThemedValueFormatter(RichTextTheme theme) => this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
 
-    public void Format(LogEventPropertyValue value, RichTextBox output, string formatString, bool literalTopLevel = false)
-    {
+    public void Format(LogEventPropertyValue value, RichTextBox output, string formatString, bool literalTopLevel = false) =>
         this.Visit(new ThemedValueFormatterState { Output = output, Format = formatString, IsTopLevel = literalTopLevel }, value);
-    }
 
-    protected StyleReset ApplyStyle(RichTextBox output, RichTextThemeStyle style)
-    {
-        return this.theme.Apply(output, style);
-    }
+    protected StyleReset ApplyStyle(RichTextBox output, RichTextThemeStyle style) => this.theme.Apply(output, style);
 }

@@ -9,7 +9,7 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting;
 
 using System.Windows.Forms;
 
-internal struct ThemedValueFormatterState
+public struct ThemedValueFormatterState
 {
     public RichTextBox Output;
 
@@ -17,8 +17,5 @@ internal struct ThemedValueFormatterState
 
     public bool IsTopLevel;
 
-    public ThemedValueFormatterState Nest()
-    {
-        return new ThemedValueFormatterState { Output = this.Output };
-    }
+    public ThemedValueFormatterState Nest() => new ThemedValueFormatterState { Output = this.Output };
 }
