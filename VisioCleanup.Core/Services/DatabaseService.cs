@@ -5,32 +5,31 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core.Services
+namespace VisioCleanup.Core.Services;
+
+using System;
+using System.Threading.Tasks;
+
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+using VisioCleanup.Core.Contracts;
+using VisioCleanup.Core.Models.Config;
+
+/// <summary>The database service.</summary>
+public class DatabaseService : AbstractProcessingService, IDatabaseService
 {
-    using System;
-    using System.Threading.Tasks;
+    private readonly ISqlServerDataSource iserverDatabaseApplication;
 
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
+    /// <summary>Initialises a new instance of the <see cref="DatabaseService" /> class.</summary>
+    /// <param name="logger">Logging instance.</param>
+    /// <param name="visioApplication">Visio application handler.</param>
+    /// <param name="iserverDatabaseApplication">iServer Database application handler.</param>
+    /// <param name="options">Application configuration being passed in.</param>
+    public DatabaseService(ILogger<DatabaseService> logger, IVisioApplication visioApplication, ISqlServerDataSource iserverDatabaseApplication, IOptions<AppConfig> options)
+        : base(logger, options, visioApplication) =>
+        this.iserverDatabaseApplication = iserverDatabaseApplication ?? throw new ArgumentNullException(nameof(iserverDatabaseApplication));
 
-    using VisioCleanup.Core.Contracts;
-    using VisioCleanup.Core.Models.Config;
-
-    /// <summary>The database service.</summary>
-    public class DatabaseService : AbstractProcessingService, IDatabaseService
-    {
-        private readonly ISqlServerDataSource iserverDatabaseApplication;
-
-        /// <summary>Initialises a new instance of the <see cref="DatabaseService" /> class.</summary>
-        /// <param name="logger">Logging instance.</param>
-        /// <param name="visioApplication">Visio application handler.</param>
-        /// <param name="iserverDatabaseApplication">iServer Database application handler.</param>
-        /// <param name="options">Application configuration being passed in.</param>
-        public DatabaseService(ILogger<DatabaseService> logger, IVisioApplication visioApplication, ISqlServerDataSource iserverDatabaseApplication, IOptions<AppConfig> options)
-            : base(logger, options, visioApplication) =>
-            this.iserverDatabaseApplication = iserverDatabaseApplication ?? throw new ArgumentNullException(nameof(iserverDatabaseApplication));
-
-        /// <inheritdoc />
-        public Task ProcessDataSet(string sqlCommand) => this.ProcessDataSetInternal(this.iserverDatabaseApplication, sqlCommand);
-    }
+    /// <inheritdoc />
+    public Task ProcessDataSetAsync(string sqlCommand) => this.ProcessDataSetInternalAsync(this.iserverDatabaseApplication, sqlCommand);
 }

@@ -5,77 +5,76 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Themes
+namespace Serilog.Sinks.RichTextWinForm.Themes;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+
+/// <summary>The class for styled rich text output.</summary>
+public class RichTextTheme
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Windows.Forms;
+    /// <summary>Gets collection of valid styles.</summary>
+    /// <value>Collection of valid styles.</value>
+    private readonly IReadOnlyDictionary<RichTextThemeStyle, ThemeColours> styles;
 
-    /// <summary>The class for styled rich text output.</summary>
-    public class RichTextTheme
+    /// <summary>Initialises a new instance of the <see cref="RichTextTheme" /> class.</summary>
+    /// <param name="styles">Styles to apply within the theme.</param>
+    /// <exception cref="System.ArgumentNullException">When <paramref name="styles" /> is null.</exception>
+    public RichTextTheme(IReadOnlyDictionary<RichTextThemeStyle, ThemeColours> styles)
     {
-        /// <summary>Gets collection of valid styles.</summary>
-        /// <value>Collection of valid styles.</value>
-        private readonly IReadOnlyDictionary<RichTextThemeStyle, ThemeColours> styles;
-
-        /// <summary>Initialises a new instance of the <see cref="RichTextTheme" /> class.</summary>
-        /// <param name="styles">Styles to apply within the theme.</param>
-        /// <exception cref="System.ArgumentNullException">When <paramref name="styles" /> is null.</exception>
-        public RichTextTheme(IReadOnlyDictionary<RichTextThemeStyle, ThemeColours> styles)
+        if (styles is null)
         {
-            if (styles is null)
-            {
-                throw new ArgumentNullException(nameof(styles));
-            }
-
-            this.styles = styles.ToDictionary(kv => kv.Key, kv => kv.Value);
+            throw new ArgumentNullException(nameof(styles));
         }
 
-        /// <summary><see cref="RichTextTheme.Reset" /> the <paramref name="output" /> to un-styled colors.</summary>
-        /// <param name="output">Output destination.</param>
-        public static void Reset(RichTextBox output)
-        {
-            if (output is null)
-            {
-                throw new ArgumentNullException(nameof(output));
-            }
+        this.styles = styles.ToDictionary(kv => kv.Key, kv => kv.Value);
+    }
 
-            output.SelectionColor = output.ForeColor;
-            output.SelectionBackColor = output.BackColor;
+    /// <summary><see cref="RichTextTheme.Reset" /> the <paramref name="output" /> to un-styled colors.</summary>
+    /// <param name="output">Output destination.</param>
+    public static void Reset(RichTextBox output)
+    {
+        if (output is null)
+        {
+            throw new ArgumentNullException(nameof(output));
         }
 
-        internal StyleReset Apply(RichTextBox output, RichTextThemeStyle style)
-        {
-            this.Set(output, style);
+        output.SelectionColor = output.ForeColor;
+        output.SelectionBackColor = output.BackColor;
+    }
 
-            return new StyleReset(output);
+    internal StyleReset Apply(RichTextBox output, RichTextThemeStyle style)
+    {
+        this.Set(output, style);
+
+        return new StyleReset(output);
+    }
+
+    /// <summary>Begin a span of text in the specified <paramref name="style" /> .</summary>
+    /// <param name="output">Output destination.</param>
+    /// <param name="style">Style to apply.</param>
+    private void Set(RichTextBox output, RichTextThemeStyle style)
+    {
+        if (output is null)
+        {
+            throw new ArgumentNullException(nameof(output));
         }
 
-        /// <summary>Begin a span of text in the specified <paramref name="style" /> .</summary>
-        /// <param name="output">Output destination.</param>
-        /// <param name="style">Style to apply.</param>
-        private void Set(RichTextBox output, RichTextThemeStyle style)
+        if (!this.styles.TryGetValue(style, out var wcts))
         {
-            if (output is null)
-            {
-                throw new ArgumentNullException(nameof(output));
-            }
+            return;
+        }
 
-            if (!this.styles.TryGetValue(style, out var wcts))
-            {
-                return;
-            }
+        if (wcts.Foreground.HasValue)
+        {
+            output.SelectionColor = wcts.Foreground.Value;
+        }
 
-            if (wcts.Foreground.HasValue)
-            {
-                output.SelectionColor = wcts.Foreground.Value;
-            }
-
-            if (wcts.Background.HasValue)
-            {
-                output.SelectionBackColor = wcts.Background.Value;
-            }
+        if (wcts.Background.HasValue)
+        {
+            output.SelectionBackColor = wcts.Background.Value;
         }
     }
 }

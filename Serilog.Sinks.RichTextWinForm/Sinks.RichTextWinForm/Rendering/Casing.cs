@@ -5,25 +5,38 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Rendering
+namespace Serilog.Sinks.RichTextWinForm.Rendering;
+
+using System;
+
+/// <summary>Set the case of a string.</summary>
+public static class Casing
 {
-    internal static class Casing
+    /// <summary>
+    /// Apply upper or lower casing to <paramref name="value" /> when <paramref name="formatString" /> is provided.
+    /// Returns <paramref name="value" /> when no or invalid <paramref name="formatString" /> provided.
+    /// </summary>
+    /// <param name="value">Provided string for formatting.</param>
+    /// <param name="formatString"><see cref="Casing.Format" /> string.</param>
+    /// <exception cref="ArgumentNullException">Empty value string.</exception>
+    /// <returns>The provided <paramref name="value" /> with formatting applied.</returns>
+    public static string Format(string value, string? formatString)
     {
-        /// <summary>
-        /// Apply upper or lower casing to <paramref name="value" /> when <paramref name="formatString" /> is provided.
-        /// Returns <paramref name="value" /> when no or invalid <paramref name="formatString" /> provided.
-        /// </summary>
-        /// <param name="value">Provided string for formatting.</param>
-        /// <param name="formatString"><see cref="Casing.Format" /> string.</param>
-        /// <returns>The provided <paramref name="value" /> with formatting applied.</returns>
-        public static string Format(string value, string? formatString = null)
+        if (value is null)
         {
-            return formatString switch
-                {
-                    "u" => value.ToUpperInvariant(),
-                    "w" => value.ToLowerInvariant(),
-                    _ => value,
-                };
+            throw new ArgumentNullException(nameof(value));
         }
+
+        if (formatString is null)
+        {
+            return value;
+        }
+
+        if (string.Equals(formatString, "u", StringComparison.Ordinal))
+        {
+            return value.ToUpperInvariant();
+        }
+
+        return string.Equals(formatString, "w", StringComparison.Ordinal) ? value.ToLowerInvariant() : value;
     }
 }

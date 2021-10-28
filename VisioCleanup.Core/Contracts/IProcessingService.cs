@@ -5,30 +5,29 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core.Contracts
+namespace VisioCleanup.Core.Contracts;
+
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+
+using VisioCleanup.Core.Models;
+
+/// <summary>Implementers store and process diagram shapes for representing in visio.</summary>
+public interface IProcessingService
 {
-    using System.Collections.ObjectModel;
-    using System.Threading.Tasks;
+    /// <summary>Gets collection of all diagram shapes.</summary>
+    /// <value>all diagram spaces.</value>
+    Collection<DiagramShape> AllShapes { get; }
 
-    using VisioCleanup.Core.Models;
+    /// <summary>Gets the digram shape at the top of the tree.</summary>
+    /// <value>Master shape.</value>
+    DiagramShape? MasterShape { get; }
 
-    /// <summary>Implementers store and process diagram shapes for representing in visio.</summary>
-    public interface IProcessingService
-    {
-        /// <summary>Gets collection of all diagram shapes.</summary>
-        /// <value>all diagram spaces.</value>
-        Collection<DiagramShape> AllShapes { get; }
+    /// <summary>Lays outs the diagramshapes based on appconfig.</summary>
+    /// <returns>A task.</returns>
+    Task LayoutDataSetAsync();
 
-        /// <summary>Gets the digram shape at the top of the tree.</summary>
-        /// <value>Master shape.</value>
-        DiagramShape? MasterShape { get; }
-
-        /// <summary>Lays outs the diagramshapes based on appconfig.</summary>
-        /// <returns>A task.</returns>
-        Task LayoutDataSet();
-
-        /// <summary>Draws new data set onto visio.</summary>
-        /// <returns>A task.</returns>
-        Task UpdateVisio();
-    }
+    /// <summary>Draws new data set onto visio.</summary>
+    /// <returns>A task.</returns>
+    Task UpdateVisioAsync();
 }

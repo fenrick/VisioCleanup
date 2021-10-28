@@ -5,27 +5,27 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core.Contracts
+namespace VisioCleanup.Core.Contracts;
+
+using System.Collections.Generic;
+
+using VisioCleanup.Core.Models;
+
+/// <summary>Handle creation and management of excel interop objects.</summary>
+public interface IDataSource
 {
-    using System.Collections.Generic;
+    /// <summary>Gets the name of data source.</summary>
+    /// <value>String representation of the name of a data source.</value>
+    string Name { get; }
 
-    using VisioCleanup.Core.Models;
+    /// <summary><see cref="Close" /> excel session and shutdown.</summary>
+    void Close();
 
-    /// <summary>Handle creation and management of excel interop objects.</summary>
-    public interface IDataSource
-    {
-        /// <summary>Gets the name of data source.</summary>
-        string Name { get; }
+    /// <summary><see cref="Open" /> excel session.</summary>
+    void Open();
 
-        /// <summary><see cref="Close" /> excel session and shutdown.</summary>
-        void Close();
-
-        /// <summary><see cref="Open" /> excel session.</summary>
-        void Open();
-
-        /// <summary>Retrieve records based on parameter.</summary>
-        /// <param name="parameter">Parameter.</param>
-        /// <returns>Collection of diagram shapes.</returns>
-        IEnumerable<DiagramShape> RetrieveRecords(string parameter);
-    }
+    /// <summary>Retrieve records based on parameter.</summary>
+    /// <param name="parameter">Parameter.</param>
+    /// <returns>Collection of diagram shapes.</returns>
+    IEnumerable<DiagramShape> RetrieveRecords(string parameter);
 }

@@ -5,26 +5,23 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Formatting
+namespace Serilog.Sinks.RichTextWinForm.Formatting;
+
+using System;
+using System.Windows.Forms;
+
+using Serilog.Data;
+using Serilog.Events;
+using Serilog.Sinks.RichTextWinForm.Themes;
+
+public abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<ThemedValueFormatterState, int>
 {
-    using System;
-    using System.Windows.Forms;
+    private readonly RichTextTheme theme;
 
-    using Serilog.Data;
-    using Serilog.Events;
-    using Serilog.Sinks.RichTextWinForm.Themes;
+    protected ThemedValueFormatter(RichTextTheme theme) => this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
 
-    internal abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<ThemedValueFormatterState, int>
-    {
-        private readonly RichTextTheme theme;
+    public void Format(LogEventPropertyValue value, RichTextBox output, string formatString, bool literalTopLevel = false) =>
+        this.Visit(new ThemedValueFormatterState { Output = output, Format = formatString, IsTopLevel = literalTopLevel }, value);
 
-        protected ThemedValueFormatter(RichTextTheme theme) => this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
-
-        public void Format(LogEventPropertyValue value, RichTextBox output, string formatString, bool literalTopLevel = false)
-        {
-            this.Visit(new ThemedValueFormatterState { Output = output, Format = formatString, IsTopLevel = literalTopLevel }, value);
-        }
-
-        protected StyleReset ApplyStyle(RichTextBox output, RichTextThemeStyle style) => this.theme.Apply(output, style);
-    }
+    protected StyleReset ApplyStyle(RichTextBox output, RichTextThemeStyle style) => this.theme.Apply(output, style);
 }

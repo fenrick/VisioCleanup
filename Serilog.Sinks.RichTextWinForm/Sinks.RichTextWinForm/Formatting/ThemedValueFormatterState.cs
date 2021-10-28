@@ -5,18 +5,26 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Formatting
+namespace Serilog.Sinks.RichTextWinForm.Formatting;
+
+using System.Windows.Forms;
+
+/// <summary>Formatter State.</summary>
+public readonly struct ThemedValueFormatterState
 {
-    using System.Windows.Forms;
+    /// <summary>Gets rich text box.</summary>
+    /// <value>Output rich text box.</value>
+    public RichTextBox Output { get; init; }
 
-    internal struct ThemedValueFormatterState
-    {
-        public RichTextBox Output;
+    /// <summary>Gets format string.</summary>
+    /// <value>Format string.</value>
+    public string Format { get; init; }
 
-        public string Format;
+    /// <summary>Gets a value indicating whether it's a top level object.</summary>
+    /// <value>Top level.</value>
+    public bool IsTopLevel { get; init; }
 
-        public bool IsTopLevel;
-
-        public ThemedValueFormatterState Nest() => new() { Output = this.Output };
-    }
+    /// <summary>Next within a new formatter.</summary>
+    /// <returns>New formatter state with this state within it.</returns>
+    public readonly ThemedValueFormatterState Nest() => new() { Output = this.Output };
 }

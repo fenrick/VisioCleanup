@@ -5,39 +5,38 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Serilog.Sinks.RichTextWinForm.Output
+namespace Serilog.Sinks.RichTextWinForm.Output;
+
+using System.IO;
+using System.Windows.Forms;
+
+using Serilog.Events;
+using Serilog.Sinks.RichTextWinForm.Themes;
+
+public class ExceptionTokenRenderer : OutputTemplateTokenRenderer
 {
-    using System.IO;
-    using System.Windows.Forms;
+    private const string StackFrameLinePrefix = "   ";
 
-    using Serilog.Events;
-    using Serilog.Sinks.RichTextWinForm.Themes;
+    private readonly RichTextTheme theme;
 
-    internal class ExceptionTokenRenderer : OutputTemplateTokenRenderer
+    public ExceptionTokenRenderer(RichTextTheme theme) => this.theme = theme;
+
+    public override void Render(LogEvent logEvent, RichTextBox output)
     {
-        private const string StackFrameLinePrefix = "   ";
-
-        private readonly RichTextTheme theme;
-
-        public ExceptionTokenRenderer(RichTextTheme theme) => this.theme = theme;
-
-        public override void Render(LogEvent logEvent, RichTextBox output)
+        // Padding is never applied by this renderer.
+        if (logEvent.Exception is null)
         {
-            // Padding is never applied by this renderer.
-            if (logEvent.Exception is null)
-            {
-                return;
-            }
+            return;
+        }
 
-            StringReader lines = new(logEvent.Exception.ToString());
-            string? nextLine;
-            while ((nextLine = lines.ReadLine()) != null)
+        StringReader lines = new(logEvent.Exception.ToString());
+        string? nextLine;
+        while ((nextLine = lines.ReadLine()) != null)
+        {
+            var style = nextLine.StartsWith(StackFrameLinePrefix) ? RichTextThemeStyle.SecondaryText : RichTextThemeStyle.Text;
+            using (this.theme.Apply(output, style))
             {
-                var style = nextLine.StartsWith(StackFrameLinePrefix) ? RichTextThemeStyle.SecondaryText : RichTextThemeStyle.Text;
-                using (this.theme.Apply(output, style))
-                {
-                    output.AppendText(nextLine);
-                }
+                output.AppendText(nextLine);
             }
         }
     }

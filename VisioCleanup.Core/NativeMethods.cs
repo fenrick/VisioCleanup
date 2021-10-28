@@ -5,28 +5,27 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core
+namespace VisioCleanup.Core;
+
+using System;
+using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
+using System.Security;
+
+internal static class NativeMethods
 {
-    using System;
-    using System.Runtime.InteropServices;
-    using System.Runtime.Versioning;
-    using System.Security;
+    [DllImport("ole32.dll", PreserveSig = false)]
+    [ResourceExposure(ResourceScope.None)]
+    [SecurityCritical] // auto-generated
+    internal static extern void CLSIDFromProgID([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
 
-    internal static class NativeMethods
-    {
-        [DllImport("ole32.dll", PreserveSig = false)]
-        [ResourceExposure(ResourceScope.None)]
-        [SecurityCritical] // auto-generated
-        internal static extern void CLSIDFromProgID([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
+    [DllImport("ole32.dll", PreserveSig = false)]
+    [ResourceExposure(ResourceScope.None)]
+    [SecurityCritical] // auto-generated
+    internal static extern void CLSIDFromProgIDEx([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
 
-        [DllImport("ole32.dll", PreserveSig = false)]
-        [ResourceExposure(ResourceScope.None)]
-        [SecurityCritical] // auto-generated
-        internal static extern void CLSIDFromProgIDEx([MarshalAs(UnmanagedType.LPWStr)] string progId, out Guid clsid);
-
-        [DllImport("oleaut32.dll", PreserveSig = false)]
-        [ResourceExposure(ResourceScope.None)]
-        [SecurityCritical] // auto-generated
-        internal static extern void GetActiveObject(ref Guid rclsid, IntPtr reserved, [MarshalAs(UnmanagedType.Interface)] out object ppunk);
-    }
+    [DllImport("oleaut32.dll", PreserveSig = false)]
+    [ResourceExposure(ResourceScope.None)]
+    [SecurityCritical] // auto-generated
+    internal static extern void GetActiveObject(ref Guid rclsid, IntPtr reserved, [MarshalAs(UnmanagedType.Interface)] out object ppunk);
 }
