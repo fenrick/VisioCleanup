@@ -545,10 +545,6 @@
     <Rule Id="C6997" Action="Warning" />
   </Rules>
   <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
-    <Rule Id="S1541" Action="Warning" />
-    <Rule Id="S3059" Action="Warning" />
-    <Rule Id="S3903" Action="None" />
-    <Rule Id="S3990" Action="Warning" />
   </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA1305" Action="Warning" />

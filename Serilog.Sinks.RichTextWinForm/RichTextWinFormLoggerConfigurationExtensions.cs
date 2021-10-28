@@ -9,6 +9,8 @@ namespace Serilog;
 
 using System;
 
+using JetBrains.Annotations;
+
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
@@ -83,7 +85,7 @@ public static class RichTextWinFormLoggerConfigurationExtensions
         RichTextTheme theme,
         LogEventLevel restrictedToMinimumLevel)
     {
-        return RichTextWinForm(loggerSinkConfiguration, outputTemplate, theme, restrictedToMinimumLevel, null, null);
+        return RichTextWinForm(loggerSinkConfiguration, outputTemplate, theme, restrictedToMinimumLevel, formatProvider: null, levelSwitch: null);
     }
 
     /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>

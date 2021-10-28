@@ -8,7 +8,6 @@
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <Nullable>enable</Nullable>
         <AnalysisLevel>preview</AnalysisLevel>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Nullable>enable</Nullable>

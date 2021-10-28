@@ -6,7 +6,6 @@
         <RootNamespace>VisioCleanup.UI</RootNamespace>
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <Nullable>enable</Nullable>
         <Product>Visio Cleanup</Product>
         <Authors>Jolyon Suthers</Authors>
         <UseWindowsForms>true</UseWindowsForms>
