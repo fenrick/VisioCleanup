@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Debug]
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       Solution_Name: VisioCleanup.sln
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
@@ -28,13 +28,21 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Install .NET Core
+      - name: Install .NET 6.0.x
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: '6.0.x'
+          include-prerelease: true 
+          
+      - name: Install .NET 5.0.x 
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
         
       - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1.0.3
+        with:
+          vs-prerelease: true
           
       - name: Cache SonarCloud packages
         uses: actions/cache@v2
