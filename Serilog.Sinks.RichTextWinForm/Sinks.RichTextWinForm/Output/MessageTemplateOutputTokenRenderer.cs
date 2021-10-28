@@ -16,27 +16,40 @@ using Serilog.Sinks.RichTextWinForm.Formatting;
 using Serilog.Sinks.RichTextWinForm.Rendering;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
+/// <summary>Message Template Output Token Renderer.</summary>
 public class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly ThemedMessageTemplateRenderer renderer;
 
+    /// <summary>Initialises a new instance of the <see cref="MessageTemplateOutputTokenRenderer" /> class.</summary>
+    /// <param name="theme">Theme.</param>
+    /// <param name="token">Token.</param>
+    /// <param name="formatProvider">Format provider.</param>
     public MessageTemplateOutputTokenRenderer(RichTextTheme theme, PropertyToken token, IFormatProvider? formatProvider)
     {
         var isLiteral = false;
         var isJson = false;
 
+        if (token is null)
+        {
+            throw new ArgumentNullException(nameof(token));
+        }
+
         if (token.Format != null)
         {
             foreach (var character in token.Format)
             {
-                if (character == 'l')
+                switch (character)
                 {
-                    isLiteral = true;
-                }
-
-                if (character == 'j')
-                {
-                    isJson = true;
+                    case 'l':
+                        isLiteral = true;
+                        break;
+                    case 'j':
+                        isJson = true;
+                        break;
+                    default:
+                        // do nothing
+                        break;
                 }
             }
         }
@@ -54,5 +67,14 @@ public class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
         this.renderer = new ThemedMessageTemplateRenderer(theme, valueFormatter, isLiteral);
     }
 
-    public override void Render(LogEvent logEvent, RichTextBox output) => this.renderer.Render(logEvent.MessageTemplate, logEvent.Properties, output);
+    /// <inheritdoc />
+    public override void Render(LogEvent logEvent, RichTextBox output)
+    {
+        if (logEvent is null)
+        {
+            throw new ArgumentNullException(nameof(logEvent));
+        }
+
+        this.renderer.Render(logEvent.MessageTemplate, logEvent.Properties, output);
+    }
 }

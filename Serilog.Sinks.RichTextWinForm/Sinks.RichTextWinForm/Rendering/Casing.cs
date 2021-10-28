@@ -7,6 +7,9 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Rendering;
 
+using System;
+
+/// <summary>Set the case of a string.</summary>
 public static class Casing
 {
     /// <summary>
@@ -15,12 +18,25 @@ public static class Casing
     /// </summary>
     /// <param name="value">Provided string for formatting.</param>
     /// <param name="formatString"><see cref="Casing.Format" /> string.</param>
+    /// <exception cref="ArgumentNullException">Empty value string.</exception>
     /// <returns>The provided <paramref name="value" /> with formatting applied.</returns>
-    public static string Format(string value, string? formatString = null) =>
-        formatString switch
-            {
-                "u" => value.ToUpperInvariant(),
-                "w" => value.ToLowerInvariant(),
-                _ => value,
-            };
+    public static string Format(string value, string? formatString)
+    {
+        if (value is null)
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
+
+        if (formatString is null)
+        {
+            return value;
+        }
+
+        if (string.Equals(formatString, "u", StringComparison.Ordinal))
+        {
+            return value.ToUpperInvariant();
+        }
+
+        return string.Equals(formatString, "w", StringComparison.Ordinal) ? value.ToLowerInvariant() : value;
+    }
 }

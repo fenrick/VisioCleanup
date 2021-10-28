@@ -9,13 +9,19 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting;
 
 using System.Windows.Forms;
 
-public struct ThemedValueFormatterState
+/// <summary>Formatter State.</summary>
+public readonly struct ThemedValueFormatterState
 {
-    public RichTextBox Output;
+    /// <summary>Gets rich text box.</summary>
+    public RichTextBox Output { get; init; }
 
-    public string Format;
+    /// <summary>Gets format string.</summary>
+    public string Format { get; init; }
 
-    public bool IsTopLevel;
+    /// <summary>Gets a value indicating whether it's a top level object.</summary>
+    public bool IsTopLevel { get; init; }
 
-    public ThemedValueFormatterState Nest() => new ThemedValueFormatterState { Output = this.Output };
+    /// <summary>Next within a new formatter.</summary>
+    /// <returns>New formatter state with this state within it.</returns>
+    public readonly ThemedValueFormatterState Nest() => new() { Output = this.Output };
 }
