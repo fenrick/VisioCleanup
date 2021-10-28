@@ -13,12 +13,15 @@ using System.Windows.Forms;
 public readonly struct ThemedValueFormatterState
 {
     /// <summary>Gets rich text box.</summary>
+    /// <value>Output rich text box.</value>
     public RichTextBox Output { get; init; }
 
     /// <summary>Gets format string.</summary>
+    /// <value>Format string.</value>
     public string Format { get; init; }
 
     /// <summary>Gets a value indicating whether it's a top level object.</summary>
+    /// <value>Top level.</value>
     public bool IsTopLevel { get; init; }
 
     /// <summary>Next within a new formatter.</summary>
