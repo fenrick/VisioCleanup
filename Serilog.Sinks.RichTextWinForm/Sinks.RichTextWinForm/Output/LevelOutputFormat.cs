@@ -62,7 +62,7 @@ public static class LevelOutputFormat
                         stringValue = stringValue.Substring(0, width);
                     }
 
-                    return Casing.Format(stringValue, null);
+                    return Casing.Format(stringValue, formatString: null);
                 }
 
             default:
