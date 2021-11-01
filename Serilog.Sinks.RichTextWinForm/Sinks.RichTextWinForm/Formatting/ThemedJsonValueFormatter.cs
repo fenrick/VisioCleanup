@@ -26,6 +26,11 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
     protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
     {
+        if (dictionary is null)
+        {
+            throw new ArgumentNullException(nameof(dictionary));
+        }
+
         var count = 0;
 
         using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
@@ -138,6 +143,11 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
     protected override int VisitStructureValue(ThemedValueFormatterState state, StructureValue structure)
     {
+        if (structure is null)
+        {
+            throw new ArgumentNullException(nameof(structure));
+        }
+
         var count = 0;
 
         using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
@@ -246,7 +256,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
                 {
                     using (this.ApplyStyle(output, RichTextThemeStyle.Number))
                     {
-                        output.AppendText(((IFormattable)value).ToString(format: null, CultureInfo.CurrentUICulture));
+                        output.AppendText(((IFormattable)value).ToString(format: null, CultureInfo.CurrentCulture));
                     }
 
                     break;
@@ -259,12 +269,12 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
                         if (double.IsNaN(d) || double.IsInfinity(d))
                         {
                             using StringWriter buffer = new();
-                            JsonValueFormatter.WriteQuotedJsonString(d.ToString(CultureInfo.CurrentUICulture), buffer);
+                            JsonValueFormatter.WriteQuotedJsonString(d.ToString(CultureInfo.CurrentCulture), buffer);
                             output.AppendText(buffer.ToString());
                             break;
                         }
 
-                        output.AppendText(d.ToString("R", CultureInfo.CurrentUICulture));
+                        output.AppendText(d.ToString("R", CultureInfo.CurrentCulture));
                         break;
                     }
                 }
@@ -276,12 +286,12 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
                         if (double.IsNaN(f) || double.IsInfinity(f))
                         {
                             using StringWriter buffer = new();
-                            JsonValueFormatter.WriteQuotedJsonString(f.ToString(CultureInfo.CurrentUICulture), buffer);
+                            JsonValueFormatter.WriteQuotedJsonString(f.ToString(CultureInfo.CurrentCulture), buffer);
                             output.AppendText(buffer.ToString());
                             break;
                         }
 
-                        output.AppendText(f.ToString("R", CultureInfo.CurrentUICulture));
+                        output.AppendText(f.ToString("R", CultureInfo.CurrentCulture));
 
                         break;
                     }
@@ -302,7 +312,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
                     using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                     {
                         using StringWriter buffer = new();
-                        JsonValueFormatter.WriteQuotedJsonString(ch.ToString(CultureInfo.CurrentUICulture), buffer);
+                        JsonValueFormatter.WriteQuotedJsonString(ch.ToString(CultureInfo.CurrentCulture), buffer);
                         output.AppendText(buffer.ToString());
                     }
 
@@ -314,7 +324,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
                     using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                     {
                         output.AppendText("\"");
-                        output.AppendText(((IFormattable)value).ToString("O", CultureInfo.CurrentUICulture));
+                        output.AppendText(((IFormattable)value).ToString("O", CultureInfo.CurrentCulture));
                         output.AppendText("\"");
                     }
 

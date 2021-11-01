@@ -78,7 +78,7 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
                 {
                     using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
                     {
-                        output.AppendText(b.ToString(CultureInfo.CurrentUICulture));
+                        output.AppendText(b.ToString(CultureInfo.CurrentCulture));
                     }
 
                     break;
@@ -89,7 +89,7 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
                     using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
                     {
                         output.AppendText("'");
-                        output.AppendText(ch.ToString(CultureInfo.CurrentUICulture));
+                        output.AppendText(ch.ToString(CultureInfo.CurrentCulture));
                         output.AppendText("'");
                     }
 
