@@ -21,7 +21,7 @@ internal sealed class NewLineTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly Alignment? alignment;
 
-    public NewLineTokenRenderer(Alignment? alignment) => this.alignment = alignment;
+    internal NewLineTokenRenderer(Alignment? alignment) => this.alignment = alignment;
 
     internal override void Render(LogEvent logEvent, RichTextBox output)
     {

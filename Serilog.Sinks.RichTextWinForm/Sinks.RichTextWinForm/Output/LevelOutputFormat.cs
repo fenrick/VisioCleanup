@@ -46,9 +46,12 @@ internal static class LevelOutputFormat
         new[] { "F", "FA", "FTL", "FATL" },
     };
 
-    public static string GetLevelMoniker(LogEventLevel value, string format)
+    internal static string GetLevelMoniker(LogEventLevel value, string format)
     {
-        if ((format.Length != 2) && (format.Length != 3))
+        const int shortLength = 2;
+        const int longLength = 3;
+
+        if (format.Length is not shortLength and not longLength)
         {
             return Casing.Format(value.ToString(), format);
         }
@@ -56,10 +59,10 @@ internal static class LevelOutputFormat
         // Using int.Parse() here requires allocating a string to exclude the first character prefix.
         // Junk like "wxy" will be accepted but produce benign results.
         var width = format[1] - '0';
-        if (format.Length == 3)
+        if (format.Length == longLength)
         {
             width *= 10;
-            width += format[2] - '0';
+            width += format[shortLength] - '0';
         }
 
         switch (width)
