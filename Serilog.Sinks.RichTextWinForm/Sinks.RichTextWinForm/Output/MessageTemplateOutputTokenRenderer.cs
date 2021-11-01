@@ -17,7 +17,7 @@ using Serilog.Sinks.RichTextWinForm.Rendering;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
 /// <summary>Message Template Output Token Renderer.</summary>
-internal class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
+internal sealed class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly ThemedMessageTemplateRenderer renderer;
 

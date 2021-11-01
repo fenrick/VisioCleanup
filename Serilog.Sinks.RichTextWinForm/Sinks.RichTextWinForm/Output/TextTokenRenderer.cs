@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using Serilog.Events;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal class TextTokenRenderer : OutputTemplateTokenRenderer
+internal sealed class TextTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly string text;
 

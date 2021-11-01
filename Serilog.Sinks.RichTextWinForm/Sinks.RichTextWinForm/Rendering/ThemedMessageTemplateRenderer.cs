@@ -16,7 +16,7 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextWinForm.Formatting;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal class ThemedMessageTemplateRenderer
+internal sealed class ThemedMessageTemplateRenderer
 {
     private readonly bool isLiteral;
 

@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using Serilog.Events;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal class ExceptionTokenRenderer : OutputTemplateTokenRenderer
+internal sealed class ExceptionTokenRenderer : OutputTemplateTokenRenderer
 {
     private const string StackFrameLinePrefix = "   ";
 

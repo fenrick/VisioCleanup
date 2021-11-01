@@ -16,7 +16,7 @@ using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal class ThemedDisplayValueFormatter : ThemedValueFormatter
+internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 {
     private readonly IFormatProvider? formatProvider;
 

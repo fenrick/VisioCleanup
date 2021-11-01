@@ -17,7 +17,7 @@ using Serilog.Sinks.RichTextWinForm.Rendering;
 
 using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
 
-internal class NewLineTokenRenderer : OutputTemplateTokenRenderer
+internal sealed class NewLineTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly Alignment? alignment;
 
