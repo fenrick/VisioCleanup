@@ -74,7 +74,7 @@ internal static class LevelOutputFormat
                     var stringValue = value.ToString();
                     if (stringValue.Length > width)
                     {
-                        stringValue = stringValue.Substring(0, width);
+                        stringValue = stringValue[..width];
                     }
 
                     return Casing.Format(stringValue, formatString: null);
