@@ -40,8 +40,10 @@ public readonly struct ThemeColours : IEquatable<ThemeColours>
     public override readonly bool Equals(object? obj) => obj is ThemeColours colours && this.Equals(colours);
 
     /// <inheritdoc />
-    public readonly bool Equals(ThemeColours other) =>
-        EqualityComparer<Color?>.Default.Equals(this.Foreground, other.Foreground) && EqualityComparer<Color?>.Default.Equals(this.Background, other.Background);
+    public readonly bool Equals(ThemeColours other)
+    {
+        return EqualityComparer<Color?>.Default.Equals(this.Foreground, other.Foreground) && EqualityComparer<Color?>.Default.Equals(this.Background, other.Background);
+    }
 
     /// <inheritdoc />
     public override readonly int GetHashCode() => this.Foreground.GetHashCode() + this.Background.GetHashCode();

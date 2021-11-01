@@ -67,8 +67,9 @@ public class AbstractProcessingService : IProcessingService
     protected IVisioApplication VisioApplication { get; }
 
     /// <inheritdoc />
-    public Task LayoutDataSetAsync() =>
-        Task.Run(
+    public Task LayoutDataSetAsync()
+    {
+        return Task.Run(
             () =>
                 {
                     for (var counter = 1; counter <= MaxCorrectRuns; counter++)
@@ -81,10 +82,12 @@ public class AbstractProcessingService : IProcessingService
                         }
                     }
                 });
+    }
 
     /// <inheritdoc />
-    public Task UpdateVisioAsync() =>
-        Task.Run(
+    public Task UpdateVisioAsync()
+    {
+        return Task.Run(
             () =>
                 {
                     try
@@ -123,13 +126,15 @@ public class AbstractProcessingService : IProcessingService
                         this.Logger.LogInformation(AbstractProcessingService_Res.Visio_closed);
                     }
                 });
+    }
 
     /// <summary>Internal process data sets.</summary>
     /// <param name="dataSource">Data source to process.</param>
     /// <param name="parameters">Parameters for process.</param>
     /// <returns>Task tracking progress.</returns>
-    protected Task ProcessDataSetInternalAsync(IDataSource dataSource, string parameters) =>
-        Task.Run(
+    protected Task ProcessDataSetInternalAsync(IDataSource dataSource, string parameters)
+    {
+        return Task.Run(
             () =>
                 {
                     try
@@ -144,12 +149,12 @@ public class AbstractProcessingService : IProcessingService
                         // master shape
                         this.Logger.LogInformation(AbstractProcessingService_Res.Create_a_fake_parent_shape);
                         this.MasterShape = new DiagramShape(0)
-                        {
-                            ShapeText = AbstractProcessingService_Res.FAKE_MASTER,
-                            ShapeType = ShapeType.FakeShape,
-                            LeftSide = this.VisioApplication.PageLeftSide,
-                            TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
-                        };
+                                           {
+                                               ShapeText = AbstractProcessingService_Res.FAKE_MASTER,
+                                               ShapeType = ShapeType.FakeShape,
+                                               LeftSide = this.VisioApplication.PageLeftSide,
+                                               TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                                           };
                         shapes.Add(this.MasterShape);
 
                         var maxRight = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
@@ -188,6 +193,7 @@ public class AbstractProcessingService : IProcessingService
                         dataSource.Close();
                     }
                 });
+    }
 
     /// <summary>Sort the children of the diagram shape.</summary>
     /// <param name="diagramShape">Shape that's children are to be sorted.</param>

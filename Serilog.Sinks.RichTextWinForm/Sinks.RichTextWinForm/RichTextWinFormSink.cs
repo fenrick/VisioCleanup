@@ -37,13 +37,6 @@ public class RichTextWinFormSink : ILogEventSink
         Sinks.Add(this);
     }
 
-    /// <inheritdoc />
-    public void Emit(LogEvent logEvent)
-    {
-        this.unprocessedLogEvents.Enqueue(logEvent);
-        this.FlushQueue();
-    }
-
     /// <summary>Add a new rich text box to the sink.</summary>
     /// <param name="richTextBox">RichTextBox to add.</param>
     public static void AddRichTextBox(RichTextBox richTextBox)
@@ -54,6 +47,13 @@ public class RichTextWinFormSink : ILogEventSink
         {
             sink.FlushQueue();
         }
+    }
+
+    /// <inheritdoc />
+    public void Emit(LogEvent logEvent)
+    {
+        this.unprocessedLogEvents.Enqueue(logEvent);
+        this.FlushQueue();
     }
 
     private void FlushQueue()
