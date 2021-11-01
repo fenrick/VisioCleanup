@@ -10,21 +10,21 @@ namespace Serilog.Sinks.RichTextWinForm.Formatting;
 using System.Windows.Forms;
 
 /// <summary>Formatter State.</summary>
-public readonly struct ThemedValueFormatterState
+internal readonly struct ThemedValueFormatterState
 {
     /// <summary>Gets rich text box.</summary>
     /// <value>Output rich text box.</value>
-    public RichTextBox Output { get; init; }
+    internal RichTextBox Output { get; init; }
 
     /// <summary>Gets format string.</summary>
     /// <value>Format string.</value>
-    public string Format { get; init; }
+    internal string Format { get; init; }
 
     /// <summary>Gets a value indicating whether it's a top level object.</summary>
     /// <value>Top level.</value>
-    public bool IsTopLevel { get; init; }
+    internal bool IsTopLevel { get; init; }
 
     /// <summary>Next within a new formatter.</summary>
     /// <returns>New formatter state with this state within it.</returns>
-    public readonly ThemedValueFormatterState Nest() => new() { Output = this.Output };
+    internal ThemedValueFormatterState Nest() => new() { Output = this.Output };
 }

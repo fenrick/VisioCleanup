@@ -207,14 +207,14 @@ public class VisioApplication : IVisioApplication
 
             // create new shape.
             DiagramShape diagramShape = new(sheetId)
-                                            {
-                                                ShapeText = selected.Text,
-                                                ShapeType = ShapeType.Existing,
-                                                LeftSide = this.CalculateLeftSide(sheetId),
-                                                RightSide = this.CalculateRightSide(sheetId),
-                                                TopSide = this.CalculateTopSide(sheetId),
-                                                BaseSide = this.CalculateBaseSide(sheetId),
-                                            };
+            {
+                ShapeText = selected.Text,
+                ShapeType = ShapeType.Existing,
+                LeftSide = this.CalculateLeftSide(sheetId),
+                RightSide = this.CalculateRightSide(sheetId),
+                TopSide = this.CalculateTopSide(sheetId),
+                BaseSide = this.CalculateBaseSide(sheetId),
+            };
             this.logger.LogDebug("Adding shape to collection");
             allShapes.Add(sheetId, diagramShape);
         }
@@ -271,44 +271,44 @@ public class VisioApplication : IVisioApplication
         var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
 
         var updates = new List<Dictionary<string, object>>
+                      {
+                          new()
                           {
-                              new()
-                                  {
-                                      { "sheetID", diagramShape.VisioId },
-                                      { "section", (short)VisSectionIndices.visSectionObject },
-                                      { "row", (short)VisRowIndices.visRowXFormOut },
-                                      { "cell", (short)VisCellIndices.visXFormWidth },
-                                      { "unit", VisUnitCodes.visMillimeters },
-                                      { "result", width },
-                                  },
-                              new()
-                                  {
-                                      { "sheetID", diagramShape.VisioId },
-                                      { "section", (short)VisSectionIndices.visSectionObject },
-                                      { "row", (short)VisRowIndices.visRowXFormOut },
-                                      { "cell", (short)VisCellIndices.visXFormHeight },
-                                      { "unit", VisUnitCodes.visMillimeters },
-                                      { "result", height },
-                                  },
-                              new()
-                                  {
-                                      { "sheetID", diagramShape.VisioId },
-                                      { "section", (short)VisSectionIndices.visSectionObject },
-                                      { "row", (short)VisRowIndices.visRowXFormOut },
-                                      { "cell", (short)VisCellIndices.visXFormPinX },
-                                      { "unit", VisUnitCodes.visMillimeters },
-                                      { "result", newPinX },
-                                  },
-                              new()
-                                  {
-                                      { "sheetID", diagramShape.VisioId },
-                                      { "section", (short)VisSectionIndices.visSectionObject },
-                                      { "row", (short)VisRowIndices.visRowXFormOut },
-                                      { "cell", (short)VisCellIndices.visXFormPinY },
-                                      { "unit", VisUnitCodes.visMillimeters },
-                                      { "result", newPinY },
-                                  },
-                          };
+                              { "sheetID", diagramShape.VisioId },
+                              { "section", (short)VisSectionIndices.visSectionObject },
+                              { "row", (short)VisRowIndices.visRowXFormOut },
+                              { "cell", (short)VisCellIndices.visXFormWidth },
+                              { "unit", VisUnitCodes.visMillimeters },
+                              { "result", width },
+                          },
+                          new()
+                          {
+                              { "sheetID", diagramShape.VisioId },
+                              { "section", (short)VisSectionIndices.visSectionObject },
+                              { "row", (short)VisRowIndices.visRowXFormOut },
+                              { "cell", (short)VisCellIndices.visXFormHeight },
+                              { "unit", VisUnitCodes.visMillimeters },
+                              { "result", height },
+                          },
+                          new()
+                          {
+                              { "sheetID", diagramShape.VisioId },
+                              { "section", (short)VisSectionIndices.visSectionObject },
+                              { "row", (short)VisRowIndices.visRowXFormOut },
+                              { "cell", (short)VisCellIndices.visXFormPinX },
+                              { "unit", VisUnitCodes.visMillimeters },
+                              { "result", newPinX },
+                          },
+                          new()
+                          {
+                              { "sheetID", diagramShape.VisioId },
+                              { "section", (short)VisSectionIndices.visSectionObject },
+                              { "row", (short)VisRowIndices.visRowXFormOut },
+                              { "cell", (short)VisCellIndices.visXFormPinY },
+                              { "unit", VisUnitCodes.visMillimeters },
+                              { "result", newPinY },
+                          },
+                      };
 
         // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
         const int SrcStreamFields = 3;

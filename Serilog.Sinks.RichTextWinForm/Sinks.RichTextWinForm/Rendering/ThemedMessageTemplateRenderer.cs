@@ -16,7 +16,7 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextWinForm.Formatting;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-public class ThemedMessageTemplateRenderer
+internal sealed class ThemedMessageTemplateRenderer
 {
     private readonly bool isLiteral;
 
@@ -24,14 +24,14 @@ public class ThemedMessageTemplateRenderer
 
     private readonly ThemedValueFormatter valueFormatter;
 
-    public ThemedMessageTemplateRenderer(RichTextTheme theme, ThemedValueFormatter valueFormatter, bool isLiteral)
+    internal ThemedMessageTemplateRenderer(RichTextTheme theme, ThemedValueFormatter valueFormatter, bool isLiteral)
     {
         this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
         this.valueFormatter = valueFormatter;
         this.isLiteral = isLiteral;
     }
 
-    public void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, RichTextBox output)
+    internal void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, RichTextBox output)
     {
         foreach (var token in template.Tokens)
         {

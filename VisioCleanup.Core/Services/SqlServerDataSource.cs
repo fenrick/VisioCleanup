@@ -55,12 +55,12 @@ public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDi
     public void Open()
     {
         SqlConnectionStringBuilder builder = new()
-                                                 {
-                                                     DataSource = this.AppConfig.DatabaseServer,
-                                                     Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated,
-                                                     InitialCatalog = this.AppConfig.DatabaseCatalog,
-                                                     ApplicationIntent = ApplicationIntent.ReadOnly,
-                                                 };
+        {
+            DataSource = this.AppConfig.DatabaseServer,
+            Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated,
+            InitialCatalog = this.AppConfig.DatabaseCatalog,
+            ApplicationIntent = ApplicationIntent.ReadOnly,
+        };
 
         this.databaseConnection = new SqlConnection(builder.ConnectionString);
         this.databaseConnection.Open();

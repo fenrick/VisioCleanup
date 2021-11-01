@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 using Serilog.Parsing;
 
-public static class Padding
+internal static class Padding
 {
     private static readonly char[] PaddingChars = new string(' ', 80).ToCharArray();
 
@@ -23,7 +23,7 @@ public static class Padding
     /// <param name="output">Output object to write result.</param>
     /// <param name="value">Provided value.</param>
     /// <param name="alignment">The alignment settings to apply when rendering <paramref name="value" /> .</param>
-    public static void Apply(RichTextBox output, string value, Alignment? alignment)
+    internal static void Apply(RichTextBox output, string value, Alignment? alignment)
     {
         if (alignment is null || (value.Length >= alignment.Value.Width))
         {

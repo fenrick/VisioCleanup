@@ -16,11 +16,11 @@ using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-public class ThemedJsonValueFormatter : ThemedValueFormatter
+internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 {
     private readonly ThemedDisplayValueFormatter displayFormatter;
 
-    public ThemedJsonValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
+    internal ThemedJsonValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
         : base(theme) =>
         this.displayFormatter = new ThemedDisplayValueFormatter(theme, formatProvider);
 

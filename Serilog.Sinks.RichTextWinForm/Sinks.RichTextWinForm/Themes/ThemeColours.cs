@@ -10,17 +10,19 @@ namespace Serilog.Sinks.RichTextWinForm.Themes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 /// <summary>Styling applied using the <see cref="System.ConsoleColor" />enumeration.</summary>
-public struct ThemeColours : IEquatable<ThemeColours>
+[StructLayout(LayoutKind.Auto)]
+public readonly struct ThemeColours : IEquatable<ThemeColours>
 {
-    /// <summary>Gets or sets the foreground color to apply.</summary>
+    /// <summary>Gets the foreground color to apply.</summary>
     /// <value>Foreground color.</value>
-    internal Color? Foreground { get; set; }
+    internal Color? Foreground { get; init; }
 
-    /// <summary>Gets or sets the background color to apply.</summary>
+    /// <summary>Gets the background color to apply.</summary>
     /// <value>Background color.</value>
-    internal Color? Background { get; set; }
+    internal Color? Background { get; init; }
 
     /// <summary>Are they equal.</summary>
     /// <param name="left">Left.</param>

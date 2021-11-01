@@ -22,7 +22,7 @@ public class RichTextTheme
     /// <summary>Initialises a new instance of the <see cref="RichTextTheme" /> class.</summary>
     /// <param name="styles">Styles to apply within the theme.</param>
     /// <exception cref="System.ArgumentNullException">When <paramref name="styles" /> is null.</exception>
-    public RichTextTheme(IReadOnlyDictionary<RichTextThemeStyle, ThemeColours> styles)
+    internal RichTextTheme(IReadOnlyDictionary<RichTextThemeStyle, ThemeColours> styles)
     {
         if (styles is null)
         {
@@ -34,7 +34,7 @@ public class RichTextTheme
 
     /// <summary><see cref="RichTextTheme.Reset" /> the <paramref name="output" /> to un-styled colors.</summary>
     /// <param name="output">Output destination.</param>
-    public static void Reset(RichTextBox output)
+    internal static void Reset(RichTextBox output)
     {
         if (output is null)
         {

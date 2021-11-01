@@ -28,7 +28,7 @@ public class OutputTemplateRenderer : ITextFormatter
     /// <param name="outputTemplate">Template for output.</param>
     /// <param name="formatProvider">FormatProvider.</param>
     /// <exception cref="System.ArgumentNullException">No output template.</exception>
-    public OutputTemplateRenderer(RichTextTheme theme, string outputTemplate, IFormatProvider? formatProvider)
+    internal OutputTemplateRenderer(RichTextTheme theme, string outputTemplate, IFormatProvider? formatProvider)
     {
         if (outputTemplate is null)
         {
@@ -83,7 +83,7 @@ public class OutputTemplateRenderer : ITextFormatter
     /// <param name="logEvent"><see cref="Log" /> event.</param>
     /// <param name="output">A rich textbox.</param>
     /// <exception cref="System.ArgumentNullException">Required parameter's not supplied.</exception>
-    public void Format(LogEvent logEvent, RichTextBox output)
+    internal void Format(LogEvent logEvent, RichTextBox output)
     {
         if (logEvent is null)
         {

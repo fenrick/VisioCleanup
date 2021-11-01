@@ -16,15 +16,15 @@ using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-public class ThemedDisplayValueFormatter : ThemedValueFormatter
+internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 {
     private readonly IFormatProvider? formatProvider;
 
-    public ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
+    internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
         : base(theme) =>
         this.formatProvider = formatProvider;
 
-    public void FormatLiteralValue(ScalarValue scalar, RichTextBox output, string format)
+    internal void FormatLiteralValue(ScalarValue scalar, RichTextBox output, string format)
     {
         var value = scalar.Value;
 

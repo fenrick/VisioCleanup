@@ -149,12 +149,12 @@ public class AbstractProcessingService : IProcessingService
                         // master shape
                         this.Logger.LogInformation(AbstractProcessingService_Res.Create_a_fake_parent_shape);
                         this.MasterShape = new DiagramShape(0)
-                                               {
-                                                   ShapeText = AbstractProcessingService_Res.FAKE_MASTER,
-                                                   ShapeType = ShapeType.FakeShape,
-                                                   LeftSide = this.VisioApplication.PageLeftSide,
-                                                   TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
-                                               };
+                        {
+                            ShapeText = AbstractProcessingService_Res.FAKE_MASTER,
+                            ShapeType = ShapeType.FakeShape,
+                            LeftSide = this.VisioApplication.PageLeftSide,
+                            TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                        };
                         shapes.Add(this.MasterShape);
 
                         var maxRight = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);

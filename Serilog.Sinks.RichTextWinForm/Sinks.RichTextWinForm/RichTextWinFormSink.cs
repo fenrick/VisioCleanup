@@ -31,7 +31,7 @@ public class RichTextWinFormSink : ILogEventSink
 
     /// <summary>Initialises a new instance of the <see cref="RichTextWinFormSink" /> class.</summary>
     /// <param name="formatter">Formatter.</param>
-    public RichTextWinFormSink(OutputTemplateRenderer formatter)
+    internal RichTextWinFormSink(OutputTemplateRenderer formatter)
     {
         this.formatter = formatter;
         Sinks.Add(this);

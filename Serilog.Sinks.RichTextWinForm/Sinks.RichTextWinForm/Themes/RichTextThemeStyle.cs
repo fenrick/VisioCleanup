@@ -11,7 +11,7 @@ using System;
 using System.ComponentModel;
 
 /// <summary>Elements styled by a console theme.</summary>
-public enum RichTextThemeStyle
+internal enum RichTextThemeStyle
 {
     /// <summary>Prominent text, generally content within an event's message.</summary>
     Text,
