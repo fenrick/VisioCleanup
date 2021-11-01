@@ -483,16 +483,14 @@ public class DiagramShape
 
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Sum(child => child.TotalChildrenCount());
 
-    private string CornerString()
-    {
-        return string.Format(
+    private string CornerString() =>
+        string.Format(
             CultureInfo.CurrentCulture,
             "Top: {0}, Left: {1}, Width: {2}, Height: {3}",
             ConvertMeasurement(this.TopSide),
             ConvertMeasurement(this.LeftSide),
             ConvertMeasurement(this.Width()),
             ConvertMeasurement(this.Height()));
-    }
 
     private bool FixPosition()
     {

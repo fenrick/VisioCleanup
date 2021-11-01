@@ -10,17 +10,19 @@ namespace Serilog.Sinks.RichTextWinForm.Themes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 /// <summary>Styling applied using the <see cref="System.ConsoleColor" />enumeration.</summary>
-public struct ThemeColours : IEquatable<ThemeColours>
+[StructLayout(LayoutKind.Auto)]
+public readonly struct ThemeColours : IEquatable<ThemeColours>
 {
-    /// <summary>Gets or sets the foreground color to apply.</summary>
+    /// <summary>Gets the foreground color to apply.</summary>
     /// <value>Foreground color.</value>
-    internal Color? Foreground { get; set; }
+    internal Color? Foreground { get; init; }
 
-    /// <summary>Gets or sets the background color to apply.</summary>
+    /// <summary>Gets the background color to apply.</summary>
     /// <value>Background color.</value>
-    internal Color? Background { get; set; }
+    internal Color? Background { get; init; }
 
     /// <summary>Are they equal.</summary>
     /// <param name="left">Left.</param>
@@ -38,10 +40,8 @@ public struct ThemeColours : IEquatable<ThemeColours>
     public override readonly bool Equals(object? obj) => obj is ThemeColours colours && this.Equals(colours);
 
     /// <inheritdoc />
-    public readonly bool Equals(ThemeColours other)
-    {
-        return EqualityComparer<Color?>.Default.Equals(this.Foreground, other.Foreground) && EqualityComparer<Color?>.Default.Equals(this.Background, other.Background);
-    }
+    public readonly bool Equals(ThemeColours other) =>
+        EqualityComparer<Color?>.Default.Equals(this.Foreground, other.Foreground) && EqualityComparer<Color?>.Default.Equals(this.Background, other.Background);
 
     /// <inheritdoc />
     public override readonly int GetHashCode() => this.Foreground.GetHashCode() + this.Background.GetHashCode();

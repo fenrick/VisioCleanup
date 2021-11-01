@@ -76,13 +76,13 @@ public class AbstractDataSource
             allShapes.Add(
                 shapeIdentifier,
                 new DiagramShape(0)
-                    {
-                        ShapeText = shapeText,
-                        ShapeType = ShapeType.NewShape,
-                        SortValue = sortValue,
-                        Master = shapeType,
-                        ShapeIdentifier = shapeIdentifier,
-                    });
+                {
+                    ShapeText = shapeText,
+                    ShapeType = ShapeType.NewShape,
+                    SortValue = sortValue,
+                    Master = shapeType,
+                    ShapeIdentifier = shapeIdentifier,
+                });
         }
 
         var shape = allShapes[shapeIdentifier];

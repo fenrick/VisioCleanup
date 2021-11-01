@@ -207,14 +207,14 @@ public class VisioApplication : IVisioApplication
 
             // create new shape.
             DiagramShape diagramShape = new(sheetId)
-                                            {
-                                                ShapeText = selected.Text,
-                                                ShapeType = ShapeType.Existing,
-                                                LeftSide = this.CalculateLeftSide(sheetId),
-                                                RightSide = this.CalculateRightSide(sheetId),
-                                                TopSide = this.CalculateTopSide(sheetId),
-                                                BaseSide = this.CalculateBaseSide(sheetId),
-                                            };
+            {
+                ShapeText = selected.Text,
+                ShapeType = ShapeType.Existing,
+                LeftSide = this.CalculateLeftSide(sheetId),
+                RightSide = this.CalculateRightSide(sheetId),
+                TopSide = this.CalculateTopSide(sheetId),
+                BaseSide = this.CalculateBaseSide(sheetId),
+            };
             this.logger.LogDebug("Adding shape to collection");
             allShapes.Add(sheetId, diagramShape);
         }

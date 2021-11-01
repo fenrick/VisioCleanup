@@ -9,7 +9,7 @@ namespace Serilog.Sinks.RichTextWinForm.Rendering;
 
 using Serilog.Parsing;
 
-public static class AlignmentExtensions
+internal static class AlignmentExtensions
 {
-    public static Alignment Widen(this Alignment alignment, int amount) => new Alignment(alignment.Direction, alignment.Width + amount);
+    internal static Alignment Widen(this Alignment alignment, int amount) => new(alignment.Direction, alignment.Width + amount);
 }

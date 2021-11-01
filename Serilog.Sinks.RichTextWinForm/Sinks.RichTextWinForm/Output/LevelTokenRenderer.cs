@@ -16,29 +16,29 @@ using Serilog.Sinks.RichTextWinForm.Themes;
 
 using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
 
-public class LevelTokenRenderer : OutputTemplateTokenRenderer
+internal class LevelTokenRenderer : OutputTemplateTokenRenderer
 {
     private static readonly Dictionary<LogEventLevel, RichTextThemeStyle> Levels = new()
-                                                                                       {
-                                                                                           { LogEventLevel.Verbose, RichTextThemeStyle.LevelVerbose },
-                                                                                           { LogEventLevel.Debug, RichTextThemeStyle.LevelDebug },
-                                                                                           { LogEventLevel.Information, RichTextThemeStyle.LevelInformation },
-                                                                                           { LogEventLevel.Warning, RichTextThemeStyle.LevelWarning },
-                                                                                           { LogEventLevel.Error, RichTextThemeStyle.LevelError },
-                                                                                           { LogEventLevel.Fatal, RichTextThemeStyle.LevelFatal },
-                                                                                       };
+    {
+        { LogEventLevel.Verbose, RichTextThemeStyle.LevelVerbose },
+        { LogEventLevel.Debug, RichTextThemeStyle.LevelDebug },
+        { LogEventLevel.Information, RichTextThemeStyle.LevelInformation },
+        { LogEventLevel.Warning, RichTextThemeStyle.LevelWarning },
+        { LogEventLevel.Error, RichTextThemeStyle.LevelError },
+        { LogEventLevel.Fatal, RichTextThemeStyle.LevelFatal },
+    };
 
     private readonly PropertyToken levelToken;
 
     private readonly RichTextTheme theme;
 
-    public LevelTokenRenderer(RichTextTheme theme, PropertyToken levelToken)
+    internal LevelTokenRenderer(RichTextTheme theme, PropertyToken levelToken)
     {
         this.theme = theme;
         this.levelToken = levelToken;
     }
 
-    public override void Render(LogEvent logEvent, RichTextBox output)
+    internal override void Render(LogEvent logEvent, RichTextBox output)
     {
         var moniker = LevelOutputFormat.GetLevelMoniker(logEvent.Level, this.levelToken.Format);
         if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))

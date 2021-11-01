@@ -14,7 +14,7 @@ using Serilog.Sinks.RichTextWinForm.Rendering;
 /// Implements the {Level} element. can now have a fixed width applied to it, as well as casing rules. Width is
 /// set through formats like "u3" (uppercase three chars), "w1" (one lowercase char), or "t4" (title case four chars).
 /// </summary>
-public static class LevelOutputFormat
+internal static class LevelOutputFormat
 {
     private static readonly string[][] LowercaseLevelMap =
         {
@@ -36,7 +36,7 @@ public static class LevelOutputFormat
 
     public static string GetLevelMoniker(LogEventLevel value, string format)
     {
-        if (format is null || ((format.Length != 2) && (format.Length != 3)))
+        if ((format.Length != 2) && (format.Length != 3))
         {
             return Casing.Format(value.ToString(), format);
         }
@@ -74,12 +74,12 @@ public static class LevelOutputFormat
                     }
 
                     return format[0] switch
-                        {
-                            'w' => LowercaseLevelMap[index][width - 1],
-                            'u' => UppercaseLevelMap[index][width - 1],
-                            't' => TitleCaseLevelMap[index][width - 1],
-                            _ => Casing.Format(value.ToString(), format),
-                        };
+                    {
+                        'w' => LowercaseLevelMap[index][width - 1],
+                        'u' => UppercaseLevelMap[index][width - 1],
+                        't' => TitleCaseLevelMap[index][width - 1],
+                        _ => Casing.Format(value.ToString(), format),
+                    };
                 }
         }
     }

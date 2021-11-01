@@ -13,15 +13,15 @@ using System.Windows.Forms;
 using Serilog.Events;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-public class ExceptionTokenRenderer : OutputTemplateTokenRenderer
+internal class ExceptionTokenRenderer : OutputTemplateTokenRenderer
 {
     private const string StackFrameLinePrefix = "   ";
 
     private readonly RichTextTheme theme;
 
-    public ExceptionTokenRenderer(RichTextTheme theme) => this.theme = theme;
+    internal ExceptionTokenRenderer(RichTextTheme theme) => this.theme = theme;
 
-    public override void Render(LogEvent logEvent, RichTextBox output)
+    internal override void Render(LogEvent logEvent, RichTextBox output)
     {
         // Padding is never applied by this renderer.
         if (logEvent.Exception is null)

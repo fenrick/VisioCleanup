@@ -12,19 +12,19 @@ using System.Windows.Forms;
 using Serilog.Events;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-public class TextTokenRenderer : OutputTemplateTokenRenderer
+internal class TextTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly string text;
 
     private readonly RichTextTheme theme;
 
-    public TextTokenRenderer(RichTextTheme theme, string text)
+    internal TextTokenRenderer(RichTextTheme theme, string text)
     {
         this.theme = theme;
         this.text = text;
     }
 
-    public override void Render(LogEvent logEvent, RichTextBox output)
+    internal override void Render(LogEvent logEvent, RichTextBox output)
     {
         using (this.theme.Apply(output, RichTextThemeStyle.TertiaryText))
         {

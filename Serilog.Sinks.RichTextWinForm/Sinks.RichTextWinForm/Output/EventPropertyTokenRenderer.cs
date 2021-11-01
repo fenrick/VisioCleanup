@@ -18,7 +18,7 @@ using Serilog.Sinks.RichTextWinForm.Themes;
 
 using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
 
-public class EventPropertyTokenRenderer : OutputTemplateTokenRenderer
+internal class EventPropertyTokenRenderer : OutputTemplateTokenRenderer
 {
     private readonly IFormatProvider? formatProvider;
 
@@ -26,14 +26,14 @@ public class EventPropertyTokenRenderer : OutputTemplateTokenRenderer
 
     private readonly PropertyToken token;
 
-    public EventPropertyTokenRenderer(RichTextTheme theme, PropertyToken token, IFormatProvider? formatProvider)
+    internal EventPropertyTokenRenderer(RichTextTheme theme, PropertyToken token, IFormatProvider? formatProvider)
     {
         this.theme = theme;
         this.token = token;
         this.formatProvider = formatProvider;
     }
 
-    public override void Render(LogEvent logEvent, RichTextBox output)
+    internal override void Render(LogEvent logEvent, RichTextBox output)
     {
         // If a property is missing, don't render anything (message templates render the raw token here).
         if (!logEvent.Properties.TryGetValue(this.token.PropertyName, out var propertyValue))

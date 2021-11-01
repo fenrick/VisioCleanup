@@ -31,10 +31,17 @@ public class RichTextWinFormSink : ILogEventSink
 
     /// <summary>Initialises a new instance of the <see cref="RichTextWinFormSink" /> class.</summary>
     /// <param name="formatter">Formatter.</param>
-    public RichTextWinFormSink(OutputTemplateRenderer formatter)
+    internal RichTextWinFormSink(OutputTemplateRenderer formatter)
     {
         this.formatter = formatter;
         Sinks.Add(this);
+    }
+
+    /// <inheritdoc />
+    public void Emit(LogEvent logEvent)
+    {
+        this.unprocessedLogEvents.Enqueue(logEvent);
+        this.FlushQueue();
     }
 
     /// <summary>Add a new rich text box to the sink.</summary>
@@ -47,13 +54,6 @@ public class RichTextWinFormSink : ILogEventSink
         {
             sink.FlushQueue();
         }
-    }
-
-    /// <inheritdoc />
-    public void Emit(LogEvent logEvent)
-    {
-        this.unprocessedLogEvents.Enqueue(logEvent);
-        this.FlushQueue();
     }
 
     private void FlushQueue()
