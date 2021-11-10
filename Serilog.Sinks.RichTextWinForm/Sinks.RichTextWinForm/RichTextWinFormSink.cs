@@ -5,6 +5,10 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+
+[assembly: CLSCompliant(true)]
+
 namespace Serilog.Sinks.RichTextWinForm;
 
 using System.Collections.Concurrent;
