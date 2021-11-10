@@ -76,7 +76,7 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
         }
 
         var dataTable = excelApplicationActiveSheet.ListObjects[1];
-        Dictionary<string, DiagramShape> allShapes = new();
+        Dictionary<string, DiagramShape> allShapes = new(StringComparer.OrdinalIgnoreCase);
 
         // find headers
         var columnMapping = this.FindHeaders(dataTable);
@@ -84,7 +84,13 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
         // process rows
         var rows = dataTable.DataBodyRange.Rows;
         this.Logger.LogDebug("getting values");
-        var data = rows.Value as object[,];
+        Collection<DiagramShape> shapes = new();
+
+        if (rows.Value is not object[,] data)
+        {
+            return shapes;
+        }
+
         foreach (var rowNumber in Enumerable.Range(1, data.GetLength(0)))
         {
             Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
@@ -100,10 +106,13 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
                 rowResults.Add(cellIndex, values);
             }
 
-            var result = Enumerable.Range(1, columnMapping.Count).Aggregate<int, DiagramShape?>(seed: null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
+            DiagramShape? result = null;
+            foreach (var i in Enumerable.Range(1, columnMapping.Count))
+            {
+                result = this.CreateShape(rowResults[i], allShapes, result);
+            }
         }
 
-        Collection<DiagramShape> shapes = new();
         foreach (var value in allShapes.Values)
         {
             shapes.Add(value);

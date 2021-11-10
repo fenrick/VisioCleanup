@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <RuleSet Name="SonarQube - VisioCleanup Visio Cleanup" ToolsVersion="16.0">
-  <Include Path="..\.sonarlint\fenrick_visiocleanupcsharp.ruleset" Action="Default" />
-  <Include Path="..\visiocleanup.ruleset" Action="Default" />
+    <Include Path="..\.sonarlint\fenrick_visiocleanupcsharp.ruleset" Action="Default" />
+    <Include Path="..\visiocleanup.ruleset" Action="Default" />
 </RuleSet>

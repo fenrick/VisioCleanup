@@ -7,6 +7,7 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Output;
 
+using System;
 using System.IO;
 using System.Windows.Forms;
 
@@ -33,7 +34,7 @@ internal sealed class ExceptionTokenRenderer : OutputTemplateTokenRenderer
         string? nextLine;
         while ((nextLine = lines.ReadLine()) != null)
         {
-            var style = nextLine.StartsWith(StackFrameLinePrefix) ? RichTextThemeStyle.SecondaryText : RichTextThemeStyle.Text;
+            var style = nextLine.StartsWith(StackFrameLinePrefix, StringComparison.CurrentCulture) ? RichTextThemeStyle.SecondaryText : RichTextThemeStyle.Text;
             using (this.theme.Apply(output, style))
             {
                 output.AppendText(nextLine);
