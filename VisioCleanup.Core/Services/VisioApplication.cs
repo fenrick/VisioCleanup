@@ -29,18 +29,6 @@ public class VisioApplication : IVisioApplication
 {
     private const string SystemNotInitialised = "System not initialised.";
 
-    private const string VisioSheetIdField = "sheetID";
-
-    private const string VisioSectionField = "section";
-
-    private const string VisioRowField = "row";
-
-    private const string VisioCellField = "cell";
-
-    private const string VisioUnitField = "unit";
-
-    private const string VisioResultField = "result";
-
     private readonly ILogger<VisioApplication> logger;
 
     private readonly ConcurrentDictionary<int, IVShape> shapeCache = new();
@@ -58,6 +46,21 @@ public class VisioApplication : IVisioApplication
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         this.activePage = null;
         this.visioApplication = null;
+    }
+
+    private enum VisioFields
+    {
+        SheetId,
+
+        Section,
+
+        Row,
+
+        Cell,
+
+        Unit,
+
+        Result,
     }
 
     /// <inheritdoc />
@@ -284,43 +287,43 @@ public class VisioApplication : IVisioApplication
         var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
         var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
 
-        var updates = new List<Dictionary<string, object>>
+        var updates = new List<Dictionary<VisioFields, object>>
                       {
-                          new(StringComparer.Ordinal)
+                          new()
                           {
-                              { VisioSheetIdField, diagramShape.VisioId },
-                              { VisioSectionField, (short)VisSectionIndices.visSectionObject },
-                              { VisioRowField, (short)VisRowIndices.visRowXFormOut },
-                              { VisioCellField, (short)VisCellIndices.visXFormWidth },
-                              { VisioUnitField, VisUnitCodes.visMillimeters },
-                              { VisioResultField, width },
+                              { VisioFields.SheetId, diagramShape.VisioId },
+                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                              { VisioFields.Cell, (short)VisCellIndices.visXFormWidth },
+                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                              { VisioFields.Result, width },
                           },
-                          new(StringComparer.Ordinal)
+                          new()
                           {
-                              { VisioSheetIdField, diagramShape.VisioId },
-                              { VisioSectionField, (short)VisSectionIndices.visSectionObject },
-                              { VisioRowField, (short)VisRowIndices.visRowXFormOut },
-                              { VisioCellField, (short)VisCellIndices.visXFormHeight },
-                              { VisioUnitField, VisUnitCodes.visMillimeters },
-                              { VisioResultField, height },
+                              { VisioFields.SheetId, diagramShape.VisioId },
+                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                              { VisioFields.Cell, (short)VisCellIndices.visXFormHeight },
+                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                              { VisioFields.Result, height },
                           },
-                          new(StringComparer.Ordinal)
+                          new()
                           {
-                              { VisioSheetIdField, diagramShape.VisioId },
-                              { VisioSectionField, (short)VisSectionIndices.visSectionObject },
-                              { VisioRowField, (short)VisRowIndices.visRowXFormOut },
-                              { VisioCellField, (short)VisCellIndices.visXFormPinX },
-                              { VisioUnitField, VisUnitCodes.visMillimeters },
-                              { VisioResultField, newPinX },
+                              { VisioFields.SheetId, diagramShape.VisioId },
+                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                              { VisioFields.Cell, (short)VisCellIndices.visXFormPinX },
+                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                              { VisioFields.Result, newPinX },
                           },
-                          new(StringComparer.Ordinal)
+                          new()
                           {
-                              { VisioSheetIdField, diagramShape.VisioId },
-                              { VisioSectionField, (short)VisSectionIndices.visSectionObject },
-                              { VisioRowField, (short)VisRowIndices.visRowXFormOut },
-                              { VisioCellField, (short)VisCellIndices.visXFormPinY },
-                              { VisioUnitField, VisUnitCodes.visMillimeters },
-                              { VisioResultField, newPinY },
+                              { VisioFields.SheetId, diagramShape.VisioId },
+                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                              { VisioFields.Cell, (short)VisCellIndices.visXFormPinY },
+                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                              { VisioFields.Result, newPinY },
                           },
                       };
 
@@ -334,13 +337,13 @@ public class VisioApplication : IVisioApplication
             var item = updates[i];
             var srcStreamTracker = 0;
 
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioSectionField], CultureInfo.CurrentCulture);
+            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Section], CultureInfo.CurrentCulture);
             srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioRowField], CultureInfo.CurrentCulture);
+            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Row], CultureInfo.CurrentCulture);
             srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioCellField], CultureInfo.CurrentCulture);
-            resultsArray[i] = item[VisioResultField];
-            unitsArray[i] = item[VisioUnitField];
+            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Cell], CultureInfo.CurrentCulture);
+            resultsArray[i] = item[VisioFields.Result];
+            unitsArray[i] = item[VisioFields.Unit];
         }
 
         // EXECUTE THE REQUEST
