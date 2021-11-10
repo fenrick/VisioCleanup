@@ -74,7 +74,7 @@ public class AbstractProcessingService : IProcessingService
                     {
                         this.Logger.LogInformation("Correcting diagram: pass {Count}", counter);
 
-                        if (this.MasterShape!.CorrectDiagram())
+                        if (!this.MasterShape!.CorrectDiagram())
                         {
                             return;
                         }
@@ -193,6 +193,16 @@ public class AbstractProcessingService : IProcessingService
                 });
     }
 
+    private static void ClearExistingRelationships(List<DiagramShape> children)
+    {
+        // clear existing relationships.
+        foreach (var child in children)
+        {
+            child.Right = null;
+            child.Below = null;
+        }
+    }
+
     private static void SortChildrenByLines(DiagramShape diagramShape, int drawLines)
     {
         var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
@@ -207,24 +217,19 @@ public class AbstractProcessingService : IProcessingService
                 }).ThenBy(shape => shape.ShapeText);
         var children = orderedChildren.ToList();
 
-        // clear existing relationships.
-        foreach (var child in children)
-        {
-            child.Right = null;
-            child.Below = null;
-        }
+        ClearExistingRelationships(children);
 
         var lineCount = 0;
         var lines = 1;
         var maxLine = Math.Round(children.Count / (double)drawLines, MidpointRounding.AwayFromZero);
 
-        for (var i = 1; i <= children.Count; i++)
+        for (var i = 0; i < children.Count; i++)
         {
             // shape being placed.
-            var childShape = children[i - 1];
+            var childShape = children[i];
 
             // are we first shape?
-            if (i == 1)
+            if (i == 0)
             {
                 lineCount++;
 
@@ -237,7 +242,7 @@ public class AbstractProcessingService : IProcessingService
             // are we below line count?
             if (lineCount < maxLine)
             {
-                children[i - 1 - 1].Right = childShape;
+                children[i - 1].Right = childShape;
                 lineCount++;
 
                 diagramShape.CorrectDiagram();
@@ -246,7 +251,7 @@ public class AbstractProcessingService : IProcessingService
             }
 
             // find start of line.
-            var shape = children[i - 1 - 1];
+            var shape = children[i - 1];
             while (shape.Left is not null)
             {
                 shape = shape.Left;
@@ -320,20 +325,15 @@ public class AbstractProcessingService : IProcessingService
         var lines = 1;
         var currentMaxDepth = 1;
 
-        // clear existing relationships.
-        foreach (var child in children)
-        {
-            child.Right = null;
-            child.Below = null;
-        }
+        ClearExistingRelationships(children);
 
-        for (var i = 1; i <= children.Count; i++)
+        for (var i = 0; i < children.Count; i++)
         {
             // shape being placed.
-            var childShape = children[i - 1];
+            var childShape = children[i];
 
             // are we first shape?
-            if (i == 1)
+            if (i == 0)
             {
                 lineCount++;
 
@@ -349,12 +349,12 @@ public class AbstractProcessingService : IProcessingService
             }
 
             // are we below line count?
-            var leftByTwo = i - 1 - 1;
-            if ((lineCount < maxLine) && ((children[leftByTwo].RightSide + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing))
+            var leftByOne = i - 1;
+            if ((lineCount < maxLine) && ((children[leftByOne].RightSide + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing))
                                           < internalMaxRight))
             {
                 // can we place on right
-                children[leftByTwo].Right = childShape;
+                children[leftByOne].Right = childShape;
                 lineCount++;
 
                 diagramShape.CorrectDiagram();
@@ -368,7 +368,7 @@ public class AbstractProcessingService : IProcessingService
             }
 
             // find start of line.
-            var shape = children[leftByTwo];
+            var shape = children[leftByOne];
             while (shape.Left is not null)
             {
                 shape = shape.Left;
