@@ -12,6 +12,7 @@
     <Rule Id="GCop209" Action="None" />
     <Rule Id="GCop212" Action="Warning" />
     <Rule Id="GCop403" Action="Warning" />
+    <Rule Id="GCop406" Action="None" />
     <Rule Id="GCop434" Action="Warning" />
     <Rule Id="GCop438" Action="Warning" />
     <Rule Id="GCop444" Action="Warning" />
