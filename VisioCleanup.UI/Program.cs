@@ -5,9 +5,12 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+
+[assembly: CLSCompliant(true)]
+
 namespace VisioCleanup.UI;
 
-using System;
 using System.Runtime.InteropServices;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -27,8 +30,10 @@ public static class Program
     /// <summary>The main entry point for the application.</summary>
     /// <param name="args">Arguments.</param>
     [STAThread]
-    public static void Main(string[] args) =>
+    public static void Main(string[] args)
+    {
         Host.CreateDefaultBuilder(args).UseSerilog(ConfigureSerilog).ConfigureServices(ConfigureApplicationServices).UseWindowsFormsLifetime<MainForm>().Build().Run();
+    }
 
     /// <summary>Configure services.</summary>
     /// <param name="hostBuilderContext">The host builder context.</param>
