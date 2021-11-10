@@ -5,9 +5,11 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace VisioCleanup.Core;
-
 using System;
+
+[assembly: CLSCompliant(true)]
+
+namespace VisioCleanup.Core;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
