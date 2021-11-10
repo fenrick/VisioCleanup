@@ -76,7 +76,7 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
         }
 
         var dataTable = excelApplicationActiveSheet.ListObjects[1];
-        Dictionary<string, DiagramShape> allShapes = new();
+        Dictionary<string, DiagramShape> allShapes = new(StringComparer.OrdinalIgnoreCase);
 
         // find headers
         var columnMapping = this.FindHeaders(dataTable);
