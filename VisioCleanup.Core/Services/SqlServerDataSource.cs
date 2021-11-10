@@ -72,7 +72,7 @@ public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDi
         using SqlCommand command = new(parameter, this.databaseConnection);
         using var reader = command.ExecuteReader();
 
-        Dictionary<string, DiagramShape> allShapes = new();
+        Dictionary<string, DiagramShape> allShapes = new(StringComparer.Ordinal);
 
         // map columns
         var columnMapping = this.MapColumns(reader.GetColumnSchema());
