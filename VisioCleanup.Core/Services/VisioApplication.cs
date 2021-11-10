@@ -27,6 +27,8 @@ using Marshal = VisioCleanup.Core.Marshal;
 /// <inheritdoc />
 public class VisioApplication : IVisioApplication
 {
+    private const string SystemNotInitialised = "System not initialised.";
+
     private readonly ILogger<VisioApplication> logger;
 
     private readonly ConcurrentDictionary<int, IVShape> shapeCache = new();
@@ -53,7 +55,7 @@ public class VisioApplication : IVisioApplication
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(SystemNotInitialised);
             }
 
             var pageSheet = this.activePage.PageSheet;
@@ -70,7 +72,7 @@ public class VisioApplication : IVisioApplication
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(SystemNotInitialised);
             }
 
             var pageSheet = this.activePage.PageSheet;
@@ -89,7 +91,7 @@ public class VisioApplication : IVisioApplication
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(SystemNotInitialised);
             }
 
             var pageSheet = this.activePage.PageSheet;
@@ -147,7 +149,7 @@ public class VisioApplication : IVisioApplication
 
         if (this.visioApplication is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         var shape = this.visioApplication.ActivePage.Drop(master, newPinX, newPinY);
@@ -184,7 +186,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication?.ActiveWindow is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         Dictionary<int, DiagramShape> allShapes = new();
@@ -237,7 +239,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         if (diagramShape is null)
@@ -259,7 +261,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
@@ -347,7 +349,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         this.visioApplication.ShowChanges = state;
@@ -408,7 +410,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication is null || this.activePage is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID[sheetId]);
