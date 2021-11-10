@@ -147,12 +147,12 @@ public class AbstractProcessingService : IProcessingService
                         // master shape
                         this.Logger.LogInformation("Create a fake parent shape");
                         this.MasterShape = new DiagramShape(0)
-                        {
-                            ShapeText = "FAKE MASTER",
-                            ShapeType = ShapeType.FakeShape,
-                            LeftSide = this.VisioApplication.PageLeftSide,
-                            TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
-                        };
+                                           {
+                                               ShapeText = "FAKE MASTER",
+                                               ShapeType = ShapeType.FakeShape,
+                                               LeftSide = this.VisioApplication.PageLeftSide,
+                                               TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                                           };
                         shapes.Add(this.MasterShape);
 
                         var maxRight = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
@@ -191,6 +191,88 @@ public class AbstractProcessingService : IProcessingService
                         dataSource.Close();
                     }
                 });
+    }
+
+    private static void SortChildrenByLines(DiagramShape diagramShape, int drawLines)
+    {
+        var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
+            shape =>
+                {
+                    if (shape.SortValue is null)
+                    {
+                        return 0 - shape.TotalChildrenCount();
+                    }
+
+                    return shape.SortValue;
+                }).ThenBy(shape => shape.ShapeText);
+        var children = orderedChildren.ToList();
+
+        // clear existing relationships.
+        foreach (var child in children)
+        {
+            child.Right = null;
+            child.Below = null;
+        }
+
+        var lineCount = 0;
+        var lines = 1;
+        var maxLine = Math.Round(children.Count / (double)drawLines, MidpointRounding.AwayFromZero);
+
+        for (var i = 1; i <= children.Count; i++)
+        {
+            // shape being placed.
+            var childShape = children[i - 1];
+
+            // are we first shape?
+            if (i == 1)
+            {
+                lineCount++;
+
+                diagramShape.CorrectDiagram();
+
+                // skip over
+                continue;
+            }
+
+            // are we below line count?
+            if (lineCount < maxLine)
+            {
+                children[i - 1 - 1].Right = childShape;
+                lineCount++;
+
+                diagramShape.CorrectDiagram();
+
+                continue;
+            }
+
+            // find start of line.
+            var shape = children[i - 1 - 1];
+            while (shape.Left is not null)
+            {
+                shape = shape.Left;
+            }
+
+            // are we relating to ourself?
+            if (shape == childShape)
+            {
+                lineCount++;
+
+                diagramShape.CorrectDiagram();
+                continue;
+            }
+
+            shape.Below = childShape;
+            lineCount = 1;
+            lines++;
+
+            diagramShape.CorrectDiagram();
+        }
+
+        diagramShape.ChildrenDepth = lines;
+
+        diagramShape.FindNeighbours();
+
+        diagramShape.CorrectDiagram();
     }
 
     /// <summary>Sort the children of the diagram shape.</summary>
@@ -309,88 +391,6 @@ public class AbstractProcessingService : IProcessingService
             {
                 currentMaxDepth = childShape.ChildrenDepth;
             }
-
-            diagramShape.CorrectDiagram();
-        }
-
-        diagramShape.ChildrenDepth = lines;
-
-        diagramShape.FindNeighbours();
-
-        diagramShape.CorrectDiagram();
-    }
-
-    private static void SortChildrenByLines(DiagramShape diagramShape, int drawLines)
-    {
-        var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
-            shape =>
-                {
-                    if (shape.SortValue is null)
-                    {
-                        return 0 - shape.TotalChildrenCount();
-                    }
-
-                    return shape.SortValue;
-                }).ThenBy(shape => shape.ShapeText);
-        var children = orderedChildren.ToList();
-
-        // clear existing relationships.
-        foreach (var child in children)
-        {
-            child.Right = null;
-            child.Below = null;
-        }
-
-        var lineCount = 0;
-        var lines = 1;
-        var maxLine = Math.Round(children.Count / (double)drawLines, MidpointRounding.AwayFromZero);
-
-        for (var i = 1; i <= children.Count; i++)
-        {
-            // shape being placed.
-            var childShape = children[i - 1];
-
-            // are we first shape?
-            if (i == 1)
-            {
-                lineCount++;
-
-                diagramShape.CorrectDiagram();
-
-                // skip over
-                continue;
-            }
-
-            // are we below line count?
-            if (lineCount < maxLine)
-            {
-                children[i - 1 - 1].Right = childShape;
-                lineCount++;
-
-                diagramShape.CorrectDiagram();
-
-                continue;
-            }
-
-            // find start of line.
-            var shape = children[i - 1 - 1];
-            while (shape.Left is not null)
-            {
-                shape = shape.Left;
-            }
-
-            // are we relating to ourself?
-            if (shape == childShape)
-            {
-                lineCount++;
-
-                diagramShape.CorrectDiagram();
-                continue;
-            }
-
-            shape.Below = childShape;
-            lineCount = 1;
-            lines++;
 
             diagramShape.CorrectDiagram();
         }
