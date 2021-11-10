@@ -274,7 +274,7 @@ public class VisioApplication : IVisioApplication
 
         var updates = new List<Dictionary<string, object>>
                       {
-                          new()
+                          new(StringComparer.Ordinal)
                           {
                               { "sheetID", diagramShape.VisioId },
                               { "section", (short)VisSectionIndices.visSectionObject },
