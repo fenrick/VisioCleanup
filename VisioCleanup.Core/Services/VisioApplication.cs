@@ -27,11 +27,13 @@ using Marshal = VisioCleanup.Core.Marshal;
 /// <inheritdoc />
 public class VisioApplication : IVisioApplication
 {
+    private const string SystemNotInitialised = "System not initialised.";
+
     private readonly ILogger<VisioApplication> logger;
 
     private readonly ConcurrentDictionary<int, IVShape> shapeCache = new();
 
-    private readonly ConcurrentDictionary<string, IVMaster?> stencilCache = new();
+    private readonly ConcurrentDictionary<string, IVMaster?> stencilCache = new(StringComparer.Ordinal);
 
     private IVPage? activePage;
 
@@ -46,6 +48,21 @@ public class VisioApplication : IVisioApplication
         this.visioApplication = null;
     }
 
+    private enum VisioFields
+    {
+        SheetId,
+
+        Section,
+
+        Row,
+
+        Cell,
+
+        Unit,
+
+        Result,
+    }
+
     /// <inheritdoc />
     public int PageLeftSide
     {
@@ -53,13 +70,13 @@ public class VisioApplication : IVisioApplication
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(SystemNotInitialised);
             }
 
             var pageSheet = this.activePage.PageSheet;
 
             return DiagramShape.ConvertMeasurement(
-                this.GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesLeftMargin));
+                GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesLeftMargin));
         }
     }
 
@@ -70,13 +87,13 @@ public class VisioApplication : IVisioApplication
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(SystemNotInitialised);
             }
 
             var pageSheet = this.activePage.PageSheet;
 
-            var rightMargin = this.GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesRightMargin);
-            var width = this.GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageWidth);
+            var rightMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPrintProperties, VisCellIndices.visPrintPropertiesRightMargin);
+            var width = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageWidth);
 
             return DiagramShape.ConvertMeasurement(width - rightMargin);
         }
@@ -89,13 +106,13 @@ public class VisioApplication : IVisioApplication
         {
             if (this.visioApplication is null || this.activePage is null)
             {
-                throw new InvalidOperationException("System not initialised.");
+                throw new InvalidOperationException(SystemNotInitialised);
             }
 
             var pageSheet = this.activePage.PageSheet;
 
-            var height = this.GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageHeight);
-            var topMargin = this.GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPrintPropertiesTopMargin);
+            var height = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPageHeight);
+            var topMargin = GetCellValue(pageSheet, VisSectionIndices.visSectionObject, VisRowIndices.visRowPage, VisCellIndices.visPrintPropertiesTopMargin);
 
             return DiagramShape.ConvertMeasurement(height - topMargin);
         }
@@ -147,7 +164,7 @@ public class VisioApplication : IVisioApplication
 
         if (this.visioApplication is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         var shape = this.visioApplication.ActivePage.Drop(master, newPinX, newPinY);
@@ -184,7 +201,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication?.ActiveWindow is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         Dictionary<int, DiagramShape> allShapes = new();
@@ -237,7 +254,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         if (diagramShape is null)
@@ -259,7 +276,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
@@ -270,43 +287,43 @@ public class VisioApplication : IVisioApplication
         var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
         var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
 
-        var updates = new List<Dictionary<string, object>>
+        var updates = new List<Dictionary<VisioFields, object>>
                       {
                           new()
                           {
-                              { "sheetID", diagramShape.VisioId },
-                              { "section", (short)VisSectionIndices.visSectionObject },
-                              { "row", (short)VisRowIndices.visRowXFormOut },
-                              { "cell", (short)VisCellIndices.visXFormWidth },
-                              { "unit", VisUnitCodes.visMillimeters },
-                              { "result", width },
+                              { VisioFields.SheetId, diagramShape.VisioId },
+                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                              { VisioFields.Cell, (short)VisCellIndices.visXFormWidth },
+                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                              { VisioFields.Result, width },
                           },
                           new()
                           {
-                              { "sheetID", diagramShape.VisioId },
-                              { "section", (short)VisSectionIndices.visSectionObject },
-                              { "row", (short)VisRowIndices.visRowXFormOut },
-                              { "cell", (short)VisCellIndices.visXFormHeight },
-                              { "unit", VisUnitCodes.visMillimeters },
-                              { "result", height },
+                              { VisioFields.SheetId, diagramShape.VisioId },
+                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                              { VisioFields.Cell, (short)VisCellIndices.visXFormHeight },
+                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                              { VisioFields.Result, height },
                           },
                           new()
                           {
-                              { "sheetID", diagramShape.VisioId },
-                              { "section", (short)VisSectionIndices.visSectionObject },
-                              { "row", (short)VisRowIndices.visRowXFormOut },
-                              { "cell", (short)VisCellIndices.visXFormPinX },
-                              { "unit", VisUnitCodes.visMillimeters },
-                              { "result", newPinX },
+                              { VisioFields.SheetId, diagramShape.VisioId },
+                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                              { VisioFields.Cell, (short)VisCellIndices.visXFormPinX },
+                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                              { VisioFields.Result, newPinX },
                           },
                           new()
                           {
-                              { "sheetID", diagramShape.VisioId },
-                              { "section", (short)VisSectionIndices.visSectionObject },
-                              { "row", (short)VisRowIndices.visRowXFormOut },
-                              { "cell", (short)VisCellIndices.visXFormPinY },
-                              { "unit", VisUnitCodes.visMillimeters },
-                              { "result", newPinY },
+                              { VisioFields.SheetId, diagramShape.VisioId },
+                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                              { VisioFields.Cell, (short)VisCellIndices.visXFormPinY },
+                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                              { VisioFields.Result, newPinY },
                           },
                       };
 
@@ -320,13 +337,13 @@ public class VisioApplication : IVisioApplication
             var item = updates[i];
             var srcStreamTracker = 0;
 
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["section"], CultureInfo.CurrentCulture);
+            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Section], CultureInfo.CurrentCulture);
             srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["row"], CultureInfo.CurrentCulture);
+            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Row], CultureInfo.CurrentCulture);
             srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["cell"], CultureInfo.CurrentCulture);
-            resultsArray[i] = item["result"];
-            unitsArray[i] = item["unit"];
+            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Cell], CultureInfo.CurrentCulture);
+            resultsArray[i] = item[VisioFields.Result];
+            unitsArray[i] = item[VisioFields.Unit];
         }
 
         // EXECUTE THE REQUEST
@@ -347,7 +364,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         this.visioApplication.ShowChanges = state;
@@ -356,7 +373,7 @@ public class VisioApplication : IVisioApplication
         this.visioApplication.DeferRecalc = state ? (short)1 : (short)0;
     }
 
-    private double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
+    private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
     {
         var shapeCell = shape.CellsSRC[(short)sectionIndex, (short)rowIndex, (short)cellIndex];
         return shapeCell.Result[VisUnitCodes.visMillimeters];
@@ -366,8 +383,8 @@ public class VisioApplication : IVisioApplication
     {
         var shape = this.GetShape(visioId);
 
-        var pinY = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
-        var locPinY = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
+        var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
+        var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
 
         return DiagramShape.ConvertMeasurement(pinY - locPinY);
     }
@@ -376,8 +393,8 @@ public class VisioApplication : IVisioApplication
     {
         var shape = this.GetShape(visioId);
 
-        var pinX = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
-        var locPinX = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
+        var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
+        var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
 
         return DiagramShape.ConvertMeasurement(pinX - locPinX);
     }
@@ -386,9 +403,9 @@ public class VisioApplication : IVisioApplication
     {
         var shape = this.GetShape(visioId);
 
-        var pinX = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
-        var locPinX = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
-        var width = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormWidth);
+        var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
+        var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
+        var width = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormWidth);
 
         return DiagramShape.ConvertMeasurement((pinX - locPinX) + width);
     }
@@ -397,9 +414,9 @@ public class VisioApplication : IVisioApplication
     {
         var shape = this.GetShape(visioId);
 
-        var pinY = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
-        var locPinY = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
-        var height = this.GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
+        var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
+        var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
+        var height = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
 
         return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
     }
@@ -408,7 +425,7 @@ public class VisioApplication : IVisioApplication
     {
         if (this.visioApplication is null || this.activePage is null)
         {
-            throw new InvalidOperationException("System not initialised.");
+            throw new InvalidOperationException(SystemNotInitialised);
         }
 
         return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID[sheetId]);
@@ -449,7 +466,7 @@ public class VisioApplication : IVisioApplication
             documentStencil.GetNames(out var masterNames);
             if (masterNames is string[] strings)
             {
-                var result = strings.Contains(key);
+                var result = strings.Contains(key, StringComparer.Ordinal);
                 if (result)
                 {
                     return documentStencil[key];
@@ -471,7 +488,7 @@ public class VisioApplication : IVisioApplication
                 continue;
             }
 
-            var result = nameArray.Contains(key);
+            var result = nameArray.Contains(key, StringComparer.Ordinal);
             if (result)
             {
                 return stencil.Masters[key];

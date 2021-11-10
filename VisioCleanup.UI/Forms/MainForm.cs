@@ -102,7 +102,7 @@ public partial class MainForm : Form
 
     private void HandleException(Exception exception, string messageText)
     {
-        this.logger.LogError(exception, exception.Message);
+        this.logger.LogError(exception, "Exception");
         this.Invoke(
             (MethodInvoker)(() =>
                                    {
