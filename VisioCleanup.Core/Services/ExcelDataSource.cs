@@ -106,7 +106,11 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
                 rowResults.Add(cellIndex, values);
             }
 
-            var result = Enumerable.Range(1, columnMapping.Count).Aggregate<int, DiagramShape?>(seed: null, (current, i) => this.CreateShape(rowResults[i], allShapes, current));
+            DiagramShape? result = null;
+            foreach (var i in Enumerable.Range(1, columnMapping.Count))
+            {
+                result = this.CreateShape(rowResults[i], allShapes, result);
+            }
         }
 
         foreach (var value in allShapes.Values)
