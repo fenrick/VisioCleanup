@@ -20,8 +20,6 @@ using VisioCleanup.Core.Contracts;
 using VisioCleanup.Core.Models;
 using VisioCleanup.Core.Models.Config;
 
-using AbstractProcessingService_Res = AbstractProcessingService_Resources;
-
 /// <inheritdoc />
 /// <summary>Abstract implementation of common code for processing services.</summary>
 public class AbstractProcessingService : IProcessingService
@@ -94,7 +92,7 @@ public class AbstractProcessingService : IProcessingService
                     {
                         this.VisioApplication.Open();
                         this.VisioApplication.VisualChanges(state: false);
-                        this.Logger.LogInformation(AbstractProcessingService_Res.Modelling_changes_to_visio);
+                        this.Logger.LogInformation("Modelling changes to visio");
 
                         // update each shape
                         foreach (var diagramShape in this.AllShapes)
@@ -102,28 +100,28 @@ public class AbstractProcessingService : IProcessingService
                             switch (diagramShape.ShapeType)
                             {
                                 case ShapeType.NewShape:
-                                    this.Logger.LogDebug(AbstractProcessingService_Res.Dropping_new_shape_Shape, diagramShape);
+                                    this.Logger.LogDebug("Dropping new shape: {Shape}", diagramShape);
                                     this.VisioApplication.CreateShape(diagramShape);
                                     break;
                                 case ShapeType.Existing:
-                                    this.Logger.LogDebug(AbstractProcessingService_Res.Updating_shape_Shape, diagramShape);
+                                    this.Logger.LogDebug("Updating shape: {Shape}", diagramShape);
                                     this.VisioApplication.UpdateShape(diagramShape);
                                     break;
                                 case ShapeType.FakeShape:
                                     // we don't draw this!
-                                    this.Logger.LogDebug(AbstractProcessingService_Res.Skipping_fake_shape_Shape, diagramShape);
+                                    this.Logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
                                     break;
                                 default:
-                                    throw new InvalidOperationException(AbstractProcessingService_Res.ShapeType_not_matched);
+                                    throw new InvalidOperationException("ShapeType not matched");
                             }
                         }
                     }
                     finally
                     {
-                        this.Logger.LogInformation(AbstractProcessingService_Res.Recalculating_diagrams);
+                        this.Logger.LogInformation("Recalculating diagrams");
                         this.VisioApplication.VisualChanges(state: true);
                         this.VisioApplication.Close();
-                        this.Logger.LogInformation(AbstractProcessingService_Res.Visio_closed);
+                        this.Logger.LogInformation("Visio closed");
                     }
                 });
     }
@@ -147,10 +145,10 @@ public class AbstractProcessingService : IProcessingService
                         List<DiagramShape> shapes = new();
 
                         // master shape
-                        this.Logger.LogInformation(AbstractProcessingService_Res.Create_a_fake_parent_shape);
+                        this.Logger.LogInformation("Create a fake parent shape");
                         this.MasterShape = new DiagramShape(0)
                         {
-                            ShapeText = AbstractProcessingService_Res.FAKE_MASTER,
+                            ShapeText = "FAKE MASTER",
                             ShapeType = ShapeType.FakeShape,
                             LeftSide = this.VisioApplication.PageLeftSide,
                             TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
@@ -160,7 +158,7 @@ public class AbstractProcessingService : IProcessingService
                         var maxRight = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
 
                         // retrieve records
-                        this.Logger.LogInformation(AbstractProcessingService_Res.Loading_dataSource_data, dataSource.Name);
+                        this.Logger.LogInformation("Loading {dataSource} data", dataSource.Name);
                         shapes.AddRange(dataSource.RetrieveRecords(parameters));
 
                         if (shapes.Count == 1)
@@ -174,22 +172,22 @@ public class AbstractProcessingService : IProcessingService
                             this.AllShapes.Add(diagramShape);
                         }
 
-                        this.Logger.LogInformation(AbstractProcessingService_Res.Assigning_fake_parent);
+                        this.Logger.LogInformation("Assigning fake parent");
                         foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
                         {
                             this.MasterShape.AddChildShape(shape);
                         }
 
                         // need to set children relationships.
-                        this.Logger.LogInformation(AbstractProcessingService_Res.Sorting_shapes_into_lines);
+                        this.Logger.LogInformation("Sorting shapes into lines");
                         this.SortChildren(this.MasterShape, maxRight);
                     }
                     finally
                     {
-                        this.Logger.LogInformation(AbstractProcessingService_Res.Closing_connection_to_visio);
+                        this.Logger.LogInformation("Closing connection to visio");
                         this.VisioApplication.Close();
 
-                        this.Logger.LogInformation(AbstractProcessingService_Res.Closing_connection_to_excel);
+                        this.Logger.LogInformation("Closing connection to excel");
                         dataSource.Close();
                     }
                 });
@@ -198,7 +196,7 @@ public class AbstractProcessingService : IProcessingService
     /// <summary>Sort the children of the diagram shape.</summary>
     /// <param name="diagramShape">Shape that's children are to be sorted.</param>
     /// <param name="maxRight">Maximum right side.</param>
-    protected void SortChildren(DiagramShape diagramShape, int maxRight)
+    private void SortChildren(DiagramShape diagramShape, int maxRight)
     {
         var internalMaxRight = maxRight - DiagramShape.ConvertMeasurement(this.AppConfig.Right);
 
