@@ -29,6 +29,18 @@ public class VisioApplication : IVisioApplication
 {
     private const string SystemNotInitialised = "System not initialised.";
 
+    private const string VisioSheetIdField = "sheetID";
+
+    private const string VisioSectionField = "section";
+
+    private const string VisioRowField = "row";
+
+    private const string VisioCellField = "cell";
+
+    private const string VisioUnitField = "unit";
+
+    private const string VisioResultField = "result";
+
     private readonly ILogger<VisioApplication> logger;
 
     private readonly ConcurrentDictionary<int, IVShape> shapeCache = new();
@@ -276,39 +288,39 @@ public class VisioApplication : IVisioApplication
                       {
                           new(StringComparer.Ordinal)
                           {
-                              { "sheetID", diagramShape.VisioId },
-                              { "section", (short)VisSectionIndices.visSectionObject },
-                              { "row", (short)VisRowIndices.visRowXFormOut },
-                              { "cell", (short)VisCellIndices.visXFormWidth },
-                              { "unit", VisUnitCodes.visMillimeters },
-                              { "result", width },
+                              { VisioSheetIdField, diagramShape.VisioId },
+                              { VisioSectionField, (short)VisSectionIndices.visSectionObject },
+                              { VisioRowField, (short)VisRowIndices.visRowXFormOut },
+                              { VisioCellField, (short)VisCellIndices.visXFormWidth },
+                              { VisioUnitField, VisUnitCodes.visMillimeters },
+                              { VisioResultField, width },
                           },
                           new(StringComparer.Ordinal)
                           {
-                              { "sheetID", diagramShape.VisioId },
-                              { "section", (short)VisSectionIndices.visSectionObject },
-                              { "row", (short)VisRowIndices.visRowXFormOut },
-                              { "cell", (short)VisCellIndices.visXFormHeight },
-                              { "unit", VisUnitCodes.visMillimeters },
-                              { "result", height },
+                              { VisioSheetIdField, diagramShape.VisioId },
+                              { VisioSectionField, (short)VisSectionIndices.visSectionObject },
+                              { VisioRowField, (short)VisRowIndices.visRowXFormOut },
+                              { VisioCellField, (short)VisCellIndices.visXFormHeight },
+                              { VisioUnitField, VisUnitCodes.visMillimeters },
+                              { VisioResultField, height },
                           },
                           new(StringComparer.Ordinal)
                           {
-                              { "sheetID", diagramShape.VisioId },
-                              { "section", (short)VisSectionIndices.visSectionObject },
-                              { "row", (short)VisRowIndices.visRowXFormOut },
-                              { "cell", (short)VisCellIndices.visXFormPinX },
-                              { "unit", VisUnitCodes.visMillimeters },
-                              { "result", newPinX },
+                              { VisioSheetIdField, diagramShape.VisioId },
+                              { VisioSectionField, (short)VisSectionIndices.visSectionObject },
+                              { VisioRowField, (short)VisRowIndices.visRowXFormOut },
+                              { VisioCellField, (short)VisCellIndices.visXFormPinX },
+                              { VisioUnitField, VisUnitCodes.visMillimeters },
+                              { VisioResultField, newPinX },
                           },
                           new(StringComparer.Ordinal)
                           {
-                              { "sheetID", diagramShape.VisioId },
-                              { "section", (short)VisSectionIndices.visSectionObject },
-                              { "row", (short)VisRowIndices.visRowXFormOut },
-                              { "cell", (short)VisCellIndices.visXFormPinY },
-                              { "unit", VisUnitCodes.visMillimeters },
-                              { "result", newPinY },
+                              { VisioSheetIdField, diagramShape.VisioId },
+                              { VisioSectionField, (short)VisSectionIndices.visSectionObject },
+                              { VisioRowField, (short)VisRowIndices.visRowXFormOut },
+                              { VisioCellField, (short)VisCellIndices.visXFormPinY },
+                              { VisioUnitField, VisUnitCodes.visMillimeters },
+                              { VisioResultField, newPinY },
                           },
                       };
 
@@ -322,13 +334,13 @@ public class VisioApplication : IVisioApplication
             var item = updates[i];
             var srcStreamTracker = 0;
 
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["section"], CultureInfo.CurrentCulture);
+            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioSectionField], CultureInfo.CurrentCulture);
             srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["row"], CultureInfo.CurrentCulture);
+            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioRowField], CultureInfo.CurrentCulture);
             srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item["cell"], CultureInfo.CurrentCulture);
-            resultsArray[i] = item["result"];
-            unitsArray[i] = item["unit"];
+            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioCellField], CultureInfo.CurrentCulture);
+            resultsArray[i] = item[VisioResultField];
+            unitsArray[i] = item[VisioUnitField];
         }
 
         // EXECUTE THE REQUEST
