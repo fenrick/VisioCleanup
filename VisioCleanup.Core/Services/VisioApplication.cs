@@ -274,7 +274,7 @@ public class VisioApplication : IVisioApplication
 
         var updates = new List<Dictionary<string, object>>
                       {
-                          new()
+                          new(StringComparer.Ordinal)
                           {
                               { "sheetID", diagramShape.VisioId },
                               { "section", (short)VisSectionIndices.visSectionObject },
@@ -283,7 +283,7 @@ public class VisioApplication : IVisioApplication
                               { "unit", VisUnitCodes.visMillimeters },
                               { "result", width },
                           },
-                          new()
+                          new(StringComparer.Ordinal)
                           {
                               { "sheetID", diagramShape.VisioId },
                               { "section", (short)VisSectionIndices.visSectionObject },
@@ -292,7 +292,7 @@ public class VisioApplication : IVisioApplication
                               { "unit", VisUnitCodes.visMillimeters },
                               { "result", height },
                           },
-                          new()
+                          new(StringComparer.Ordinal)
                           {
                               { "sheetID", diagramShape.VisioId },
                               { "section", (short)VisSectionIndices.visSectionObject },
@@ -301,7 +301,7 @@ public class VisioApplication : IVisioApplication
                               { "unit", VisUnitCodes.visMillimeters },
                               { "result", newPinX },
                           },
-                          new()
+                          new(StringComparer.Ordinal)
                           {
                               { "sheetID", diagramShape.VisioId },
                               { "section", (short)VisSectionIndices.visSectionObject },
