@@ -466,7 +466,7 @@ public class VisioApplication : IVisioApplication
             documentStencil.GetNames(out var masterNames);
             if (masterNames is string[] strings)
             {
-                var result = strings.Contains(key);
+                var result = strings.Contains(key, StringComparer.Ordinal);
                 if (result)
                 {
                     return documentStencil[key];
@@ -488,7 +488,7 @@ public class VisioApplication : IVisioApplication
                 continue;
             }
 
-            var result = nameArray.Contains(key);
+            var result = nameArray.Contains(key, StringComparer.Ordinal);
             if (result)
             {
                 return stencil.Masters[key];
