@@ -31,7 +31,7 @@ public class VisioApplication : IVisioApplication
 
     private readonly ConcurrentDictionary<int, IVShape> shapeCache = new();
 
-    private readonly ConcurrentDictionary<string, IVMaster?> stencilCache = new();
+    private readonly ConcurrentDictionary<string, IVMaster?> stencilCache = new(StringComparer.Ordinal);
 
     private IVPage? activePage;
 
