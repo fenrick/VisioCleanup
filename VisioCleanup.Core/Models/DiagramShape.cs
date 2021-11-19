@@ -336,7 +336,35 @@ public class DiagramShape
             result = true;
         }
 
-        return result;
+        if (this.Children.Count <= 0)
+        {
+            return result;
+        }
+
+        // if shape to left is bigger
+        if (this.Left is not null && this.Left.Height() > this.Height())
+        {
+            this.logger.Debug("Resizing: {Shape}", this);
+            this.BaseSide = this.TopSide - this.Left.Height();
+            this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
+            result = true;
+        }
+
+        // if share to right is bigger
+        if (this.Right is null)
+        {
+            return result;
+        }
+
+        if (this.Right.Height() <= this.Height())
+        {
+            return result;
+        }
+
+        this.logger.Debug("Resizing: {Shape}", this);
+        this.BaseSide = this.TopSide - this.Right.Height();
+        this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
+        return true;
     }
 
     /// <summary>Does this shape have a parent.</summary>
