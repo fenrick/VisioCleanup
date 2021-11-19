@@ -193,7 +193,7 @@ public class AbstractProcessingService : IProcessingService
                 });
     }
 
-    private static void ClearExistingRelationships(List<DiagramShape> children)
+    private static void ClearExistingRelationships(IEnumerable<DiagramShape> children)
     {
         // clear existing relationships.
         foreach (var child in children)
