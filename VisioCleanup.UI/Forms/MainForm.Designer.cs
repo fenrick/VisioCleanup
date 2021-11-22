@@ -57,6 +57,7 @@ public partial class MainForm
         Button loadFromIServerButton;
         Button layoutDataSet;
         Button updateVisioDrawing;
+        Button drawBitmapButton;
         TabControl tabControl1;
         TabPage dataSetTab;
         TabPage parametersTab;
@@ -81,6 +82,7 @@ public partial class MainForm
         loadFromIServerButton = new Button();
         layoutDataSet = new Button();
         updateVisioDrawing = new Button();
+        drawBitmapButton = new Button();
         tabControl1 = new TabControl();
         dataSetTab = new TabPage();
         parametersTab = new TabPage();
@@ -124,6 +126,14 @@ public partial class MainForm
         loadVisioObjects.Text = "Load Visio Objects";
         loadVisioObjects.Click += this.LoadVisioObjects_Click;
 
+        // drawBitMapButton
+        drawBitmapButton.AutoSize = true;
+        drawBitmapButton.Name = "drawBitmapButton";
+        drawBitmapButton.Size = buttonSize;
+        drawBitmapButton.TabIndex = 6;
+        drawBitmapButton.Text = "Draw Bitmap";
+        drawBitmapButton.Click += this.DrawBitmapButton_Click;
+
         // logSplitContainer
         logSplitContainer.Cursor = Cursors.HSplit;
         logSplitContainer.Dock = DockStyle.Fill;
@@ -135,7 +145,7 @@ public partial class MainForm
 
         // logSplitContainer.Panel2
         logSplitContainer.Panel2.Controls.Add(logGroupBox);
-        logSplitContainer.TabIndex = 5;
+        logSplitContainer.TabIndex = 99;
 
         // controlsTableLayoutPanel
         controlsTableLayoutPanel.AutoSize = true;
@@ -166,6 +176,7 @@ public partial class MainForm
         this.controlsFlowPanel.Controls.Add(loadVisioObjects);
         this.controlsFlowPanel.Controls.Add(layoutDataSet);
         this.controlsFlowPanel.Controls.Add(updateVisioDrawing);
+        this.controlsFlowPanel.Controls.Add(drawBitmapButton);
         this.controlsFlowPanel.Dock = DockStyle.Fill;
         this.controlsFlowPanel.TabIndex = 0;
 

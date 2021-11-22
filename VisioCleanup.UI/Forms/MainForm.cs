@@ -156,6 +156,11 @@ public partial class MainForm : Form
         }
     }
 
+    private void DrawBitmapButton_Click(object sender, EventArgs e)
+    {
+        // Method intentionally left empty.
+    }
+
     /// <summary>sThe load from iserver database.</summary>
     /// <param name="sender">The event sender.</param>
     /// <param name="e">The click event.</param>
