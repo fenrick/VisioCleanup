@@ -342,7 +342,7 @@ public class DiagramShape
         }
 
         // if shape to left is bigger
-        if (this.Left is not null && this.Left.Height() > this.Height())
+        if (this.Left is not null && (this.Left.Height() > this.Height()))
         {
             this.logger.Debug("Resizing: {Shape}", this);
             this.BaseSide = this.TopSide - this.Left.Height();
