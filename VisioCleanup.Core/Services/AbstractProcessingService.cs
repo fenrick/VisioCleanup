@@ -212,17 +212,7 @@ public class AbstractProcessingService : IProcessingService
 
     private static void SortChildrenByLines(DiagramShape diagramShape, int drawLines)
     {
-        var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
-            shape =>
-                {
-                    if (shape.SortValue is null)
-                    {
-                        return 0 - shape.TotalChildrenCount();
-                    }
-
-                    return shape.SortValue;
-                }).ThenBy(shape => shape.ShapeText);
-        var children = orderedChildren.ToList();
+        var children = OrderChildren(diagramShape);
 
         ClearExistingRelationships(children);
 
@@ -294,18 +284,7 @@ public class AbstractProcessingService : IProcessingService
     {
         var internalMaxRight = maxRight - DiagramShape.ConvertMeasurement(this.AppConfig.Right);
 
-        var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
-            shape =>
-                {
-                    if (shape.SortValue is null)
-                    {
-                        return 0 - shape.TotalChildrenCount();
-                    }
-
-                    return shape.SortValue;
-                }).ThenBy(shape => shape.ShapeText);
-
-        var children = orderedChildren.ToList();
+        var children = OrderChildren(diagramShape);
 
         foreach (var child in children.Where(child => child.Children.Count > 0))
         {
@@ -407,5 +386,22 @@ public class AbstractProcessingService : IProcessingService
         diagramShape.FindNeighbours();
 
         diagramShape.CorrectDiagram();
+    }
+
+    private static List<DiagramShape> OrderChildren(DiagramShape diagramShape)
+    {
+        var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
+            shape =>
+                {
+                    if (shape.SortValue is null)
+                    {
+                        return 0 - shape.TotalChildrenCount();
+                    }
+
+                    return shape.SortValue;
+                }).ThenBy(shape => shape.ShapeText);
+
+        var children = orderedChildren.ToList();
+        return children;
     }
 }
