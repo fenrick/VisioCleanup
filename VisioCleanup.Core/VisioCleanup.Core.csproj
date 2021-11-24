@@ -29,6 +29,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MathNet.Numerics" Version="5.0.0-alpha02" />
         <PackageReference Include="Meziantou.Analyzer" Version="1.0.679">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
