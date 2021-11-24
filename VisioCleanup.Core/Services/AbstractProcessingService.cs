@@ -400,17 +400,18 @@ public class AbstractProcessingService : IProcessingService
         diagramShape.CorrectDiagram();
     }
 
-    private double CalculateMaxLine(DiagramShape diagramShape, List<DiagramShape> children)
+    private double CalculateMaxLine(DiagramShape diagramShape, IEnumerable<DiagramShape> children)
     {
         double maxLine;
-        if (children.Count == (diagramShape.TotalChildrenCount() - 1))
+        var childrenCount = children.Count();
+        if (childrenCount == (diagramShape.TotalChildrenCount() - 1))
         {
-            maxLine = Math.Round(Math.Sqrt(children.Count), MidpointRounding.AwayFromZero);
-            var drawLines = children.Count / maxLine;
+            maxLine = Math.Round(Math.Sqrt(childrenCount), MidpointRounding.AwayFromZero);
+            var drawLines = childrenCount / maxLine;
             var appConfigMaxBoxLines = this.AppConfig.MaxBoxLines ?? 5d;
             if (drawLines > appConfigMaxBoxLines)
             {
-                maxLine = Math.Round(children.Count / appConfigMaxBoxLines, MidpointRounding.AwayFromZero);
+                maxLine = Math.Round(childrenCount / appConfigMaxBoxLines, MidpointRounding.AwayFromZero);
             }
         }
         else
