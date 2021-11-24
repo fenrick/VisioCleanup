@@ -8,7 +8,6 @@
 namespace VisioCleanup.Core.Models;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -338,7 +337,7 @@ public class DiagramShape
                     rowCount++;
                     continue;
                 }
-                
+
                 columnChild = columnChild.Right;
             }
 
@@ -347,8 +346,8 @@ public class DiagramShape
         }
 
         // remove empty rows & columns
-        int columns = bitmap.EnumerateColumns().Count(values => values.Sum() > 0);
-        int rows = bitmap.EnumerateRows().Count(values => values.Sum() > 0);
+        var columns = bitmap.EnumerateColumns().Count(values => values.Sum() > 0);
+        var rows = bitmap.EnumerateRows().Count(values => values.Sum() > 0);
 
         bitmap = bitmap.SubMatrix(0, rows, 0, columns);
 
