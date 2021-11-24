@@ -33,5 +33,5 @@ public interface IProcessingService
 
     /// <summary>Draws a bitmap of the diagram structure.</summary>
     /// <returns>A <see cref="Task" /> representing the result of the asynchronous operation.</returns>
-    Task DrawBitmapStructure();
+    Task DrawBitmapStructureAsync();
 }

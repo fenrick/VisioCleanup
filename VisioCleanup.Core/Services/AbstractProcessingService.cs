@@ -127,7 +127,7 @@ public class AbstractProcessingService : IProcessingService
     }
 
     /// <inheritdoc />
-    public Task DrawBitmapStructure()
+    public Task DrawBitmapStructureAsync()
     {
         return Task.Run(() =>
         {
