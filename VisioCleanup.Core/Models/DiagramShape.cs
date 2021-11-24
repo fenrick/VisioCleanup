@@ -302,56 +302,6 @@ public class DiagramShape
     /// <returns>Measurement for visio.</returns>
     public static double ConvertMeasurement(int measurement) => (double)measurement / ConversionFactor;
 
-    internal Matrix<float> Bitmap()
-    {
-        var bitmap = Matrix<float>.Build.Sparse(this.TotalChildrenCount(), this.TotalChildrenCount(), 0);
-
-        if (this.Children.Count == 0)
-        {
-            return Matrix<float>.Build.Dense(1, 1, 0);
-        }
-
-        var rowCount = 0;
-        var rowChild = this.Children.First(child => child.Left is null && child.Above is null);
-
-        while (rowChild is not null)
-        {
-            var columnCount = 0;
-            var columnChild = rowChild;
-
-            while (columnChild is not null)
-            {
-                var childBitmap = columnChild.Bitmap().Add(1);
-
-                var existingSpace = bitmap.SubMatrix(rowCount, childBitmap.RowCount, columnCount, childBitmap.ColumnCount);
-
-                // space is empty!
-                if (existingSpace.ColumnSums().Sum() <= 0)
-                {
-                    bitmap.SetSubMatrix(rowCount, columnCount, childBitmap);
-                    columnCount += childBitmap.ColumnCount;
-                }
-                else
-                {
-                    // where do we put it?
-                    rowCount++;
-                    continue;
-                }
-
-                columnChild = columnChild.Right;
-            }
-
-            rowChild = rowChild.Below;
-            rowCount++;
-        }
-
-        // remove empty rows & columns
-        var columns = bitmap.EnumerateColumns().Count(values => values.Sum() > 0);
-        var rows = bitmap.EnumerateRows().Count(values => values.Sum() > 0);
-
-        return bitmap.SubMatrix(0, rows, 0, columns);
-    }
-
     /// <summary>Add child shape to parent.</summary>
     /// <param name="childShape">New child shape of this shape.</param>
     public void AddChildShape(DiagramShape childShape)
@@ -470,6 +420,56 @@ public class DiagramShape
     /// <summary>Calculate the width of the shape.</summary>
     /// <returns>Width.</returns>
     public int Width() => this.RightSide - this.LeftSide;
+
+    internal Matrix<float> Bitmap()
+    {
+        var bitmap = Matrix<float>.Build.Sparse(this.TotalChildrenCount(), this.TotalChildrenCount(), 0);
+
+        if (this.Children.Count == 0)
+        {
+            return Matrix<float>.Build.Dense(1, 1, 0);
+        }
+
+        var rowCount = 0;
+        var rowChild = this.Children.First(child => child.Left is null && child.Above is null);
+
+        while (rowChild is not null)
+        {
+            var columnCount = 0;
+            var columnChild = rowChild;
+
+            while (columnChild is not null)
+            {
+                var childBitmap = columnChild.Bitmap().Add(1);
+
+                var existingSpace = bitmap.SubMatrix(rowCount, childBitmap.RowCount, columnCount, childBitmap.ColumnCount);
+
+                // space is empty!
+                if (existingSpace.ColumnSums().Sum() <= 0)
+                {
+                    bitmap.SetSubMatrix(rowCount, columnCount, childBitmap);
+                    columnCount += childBitmap.ColumnCount;
+                }
+                else
+                {
+                    // where do we put it?
+                    rowCount++;
+                    continue;
+                }
+
+                columnChild = columnChild.Right;
+            }
+
+            rowChild = rowChild.Below;
+            rowCount++;
+        }
+
+        // remove empty rows & columns
+        var columns = bitmap.EnumerateColumns().Count(values => values.Sum() > 0);
+        var rows = bitmap.EnumerateRows().Count(values => values.Sum() > 0);
+
+        return bitmap.SubMatrix(0, rows, 0, columns);
+    }
 
     /// <summary>Map all neighbour shapes within tolerance of 10.</summary>
     /// <exception cref="System.NotImplementedException">No idea what to do yet with this.</exception>
