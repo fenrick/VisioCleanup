@@ -291,21 +291,7 @@ public class AbstractProcessingService : IProcessingService
             this.SortChildren(child, internalMaxRight);
         }
 
-        double maxLine;
-        if (children.Count == (diagramShape.TotalChildrenCount() - 1))
-        {
-            maxLine = Math.Round(Math.Sqrt(children.Count), MidpointRounding.AwayFromZero);
-            var drawLines = children.Count / maxLine;
-            var appConfigMaxBoxLines = this.AppConfig.MaxBoxLines ?? 5d;
-            if (drawLines > appConfigMaxBoxLines)
-            {
-                maxLine = Math.Round(children.Count / appConfigMaxBoxLines, MidpointRounding.AwayFromZero);
-            }
-        }
-        else
-        {
-            maxLine = int.MaxValue;
-        }
+        var maxLine = this.CalculateMaxLine(diagramShape, children);
 
         var lineCount = 0;
         var lines = 1;
@@ -394,6 +380,28 @@ public class AbstractProcessingService : IProcessingService
 
         return shape;
     }
+
+    private double CalculateMaxLine(DiagramShape diagramShape, List<DiagramShape> children)
+    {
+        double maxLine;
+        if (children.Count == (diagramShape.TotalChildrenCount() - 1))
+        {
+            maxLine = Math.Round(Math.Sqrt(children.Count), MidpointRounding.AwayFromZero);
+            var drawLines = children.Count / maxLine;
+            var appConfigMaxBoxLines = this.AppConfig.MaxBoxLines ?? 5d;
+            if (drawLines > appConfigMaxBoxLines)
+            {
+                maxLine = Math.Round(children.Count / appConfigMaxBoxLines, MidpointRounding.AwayFromZero);
+            }
+        }
+        else
+        {
+            maxLine = int.MaxValue;
+        }
+
+        return maxLine;
+    }
+
     private static List<DiagramShape> OrderChildren(DiagramShape diagramShape)
     {
         var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
