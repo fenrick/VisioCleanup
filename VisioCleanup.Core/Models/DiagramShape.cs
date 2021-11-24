@@ -349,9 +349,7 @@ public class DiagramShape
         var columns = bitmap.EnumerateColumns().Count(values => values.Sum() > 0);
         var rows = bitmap.EnumerateRows().Count(values => values.Sum() > 0);
 
-        bitmap = bitmap.SubMatrix(0, rows, 0, columns);
-
-        return bitmap;
+        return bitmap.SubMatrix(0, rows, 0, columns);
     }
 
     /// <summary>Add child shape to parent.</summary>
