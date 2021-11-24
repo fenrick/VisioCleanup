@@ -174,7 +174,7 @@ public partial class MainForm : Form
 
             this.logger.LogDebug("Laying out data set");
 
-            await this.processingService!.DrawBitmapStructure().ConfigureAwait(false);
+            await this.processingService!.DrawBitmapStructureAsync().ConfigureAwait(false);
 
             this.Invoke(
                 (MethodInvoker)(() =>
