@@ -37,9 +37,9 @@ public class DiagramShape
 
     private int baseSide;
 
-    private DiagramShape? below;
+    private DiagramShape? diagramShapeBelowThisDiagramShape;
 
-    private DiagramShape? right;
+    private DiagramShape? diagramShapeToRightOfThisDiagramShape;
 
     private int rightSide;
 
@@ -78,79 +78,79 @@ public class DiagramShape
 
             // move shape below
             int movement;
-            if (this.Below is not null)
+            if (this.DiagramShapeBelow is not null)
             {
                 // calculate movement
-                movement = this.Below.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
+                movement = this.DiagramShapeBelow.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
 
                 if (movement != 0)
                 {
-                    this.logger.Debug(MovingShapeByMovementDirection, this.Below, movement, VerticalDirection);
-                    this.Below.MoveVertical(movement);
+                    this.logger.Debug(MovingShapeByMovementDirection, this.DiagramShapeBelow, movement, VerticalDirection);
+                    this.DiagramShapeBelow.MoveVertical(movement);
                 }
             }
 
             // move shape on right
-            if (this.Right is null)
+            if (this.DiagramShapeRight is null)
             {
                 return;
             }
 
             // calculate movement
-            movement = this.Right.TopSide - this.TopSide;
+            movement = this.DiagramShapeRight.TopSide - this.TopSide;
             if (movement == 0)
             {
                 return;
             }
 
-            this.logger.Debug(MovingShapeByMovementDirection, this.Right, movement, VerticalDirection);
-            this.Right.MoveVertical(movement);
+            this.logger.Debug(MovingShapeByMovementDirection, this.DiagramShapeRight, movement, VerticalDirection);
+            this.DiagramShapeRight.MoveVertical(movement);
         }
     }
 
     /// <summary>Gets or sets the shape below.</summary>
     /// <value>Shape below.</value>
-    public DiagramShape? Below
+    public DiagramShape? DiagramShapeBelow
     {
-        get => this.below;
+        get => this.diagramShapeBelowThisDiagramShape;
         set
         {
             // remove existing relationship.
-            if (this.below is not null)
+            if (this.diagramShapeBelowThisDiagramShape is not null)
             {
-                this.below.Above = null;
+                this.diagramShapeBelowThisDiagramShape.Above = null;
             }
 
             // set value.
-            this.below = value;
+            this.diagramShapeBelowThisDiagramShape = value;
 
-            if (this.below is null)
+            if (this.diagramShapeBelowThisDiagramShape is null)
             {
                 return;
             }
 
             // set relationship.
-            this.below.Above = this;
+            this.diagramShapeBelowThisDiagramShape.Above = this;
 
             // calculate movement
-            var movement = this.below.LeftSide - this.LeftSide;
+            var movement = this.diagramShapeBelowThisDiagramShape.LeftSide - this.LeftSide;
 
             if (movement != 0)
             {
-                this.logger.Debug(MovingShapeByMovementDirection, this.below, movement, HorizontalDirection);
-                this.below.MoveHorizontal(movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.diagramShapeBelowThisDiagramShape, movement, HorizontalDirection);
+                this.diagramShapeBelowThisDiagramShape.MoveHorizontal(movement);
             }
 
             // calculate movement
-            movement = this.below.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
+            movement = this.diagramShapeBelowThisDiagramShape.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
 
             if (movement == 0)
             {
                 return;
             }
 
-            this.logger.Debug(MovingShapeByMovementDirection, this.below, movement, VerticalDirection);
-            this.below.MoveVertical(movement);
+            this.logger.Debug(MovingShapeByMovementDirection, this.diagramShapeBelowThisDiagramShape, movement, VerticalDirection);
+            this.diagramShapeBelowThisDiagramShape.MoveVertical(movement);
         }
     }
 
@@ -176,50 +176,50 @@ public class DiagramShape
 
     /// <summary>Gets or sets the shape to the right.</summary>
     /// <value>Shape to right.</value>
-    public DiagramShape? Right
+    public DiagramShape? DiagramShapeRight
     {
-        get => this.right;
+        get => this.diagramShapeToRightOfThisDiagramShape;
         set
         {
             // remove existing relationship.
-            if (this.right is not null)
+            if (this.diagramShapeToRightOfThisDiagramShape is not null)
             {
-                this.right.Left = null;
+                this.diagramShapeToRightOfThisDiagramShape.Left = null;
             }
 
             // set value.
-            this.right = value;
+            this.diagramShapeToRightOfThisDiagramShape = value;
 
-            if (this.right is null)
+            if (this.diagramShapeToRightOfThisDiagramShape is null)
             {
                 return;
             }
 
             // set relationship.
-            this.right.Left = this;
+            this.diagramShapeToRightOfThisDiagramShape.Left = this;
 
             // calculate movement
-            var movement = this.right.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+            var movement = this.diagramShapeToRightOfThisDiagramShape.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
 
             if (movement != 0)
             {
-                this.logger.Debug(MovingShapeByMovementDirection, this.right, movement, HorizontalDirection);
-                this.right.MoveHorizontal(movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.diagramShapeToRightOfThisDiagramShape, movement, HorizontalDirection);
+                this.diagramShapeToRightOfThisDiagramShape.MoveHorizontal(movement);
             }
 
             // calculate movement
-            movement = this.right.TopSide - this.TopSide;
+            movement = this.diagramShapeToRightOfThisDiagramShape.TopSide - this.TopSide;
             if (movement == 0)
             {
                 return;
             }
 
-            this.logger.Debug(MovingShapeByMovementDirection, this.right, movement, VerticalDirection);
-            this.right.MoveVertical(movement);
+            this.logger.Debug(MovingShapeByMovementDirection, this.diagramShapeToRightOfThisDiagramShape, movement, VerticalDirection);
+            this.diagramShapeToRightOfThisDiagramShape.MoveVertical(movement);
         }
     }
 
-    /// <summary>Gets or sets <see cref="VisioCleanup.Core.Models.DiagramShape.right" /> side of the shape.</summary>
+    /// <summary>Gets or sets <see cref="diagramShapeToRightOfThisDiagramShape" /> side of the shape.</summary>
     /// <value>Right side of shape.</value>
     public int RightSide
     {
@@ -230,34 +230,34 @@ public class DiagramShape
 
             // move shape to right to spacing width
             int movement;
-            if (this.Right is not null)
+            if (this.DiagramShapeRight is not null)
             {
                 // calculate movement
-                movement = this.Right.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+                movement = this.DiagramShapeRight.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
 
                 if (movement != 0)
                 {
-                    this.logger.Debug(MovingShapeByMovementDirection, this.Right, movement, HorizontalDirection);
-                    this.Right.MoveHorizontal(movement);
+                    this.logger.Debug(MovingShapeByMovementDirection, this.DiagramShapeRight, movement, HorizontalDirection);
+                    this.DiagramShapeRight.MoveHorizontal(movement);
                 }
             }
 
             // align shape below to left hand side.
-            if (this.Below is null)
+            if (this.DiagramShapeBelow is null)
             {
                 return;
             }
 
             // calculate movement
-            movement = this.Below.LeftSide - this.LeftSide;
+            movement = this.DiagramShapeBelow.LeftSide - this.LeftSide;
 
             if (movement == 0)
             {
                 return;
             }
 
-            this.logger.Debug(MovingShapeByMovementDirection, this.Below, movement, HorizontalDirection);
-            this.Below.MoveHorizontal(movement);
+            this.logger.Debug(MovingShapeByMovementDirection, this.DiagramShapeBelow, movement, HorizontalDirection);
+            this.DiagramShapeBelow.MoveHorizontal(movement);
         }
     }
 
@@ -353,18 +353,18 @@ public class DiagramShape
         }
 
         // if share to right is bigger
-        if (this.Right is null)
+        if (this.DiagramShapeRight is null)
         {
             return result;
         }
 
-        if (this.Right.Height() <= this.Height())
+        if (this.DiagramShapeRight.Height() <= this.Height())
         {
             return result;
         }
 
         this.logger.Debug("Resizing: {Shape}", this);
-        this.BaseSide = this.TopSide - this.Right.Height();
+        this.BaseSide = this.TopSide - this.DiagramShapeRight.Height();
         this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
         return true;
     }
@@ -457,10 +457,10 @@ public class DiagramShape
                     continue;
                 }
 
-                columnChild = columnChild.Right;
+                columnChild = columnChild.DiagramShapeRight;
             }
 
-            rowChild = rowChild.Below;
+            rowChild = rowChild.DiagramShapeBelow;
             rowCount++;
         }
 
@@ -484,8 +484,8 @@ public class DiagramShape
         var children = this.Children;
         foreach (var child in children)
         {
-            child.Right = null;
-            child.Below = null;
+            child.DiagramShapeRight = null;
+            child.DiagramShapeBelow = null;
         }
 
         var tolerance = ((AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) * ConversionFactor) / 2d;
@@ -514,7 +514,7 @@ public class DiagramShape
                     case not null when currentShape.BaseSide >= shape.BaseSide:
                         continue;
                     case not null when (shape.BaseSide - currentShape.TopSide) < (tolerance + tolerance):
-                        shape.Below = currentShape;
+                        shape.DiagramShapeBelow = currentShape;
 
                         currentShape = shape;
                         break;
@@ -549,7 +549,7 @@ public class DiagramShape
                     case not null when currentShape.LeftSide >= shape.LeftSide:
                         continue;
                     case not null when (shape.LeftSide - currentShape.RightSide) < (tolerance + tolerance):
-                        currentShape.Right = shape;
+                        currentShape.DiagramShapeRight = shape;
 
                         currentShape = shape;
                         break;
@@ -563,16 +563,14 @@ public class DiagramShape
 
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Sum(child => child.TotalChildrenCount());
 
-    private string CornerString()
-    {
-        return string.Format(
+    private string CornerString() =>
+        string.Format(
             CultureInfo.CurrentCulture,
             "Top: {0}, Left: {1}, Width: {2}, Height: {3}",
             ConvertMeasurement(this.TopSide),
             ConvertMeasurement(this.LeftSide),
             ConvertMeasurement(this.Width()),
             ConvertMeasurement(this.Height()));
-    }
 
     private bool FixPosition()
     {
@@ -611,55 +609,55 @@ public class DiagramShape
 
         // move shape to right to spacing width
         int movement;
-        if (this.Right is not null)
+        if (this.DiagramShapeRight is not null)
         {
             // calculate movement
-            movement = this.Right.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+            movement = this.DiagramShapeRight.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
 
             if (movement != 0)
             {
-                this.logger.Debug(MovingShapeByMovementDirection, this.Right, movement, HorizontalDirection);
-                this.Right.MoveHorizontal(movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.DiagramShapeRight, movement, HorizontalDirection);
+                this.DiagramShapeRight.MoveHorizontal(movement);
                 result = true;
             }
 
             // calculate movement
-            movement = this.Right.TopSide - this.TopSide;
+            movement = this.DiagramShapeRight.TopSide - this.TopSide;
             if (movement != 0)
             {
-                this.logger.Debug(MovingShapeByMovementDirection, this.Right, movement, VerticalDirection);
-                this.Right.MoveVertical(movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.DiagramShapeRight, movement, VerticalDirection);
+                this.DiagramShapeRight.MoveVertical(movement);
                 result = true;
             }
         }
 
         // align shape below to left hand side.
-        if (this.Below is null)
+        if (this.DiagramShapeBelow is not null)
         {
-            return result;
+            movement = this.DiagramShapeBelow.LeftSide - this.LeftSide;
+
+            if (movement != 0)
+            {
+                this.logger.Debug(MovingShapeByMovementDirection, this.DiagramShapeBelow, movement, HorizontalDirection);
+                this.DiagramShapeBelow.MoveHorizontal(movement);
+                result = true;
+            }
+
+            // calculate movement
+            movement = this.DiagramShapeBelow.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
+
+            if (movement == 0)
+            {
+                return result;
+            }
+
+            this.logger.Debug(MovingShapeByMovementDirection, this.DiagramShapeBelow, movement, VerticalDirection);
+            this.DiagramShapeBelow.MoveVertical(movement);
+            return true;
         }
 
         // calculate movement
-        movement = this.Below.LeftSide - this.LeftSide;
-
-        if (movement != 0)
-        {
-            this.logger.Debug(MovingShapeByMovementDirection, this.Below, movement, HorizontalDirection);
-            this.Below.MoveHorizontal(movement);
-            result = true;
-        }
-
-        // calculate movement
-        movement = this.Below.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
-
-        if (movement == 0)
-        {
-            return result;
-        }
-
-        this.logger.Debug(MovingShapeByMovementDirection, this.Below, movement, VerticalDirection);
-        this.Below.MoveVertical(movement);
-        return true;
+        return result;
     }
 
     private void MoveHorizontal(int movement)
