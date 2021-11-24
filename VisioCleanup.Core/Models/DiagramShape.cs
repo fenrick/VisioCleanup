@@ -326,7 +326,7 @@ public class DiagramShape
                 var existingSpace = bitmap.SubMatrix(rowCount, childBitmap.RowCount, columnCount, childBitmap.ColumnCount);
 
                 // space is empty!
-                if (existingSpace.ColumnSums().Sum() == 0)
+                if (existingSpace.ColumnSums().Sum() <= 0)
                 {
                     bitmap.SetSubMatrix(rowCount, columnCount, childBitmap);
                     columnCount += childBitmap.ColumnCount;
