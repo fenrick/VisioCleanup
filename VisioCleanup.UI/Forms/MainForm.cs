@@ -156,9 +156,38 @@ public partial class MainForm : Form
         }
     }
 
-    private void DrawBitmapButton_Click(object sender, EventArgs e)
+    private async void DrawBitmapButton_Click(object sender, EventArgs e)
     {
-        // Method intentionally left empty.
+        if (this.CheckProcessingService())
+        {
+            return;
+        }
+
+        try
+        {
+            this.Invoke(
+                (MethodInvoker)(() =>
+                                       {
+                                           this.controlsFlowPanel.Enabled = false;
+                                           this.dataSetBindingSource.DataSource = null;
+                                       }));
+
+            this.logger.LogDebug("Laying out data set");
+
+            await this.processingService!.DrawBitmapStructure().ConfigureAwait(false);
+
+            this.Invoke(
+                (MethodInvoker)(() =>
+                                       {
+                                           this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
+
+                                           this.controlsFlowPanel.Enabled = true;
+                                       }));
+        }
+        catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
+        {
+            this.HandleException(exception, "@Processing error.");
+        }
     }
 
     /// <summary>sThe load from iserver database.</summary>

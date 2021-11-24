@@ -30,4 +30,6 @@ public interface IProcessingService
     /// <summary>Draws new data set onto visio.</summary>
     /// <returns>A task.</returns>
     Task UpdateVisioAsync();
+
+    Task DrawBitmapStructure();
 }

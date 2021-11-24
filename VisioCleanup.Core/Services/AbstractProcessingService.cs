@@ -126,6 +126,13 @@ public class AbstractProcessingService : IProcessingService
                 });
     }
 
+    /// <inheritdoc />
+    public Task DrawBitmapStructure() {
+        return Task.Run(() => {
+            var bitmap = this.MasterShape!.DrawBitmapStructure();
+        });
+    }
+
     /// <summary>Internal process data sets.</summary>
     /// <param name="dataSource">Data source to process.</param>
     /// <param name="parameters">Parameters for process.</param>
