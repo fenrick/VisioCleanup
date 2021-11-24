@@ -63,7 +63,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0-preview3.21293.2" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
         <PackageReference Include="Serilog" Version="2.11.0-dev-01371" />
         <Reference Include="Microsoft.Office.Interop.Excel">
