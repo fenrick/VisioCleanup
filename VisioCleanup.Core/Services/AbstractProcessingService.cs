@@ -354,11 +354,7 @@ public class AbstractProcessingService : IProcessingService
             }
 
             // find start of line.
-            var shape = children[leftByOne];
-            while (shape.Left is not null)
-            {
-                shape = shape.Left;
-            }
+            var shape = MostLeftShape(children[leftByOne]);
 
             // are we relating to our self?
             if (shape == childShape)
@@ -388,6 +384,16 @@ public class AbstractProcessingService : IProcessingService
         diagramShape.CorrectDiagram();
     }
 
+    private static DiagramShape MostLeftShape(DiagramShape firstOption)
+    {
+        var shape = firstOption;
+        while (shape.Left is not null)
+        {
+            shape = shape.Left;
+        }
+
+        return shape;
+    }
     private static List<DiagramShape> OrderChildren(DiagramShape diagramShape)
     {
         var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
