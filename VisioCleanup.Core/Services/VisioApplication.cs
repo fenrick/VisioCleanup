@@ -288,44 +288,44 @@ public class VisioApplication : IVisioApplication
         var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
 
         var updates = new List<Dictionary<VisioFields, object>>
-                      {
-                          new()
-                          {
-                              { VisioFields.SheetId, diagramShape.VisioId },
-                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
-                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
-                              { VisioFields.Cell, (short)VisCellIndices.visXFormWidth },
-                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
-                              { VisioFields.Result, width },
-                          },
-                          new()
-                          {
-                              { VisioFields.SheetId, diagramShape.VisioId },
-                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
-                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
-                              { VisioFields.Cell, (short)VisCellIndices.visXFormHeight },
-                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
-                              { VisioFields.Result, height },
-                          },
-                          new()
-                          {
-                              { VisioFields.SheetId, diagramShape.VisioId },
-                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
-                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
-                              { VisioFields.Cell, (short)VisCellIndices.visXFormPinX },
-                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
-                              { VisioFields.Result, newPinX },
-                          },
-                          new()
-                          {
-                              { VisioFields.SheetId, diagramShape.VisioId },
-                              { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
-                              { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
-                              { VisioFields.Cell, (short)VisCellIndices.visXFormPinY },
-                              { VisioFields.Unit, VisUnitCodes.visMillimeters },
-                              { VisioFields.Result, newPinY },
-                          },
-                      };
+        {
+            new()
+            {
+                { VisioFields.SheetId, diagramShape.VisioId },
+                { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                { VisioFields.Cell, (short)VisCellIndices.visXFormWidth },
+                { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                { VisioFields.Result, width },
+            },
+            new()
+            {
+                { VisioFields.SheetId, diagramShape.VisioId },
+                { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                { VisioFields.Cell, (short)VisCellIndices.visXFormHeight },
+                { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                { VisioFields.Result, height },
+            },
+            new()
+            {
+                { VisioFields.SheetId, diagramShape.VisioId },
+                { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                { VisioFields.Cell, (short)VisCellIndices.visXFormPinX },
+                { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                { VisioFields.Result, newPinX },
+            },
+            new()
+            {
+                { VisioFields.SheetId, diagramShape.VisioId },
+                { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
+                { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
+                { VisioFields.Cell, (short)VisCellIndices.visXFormPinY },
+                { VisioFields.Unit, VisUnitCodes.visMillimeters },
+                { VisioFields.Result, newPinY },
+            },
+        };
 
         // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
         const int SrcStreamFields = 3;

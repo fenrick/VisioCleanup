@@ -126,6 +126,15 @@ public class AbstractProcessingService : IProcessingService
                 });
     }
 
+    /// <inheritdoc />
+    public Task DrawBitmapStructure()
+    {
+        return Task.Run(() =>
+        {
+            var bitmap = this.MasterShape!.Bitmap();
+        });
+    }
+
     /// <summary>Internal process data sets.</summary>
     /// <param name="dataSource">Data source to process.</param>
     /// <param name="parameters">Parameters for process.</param>
@@ -205,17 +214,7 @@ public class AbstractProcessingService : IProcessingService
 
     private static void SortChildrenByLines(DiagramShape diagramShape, int drawLines)
     {
-        var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
-            shape =>
-                {
-                    if (shape.SortValue is null)
-                    {
-                        return 0 - shape.TotalChildrenCount();
-                    }
-
-                    return shape.SortValue;
-                }).ThenBy(shape => shape.ShapeText);
-        var children = orderedChildren.ToList();
+        var children = OrderChildren(diagramShape);
 
         ClearExistingRelationships(children);
 
@@ -280,13 +279,19 @@ public class AbstractProcessingService : IProcessingService
         diagramShape.CorrectDiagram();
     }
 
-    /// <summary>Sort the children of the diagram shape.</summary>
-    /// <param name="diagramShape">Shape that's children are to be sorted.</param>
-    /// <param name="maxRight">Maximum right side.</param>
-    private void SortChildren(DiagramShape diagramShape, int maxRight)
+    private static DiagramShape MostLeftShape(DiagramShape firstOption)
     {
-        var internalMaxRight = maxRight - DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+        var shape = firstOption;
+        while (shape.Left is not null)
+        {
+            shape = shape.Left;
+        }
 
+        return shape;
+    }
+
+    private static List<DiagramShape> OrderChildren(DiagramShape diagramShape)
+    {
         var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
             shape =>
                 {
@@ -299,27 +304,24 @@ public class AbstractProcessingService : IProcessingService
                 }).ThenBy(shape => shape.ShapeText);
 
         var children = orderedChildren.ToList();
+        return children;
+    }
+
+    /// <summary>Sort the children of the diagram shape.</summary>
+    /// <param name="diagramShape">Shape that's children are to be sorted.</param>
+    /// <param name="maxRight">Maximum right side.</param>
+    private void SortChildren(DiagramShape diagramShape, int maxRight)
+    {
+        var internalMaxRight = maxRight - DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+
+        var children = OrderChildren(diagramShape);
 
         foreach (var child in children.Where(child => child.Children.Count > 0))
         {
             this.SortChildren(child, internalMaxRight);
         }
 
-        double maxLine;
-        if (children.Count == (diagramShape.TotalChildrenCount() - 1))
-        {
-            maxLine = Math.Round(Math.Sqrt(children.Count), MidpointRounding.AwayFromZero);
-            var drawLines = children.Count / maxLine;
-            var appConfigMaxBoxLines = this.AppConfig.MaxBoxLines ?? 5d;
-            if (drawLines > appConfigMaxBoxLines)
-            {
-                maxLine = Math.Round(children.Count / appConfigMaxBoxLines, MidpointRounding.AwayFromZero);
-            }
-        }
-        else
-        {
-            maxLine = int.MaxValue;
-        }
+        var maxLine = this.CalculateMaxLine(diagramShape, children);
 
         var lineCount = 0;
         var lines = 1;
@@ -368,11 +370,7 @@ public class AbstractProcessingService : IProcessingService
             }
 
             // find start of line.
-            var shape = children[leftByOne];
-            while (shape.Left is not null)
-            {
-                shape = shape.Left;
-            }
+            var shape = MostLeftShape(children[leftByOne]);
 
             // are we relating to our self?
             if (shape == childShape)
@@ -400,5 +398,27 @@ public class AbstractProcessingService : IProcessingService
         diagramShape.FindNeighbours();
 
         diagramShape.CorrectDiagram();
+    }
+
+    private double CalculateMaxLine(DiagramShape diagramShape, IEnumerable<DiagramShape> children)
+    {
+        double maxLine;
+        var childrenCount = children.Count();
+        if (childrenCount == (diagramShape.TotalChildrenCount() - 1))
+        {
+            maxLine = Math.Round(Math.Sqrt(childrenCount), MidpointRounding.AwayFromZero);
+            var drawLines = childrenCount / maxLine;
+            var appConfigMaxBoxLines = this.AppConfig.MaxBoxLines ?? 5d;
+            if (drawLines > appConfigMaxBoxLines)
+            {
+                maxLine = Math.Round(childrenCount / appConfigMaxBoxLines, MidpointRounding.AwayFromZero);
+            }
+        }
+        else
+        {
+            maxLine = int.MaxValue;
+        }
+
+        return maxLine;
     }
 }

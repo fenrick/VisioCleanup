@@ -156,6 +156,40 @@ public partial class MainForm : Form
         }
     }
 
+    private async void DrawBitmapButton_Click(object sender, EventArgs e)
+    {
+        if (this.CheckProcessingService())
+        {
+            return;
+        }
+
+        try
+        {
+            this.Invoke(
+                (MethodInvoker)(() =>
+                                       {
+                                           this.controlsFlowPanel.Enabled = false;
+                                           this.dataSetBindingSource.DataSource = null;
+                                       }));
+
+            this.logger.LogDebug("Laying out data set");
+
+            await this.processingService!.DrawBitmapStructure().ConfigureAwait(false);
+
+            this.Invoke(
+                (MethodInvoker)(() =>
+                                       {
+                                           this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
+
+                                           this.controlsFlowPanel.Enabled = true;
+                                       }));
+        }
+        catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
+        {
+            this.HandleException(exception, "@Processing error.");
+        }
+    }
+
     /// <summary>sThe load from iserver database.</summary>
     /// <param name="sender">The event sender.</param>
     /// <param name="e">The click event.</param>

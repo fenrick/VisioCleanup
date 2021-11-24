@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
+        <OutputType>WinExe</OutputType>
         <TargetFramework>net6.0-windows10.0.20348.0</TargetFramework>
         <RootNamespace>VisioCleanup.UI</RootNamespace>
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
@@ -30,7 +30,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Meziantou.Analyzer" Version="1.0.675">
+        <PackageReference Include="Meziantou.Analyzer" Version="1.0.679">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -44,7 +44,8 @@
         </PackageReference>
         <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
         <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.30.0.37606">
+        <PackageReference Include="OswaldTechnologies.Extensions.Hosting.WindowsFormsLifetime" Version="0.1.0" />
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.32.0.39516">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -75,7 +76,6 @@
         <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="WindowsFormsGenericHost" Version="0.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
