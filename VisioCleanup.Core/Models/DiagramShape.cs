@@ -302,7 +302,7 @@ public class DiagramShape
     /// <returns>Measurement for visio.</returns>
     public static double ConvertMeasurement(int measurement) => (double)measurement / ConversionFactor;
 
-    public Matrix<float> Bitmap()
+    internal Matrix<float> Bitmap()
     {
         var bitmap = Matrix<float>.Build.Sparse(this.TotalChildrenCount(), this.TotalChildrenCount(), 0);
 
