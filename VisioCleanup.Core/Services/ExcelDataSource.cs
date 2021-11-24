@@ -113,12 +113,7 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
             }
         }
 
-        foreach (var value in allShapes.Values)
-        {
-            shapes.Add(value);
-        }
-
-        return shapes;
+        return allShapes.Values;
     }
 
     private SortedList<int, Dictionary<FieldType, int>> FindHeaders(ListObject dataTable)
