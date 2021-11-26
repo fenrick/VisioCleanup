@@ -207,8 +207,8 @@ public class AbstractProcessingService : IProcessingService
         // clear existing relationships.
         foreach (var child in children)
         {
-            child.Right = null;
-            child.Below = null;
+            child.DiagramShapeRight = null;
+            child.DiagramShapeBelow = null;
         }
     }
 
@@ -241,7 +241,7 @@ public class AbstractProcessingService : IProcessingService
             // are we below line count?
             if (lineCount < maxLine)
             {
-                children[i - 1].Right = childShape;
+                children[i - 1].DiagramShapeRight = childShape;
                 lineCount++;
 
                 diagramShape.CorrectDiagram();
@@ -265,7 +265,7 @@ public class AbstractProcessingService : IProcessingService
                 continue;
             }
 
-            shape.Below = childShape;
+            shape.DiagramShapeBelow = childShape;
             lineCount = 1;
             lines++;
 
@@ -356,7 +356,7 @@ public class AbstractProcessingService : IProcessingService
                                           < internalMaxRight))
             {
                 // can we place on right
-                children[leftByOne].Right = childShape;
+                children[leftByOne].DiagramShapeRight = childShape;
                 lineCount++;
 
                 diagramShape.CorrectDiagram();
@@ -381,7 +381,7 @@ public class AbstractProcessingService : IProcessingService
                 continue;
             }
 
-            shape.Below = childShape;
+            shape.DiagramShapeBelow = childShape;
             lineCount = 1;
             lines++;
 
