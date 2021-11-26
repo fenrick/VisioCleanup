@@ -45,7 +45,7 @@ public class DiagramShape
 
     /// <summary>Initialises a new instance of the <see cref="DiagramShape" /> class.</summary>
     /// <param name="visioId">Visio shape ID.</param>
-    public DiagramShape(int visioId)
+    internal DiagramShape(int visioId)
     {
         this.logger = Log.ForContext<DiagramShape>();
         this.VisioId = visioId;
@@ -59,17 +59,19 @@ public class DiagramShape
         this.SortValue = string.Empty;
     }
 
+    internal static AppConfig? AppConfig { get; set; }
+
     /// <summary>Gets collection of child shapes.</summary>
     /// <value>child shapes.</value>
-    public Collection<DiagramShape> Children { get; }
+    internal Collection<DiagramShape> Children { get; }
 
     /// <summary>Gets the shape above.</summary>
     /// <value>Shape above.</value>
-    public DiagramShape? Above { get; private set; }
+    internal DiagramShape? Above { get; private set; }
 
     /// <summary>Gets or sets base of the shape.</summary>
     /// <value>Bottom of shape.</value>
-    public int BaseSide
+    internal int BaseSide
     {
         get => this.baseSide;
         set
@@ -110,7 +112,7 @@ public class DiagramShape
 
     /// <summary>Gets or sets the shape below.</summary>
     /// <value>Shape below.</value>
-    public DiagramShape? DiagramShapeBelow
+    internal DiagramShape? DiagramShapeBelow
     {
         get => this.diagramShapeBelowThisDiagramShape;
         set
@@ -156,27 +158,27 @@ public class DiagramShape
 
     /// <summary>Gets or sets how deep is the rendered children.</summary>
     /// <value>depth of children.</value>
-    public int ChildrenDepth { get; set; }
+    internal int ChildrenDepth { get; set; }
 
     /// <summary>Gets the shape to the left.</summary>
     /// <value>Left shape.</value>
-    public DiagramShape? Left { get; private set; }
+    internal DiagramShape? Left { get; private set; }
 
     /// <summary>Gets or sets left side of the shape.</summary>
     /// <value>Left side of shape.</value>
-    public int LeftSide { get; set; }
+    internal int LeftSide { get; set; }
 
     /// <summary>Gets or sets or setsthe stencil used for drawing shape.</summary>
     /// <value>Master shape stencil.</value>
-    public string Master { get; set; }
+    internal string Master { get; set; }
 
     /// <summary>Gets parent shape of curent shape.</summary>
     /// <value>Parent shape.</value>
-    public DiagramShape? ParentShape { get; private set; }
+    internal DiagramShape? ParentShape { get; private set; }
 
     /// <summary>Gets or sets the shape to the right.</summary>
     /// <value>Shape to right.</value>
-    public DiagramShape? DiagramShapeRight
+    internal DiagramShape? DiagramShapeRight
     {
         get => this.diagramShapeToRightOfThisDiagramShape;
         set
@@ -221,7 +223,7 @@ public class DiagramShape
 
     /// <summary>Gets or sets <see cref="diagramShapeToRightOfThisDiagramShape" /> side of the shape.</summary>
     /// <value>Right side of shape.</value>
-    public int RightSide
+    internal int RightSide
     {
         get => this.rightSide;
         set
@@ -263,19 +265,19 @@ public class DiagramShape
 
     /// <summary>Gets or sets a unique shape identifier.</summary>
     /// <value>Unique identifer.</value>
-    public string? ShapeIdentifier { get; set; }
+    internal string? ShapeIdentifier { get; set; }
 
     /// <summary>Gets or sets the shape text.</summary>
     /// <value>Shape text.</value>
-    public string ShapeText { get; set; }
+    internal string ShapeText { get; set; }
 
     /// <summary>Gets or sets the shape type.</summary>
     /// <value>Shape type.</value>
-    public ShapeType ShapeType { get; set; }
+    internal ShapeType ShapeType { get; set; }
 
     /// <summary>Gets or sets value used to sort shapes.</summary>
     /// <value>Sort value.</value>
-    public string? SortValue
+    internal string? SortValue
     {
         get;
         [UsedImplicitly]
@@ -284,27 +286,28 @@ public class DiagramShape
 
     /// <summary>Gets or sets top of the shape.</summary>
     /// <value>Top side of shape.</value>
-    public int TopSide { get; set; }
+    internal int TopSide { get; set; }
 
     /// <summary>Gets or sets visio shape id.</summary>
     /// <value>Visio identifer.</value>
-    public int VisioId { get; set; }
+    internal int VisioId { get; set; }
 
-    internal static AppConfig? AppConfig { get; set; }
+    /// <inheritdoc />
+    public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
 
     /// <summary>Convert a visio <paramref name="measurement" /> into an easier mathematical model.</summary>
     /// <param name="measurement">Measurement from visio.</param>
     /// <returns>Easier <see langword="internal" /> measurement.</returns>
-    public static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, ConversionDigits, MidpointRounding.AwayFromZero) * ConversionFactor);
+    internal static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, ConversionDigits, MidpointRounding.AwayFromZero) * ConversionFactor);
 
     /// <summary>Convert an easier <paramref name="measurement" /> back to visio model.</summary>
     /// <param name="measurement">Easier <see langword="internal" /> measurement.</param>
     /// <returns>Measurement for visio.</returns>
-    public static double ConvertMeasurement(int measurement) => (double)measurement / ConversionFactor;
+    internal static double ConvertMeasurement(int measurement) => (double)measurement / ConversionFactor;
 
     /// <summary>Add child shape to parent.</summary>
     /// <param name="childShape">New child shape of this shape.</param>
-    public void AddChildShape(DiagramShape childShape)
+    internal void AddChildShape(DiagramShape childShape)
     {
         if (childShape is null)
         {
@@ -322,7 +325,7 @@ public class DiagramShape
 
     /// <summary>Correct shape and child shapes.</summary>
     /// <returns>If any shape was changed.</returns>
-    public bool CorrectDiagram()
+    internal bool CorrectDiagram()
     {
         var result = this.FixPosition();
 
@@ -371,15 +374,15 @@ public class DiagramShape
 
     /// <summary>Does this shape have a parent.</summary>
     /// <returns>True if a parent.</returns>
-    public bool HasParent() => this.ParentShape is not null;
+    internal bool HasParent() => this.ParentShape is not null;
 
     /// <summary>Calculate the height of the shape.</summary>
     /// <returns>Height.</returns>
-    public int Height() => this.TopSide - this.BaseSide;
+    internal int Height() => this.TopSide - this.BaseSide;
 
     /// <summary>Resize the shape based on appconfig.</summary>
     /// <returns>If shape changed.</returns>
-    public bool ResizeShape()
+    internal bool ResizeShape()
     {
         int width;
         int height;
@@ -414,12 +417,9 @@ public class DiagramShape
         return true;
     }
 
-    /// <inheritdoc />
-    public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
-
     /// <summary>Calculate the width of the shape.</summary>
     /// <returns>Width.</returns>
-    public int Width() => this.RightSide - this.LeftSide;
+    internal int Width() => this.RightSide - this.LeftSide;
 
     internal Matrix<float> Bitmap()
     {

@@ -13,13 +13,13 @@ using System.Security;
 using Serilog;
 
 /// <summary>Implementation of .Net Framework 4.6 System.Runtime.InteropServices.Marshal.GetActiveObject().</summary>
-public static class Marshal
+internal static class Marshal
 {
     /// <summary>Copy of System.Runtime.InteropServices.Marshal.GetActiveObject().</summary>
     /// <param name="progId">String program identifier.</param>
     /// <returns>Object.</returns>
     [SecurityCritical] // auto-generated_required
-    public static object GetActiveObject(string progId)
+    internal static object GetActiveObject(string progId)
     {
         Guid classId;
 

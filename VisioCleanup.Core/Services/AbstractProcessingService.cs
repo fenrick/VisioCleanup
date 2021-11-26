@@ -30,7 +30,7 @@ public class AbstractProcessingService : IProcessingService
     /// <param name="logger">Logger.</param>
     /// <param name="options">Application configuration being passed in.</param>
     /// <param name="visioApplication">Visio Application engine.</param>
-    protected AbstractProcessingService(ILogger logger, IOptions<AppConfig> options, IVisioApplication visioApplication)
+    public AbstractProcessingService(ILogger logger, IOptions<AppConfig> options, IVisioApplication visioApplication)
     {
         if (options is null)
         {
@@ -50,19 +50,19 @@ public class AbstractProcessingService : IProcessingService
     public Collection<DiagramShape> AllShapes { get; } = new();
 
     /// <inheritdoc />
-    public DiagramShape? MasterShape { get; protected set; }
+    public DiagramShape? MasterShape { get; internal set; }
 
     /// <summary>Gets application configuration.</summary>
     /// <value>Configuration.</value>
-    protected AppConfig AppConfig { get; }
+    internal AppConfig AppConfig { get; }
 
     /// <summary>Gets logging environment.</summary>
     /// <value>Logger.</value>
-    protected ILogger Logger { get; }
+    internal ILogger Logger { get; }
 
     /// <summary>Gets visio processing engine.</summary>
     /// <value>Visio execution environment.</value>
-    protected IVisioApplication VisioApplication { get; }
+    internal IVisioApplication VisioApplication { get; }
 
     /// <inheritdoc />
     public Task LayoutDataSetAsync()
