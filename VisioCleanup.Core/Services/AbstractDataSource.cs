@@ -23,7 +23,7 @@ public class AbstractDataSource
     /// <summary>Initialises a new instance of the <see cref="AbstractDataSource" /> class.</summary>
     /// <param name="logger">Logging instance.</param>
     /// <param name="options">Application configuration settings.</param>
-    protected AbstractDataSource(ILogger logger, IOptions<AppConfig> options)
+    public AbstractDataSource(ILogger logger, IOptions<AppConfig> options)
     {
         if (options == null)
         {
@@ -36,18 +36,18 @@ public class AbstractDataSource
 
     /// <summary>Gets application configuration.</summary>
     /// <value>Configuration.</value>
-    protected AppConfig AppConfig { get; }
+    internal AppConfig AppConfig { get; }
 
     /// <summary>Gets logging environment.</summary>
     /// <value>Logger.</value>
-    protected ILogger Logger { get; }
+    internal ILogger Logger { get; }
 
     /// <summary>Create a new shape object.</summary>
     /// <param name="rowResult">Data set row.</param>
     /// <param name="allShapes">set of all shapes.</param>
     /// <param name="previousShape">Parent shape.</param>
     /// <returns>New shape object.</returns>
-    protected DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
+    internal DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
     {
         if (rowResult == null)
         {
