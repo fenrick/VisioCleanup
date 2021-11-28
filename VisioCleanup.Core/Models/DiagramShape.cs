@@ -65,9 +65,9 @@ public class DiagramShape
     /// <value>child shapes.</value>
     internal Collection<DiagramShape> Children { get; }
 
-    /// <summary>Gets the shape above.</summary>
+    /// <summary>Gets or sets the shape above.</summary>
     /// <value>Shape above.</value>
-    internal DiagramShape? Above { get; private set; }
+    internal DiagramShape? Above { get; set; }
 
     /// <summary>Gets or sets base of the shape.</summary>
     /// <value>Bottom of shape.</value>
@@ -160,9 +160,9 @@ public class DiagramShape
     /// <value>depth of children.</value>
     internal int ChildrenDepth { get; set; }
 
-    /// <summary>Gets the shape to the left.</summary>
+    /// <summary>Gets or sets the shape to the left.</summary>
     /// <value>Left shape.</value>
-    internal DiagramShape? Left { get; private set; }
+    internal DiagramShape? Left { get; set; }
 
     /// <summary>Gets or sets left side of the shape.</summary>
     /// <value>Left side of shape.</value>
@@ -172,9 +172,9 @@ public class DiagramShape
     /// <value>Master shape stencil.</value>
     internal string Master { get; set; }
 
-    /// <summary>Gets parent shape of curent shape.</summary>
+    /// <summary>Gets or sets parent shape of curent shape.</summary>
     /// <value>Parent shape.</value>
-    internal DiagramShape? ParentShape { get; private set; }
+    internal DiagramShape? ParentShape { get; set; }
 
     /// <summary>Gets or sets the shape to the right.</summary>
     /// <value>Shape to right.</value>
@@ -563,14 +563,16 @@ public class DiagramShape
 
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Sum(child => child.TotalChildrenCount());
 
-    private string CornerString() =>
-        string.Format(
+    private string CornerString()
+    {
+        return string.Format(
             CultureInfo.CurrentCulture,
             "Top: {0}, Left: {1}, Width: {2}, Height: {3}",
             ConvertMeasurement(this.TopSide),
             ConvertMeasurement(this.LeftSide),
             ConvertMeasurement(this.Width()),
             ConvertMeasurement(this.Height()));
+    }
 
     private bool FixPosition()
     {

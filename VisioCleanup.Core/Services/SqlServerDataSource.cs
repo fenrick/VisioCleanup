@@ -118,7 +118,7 @@ public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDi
 
     /// <summary>Native/Managed Dispose.</summary>
     /// <param name="native">Is this a native dispose.</param>
-    internal virtual void Dispose(bool native)
+    protected virtual void Dispose(bool native)
     {
         if (!native)
         {

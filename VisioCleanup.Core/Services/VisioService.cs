@@ -33,8 +33,9 @@ public class VisioService : AbstractProcessingService, IVisioService
     }
 
     /// <inheritdoc />
-    public Task LoadVisioObjectModelAsync() =>
-        Task.Run(
+    public Task LoadVisioObjectModelAsync()
+    {
+        return Task.Run(
             () =>
                 {
                     try
@@ -94,6 +95,7 @@ public class VisioService : AbstractProcessingService, IVisioService
                         this.VisioApplication.Close();
                     }
                 });
+    }
 
     private DiagramShape? FindClosestOverlap(DiagramShape diagramShape)
     {
