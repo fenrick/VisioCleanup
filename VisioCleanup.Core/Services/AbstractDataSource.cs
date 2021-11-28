@@ -34,20 +34,20 @@ public class AbstractDataSource
         this.AppConfig = options.Value;
     }
 
-    /// <summary>Gets application configuration.</summary>
-    /// <value>Configuration.</value>
-    internal AppConfig AppConfig { get; }
-
     /// <summary>Gets logging environment.</summary>
     /// <value>Logger.</value>
     internal ILogger Logger { get; }
+
+    /// <summary>Gets application configuration.</summary>
+    /// <value>Configuration.</value>
+    protected AppConfig AppConfig { get; }
 
     /// <summary>Create a new shape object.</summary>
     /// <param name="rowResult">Data set row.</param>
     /// <param name="allShapes">set of all shapes.</param>
     /// <param name="previousShape">Parent shape.</param>
     /// <returns>New shape object.</returns>
-    internal DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
+    protected DiagramShape? CreateShape(IReadOnlyDictionary<FieldType, string> rowResult, IDictionary<string, DiagramShape> allShapes, DiagramShape? previousShape)
     {
         if (rowResult == null)
         {

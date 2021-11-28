@@ -67,7 +67,7 @@ public class DiagramShape
 
     /// <summary>Gets the shape above.</summary>
     /// <value>Shape above.</value>
-    internal DiagramShape? Above { get; private set; }
+    internal DiagramShape? Above { get; set; }
 
     /// <summary>Gets or sets base of the shape.</summary>
     /// <value>Bottom of shape.</value>
@@ -162,7 +162,7 @@ public class DiagramShape
 
     /// <summary>Gets the shape to the left.</summary>
     /// <value>Left shape.</value>
-    internal DiagramShape? Left { get; private set; }
+    internal DiagramShape? Left { get; set; }
 
     /// <summary>Gets or sets left side of the shape.</summary>
     /// <value>Left side of shape.</value>
@@ -174,7 +174,7 @@ public class DiagramShape
 
     /// <summary>Gets parent shape of curent shape.</summary>
     /// <value>Parent shape.</value>
-    internal DiagramShape? ParentShape { get; private set; }
+    internal DiagramShape? ParentShape { get; set; }
 
     /// <summary>Gets or sets the shape to the right.</summary>
     /// <value>Shape to right.</value>

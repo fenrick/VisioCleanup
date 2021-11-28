@@ -8,7 +8,7 @@
 namespace VisioCleanup.Core.Models;
 
 /// <summary>Fields within an excel data table.</summary>
-internal enum FieldType
+public enum FieldType
 {
     /// <summary><see cref="VisioCleanup.Core.Models.FieldType.ShapeText" /> field.</summary>
     ShapeText,

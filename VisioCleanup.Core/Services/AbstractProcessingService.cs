@@ -50,19 +50,19 @@ public class AbstractProcessingService : IProcessingService
     public Collection<DiagramShape> AllShapes { get; } = new();
 
     /// <inheritdoc />
-    public DiagramShape? MasterShape { get; internal set; }
+    public DiagramShape? MasterShape { get; protected set; }
 
     /// <summary>Gets application configuration.</summary>
     /// <value>Configuration.</value>
-    internal AppConfig AppConfig { get; }
+    protected AppConfig AppConfig { get; }
 
     /// <summary>Gets logging environment.</summary>
     /// <value>Logger.</value>
-    internal ILogger Logger { get; }
+    protected ILogger Logger { get; }
 
     /// <summary>Gets visio processing engine.</summary>
     /// <value>Visio execution environment.</value>
-    internal IVisioApplication VisioApplication { get; }
+    protected IVisioApplication VisioApplication { get; }
 
     /// <inheritdoc />
     public Task LayoutDataSetAsync()
@@ -129,13 +129,14 @@ public class AbstractProcessingService : IProcessingService
     /// <inheritdoc />
     public Task DrawBitmapStructureAsync()
     {
-        return Task.Run(() =>
-        {
-            var bitmap = this.MasterShape!.Bitmap();
-        });
+        return Task.Run(
+            () =>
+                {
+                    var bitmap = this.MasterShape!.Bitmap();
+                });
     }
 
-    /// <summary>Internal process data sets.</summary>
+    /// <summary>private process data sets.</summary>
     /// <param name="dataSource">Data source to process.</param>
     /// <param name="parameters">Parameters for process.</param>
     /// <returns>Task tracking progress.</returns>
