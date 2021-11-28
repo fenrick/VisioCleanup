@@ -20,8 +20,10 @@ internal abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<Them
 
     protected ThemedValueFormatter(RichTextTheme theme) => this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
 
-    internal void Format(LogEventPropertyValue value, RichTextBox output, string formatString, bool literalTopLevel = false) =>
+    internal void Format(LogEventPropertyValue value, RichTextBox output, string formatString, bool literalTopLevel = false)
+    {
         this.Visit(new ThemedValueFormatterState { Output = output, Format = formatString, IsTopLevel = literalTopLevel }, value);
+    }
 
     protected StyleReset ApplyStyle(RichTextBox output, RichTextThemeStyle style) => this.theme.Apply(output, style);
 }
