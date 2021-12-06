@@ -1,25 +1,28 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="MainPage.xaml.cs" company="Jolyon Suthers">
+// Copyright (c) Jolyon Suthers. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace VisioCleanup.MAUI;
+
+using System;
 
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Essentials;
 
-namespace VisioCleanup.MAUI
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    private int count = 0;
+
+    public MainPage() => this.InitializeComponent();
+
+    private void OnCounterClicked(object sender, EventArgs e)
     {
-        int count = 0;
+        this.count++;
+        this.CounterLabel.Text = $"Current count: {this.count}";
 
-        public MainPage()
-        {
-            InitializeComponent();
-        }
-
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            count++;
-            CounterLabel.Text = $"Current count: {count}";
-
-            SemanticScreenReader.Announce(CounterLabel.Text);
-        }
+        SemanticScreenReader.Announce(this.CounterLabel.Text);
     }
 }

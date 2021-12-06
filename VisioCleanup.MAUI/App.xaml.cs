@@ -1,18 +1,20 @@
-﻿using Microsoft.Maui;
+﻿// -----------------------------------------------------------------------
+// <copyright file="App.xaml.cs" company="Jolyon Suthers">
+// Copyright (c) Jolyon Suthers. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace VisioCleanup.MAUI;
+
 using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.PlatformConfiguration.WindowsSpecific;
 
-using Application = Microsoft.Maui.Controls.Application;
-
-namespace VisioCleanup.MAUI
+public partial class App : Application
 {
-    public partial class App : Application
+    public App()
     {
-        public App()
-        {
-            InitializeComponent();
+        this.InitializeComponent();
 
-            MainPage = new MainPage();
-        }
+        this.MainPage = new MainPage();
     }
 }

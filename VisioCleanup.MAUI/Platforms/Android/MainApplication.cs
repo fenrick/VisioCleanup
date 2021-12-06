@@ -1,4 +1,11 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="MainApplication.cs" company="Jolyon Suthers">
+// Copyright (c) Jolyon Suthers. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 
 using Android.App;
 using Android.Runtime;
