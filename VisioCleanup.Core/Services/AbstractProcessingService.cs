@@ -30,7 +30,7 @@ public class AbstractProcessingService : IProcessingService
     /// <param name="logger">Logger.</param>
     /// <param name="options">Application configuration being passed in.</param>
     /// <param name="visioApplication">Visio Application engine.</param>
-    public AbstractProcessingService(ILogger logger, IOptions<AppConfig> options, IVisioApplication visioApplication)
+    protected AbstractProcessingService(ILogger logger, IOptions<AppConfig> options, IVisioApplication visioApplication)
     {
         if (options is null)
         {
@@ -91,29 +91,12 @@ public class AbstractProcessingService : IProcessingService
                     try
                     {
                         this.VisioApplication.Open();
-                        this.VisioApplication.VisualChanges(state: false);
+                        this.VisioApplication.VisualChanges(state: true);
                         this.Logger.LogInformation("Modelling changes to visio");
 
-                        // update each shape
-                        foreach (var diagramShape in this.AllShapes)
+                        if (this.MasterShape is not null)
                         {
-                            switch (diagramShape.ShapeType)
-                            {
-                                case ShapeType.NewShape:
-                                    this.Logger.LogDebug("Dropping new shape: {Shape}", diagramShape);
-                                    this.VisioApplication.CreateShape(diagramShape);
-                                    break;
-                                case ShapeType.Existing:
-                                    this.Logger.LogDebug("Updating shape: {Shape}", diagramShape);
-                                    this.VisioApplication.UpdateShape(diagramShape);
-                                    break;
-                                case ShapeType.FakeShape:
-                                    // we don't draw this!
-                                    this.Logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
-                                    break;
-                                default:
-                                    throw new InvalidOperationException("ShapeType not matched");
-                            }
+                            this.DrawShape(this.MasterShape);
                         }
                     }
                     finally
@@ -132,7 +115,7 @@ public class AbstractProcessingService : IProcessingService
         return Task.Run(
             () =>
                 {
-                    var bitmap = this.MasterShape!.Bitmap();
+                    this.MasterShape!.Bitmap();
                 });
     }
 
@@ -150,53 +133,30 @@ public class AbstractProcessingService : IProcessingService
                         // open connection to excel
                         dataSource.Open();
 
-                        // open connection to visio
-                        this.VisioApplication.Open();
-                        List<DiagramShape> shapes = new();
-
                         // master shape
                         this.Logger.LogInformation("Create a fake parent shape");
                         this.MasterShape = new DiagramShape(0)
                         {
                             ShapeText = "FAKE MASTER",
                             ShapeType = ShapeType.FakeShape,
-                            LeftSide = this.VisioApplication.PageLeftSide,
-                            TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                            LeftSide = 0,
+                            TopSide = 0,
                         };
-                        shapes.Add(this.MasterShape);
-
-                        var maxRight = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth);
 
                         // retrieve records
                         this.Logger.LogInformation("Loading {dataSource} data", dataSource.Name);
-                        shapes.AddRange(dataSource.RetrieveRecords(parameters));
 
-                        if (shapes.Count == 1)
+                        dataSource.RetrieveRecords(parameters, this.MasterShape);
+                        if (this.MasterShape.Children.Count == 0)
                         {
                             return;
                         }
 
-                        this.AllShapes.Clear();
-                        foreach (var diagramShape in shapes)
-                        {
-                            this.AllShapes.Add(diagramShape);
-                        }
-
-                        this.Logger.LogInformation("Assigning fake parent");
-                        foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
-                        {
-                            this.MasterShape.AddChildShape(shape);
-                        }
-
                         // need to set children relationships.
                         this.Logger.LogInformation("Sorting shapes into lines");
-                        this.SortChildren(this.MasterShape, maxRight);
                     }
                     finally
                     {
-                        this.Logger.LogInformation("Closing connection to visio");
-                        this.VisioApplication.Close();
-
                         this.Logger.LogInformation("Closing connection to excel");
                         dataSource.Close();
                     }
@@ -306,6 +266,34 @@ public class AbstractProcessingService : IProcessingService
 
         var children = orderedChildren.ToList();
         return children;
+    }
+
+    private void DrawShape(DiagramShape diagramShape)
+    {
+        // draw shapw
+        switch (diagramShape.ShapeType)
+        {
+            case ShapeType.NewShape:
+                this.Logger.LogDebug("Dropping new shape: {Shape}", diagramShape);
+                this.VisioApplication.CreateShape(diagramShape);
+                break;
+            case ShapeType.Existing:
+                this.Logger.LogDebug("Updating shape: {Shape}", diagramShape);
+                this.VisioApplication.UpdateShape(diagramShape);
+                break;
+            case ShapeType.FakeShape:
+                // we don't draw this!
+                this.Logger.LogDebug("Skipping fake shape: {Shape}", diagramShape);
+                break;
+            default:
+                throw new InvalidOperationException("ShapeType not matched");
+        }
+
+        // draw children
+        foreach (var child in diagramShape.Children)
+        {
+            this.DrawShape(child);
+        }
     }
 
     /// <summary>Sort the children of the diagram shape.</summary>

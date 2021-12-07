@@ -9,7 +9,6 @@ namespace VisioCleanup.Core.Services;
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
@@ -23,8 +22,8 @@ using VisioCleanup.Core.Contracts;
 using VisioCleanup.Core.Models;
 using VisioCleanup.Core.Models.Config;
 
-/// <inheritdoc />
-public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDisposable
+/// <inheritdoc cref="ISqlServerDataSource" />
+public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDisposable
 {
     private SqlConnection? databaseConnection;
 
@@ -67,7 +66,7 @@ public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDi
     }
 
     /// <inheritdoc />
-    public IEnumerable<DiagramShape> RetrieveRecords(string parameter)
+    public void RetrieveRecords(string parameter, DiagramShape masterShape)
     {
         using SqlCommand command = new(parameter, this.databaseConnection);
         using var reader = command.ExecuteReader();
@@ -99,26 +98,17 @@ public class SqlServerDataSource : AbstractDataSource, ISqlServerDataSource, IDi
                 result = this.CreateShape(rowResults[i], allShapes, result);
             }
         }
-
-        Collection<DiagramShape> shapes = new();
-        foreach (var value in allShapes.Values)
-        {
-            shapes.Add(value);
-        }
-
-        return shapes;
     }
 
     /// <inheritdoc />
     public void Dispose()
     {
         this.Dispose(native: true);
-        GC.SuppressFinalize(this);
     }
 
     /// <summary>Native/Managed Dispose.</summary>
     /// <param name="native">Is this a native dispose.</param>
-    protected virtual void Dispose(bool native)
+    private void Dispose(bool native)
     {
         if (!native)
         {

@@ -23,7 +23,7 @@ public class AbstractDataSource
     /// <summary>Initialises a new instance of the <see cref="AbstractDataSource" /> class.</summary>
     /// <param name="logger">Logging instance.</param>
     /// <param name="options">Application configuration settings.</param>
-    public AbstractDataSource(ILogger logger, IOptions<AppConfig> options)
+    protected AbstractDataSource(ILogger logger, IOptions<AppConfig> options)
     {
         if (options == null)
         {
@@ -65,7 +65,7 @@ public class AbstractDataSource
 
         if (string.IsNullOrEmpty(shapeText))
         {
-            return previousShape;
+            return null;
         }
 
         var shapeIdentifier = string.Format(CultureInfo.CurrentCulture, "{0} {1}:{2}", previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();
