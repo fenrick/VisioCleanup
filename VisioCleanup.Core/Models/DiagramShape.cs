@@ -59,19 +59,42 @@ public class DiagramShape
         this.SortValue = string.Empty;
     }
 
-    internal static AppConfig? AppConfig { get; set; }
+    /// <summary>Gets or sets or setsthe stencil used for drawing shape.</summary>
+    /// <value>Master shape stencil.</value>
+    public string Master { get; set; }
 
-    /// <summary>Gets collection of child shapes.</summary>
-    /// <value>child shapes.</value>
-    internal Collection<DiagramShape> Children { get; }
+    /// <summary>Gets or sets parent shape of curent shape.</summary>
+    /// <value>Parent shape.</value>
+    public DiagramShape? ParentShape { get; set; }
+
+    /// <summary>Gets or sets a unique shape identifier.</summary>
+    /// <value>Unique identifer.</value>
+    public string? ShapeIdentifier { get; set; }
+
+    /// <summary>Gets or sets the shape text.</summary>
+    /// <value>Shape text.</value>
+    public string ShapeText { get; set; }
+
+    /// <summary>Gets or sets the shape type.</summary>
+    /// <value>Shape type.</value>
+    public ShapeType ShapeType { get; set; }
+
+    /// <summary>Gets or sets value used to sort shapes.</summary>
+    /// <value>Sort value.</value>
+    public string? SortValue
+    {
+        get;
+        [UsedImplicitly]
+        set;
+    }
 
     /// <summary>Gets or sets the shape above.</summary>
     /// <value>Shape above.</value>
-    internal DiagramShape? Above { get; set; }
+    public DiagramShape? Above { get; set; }
 
     /// <summary>Gets or sets base of the shape.</summary>
     /// <value>Bottom of shape.</value>
-    internal int BaseSide
+    public int BaseSide
     {
         get => this.baseSide;
         set
@@ -112,7 +135,7 @@ public class DiagramShape
 
     /// <summary>Gets or sets the shape below.</summary>
     /// <value>Shape below.</value>
-    internal DiagramShape? DiagramShapeBelow
+    public DiagramShape? DiagramShapeBelow
     {
         get => this.diagramShapeBelowThisDiagramShape;
         set
@@ -156,29 +179,17 @@ public class DiagramShape
         }
     }
 
-    /// <summary>Gets or sets how deep is the rendered children.</summary>
-    /// <value>depth of children.</value>
-    internal int ChildrenDepth { get; set; }
-
     /// <summary>Gets or sets the shape to the left.</summary>
     /// <value>Left shape.</value>
-    internal DiagramShape? Left { get; set; }
+    public DiagramShape? Left { get; set; }
 
     /// <summary>Gets or sets left side of the shape.</summary>
     /// <value>Left side of shape.</value>
-    internal int LeftSide { get; set; }
-
-    /// <summary>Gets or sets or setsthe stencil used for drawing shape.</summary>
-    /// <value>Master shape stencil.</value>
-    internal string Master { get; set; }
-
-    /// <summary>Gets or sets parent shape of curent shape.</summary>
-    /// <value>Parent shape.</value>
-    internal DiagramShape? ParentShape { get; set; }
+    public int LeftSide { get; set; }
 
     /// <summary>Gets or sets the shape to the right.</summary>
     /// <value>Shape to right.</value>
-    internal DiagramShape? DiagramShapeRight
+    public DiagramShape? DiagramShapeRight
     {
         get => this.diagramShapeToRightOfThisDiagramShape;
         set
@@ -223,7 +234,7 @@ public class DiagramShape
 
     /// <summary>Gets or sets <see cref="diagramShapeToRightOfThisDiagramShape" /> side of the shape.</summary>
     /// <value>Right side of shape.</value>
-    internal int RightSide
+    public int RightSide
     {
         get => this.rightSide;
         set
@@ -263,34 +274,23 @@ public class DiagramShape
         }
     }
 
-    /// <summary>Gets or sets a unique shape identifier.</summary>
-    /// <value>Unique identifer.</value>
-    internal string? ShapeIdentifier { get; set; }
-
-    /// <summary>Gets or sets the shape text.</summary>
-    /// <value>Shape text.</value>
-    internal string ShapeText { get; set; }
-
-    /// <summary>Gets or sets the shape type.</summary>
-    /// <value>Shape type.</value>
-    internal ShapeType ShapeType { get; set; }
-
-    /// <summary>Gets or sets value used to sort shapes.</summary>
-    /// <value>Sort value.</value>
-    internal string? SortValue
-    {
-        get;
-        [UsedImplicitly]
-        set;
-    }
-
     /// <summary>Gets or sets top of the shape.</summary>
     /// <value>Top side of shape.</value>
-    internal int TopSide { get; set; }
+    public int TopSide { get; set; }
 
     /// <summary>Gets or sets visio shape id.</summary>
     /// <value>Visio identifer.</value>
-    internal int VisioId { get; set; }
+    public int VisioId { get; set; }
+
+    internal static AppConfig? AppConfig { get; set; }
+
+    /// <summary>Gets collection of child shapes.</summary>
+    /// <value>child shapes.</value>
+    internal Collection<DiagramShape> Children { get; }
+
+    /// <summary>Gets or sets how deep is the rendered children.</summary>
+    /// <value>depth of children.</value>
+    internal int ChildrenDepth { get; set; }
 
     /// <inheritdoc />
     public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
@@ -563,16 +563,14 @@ public class DiagramShape
 
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Sum(child => child.TotalChildrenCount());
 
-    private string CornerString()
-    {
-        return string.Format(
+    private string CornerString() =>
+        string.Format(
             CultureInfo.CurrentCulture,
             "Top: {0}, Left: {1}, Width: {2}, Height: {3}",
             ConvertMeasurement(this.TopSide),
             ConvertMeasurement(this.LeftSide),
             ConvertMeasurement(this.Width()),
             ConvertMeasurement(this.Height()));
-    }
 
     private bool FixPosition()
     {
