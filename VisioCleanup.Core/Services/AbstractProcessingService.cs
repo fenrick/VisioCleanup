@@ -153,7 +153,9 @@ public class AbstractProcessingService : IProcessingService
                         }
 
                         // need to set children relationships.
-                        this.Logger.LogInformation("Sorting shapes into lines");
+                        this.Logger.LogInformation("Creating all shapes");
+                        this.AllShapes.Clear();
+                        this.PopulateAllShapes(this.MasterShape);
                     }
                     finally
                     {
@@ -266,6 +268,16 @@ public class AbstractProcessingService : IProcessingService
 
         var children = orderedChildren.ToList();
         return children;
+    }
+
+    private void PopulateAllShapes(DiagramShape diagramShape)
+    {
+        this.AllShapes.Add(diagramShape);
+
+        foreach (var child in diagramShape.Children)
+        {
+            this.PopulateAllShapes(child);
+        }
     }
 
     private void DrawShape(DiagramShape diagramShape)
