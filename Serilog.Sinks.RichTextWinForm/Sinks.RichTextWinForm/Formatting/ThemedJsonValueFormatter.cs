@@ -54,15 +54,12 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
             delim = ", ";
 
-            RichTextThemeStyle style;
-            if (scalarValue.Value == null)
+            var style = scalarValue.Value switch
             {
-                style = RichTextThemeStyle.Null;
-            }
-            else
-            {
-                style = scalarValue.Value is string ? RichTextThemeStyle.String : RichTextThemeStyle.Scalar;
-            }
+                string => RichTextThemeStyle.String,
+                null => RichTextThemeStyle.Null,
+                _ => RichTextThemeStyle.Scalar,
+            };
 
             using (this.ApplyStyle(state.Output, style))
             {
