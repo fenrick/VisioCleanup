@@ -212,7 +212,7 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
     {
         var count = 0;
 
-        if (structure.TypeTag != null)
+        if (structure.TypeTag is not null)
         {
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name))
             {
