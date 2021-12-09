@@ -186,7 +186,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
             count += this.Visit(state.Nest(), property.Value);
         }
 
-        if (structure.TypeTag != null)
+        if (structure.TypeTag is not null)
         {
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {
