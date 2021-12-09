@@ -78,8 +78,8 @@ public class VisioService : AbstractProcessingService, IVisioService
                         }
 
                         // set master shape size.
-                        this.MasterShape!.LeftSide = this.MasterShape.Children.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
-                        this.MasterShape!.TopSide = this.MasterShape.Children.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
+                        this.MasterShape!.LeftSide = this.MasterShape.Children.Values.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
+                        this.MasterShape!.TopSide = this.MasterShape.Children.Values.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
 
                         this.MasterShape.ResizeShape();
 

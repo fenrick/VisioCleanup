@@ -265,10 +265,10 @@ public class VisioApplication : IVisioApplication
         if (diagramShape.ShapeType == ShapeType.Existing)
         {
             var shape = this.GetShape(diagramShape.VisioId);
-            shape.BringToFront();
+            // shape.BringToFront();
         }
 
-        Parallel.ForEach(diagramShape.Children, this.SetForeground);
+        // Parallel.ForEach(diagramShape.Children.Values, this.SetForeground);
     }
 
     /// <inheritdoc />

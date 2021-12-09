@@ -123,24 +123,26 @@ public class AbstractProcessingService : IProcessingService
     /// <param name="dataSource">Data source to process.</param>
     /// <param name="parameters">Parameters for process.</param>
     /// <returns>Task tracking progress.</returns>
-    protected Task ProcessDataSetInternalAsync(IDataSource dataSource, string parameters)
-    {
-        return Task.Run(
+    protected Task ProcessDataSetInternalAsync(IDataSource dataSource, string parameters) =>
+        Task.Run(
             () =>
                 {
                     try
                     {
                         // open connection to excel
                         dataSource.Open();
+                        this.VisioApplication.Open();
 
                         // master shape
                         this.Logger.LogInformation("Create a fake parent shape");
                         this.MasterShape = new DiagramShape(0)
                         {
                             ShapeText = "FAKE MASTER",
+                            SortValue = "FAKE MASTER",
                             ShapeType = ShapeType.FakeShape,
-                            LeftSide = 0,
-                            TopSide = 0,
+                            LeftSide = this.VisioApplication.PageLeftSide,
+                            TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                            RightSide = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
                         };
 
                         // retrieve records
@@ -156,14 +158,19 @@ public class AbstractProcessingService : IProcessingService
                         this.Logger.LogInformation("Creating all shapes");
                         this.AllShapes.Clear();
                         this.PopulateAllShapes(this.MasterShape);
+
+                        // sort
+                        this.SortChildren(this.MasterShape, this.MasterShape.RightSide);
                     }
                     finally
                     {
-                        this.Logger.LogInformation("Closing connection to excel");
+                        this.Logger.LogInformation("Closing connection to data source");
                         dataSource.Close();
+
+                        this.Logger.LogInformation("Closing connection to visio");
+                        this.VisioApplication.Close();
                     }
                 });
-    }
 
     private static void ClearExistingRelationships(IEnumerable<DiagramShape> children)
     {
@@ -177,7 +184,7 @@ public class AbstractProcessingService : IProcessingService
 
     private static void SortChildrenByLines(DiagramShape diagramShape, int drawLines)
     {
-        var children = OrderChildren(diagramShape);
+        var children = diagramShape.Children.Values;
 
         ClearExistingRelationships(children);
 
@@ -253,28 +260,11 @@ public class AbstractProcessingService : IProcessingService
         return shape;
     }
 
-    private static List<DiagramShape> OrderChildren(DiagramShape diagramShape)
-    {
-        var orderedChildren = diagramShape.Children.OrderBy<DiagramShape, object>(
-            shape =>
-                {
-                    if (shape.SortValue is null)
-                    {
-                        return 0 - shape.TotalChildrenCount();
-                    }
-
-                    return shape.SortValue;
-                }).ThenBy(shape => shape.ShapeText);
-
-        var children = orderedChildren.ToList();
-        return children;
-    }
-
     private void PopulateAllShapes(DiagramShape diagramShape)
     {
         this.AllShapes.Add(diagramShape);
 
-        foreach (var child in diagramShape.Children)
+        foreach (var child in diagramShape.Children.Values)
         {
             this.PopulateAllShapes(child);
         }
@@ -302,7 +292,7 @@ public class AbstractProcessingService : IProcessingService
         }
 
         // draw children
-        foreach (var child in diagramShape.Children)
+        foreach (var child in diagramShape.Children.Values)
         {
             this.DrawShape(child);
         }
@@ -315,7 +305,7 @@ public class AbstractProcessingService : IProcessingService
     {
         var internalMaxRight = maxRight - DiagramShape.ConvertMeasurement(this.AppConfig.Right);
 
-        var children = OrderChildren(diagramShape);
+        var children = diagramShape.Children.Values;
 
         foreach (var child in children.Where(child => child.Children.Count > 0))
         {
