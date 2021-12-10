@@ -123,8 +123,9 @@ public class AbstractProcessingService : IProcessingService
     /// <param name="dataSource">Data source to process.</param>
     /// <param name="parameters">Parameters for process.</param>
     /// <returns>Task tracking progress.</returns>
-    protected Task ProcessDataSetInternalAsync(IDataSource dataSource, string parameters) =>
-        Task.Run(
+    protected Task ProcessDataSetInternalAsync(IDataSource dataSource, string parameters)
+    {
+        return Task.Run(
             () =>
                 {
                     try
@@ -171,6 +172,7 @@ public class AbstractProcessingService : IProcessingService
                         this.VisioApplication.Close();
                     }
                 });
+    }
 
     private static void ClearExistingRelationships(IEnumerable<DiagramShape> children)
     {
