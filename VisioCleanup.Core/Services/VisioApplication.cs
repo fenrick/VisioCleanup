@@ -328,8 +328,8 @@ public class VisioApplication : IVisioApplication
         };
 
         // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
-        const int SrcStreamFields = 3;
-        var srcStream = new short[updates.Count * SrcStreamFields];
+        const int srcStreamFields = 3;
+        var srcStream = new short[updates.Count * srcStreamFields];
         var unitsArray = new object[updates.Count];
         var resultsArray = new object[updates.Count];
         for (var i = 0; i < updates.Count; i++)
@@ -337,20 +337,20 @@ public class VisioApplication : IVisioApplication
             var item = updates[i];
             var srcStreamTracker = 0;
 
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Section], CultureInfo.CurrentCulture);
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Section], CultureInfo.CurrentCulture);
             srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Row], CultureInfo.CurrentCulture);
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Row], CultureInfo.CurrentCulture);
             srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Cell], CultureInfo.CurrentCulture);
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Cell], CultureInfo.CurrentCulture);
             resultsArray[i] = item[VisioFields.Result];
             unitsArray[i] = item[VisioFields.Unit];
         }
 
         // EXECUTE THE REQUEST
-        const short Flags = 0;
+        const short flags = 0;
         try
         {
-            this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, Flags);
+            this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, flags);
         }
         catch (COMException e)
         {
