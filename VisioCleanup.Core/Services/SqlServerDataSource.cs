@@ -68,7 +68,9 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
     /// <inheritdoc />
     public void RetrieveRecords(string parameter, DiagramShape masterShape)
     {
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
         using SqlCommand command = new(parameter, this.databaseConnection);
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
         using var reader = command.ExecuteReader();
 
         Dictionary<string, DiagramShape> allShapes = new(StringComparer.Ordinal);
