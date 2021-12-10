@@ -54,15 +54,12 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
             delim = ", ";
 
-            RichTextThemeStyle style;
-            if (scalarValue.Value == null)
+            var style = scalarValue.Value switch
             {
-                style = RichTextThemeStyle.Null;
-            }
-            else
-            {
-                style = scalarValue.Value is string ? RichTextThemeStyle.String : RichTextThemeStyle.Scalar;
-            }
+                string => RichTextThemeStyle.String,
+                null => RichTextThemeStyle.Null,
+                _ => RichTextThemeStyle.Scalar,
+            };
 
             using (this.ApplyStyle(state.Output, style))
             {
@@ -186,7 +183,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
             count += this.Visit(state.Nest(), property.Value);
         }
 
-        if (structure.TypeTag != null)
+        if (structure.TypeTag is not null)
         {
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
             {

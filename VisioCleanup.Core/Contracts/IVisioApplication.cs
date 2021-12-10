@@ -40,10 +40,6 @@ public interface IVisioApplication
     /// <returns>Enumerable of DiagramShapes.</returns>
     IEnumerable<DiagramShape> RetrieveShapes();
 
-    /// <summary>If shape exists on Visio diagram, move to foreground.</summary>
-    /// <param name="diagramShape">Shape to be moved.</param>
-    void SetForeground(DiagramShape diagramShape);
-
     /// <summary>Update shape on Visio diagram, moving, resizing, etc.</summary>
     /// <param name="diagramShape">Shape to be updated.</param>
     void UpdateShape(DiagramShape diagramShape);

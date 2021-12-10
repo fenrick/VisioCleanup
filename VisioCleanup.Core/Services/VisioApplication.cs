@@ -14,7 +14,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Office.Interop.Visio;
@@ -250,7 +249,7 @@ public class VisioApplication : IVisioApplication
     }
 
     /// <inheritdoc />
-    public void SetForeground(DiagramShape diagramShape)
+    public void UpdateShape(DiagramShape diagramShape)
     {
         if (this.visioApplication is null)
         {
@@ -262,23 +261,6 @@ public class VisioApplication : IVisioApplication
             throw new ArgumentNullException(nameof(diagramShape));
         }
 
-        if (diagramShape.ShapeType == ShapeType.Existing)
-        {
-            var shape = this.GetShape(diagramShape.VisioId);
-            shape.BringToFront();
-        }
-
-        Parallel.ForEach(diagramShape.Children, this.SetForeground);
-    }
-
-    /// <inheritdoc />
-    public void UpdateShape(DiagramShape diagramShape)
-    {
-        if (this.visioApplication is null)
-        {
-            throw new InvalidOperationException(SystemNotInitialised);
-        }
-
         var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
         var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
         var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
@@ -287,75 +269,35 @@ public class VisioApplication : IVisioApplication
         var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
         var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
 
-        var updates = new List<Dictionary<VisioFields, object>>
+        var updates = new[]
         {
-            new()
-            {
-                { VisioFields.SheetId, diagramShape.VisioId },
-                { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
-                { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
-                { VisioFields.Cell, (short)VisCellIndices.visXFormWidth },
-                { VisioFields.Unit, VisUnitCodes.visMillimeters },
-                { VisioFields.Result, width },
-            },
-            new()
-            {
-                { VisioFields.SheetId, diagramShape.VisioId },
-                { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
-                { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
-                { VisioFields.Cell, (short)VisCellIndices.visXFormHeight },
-                { VisioFields.Unit, VisUnitCodes.visMillimeters },
-                { VisioFields.Result, height },
-            },
-            new()
-            {
-                { VisioFields.SheetId, diagramShape.VisioId },
-                { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
-                { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
-                { VisioFields.Cell, (short)VisCellIndices.visXFormPinX },
-                { VisioFields.Unit, VisUnitCodes.visMillimeters },
-                { VisioFields.Result, newPinX },
-            },
-            new()
-            {
-                { VisioFields.SheetId, diagramShape.VisioId },
-                { VisioFields.Section, (short)VisSectionIndices.visSectionObject },
-                { VisioFields.Row, (short)VisRowIndices.visRowXFormOut },
-                { VisioFields.Cell, (short)VisCellIndices.visXFormPinY },
-                { VisioFields.Unit, VisUnitCodes.visMillimeters },
-                { VisioFields.Result, newPinY },
-            },
+            CreateUpdateObject(
+                diagramShape.VisioId,
+                (short)VisSectionIndices.visSectionObject,
+                (short)VisRowIndices.visRowXFormOut,
+                (short)VisCellIndices.visXFormWidth,
+                width),
+            CreateUpdateObject(
+                diagramShape.VisioId,
+                (short)VisSectionIndices.visSectionObject,
+                (short)VisRowIndices.visRowXFormOut,
+                (short)VisCellIndices.visXFormHeight,
+                height),
+            CreateUpdateObject(
+                diagramShape.VisioId,
+                (short)VisSectionIndices.visSectionObject,
+                (short)VisRowIndices.visRowXFormOut,
+                (short)VisCellIndices.visXFormPinX,
+                newPinX),
+            CreateUpdateObject(
+                diagramShape.VisioId,
+                (short)VisSectionIndices.visSectionObject,
+                (short)VisRowIndices.visRowXFormOut,
+                (short)VisCellIndices.visXFormPinY,
+                newPinY),
         };
 
-        // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
-        const int SrcStreamFields = 3;
-        var srcStream = new short[updates.Count * SrcStreamFields];
-        var unitsArray = new object[updates.Count];
-        var resultsArray = new object[updates.Count];
-        for (var i = 0; i < updates.Count; i++)
-        {
-            var item = updates[i];
-            var srcStreamTracker = 0;
-
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Section], CultureInfo.CurrentCulture);
-            srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Row], CultureInfo.CurrentCulture);
-            srcStreamTracker++;
-            srcStream[(i * SrcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Cell], CultureInfo.CurrentCulture);
-            resultsArray[i] = item[VisioFields.Result];
-            unitsArray[i] = item[VisioFields.Unit];
-        }
-
-        // EXECUTE THE REQUEST
-        const short Flags = 0;
-        try
-        {
-            this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, Flags);
-        }
-        catch (COMException e)
-        {
-            this.logger.LogError(e, "Error occured during updating {Shape}", diagramShape);
-        }
+        this.ExecuteVisioShapeUpdate(diagramShape, updates);
     }
 
     /// <exception cref="System.InvalidOperationException">System not initialised.</exception>
@@ -373,10 +315,56 @@ public class VisioApplication : IVisioApplication
         this.visioApplication.DeferRecalc = state ? (short)1 : (short)0;
     }
 
+    private static Dictionary<VisioFields, object> CreateUpdateObject(int visioId, short section, short row, short cell, double result)
+    {
+        return new()
+        {
+            { VisioFields.SheetId, visioId },
+            { VisioFields.Section, section },
+            { VisioFields.Row, row },
+            { VisioFields.Cell, cell },
+            { VisioFields.Unit, VisUnitCodes.visMillimeters },
+            { VisioFields.Result, result },
+        };
+    }
+
     private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
     {
         var shapeCell = shape.CellsSRC[(short)sectionIndex, (short)rowIndex, (short)cellIndex];
         return shapeCell.Result[VisUnitCodes.visMillimeters];
+    }
+
+    private void ExecuteVisioShapeUpdate(DiagramShape diagramShape, Dictionary<VisioFields, object>[] updates)
+    {
+        // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
+        const int srcStreamFields = 3;
+        var srcStream = new short[updates.Length * srcStreamFields];
+        var unitsArray = new object[updates.Length];
+        var resultsArray = new object[updates.Length];
+        for (var i = 0; i < updates.Length; i++)
+        {
+            var item = updates[i];
+            var srcStreamTracker = 0;
+
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Section], CultureInfo.CurrentCulture);
+            srcStreamTracker++;
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Row], CultureInfo.CurrentCulture);
+            srcStreamTracker++;
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Cell], CultureInfo.CurrentCulture);
+            resultsArray[i] = item[VisioFields.Result];
+            unitsArray[i] = item[VisioFields.Unit];
+        }
+
+        // EXECUTE THE REQUEST
+        const short flags = 0;
+        try
+        {
+            this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, flags);
+        }
+        catch (COMException e)
+        {
+            this.logger.LogError(e, "Error occured during updating {Shape}", diagramShape);
+        }
     }
 
     private int CalculateBaseSide(int visioId)
@@ -428,7 +416,7 @@ public class VisioApplication : IVisioApplication
             throw new InvalidOperationException(SystemNotInitialised);
         }
 
-        return this.shapeCache.GetOrAdd(visioId, sheetId => this.activePage.Shapes.ItemFromID[sheetId]);
+        return this.shapeCache.GetOrAdd(visioId, this.activePage.Shapes.ItemFromID[visioId]);
     }
 
     private void LoadShapeCache()
@@ -480,9 +468,10 @@ public class VisioApplication : IVisioApplication
             return null;
         }
 
-        foreach (var stencil in from object? stencilName in stencilNames where stencilName?.Equals(string.Empty) == false select this.visioApplication.Documents[stencilName])
+        foreach (var masters in stencilNames.Cast<string>().Where(stencilName => !string.IsNullOrEmpty(stencilName))
+                     .Select(stencilName => this.visioApplication.Documents[stencilName].Masters))
         {
-            stencil.Masters.GetNames(out var names);
+            masters.GetNames(out var names);
             if (names is not string[] nameArray)
             {
                 continue;
@@ -491,7 +480,7 @@ public class VisioApplication : IVisioApplication
             var result = nameArray.Contains(key, StringComparer.Ordinal);
             if (result)
             {
-                return stencil.Masters[key];
+                return masters[key];
             }
         }
 

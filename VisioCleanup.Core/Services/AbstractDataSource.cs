@@ -23,7 +23,7 @@ public class AbstractDataSource
     /// <summary>Initialises a new instance of the <see cref="AbstractDataSource" /> class.</summary>
     /// <param name="logger">Logging instance.</param>
     /// <param name="options">Application configuration settings.</param>
-    public AbstractDataSource(ILogger logger, IOptions<AppConfig> options)
+    protected AbstractDataSource(ILogger logger, IOptions<AppConfig> options)
     {
         if (options == null)
         {
@@ -60,12 +60,12 @@ public class AbstractDataSource
         }
 
         var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : string.Empty;
-        var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : null;
         var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : string.Empty;
+        var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : shapeText;
 
         if (string.IsNullOrEmpty(shapeText))
         {
-            return previousShape;
+            return null;
         }
 
         var shapeIdentifier = string.Format(CultureInfo.CurrentCulture, "{0} {1}:{2}", previousShape?.ShapeIdentifier, shapeText, shapeType).Trim();

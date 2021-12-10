@@ -7,8 +7,6 @@
 
 namespace VisioCleanup.Core.Contracts;
 
-using System.Collections.Generic;
-
 using VisioCleanup.Core.Models;
 
 /// <summary>Handle creation and management of excel interop objects.</summary>
@@ -26,6 +24,6 @@ public interface IDataSource
 
     /// <summary>Retrieve records based on parameter.</summary>
     /// <param name="parameter">Parameter.</param>
-    /// <returns>Collection of diagram shapes.</returns>
-    IEnumerable<DiagramShape> RetrieveRecords(string parameter);
+    /// <param name="masterShape">Master shape to add all found shapes to.</param>
+    void RetrieveRecords(string parameter, DiagramShape masterShape);
 }

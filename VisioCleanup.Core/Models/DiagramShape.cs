@@ -8,6 +8,7 @@
 namespace VisioCleanup.Core.Models;
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -49,7 +50,7 @@ public class DiagramShape
     {
         this.logger = Log.ForContext<DiagramShape>();
         this.VisioId = visioId;
-        this.Children = new Collection<DiagramShape>();
+        this.Children = new SortedList<string, DiagramShape>(StringComparer.Ordinal);
         this.TopSide = ConvertMeasurement(AppConfig!.Height);
         this.LeftSide = 0;
         this.RightSide = ConvertMeasurement(AppConfig.Width);
@@ -59,19 +60,37 @@ public class DiagramShape
         this.SortValue = string.Empty;
     }
 
-    internal static AppConfig? AppConfig { get; set; }
+    /// <summary>Gets the stencil used for drawing shape.</summary>
+    /// <value>Master shape stencil.</value>
+    public string Master { get; init; }
 
-    /// <summary>Gets collection of child shapes.</summary>
-    /// <value>child shapes.</value>
-    internal Collection<DiagramShape> Children { get; }
+    /// <summary>Gets parent shape of curent shape.</summary>
+    /// <value>Parent shape.</value>
+    public DiagramShape? ParentShape { get; private set; }
+
+    /// <summary>Gets a unique shape identifier.</summary>
+    /// <value>Unique identifer.</value>
+    public string? ShapeIdentifier { get; init; }
+
+    /// <summary>Gets the shape text.</summary>
+    /// <value>Shape text.</value>
+    public string ShapeText { get; init; }
+
+    /// <summary>Gets or sets the shape type.</summary>
+    /// <value>Shape type.</value>
+    public ShapeType ShapeType { get; set; }
+
+    /// <summary>Gets value used to sort shapes.</summary>
+    /// <value>Sort value.</value>
+    public string SortValue { get; init; }
 
     /// <summary>Gets or sets the shape above.</summary>
     /// <value>Shape above.</value>
-    internal DiagramShape? Above { get; set; }
+    public DiagramShape? Above { get; set; }
 
     /// <summary>Gets or sets base of the shape.</summary>
     /// <value>Bottom of shape.</value>
-    internal int BaseSide
+    public int BaseSide
     {
         get => this.baseSide;
         set
@@ -112,7 +131,7 @@ public class DiagramShape
 
     /// <summary>Gets or sets the shape below.</summary>
     /// <value>Shape below.</value>
-    internal DiagramShape? DiagramShapeBelow
+    public DiagramShape? DiagramShapeBelow
     {
         get => this.diagramShapeBelowThisDiagramShape;
         set
@@ -156,29 +175,17 @@ public class DiagramShape
         }
     }
 
-    /// <summary>Gets or sets how deep is the rendered children.</summary>
-    /// <value>depth of children.</value>
-    internal int ChildrenDepth { get; set; }
-
     /// <summary>Gets or sets the shape to the left.</summary>
     /// <value>Left shape.</value>
-    internal DiagramShape? Left { get; set; }
+    public DiagramShape? Left { get; set; }
 
     /// <summary>Gets or sets left side of the shape.</summary>
     /// <value>Left side of shape.</value>
-    internal int LeftSide { get; set; }
-
-    /// <summary>Gets or sets or setsthe stencil used for drawing shape.</summary>
-    /// <value>Master shape stencil.</value>
-    internal string Master { get; set; }
-
-    /// <summary>Gets or sets parent shape of curent shape.</summary>
-    /// <value>Parent shape.</value>
-    internal DiagramShape? ParentShape { get; set; }
+    public int LeftSide { get; set; }
 
     /// <summary>Gets or sets the shape to the right.</summary>
     /// <value>Shape to right.</value>
-    internal DiagramShape? DiagramShapeRight
+    public DiagramShape? DiagramShapeRight
     {
         get => this.diagramShapeToRightOfThisDiagramShape;
         set
@@ -223,7 +230,7 @@ public class DiagramShape
 
     /// <summary>Gets or sets <see cref="diagramShapeToRightOfThisDiagramShape" /> side of the shape.</summary>
     /// <value>Right side of shape.</value>
-    internal int RightSide
+    public int RightSide
     {
         get => this.rightSide;
         set
@@ -263,34 +270,23 @@ public class DiagramShape
         }
     }
 
-    /// <summary>Gets or sets a unique shape identifier.</summary>
-    /// <value>Unique identifer.</value>
-    internal string? ShapeIdentifier { get; set; }
-
-    /// <summary>Gets or sets the shape text.</summary>
-    /// <value>Shape text.</value>
-    internal string ShapeText { get; set; }
-
-    /// <summary>Gets or sets the shape type.</summary>
-    /// <value>Shape type.</value>
-    internal ShapeType ShapeType { get; set; }
-
-    /// <summary>Gets or sets value used to sort shapes.</summary>
-    /// <value>Sort value.</value>
-    internal string? SortValue
-    {
-        get;
-        [UsedImplicitly]
-        set;
-    }
-
     /// <summary>Gets or sets top of the shape.</summary>
     /// <value>Top side of shape.</value>
-    internal int TopSide { get; set; }
+    public int TopSide { get; set; }
 
     /// <summary>Gets or sets visio shape id.</summary>
     /// <value>Visio identifer.</value>
-    internal int VisioId { get; set; }
+    public int VisioId { get; set; }
+
+    internal static AppConfig? AppConfig { get; set; }
+
+    /// <summary>Gets collection of child shapes.</summary>
+    /// <value>child shapes.</value>
+    internal SortedList<string, DiagramShape> Children { get; }
+
+    /// <summary>Gets or sets how deep is the rendered children.</summary>
+    /// <value>depth of children.</value>
+    internal int ChildrenDepth { get; set; }
 
     /// <inheritdoc />
     public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
@@ -314,12 +310,15 @@ public class DiagramShape
             throw new ArgumentNullException(nameof(childShape));
         }
 
-        if (!this.Children.Contains(childShape))
+        if (this.Children.ContainsValue(childShape))
         {
-            this.Children.Add(childShape);
+            return;
         }
 
-        // add to array
+        // add to list of all children`
+        this.Children.Add(childShape.SortValue, childShape);
+
+        // set parent shape
         childShape.ParentShape = this;
     }
 
@@ -330,7 +329,7 @@ public class DiagramShape
         var result = this.FixPosition();
 
         // depth first correction process
-        foreach (var shape in this.Children.Where(diagramShape => diagramShape.CorrectDiagram()))
+        foreach (var shape in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
         {
             result = true;
         }
@@ -388,12 +387,12 @@ public class DiagramShape
         int height;
         if (this.Children.Count > 0)
         {
-            var minLeftSide = this.Children.Select(shape => shape.LeftSide).Min() - ConvertMeasurement(AppConfig!.Left);
-            var maxRightSide = this.Children.Select(shape => shape.RightSide).Max() + ConvertMeasurement(AppConfig.Right);
+            var minLeftSide = this.Children.Values.Select(shape => shape.LeftSide).Min() - ConvertMeasurement(AppConfig!.Left);
+            var maxRightSide = this.Children.Values.Select(shape => shape.RightSide).Max() + ConvertMeasurement(AppConfig.Right);
             width = maxRightSide - minLeftSide;
 
-            var minBaseSide = this.Children.Select(shape => shape.BaseSide).Min() - ConvertMeasurement(AppConfig.Base);
-            var maxTopSide = this.Children.Select(shape => shape.TopSide).Max() + ConvertMeasurement(AppConfig.Top);
+            var minBaseSide = this.Children.Values.Select(shape => shape.BaseSide).Min() - ConvertMeasurement(AppConfig.Base);
+            var maxTopSide = this.Children.Values.Select(shape => shape.TopSide).Max() + ConvertMeasurement(AppConfig.Top);
             height = maxTopSide - minBaseSide;
         }
         else
@@ -431,7 +430,7 @@ public class DiagramShape
         }
 
         var rowCount = 0;
-        var rowChild = this.Children.First(child => child.Left is null && child.Above is null);
+        var rowChild = this.Children.Values.First(child => child.Left is null && child.Above is null);
 
         while (rowChild is not null)
         {
@@ -482,7 +481,7 @@ public class DiagramShape
 
         // reset all shapes, without triggering movements.
         var children = this.Children;
-        foreach (var child in children)
+        foreach (var child in children.Values)
         {
             child.DiagramShapeRight = null;
             child.DiagramShapeBelow = null;
@@ -490,7 +489,7 @@ public class DiagramShape
 
         var tolerance = ((AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) * ConversionFactor) / 2d;
 
-        var lines = children.OrderBy(shape => shape.LeftSide).Select(shape => shape.LeftSide);
+        var lines = children.Values.OrderBy(shape => shape.LeftSide).Select(shape => shape.LeftSide);
         foreach (var line in lines.Distinct())
         {
             bool AbsoluteShapeSize(DiagramShape shape)
@@ -499,7 +498,7 @@ public class DiagramShape
                 return Math.Abs(side) < tolerance;
             }
 
-            var diagramShapes = children.Where(AbsoluteShapeSize);
+            var diagramShapes = children.Values.Where(AbsoluteShapeSize);
             var bottomOrdered = diagramShapes.OrderBy(shape => shape.BaseSide).ToList();
             DiagramShape? currentShape = null;
 
@@ -525,7 +524,7 @@ public class DiagramShape
             }
         }
 
-        lines = children.OrderBy(shape => shape.TopSide).Select(shape => shape.TopSide);
+        lines = children.Values.OrderBy(shape => shape.TopSide).Select(shape => shape.TopSide);
         foreach (var line in lines.Distinct())
         {
             bool AbsoluteShapeSize(DiagramShape shape)
@@ -534,7 +533,7 @@ public class DiagramShape
                 return Math.Abs(side) < tolerance;
             }
 
-            var diagramShapes = children.Where(AbsoluteShapeSize);
+            var diagramShapes = children.Values.Where(AbsoluteShapeSize);
             var bottomOrdered = diagramShapes.OrderBy(shape => shape.LeftSide);
             DiagramShape? currentShape = null;
 
@@ -561,18 +560,16 @@ public class DiagramShape
         }
     }
 
-    internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Sum(child => child.TotalChildrenCount());
+    internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Values.Sum(child => child.TotalChildrenCount());
 
-    private string CornerString()
-    {
-        return string.Format(
+    private string CornerString() =>
+        string.Format(
             CultureInfo.CurrentCulture,
             "Top: {0}, Left: {1}, Width: {2}, Height: {3}",
             ConvertMeasurement(this.TopSide),
             ConvertMeasurement(this.LeftSide),
             ConvertMeasurement(this.Width()),
             ConvertMeasurement(this.Height()));
-    }
 
     private bool FixPosition()
     {

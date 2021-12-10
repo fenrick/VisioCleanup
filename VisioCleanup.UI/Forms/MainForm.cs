@@ -72,11 +72,11 @@ public partial class MainForm : Form
         {
             foreach (var queryName in this.appConfig.DatabaseQueries.Select(databaseQuery => databaseQuery["Name"]))
             {
-                this.selectSQLStatementComboBox.Items.Add(queryName);
+                this.selectSqlStatementComboBox.Items.Add(queryName);
             }
         }
 
-        this.selectSQLStatementComboBox.SelectedIndex = 0;
+        this.selectSqlStatementComboBox.SelectedIndex = 0;
 
         this.SelectSqlStatementComboBoxSelectionChangeCommitted(sender: null, e: null);
     }
@@ -302,7 +302,7 @@ public partial class MainForm : Form
         }
 
         foreach (var databaseQuery in this.appConfig.DatabaseQueries.Where(
-                     databaseQuery => string.Equals(databaseQuery["Name"], this.selectSQLStatementComboBox.Text, StringComparison.Ordinal)))
+                     databaseQuery => string.Equals(databaseQuery["Name"], this.selectSqlStatementComboBox.Text, StringComparison.Ordinal)))
         {
             this.sqlStatementTextBox.Text = databaseQuery["Query"];
 

@@ -8,7 +8,7 @@
 namespace VisioCleanup.Core.Models;
 
 /// <summary>Type of diagram shape.</summary>
-internal enum ShapeType
+public enum ShapeType
 {
     /// <summary><see cref="VisioCleanup.Core.Models.ShapeType.Existing" /> diagram shape.</summary>
     Existing,
