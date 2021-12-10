@@ -9,8 +9,11 @@ namespace VisioCleanup.Core.Models;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+
+using JetBrains.Annotations;
 
 using MathNet.Numerics.LinearAlgebra;
 
@@ -41,10 +44,6 @@ public class DiagramShape
 
     private int rightSide;
 
-    private int leftSide;
-
-    private int topSide;
-
     /// <summary>Initialises a new instance of the <see cref="DiagramShape" /> class.</summary>
     /// <param name="visioId">Visio shape ID.</param>
     internal DiagramShape(int visioId)
@@ -60,9 +59,6 @@ public class DiagramShape
         this.ShapeText = string.Empty;
         this.SortValue = string.Empty;
     }
-
-    /// <summary>Noifty on shape resize.</summary>
-    public event EventHandler? ShapeResize;
 
     /// <summary>Gets the stencil used for drawing shape.</summary>
     /// <value>Master shape stencil.</value>
@@ -100,7 +96,6 @@ public class DiagramShape
         set
         {
             this.baseSide = value;
-            this.OnShapeResize();
 
             // move shape below
             int movement;
@@ -186,15 +181,7 @@ public class DiagramShape
 
     /// <summary>Gets or sets left side of the shape.</summary>
     /// <value>Left side of shape.</value>
-    public int LeftSide
-    {
-        get => this.leftSide;
-        set
-        {
-            this.leftSide = value;
-            this.OnShapeResize();
-        }
-    }
+    public int LeftSide { get; set; }
 
     /// <summary>Gets or sets the shape to the right.</summary>
     /// <value>Shape to right.</value>
@@ -249,7 +236,6 @@ public class DiagramShape
         set
         {
             this.rightSide = value;
-            this.OnShapeResize();
 
             // move shape to right to spacing width
             int movement;
@@ -286,15 +272,7 @@ public class DiagramShape
 
     /// <summary>Gets or sets top of the shape.</summary>
     /// <value>Top side of shape.</value>
-    public int TopSide
-    {
-        get => this.topSide;
-        set
-        {
-            this.topSide = value;
-            this.OnShapeResize();
-        }
-    }
+    public int TopSide { get; set; }
 
     /// <summary>Gets or sets visio shape id.</summary>
     /// <value>Visio identifer.</value>
@@ -337,9 +315,7 @@ public class DiagramShape
             return;
         }
 
-        childShape.ShapeResize += this.ChildShape_ShapeResize;
-
-        // add to list of all children
+        // add to list of all children`
         this.Children.Add(childShape.SortValue, childShape);
 
         // set parent shape
@@ -585,15 +561,6 @@ public class DiagramShape
     }
 
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Values.Sum(child => child.TotalChildrenCount());
-
-    /// <summary>Notify of a shape resize.</summary>
-    protected virtual void OnShapeResize()
-    {
-        var handler = this.ShapeResize;
-        handler?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void ChildShape_ShapeResize(object? sender, EventArgs e) => this.logger.Debug("Child shape was resized!");
 
     private string CornerString() =>
         string.Format(
