@@ -416,7 +416,7 @@ public class VisioApplication : IVisioApplication
             throw new InvalidOperationException(SystemNotInitialised);
         }
 
-        return this.shapeCache.GetOrAdd(visioId, (sheetId) => this.activePage.Shapes.ItemFromID[sheetId]);
+        return this.shapeCache.GetOrAdd(visioId, this.activePage.Shapes.ItemFromID[visioId]);
     }
 
     private void LoadShapeCache()
