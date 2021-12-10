@@ -14,7 +14,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Office.Interop.Visio;
@@ -247,28 +246,6 @@ public class VisioApplication : IVisioApplication
         }
 
         return shapes;
-    }
-
-    /// <inheritdoc />
-    public void SetForeground(DiagramShape diagramShape)
-    {
-        if (this.visioApplication is null)
-        {
-            throw new InvalidOperationException(SystemNotInitialised);
-        }
-
-        if (diagramShape is null)
-        {
-            throw new ArgumentNullException(nameof(diagramShape));
-        }
-
-        if (diagramShape.ShapeType == ShapeType.Existing)
-        {
-            var shape = this.GetShape(diagramShape.VisioId);
-            // shape.BringToFront();
-        }
-
-        // Parallel.ForEach(diagramShape.Children.Values, this.SetForeground);
     }
 
     /// <inheritdoc />
