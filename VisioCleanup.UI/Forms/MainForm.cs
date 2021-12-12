@@ -97,7 +97,6 @@ public partial class MainForm : Form
             MessageBoxDefaultButton.Button1,
             MessageBoxOptions.ServiceNotification);
         return true;
-
     }
 
     private void HandleException(Exception exception, string messageText)
