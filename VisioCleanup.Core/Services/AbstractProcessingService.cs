@@ -109,6 +109,11 @@ public class AbstractProcessingService : IProcessingService
     /// <param name="parameters">Parameters for process.</param>
     protected void ProcessDataSetInternal(IDataSource dataSource, string parameters)
     {
+        if (dataSource is null)
+        {
+            throw new ArgumentNullException(nameof(dataSource));
+        }
+
         try
         {
             // open connection to excel
