@@ -7,13 +7,10 @@
 
 namespace VisioCleanup.Core.Contracts;
 
-using System.Threading.Tasks;
-
 /// <inheritdoc />
 /// <summary>The VisioService interface.</summary>
 public interface IVisioService : IProcessingService
 {
     /// <summary>Load the visio object model.</summary>
-    /// <returns>A <see cref="System.Threading.Tasks.Task" /> representing the result of the asynchronous operation.</returns>
-    Task LoadVisioObjectModelAsync();
+    void LoadVisioObjectModel();
 }

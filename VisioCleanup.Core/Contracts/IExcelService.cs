@@ -7,13 +7,10 @@
 
 namespace VisioCleanup.Core.Contracts;
 
-using System.Threading.Tasks;
-
 /// <inheritdoc />
 /// <summary>The ExcelService interface.</summary>
 public interface IExcelService : IProcessingService
 {
     /// <summary>Async process excel data set and load into memory.</summary>
-    /// <returns>Async Task.</returns>
-    Task ProcessDataSetAsync();
+    void ProcessDataSet();
 }
