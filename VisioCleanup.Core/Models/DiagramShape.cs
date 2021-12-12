@@ -589,7 +589,7 @@ public class DiagramShape
     /// <summary>Notify of a shape resize.</summary>
     protected virtual void OnShapeResize()
     {
-        var handler = ShapeResize;
+        var handler = this.ShapeResize;
         handler?.Invoke(this, EventArgs.Empty);
     }
 
