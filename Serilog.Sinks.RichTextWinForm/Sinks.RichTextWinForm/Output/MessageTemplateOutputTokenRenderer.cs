@@ -54,15 +54,7 @@ internal sealed class MessageTemplateOutputTokenRenderer : IOutputTemplateTokenR
             }
         }
 
-        ThemedValueFormatter valueFormatter;
-        if (isJson)
-        {
-            valueFormatter = new ThemedJsonValueFormatter(theme, formatProvider);
-        }
-        else
-        {
-            valueFormatter = new ThemedDisplayValueFormatter(theme, formatProvider);
-        }
+        ThemedValueFormatter valueFormatter = isJson ? new ThemedJsonValueFormatter(theme, formatProvider) : new ThemedDisplayValueFormatter(theme, formatProvider);
 
         this.renderer = new ThemedMessageTemplateRenderer(theme, valueFormatter, isLiteral);
     }
