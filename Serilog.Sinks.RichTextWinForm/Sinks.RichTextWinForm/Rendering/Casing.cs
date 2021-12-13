@@ -37,6 +37,8 @@ internal static class Casing
             return value.ToUpperInvariant();
         }
 
+#pragma warning disable S4040 // Strings should be normalized to uppercase
         return string.Equals(formatString, "w", StringComparison.Ordinal) ? value.ToLowerInvariant() : value;
+#pragma warning restore S4040 // Strings should be normalized to uppercase
     }
 }
