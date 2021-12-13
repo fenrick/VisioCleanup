@@ -34,17 +34,14 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
             case string str:
                 this.FormatStringValue(output, format, str);
                 break;
-            case ValueType and (int or uint or long):
-            case ValueType and (ulong or decimal or byte):
-            case ValueType and (sbyte or short or ushort):
-            case ValueType and (float or double):
-                this.FormatNumberValue(scalar, output, format);
-                break;
             case bool b:
                 this.FormatBooleanValue(output, b);
                 break;
             case char ch:
                 this.FormatCharacterValue(output, ch);
+                break;
+            case ValueType:
+                this.FormatNumberValue(scalar, output, format);
                 break;
             default:
                 this.FormatScalarValue(scalar, output, format);
