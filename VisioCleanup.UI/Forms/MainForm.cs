@@ -79,6 +79,8 @@ public partial class MainForm : Form
         this.selectSqlStatementComboBox.SelectedIndex = 0;
 
         this.SelectSqlStatementComboBoxSelectionChangeCommitted(sender: null, e: null);
+
+        this.logger.LogInformation("Application fully loaded.");
     }
 
     private bool CheckProcessingService()
