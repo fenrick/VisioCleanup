@@ -17,13 +17,13 @@ using Serilog.Sinks.RichTextWinForm.Rendering;
 
 using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
 
-internal sealed class NewLineTokenRenderer : OutputTemplateTokenRenderer
+internal sealed class NewLineTokenRenderer : IOutputTemplateTokenRenderer
 {
     private readonly Alignment? alignment;
 
     internal NewLineTokenRenderer(Alignment? alignment) => this.alignment = alignment;
 
-    internal override void Render(LogEvent logEvent, RichTextBox output)
+    public void Render(LogEvent logEvent, RichTextBox output)
     {
         if (this.alignment.HasValue)
         {

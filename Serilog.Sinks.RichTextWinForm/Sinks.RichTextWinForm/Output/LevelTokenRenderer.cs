@@ -16,7 +16,7 @@ using Serilog.Sinks.RichTextWinForm.Themes;
 
 using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
 
-internal sealed class LevelTokenRenderer : OutputTemplateTokenRenderer
+internal sealed class LevelTokenRenderer : IOutputTemplateTokenRenderer
 {
     private static readonly Dictionary<LogEventLevel, RichTextThemeStyle> Levels = new()
     {
@@ -38,7 +38,7 @@ internal sealed class LevelTokenRenderer : OutputTemplateTokenRenderer
         this.levelToken = levelToken;
     }
 
-    internal override void Render(LogEvent logEvent, RichTextBox output)
+    public void Render(LogEvent logEvent, RichTextBox output)
     {
         var moniker = LevelOutputFormat.GetLevelMoniker(logEvent.Level, this.levelToken.Format);
         if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))

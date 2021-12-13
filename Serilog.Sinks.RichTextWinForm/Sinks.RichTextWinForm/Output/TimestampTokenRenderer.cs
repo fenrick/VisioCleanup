@@ -17,7 +17,7 @@ using Serilog.Sinks.RichTextWinForm.Themes;
 
 using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
 
-internal sealed class TimestampTokenRenderer : OutputTemplateTokenRenderer
+internal sealed class TimestampTokenRenderer : IOutputTemplateTokenRenderer
 {
     private readonly IFormatProvider? formatProvider;
 
@@ -32,7 +32,7 @@ internal sealed class TimestampTokenRenderer : OutputTemplateTokenRenderer
         this.formatProvider = formatProvider;
     }
 
-    internal override void Render(LogEvent logEvent, RichTextBox output)
+    public void Render(LogEvent logEvent, RichTextBox output)
     {
         // We need access to ScalarValue.Render() to avoid this alloc; just ensures
         // that custom format providers are supported properly.

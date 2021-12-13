@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="OutputTemplateTokenRenderer.cs" company="Jolyon Suthers">
+// <copyright file="IOutputTemplateTokenRenderer.cs" company="Jolyon Suthers">
 // Copyright (c) Jolyon Suthers. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 using Serilog.Events;
 
-internal abstract class OutputTemplateTokenRenderer
+internal interface IOutputTemplateTokenRenderer
 {
-    internal abstract void Render(LogEvent logEvent, RichTextBox output);
+    public void Render(LogEvent logEvent, RichTextBox output);
 }

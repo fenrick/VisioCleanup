@@ -16,7 +16,7 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextWinForm.Formatting;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
-internal sealed class PropertiesTokenRenderer : OutputTemplateTokenRenderer
+internal sealed class PropertiesTokenRenderer : IOutputTemplateTokenRenderer
 {
     private readonly MessageTemplate outputTemplate;
 
@@ -38,7 +38,7 @@ internal sealed class PropertiesTokenRenderer : OutputTemplateTokenRenderer
         this.valueFormatter = isJson ? new ThemedJsonValueFormatter(theme, formatProvider) : new ThemedDisplayValueFormatter(theme, formatProvider);
     }
 
-    internal override void Render(LogEvent logEvent, RichTextBox output)
+    public void Render(LogEvent logEvent, RichTextBox output)
     {
         var included = logEvent.Properties.Where(p => !TemplateContainsPropertyName(logEvent.MessageTemplate, p.Key) && !TemplateContainsPropertyName(this.outputTemplate, p.Key))
             .Select(p => new LogEventProperty(p.Key, p.Value));
