@@ -13,7 +13,6 @@ namespace Serilog.Sinks.RichTextWinForm;
 
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Forms;
 
 using Serilog.Core;
@@ -25,9 +24,7 @@ public class RichTextWinFormSink : ILogEventSink
 {
     /// <summary>Gets a collection of rich text fields.</summary>
     /// <value>A collection of rich text fields.</value>
-    private static readonly Collection<RichTextBox> RichTextField = new();
-
-    private static readonly Collection<RichTextWinFormSink> Sinks = new();
+    private static readonly Collection<RichTextBox> RichTextFields = new();
 
     private readonly OutputTemplateRenderer formatter;
 
@@ -35,23 +32,11 @@ public class RichTextWinFormSink : ILogEventSink
 
     /// <summary>Initialises a new instance of the <see cref="RichTextWinFormSink" /> class.</summary>
     /// <param name="formatter">Formatter.</param>
-    internal RichTextWinFormSink(OutputTemplateRenderer formatter)
-    {
-        this.formatter = formatter;
-        Sinks.Add(this);
-    }
+    internal RichTextWinFormSink(OutputTemplateRenderer formatter) => this.formatter = formatter;
 
     /// <summary>Add a new rich text box to the sink.</summary>
     /// <param name="richTextBox">RichTextBox to add.</param>
-    public static void AddRichTextBox(RichTextBox richTextBox)
-    {
-        RichTextField.Add(richTextBox);
-
-        foreach (var sink in Sinks)
-        {
-            sink.FlushQueue();
-        }
-    }
+    public static void AddRichTextBox(RichTextBox richTextBox) => RichTextFields.Add(richTextBox);
 
     /// <inheritdoc />
     public void Emit(LogEvent logEvent)
@@ -62,23 +47,23 @@ public class RichTextWinFormSink : ILogEventSink
 
     private void FlushQueue()
     {
-        if (RichTextField.Count <= 0)
+        if (RichTextFields.Count == 0)
         {
             return;
         }
 
         while (this.unprocessedLogEvents.TryDequeue(out var unprocessedLogEvent))
         {
-            foreach (var richTextBox in RichTextField.Where(richTextBox => !richTextBox.IsDisposed))
+            foreach (var richTextField in RichTextFields)
             {
-                if (richTextBox.InvokeRequired)
+                if (richTextField.InvokeRequired)
                 {
                     var @event = unprocessedLogEvent;
-                    richTextBox.Invoke((MethodInvoker)(() => this.formatter.Format(@event, richTextBox)));
+                    richTextField.Invoke((MethodInvoker)(() => this.formatter.Format(@event, richTextField)));
                     continue;
                 }
 
-                this.formatter.Format(unprocessedLogEvent, richTextBox);
+                this.formatter.Format(unprocessedLogEvent, richTextField);
             }
         }
 

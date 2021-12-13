@@ -221,29 +221,17 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
     private void FormatLiteralValue(ScalarValue scalar, RichTextBox output)
     {
-        var value = scalar.Value;
-
-        switch (value)
+        switch (scalar.Value)
         {
             case null:
                 {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Null))
-                    {
-                        output.AppendText("null");
-                    }
-
+                    this.FormatNullValue(output);
                     break;
                 }
 
             case string str:
                 {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.String))
-                    {
-                        using StringWriter buffer = new();
-                        JsonValueFormatter.WriteQuotedJsonString(str, buffer);
-                        output.AppendText(buffer.ToString());
-                    }
-
+                    this.FormatStringValue(output, str);
                     break;
                 }
 
@@ -251,94 +239,141 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
             case ValueType and (ulong or decimal or byte):
             case ValueType and (sbyte or short or ushort):
                 {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Number))
-                    {
-                        output.AppendText(((IFormattable)value).ToString(format: null, CultureInfo.CurrentCulture));
-                    }
-
+                    this.FormatNumberValue(output, scalar.Value);
                     break;
                 }
 
             case double d:
                 {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Number))
-                    {
-                        if (double.IsNaN(d) || double.IsInfinity(d))
-                        {
-                            using StringWriter buffer = new();
-                            JsonValueFormatter.WriteQuotedJsonString(d.ToString(CultureInfo.CurrentCulture), buffer);
-                            output.AppendText(buffer.ToString());
-                            break;
-                        }
-
-                        output.AppendText(d.ToString("R", CultureInfo.CurrentCulture));
-                        break;
-                    }
+                    this.FormatDoubleValue(output, d);
+                    break;
                 }
 
             case float f:
                 {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Number))
-                    {
-                        if (double.IsNaN(f) || double.IsInfinity(f))
-                        {
-                            using StringWriter buffer = new();
-                            JsonValueFormatter.WriteQuotedJsonString(f.ToString(CultureInfo.CurrentCulture), buffer);
-                            output.AppendText(buffer.ToString());
-                            break;
-                        }
-
-                        output.AppendText(f.ToString("R", CultureInfo.CurrentCulture));
-
-                        break;
-                    }
+                    this.FormatFloatValue(output, f);
+                    break;
                 }
 
             case bool b:
                 {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
-                    {
-                        output.AppendText(b ? "true" : "false");
-                    }
-
+                    this.FormatBooleanValue(output, b);
                     break;
                 }
 
             case char ch:
                 {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
-                    {
-                        using StringWriter buffer = new();
-                        JsonValueFormatter.WriteQuotedJsonString(ch.ToString(CultureInfo.CurrentCulture), buffer);
-                        output.AppendText(buffer.ToString());
-                    }
-
+                    this.FormatCharacterValue(output, ch);
                     break;
                 }
 
             case ValueType and (DateTime or DateTimeOffset):
                 {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
-                    {
-                        output.AppendText("\"");
-                        output.AppendText(((IFormattable)value).ToString("O", CultureInfo.CurrentCulture));
-                        output.AppendText("\"");
-                    }
-
+                    this.FormatDateTimeValue(output, scalar.Value);
                     break;
                 }
 
             default:
                 {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
-                    {
-                        using StringWriter buffer = new();
-                        JsonValueFormatter.WriteQuotedJsonString(value.ToString(), buffer);
-                        output.AppendText(buffer.ToString());
-                    }
-
+                    this.FormatScalarValue(output, scalar.Value);
                     break;
                 }
+        }
+    }
+
+    private void FormatScalarValue(RichTextBox output, object value)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
+        {
+            using StringWriter buffer = new();
+            JsonValueFormatter.WriteQuotedJsonString(value.ToString(), buffer);
+            output.AppendText(buffer.ToString());
+        }
+    }
+
+    private void FormatDateTimeValue(RichTextBox output, object value)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
+        {
+            output.AppendText("\"");
+            output.AppendText(((IFormattable)value).ToString("O", CultureInfo.CurrentCulture));
+            output.AppendText("\"");
+        }
+    }
+
+    private void FormatCharacterValue(RichTextBox output, char characterValue)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
+        {
+            using StringWriter buffer = new();
+            JsonValueFormatter.WriteQuotedJsonString(characterValue.ToString(CultureInfo.CurrentCulture), buffer);
+            output.AppendText(buffer.ToString());
+        }
+    }
+
+    private void FormatBooleanValue(RichTextBox output, bool booleanValue)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
+        {
+            output.AppendText(booleanValue ? "true" : "false");
+        }
+    }
+
+    private void FormatFloatValue(RichTextBox output, float floatValue)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+        {
+            if (double.IsNaN(floatValue) || double.IsInfinity(floatValue))
+            {
+                using StringWriter buffer = new();
+                JsonValueFormatter.WriteQuotedJsonString(floatValue.ToString(CultureInfo.CurrentCulture), buffer);
+                output.AppendText(buffer.ToString());
+                return;
+            }
+
+            output.AppendText(floatValue.ToString("R", CultureInfo.CurrentCulture));
+        }
+    }
+
+    private void FormatDoubleValue(RichTextBox output, double doubleValue)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+        {
+            if (double.IsNaN(doubleValue) || double.IsInfinity(doubleValue))
+            {
+                using StringWriter buffer = new();
+                JsonValueFormatter.WriteQuotedJsonString(doubleValue.ToString(CultureInfo.CurrentCulture), buffer);
+                output.AppendText(buffer.ToString());
+                return;
+            }
+
+            output.AppendText(doubleValue.ToString("R", CultureInfo.CurrentCulture));
+        }
+    }
+
+    private void FormatNumberValue(RichTextBox output, object value)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+        {
+            output.AppendText(((IFormattable)value).ToString(format: null, CultureInfo.CurrentCulture));
+        }
+    }
+
+    private void FormatStringValue(RichTextBox output, string stringValue)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.String))
+        {
+            using StringWriter buffer = new();
+            JsonValueFormatter.WriteQuotedJsonString(stringValue, buffer);
+            output.AppendText(buffer.ToString());
+        }
+    }
+
+    private void FormatNullValue(RichTextBox output)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Null))
+        {
+            output.AppendText("null");
         }
     }
 }
