@@ -205,7 +205,7 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         return count;
     }
 
-    private void FormatScalarValue(ScalarValue scalar, RichTextBox output, string format)
+    private void FormatScalarValue(LogEventPropertyValue scalar, RichTextBox output, string format)
     {
         using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
         {
@@ -233,7 +233,7 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         }
     }
 
-    private void FormatNumberValue(ScalarValue scalar, RichTextBox output, string format)
+    private void FormatNumberValue(LogEventPropertyValue scalar, RichTextBox output, string format)
     {
         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
         {
