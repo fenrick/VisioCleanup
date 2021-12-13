@@ -21,7 +21,7 @@ using Serilog.Sinks.RichTextWinForm.Themes;
 /// <summary>Render output as per theme.</summary>
 public class OutputTemplateRenderer : ITextFormatter
 {
-    private readonly OutputTemplateTokenRenderer[] outputTemplateTokenRenderers;
+    private readonly IOutputTemplateTokenRenderer[] outputTemplateTokenRenderers;
 
     /// <summary>Initialises a new instance of the <see cref="OutputTemplateRenderer" /> class.</summary>
     /// <param name="theme">Rich text theme.</param>
@@ -37,7 +37,7 @@ public class OutputTemplateRenderer : ITextFormatter
 
         var template = new MessageTemplateParser().Parse(outputTemplate);
 
-        var templateTokenRenderers = new List<OutputTemplateTokenRenderer>();
+        var templateTokenRenderers = new List<IOutputTemplateTokenRenderer>();
         foreach (var token in template.Tokens)
         {
             if (token is TextToken tt)

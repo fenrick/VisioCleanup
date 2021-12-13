@@ -224,60 +224,33 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
         switch (scalar.Value)
         {
             case null:
-                {
-                    this.FormatNullValue(output);
-                    break;
-                }
-
+                this.FormatNullValue(output);
+                break;
             case string str:
-                {
-                    this.FormatStringValue(output, str);
-                    break;
-                }
-
-            case ValueType and (int or uint or long):
-            case ValueType and (ulong or decimal or byte):
-            case ValueType and (sbyte or short or ushort):
-                {
-                    this.FormatNumberValue(output, scalar.Value);
-                    break;
-                }
-
+                this.FormatStringValue(output, str);
+                break;
             case double d:
-                {
-                    this.FormatDoubleValue(output, d);
-                    break;
-                }
-
+                this.FormatDoubleValue(output, d);
+                break;
             case float f:
-                {
-                    this.FormatFloatValue(output, f);
-                    break;
-                }
-
+                this.FormatFloatValue(output, f);
+                break;
             case bool b:
-                {
-                    this.FormatBooleanValue(output, b);
-                    break;
-                }
-
+                this.FormatBooleanValue(output, b);
+                break;
             case char ch:
-                {
-                    this.FormatCharacterValue(output, ch);
-                    break;
-                }
-
-            case ValueType and (DateTime or DateTimeOffset):
-                {
-                    this.FormatDateTimeValue(output, scalar.Value);
-                    break;
-                }
-
+                this.FormatCharacterValue(output, ch);
+                break;
+            case DateTime:
+            case DateTimeOffset:
+                this.FormatDateTimeValue(output, scalar.Value);
+                break;
+            case ValueType:
+                this.FormatNumberValue(output, scalar.Value);
+                break;
             default:
-                {
-                    this.FormatScalarValue(output, scalar.Value);
-                    break;
-                }
+                this.FormatScalarValue(output, scalar.Value);
+                break;
         }
     }
 

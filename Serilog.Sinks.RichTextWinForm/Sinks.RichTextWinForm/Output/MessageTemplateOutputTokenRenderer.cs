@@ -17,7 +17,7 @@ using Serilog.Sinks.RichTextWinForm.Rendering;
 using Serilog.Sinks.RichTextWinForm.Themes;
 
 /// <summary>Message Template Output Token Renderer.</summary>
-internal sealed class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
+internal sealed class MessageTemplateOutputTokenRenderer : IOutputTemplateTokenRenderer
 {
     private readonly ThemedMessageTemplateRenderer renderer;
 
@@ -54,21 +54,13 @@ internal sealed class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRe
             }
         }
 
-        ThemedValueFormatter valueFormatter;
-        if (isJson)
-        {
-            valueFormatter = new ThemedJsonValueFormatter(theme, formatProvider);
-        }
-        else
-        {
-            valueFormatter = new ThemedDisplayValueFormatter(theme, formatProvider);
-        }
+        ThemedValueFormatter valueFormatter = isJson ? new ThemedJsonValueFormatter(theme, formatProvider) : new ThemedDisplayValueFormatter(theme, formatProvider);
 
         this.renderer = new ThemedMessageTemplateRenderer(theme, valueFormatter, isLiteral);
     }
 
     /// <inheritdoc />
-    internal override void Render(LogEvent logEvent, RichTextBox output)
+    public void Render(LogEvent logEvent, RichTextBox output)
     {
         if (logEvent is null)
         {

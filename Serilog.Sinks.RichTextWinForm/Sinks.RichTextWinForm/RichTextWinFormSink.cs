@@ -13,6 +13,7 @@ namespace Serilog.Sinks.RichTextWinForm;
 
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Forms;
 
 using Serilog.Core;
@@ -47,7 +48,7 @@ public class RichTextWinFormSink : ILogEventSink
 
     private void FlushQueue()
     {
-        if (RichTextFields.Count == 0)
+        if (RichTextFields.Any(textField => textField.IsDisposed))
         {
             return;
         }
