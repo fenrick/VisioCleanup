@@ -8,7 +8,6 @@
 namespace VisioCleanup.Core.Services;
 
 using System;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,5 +30,5 @@ public class ExcelService : AbstractProcessingService, IExcelService
         this.dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
 
     /// <inheritdoc />
-    public Task ProcessDataSetAsync() => this.ProcessDataSetInternalAsync(this.dataSource, string.Empty);
+    public void ProcessDataSet() => this.ProcessDataSetInternal(this.dataSource, string.Empty);
 }

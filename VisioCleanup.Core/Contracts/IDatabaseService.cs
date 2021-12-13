@@ -7,14 +7,11 @@
 
 namespace VisioCleanup.Core.Contracts;
 
-using System.Threading.Tasks;
-
 /// <inheritdoc />
 /// <summary>The IDatabase interface.</summary>
 public interface IDatabaseService : IProcessingService
 {
     /// <summary>Load dataset based on database query, from iserver reporting database.</summary>
     /// <param name="sqlCommand">sql to execute.</param>
-    /// <returns>Async task.</returns>
-    Task ProcessDataSetAsync(string sqlCommand);
+    void ProcessDataSet(string sqlCommand);
 }

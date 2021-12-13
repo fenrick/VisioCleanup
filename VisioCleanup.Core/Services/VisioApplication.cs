@@ -317,7 +317,7 @@ public class VisioApplication : IVisioApplication
 
     private static Dictionary<VisioFields, object> CreateUpdateObject(int visioId, short section, short row, short cell, double result)
     {
-        return new()
+        return new Dictionary<VisioFields, object>
         {
             { VisioFields.SheetId, visioId },
             { VisioFields.Section, section },

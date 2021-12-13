@@ -7,10 +7,11 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Formatting;
 
+using System;
 using System.Windows.Forms;
 
 /// <summary>Formatter State.</summary>
-internal readonly struct ThemedValueFormatterState
+internal readonly struct ThemedValueFormatterState : IEquatable<ThemedValueFormatterState>
 {
     /// <summary>Gets rich text box.</summary>
     /// <value>Output rich text box.</value>
@@ -23,6 +24,18 @@ internal readonly struct ThemedValueFormatterState
     /// <summary>Gets a value indicating whether it's a top level object.</summary>
     /// <value>Top level.</value>
     internal bool IsTopLevel { get; init; }
+
+    /// <inheritdoc />
+    public bool Equals(ThemedValueFormatterState other)
+    {
+        return this.Output.Equals(other.Output) && string.Equals(this.Format, other.Format, StringComparison.InvariantCulture) && (this.IsTopLevel == other.IsTopLevel);
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is ThemedValueFormatterState other && this.Equals(other);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => HashCode.Combine(this.Output, this.Format, this.IsTopLevel);
 
     /// <summary>Next within a new formatter.</summary>
     /// <returns>New formatter state with this state within it.</returns>

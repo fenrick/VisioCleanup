@@ -50,6 +50,8 @@ internal static class LevelOutputFormat
     {
         const int shortLength = 2;
         const int longLength = 3;
+        const int secondDecimalPosition = 10;
+        const int maxWidth = 4;
 
         if (format.Length is not shortLength and not longLength)
         {
@@ -61,7 +63,7 @@ internal static class LevelOutputFormat
         var width = format[1] - '0';
         if (format.Length == longLength)
         {
-            width *= 10;
+            width *= secondDecimalPosition;
             width += format[shortLength] - '0';
         }
 
@@ -69,7 +71,7 @@ internal static class LevelOutputFormat
         {
             case < 1:
                 return string.Empty;
-            case > 4:
+            case > maxWidth:
                 {
                     var stringValue = value.ToString();
                     if (stringValue.Length > width)

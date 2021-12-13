@@ -22,6 +22,8 @@ using Serilog;
 using VisioCleanup.Core;
 using VisioCleanup.UI.Forms;
 
+using WindowsFormsLifetime;
+
 /// <summary>Main execution point.</summary>
 [Guid("E259A812-31F7-4456-BD56-EEDA53E99D7E")]
 public static class Program

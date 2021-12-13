@@ -79,50 +79,41 @@ public partial class MainForm : Form
         this.selectSqlStatementComboBox.SelectedIndex = 0;
 
         this.SelectSqlStatementComboBoxSelectionChangeCommitted(sender: null, e: null);
+
+        this.logger.LogInformation("Application fully loaded.");
     }
 
     private bool CheckProcessingService()
     {
-        if (this.processingService is null)
+        if (this.processingService is not null)
         {
-            this.logger.LogDebug("Processing Service is not defined");
-            this.Invoke(
-                (MethodInvoker)(() => MessageBox.Show(
-                                       @"Unable to layout dataset, none is loaded.",
-                                       @"Error",
-                                       MessageBoxButtons.OK,
-                                       MessageBoxIcon.Error,
-                                       MessageBoxDefaultButton.Button1,
-                                       MessageBoxOptions.ServiceNotification)));
-            return true;
+            return false;
         }
 
-        return false;
+        this.logger.LogDebug("Processing Service is not defined");
+        MessageBox.Show(
+            @"Unable to layout dataset, none is loaded.",
+            @"Error",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Error,
+            MessageBoxDefaultButton.Button1,
+            MessageBoxOptions.ServiceNotification);
+        return true;
     }
 
     private void HandleException(Exception exception, string messageText)
     {
         this.logger.LogError(exception, "Exception");
-        this.Invoke(
-            (MethodInvoker)(() =>
-                                   {
-                                       this.processingService = null;
-                                       this.dataSetBindingSource.DataSource = null;
-                                       this.controlsFlowPanel.Enabled = true;
-                                       MessageBox.Show(
-                                           messageText,
-                                           @"Error",
-                                           MessageBoxButtons.OK,
-                                           MessageBoxIcon.Error,
-                                           MessageBoxDefaultButton.Button1,
-                                           MessageBoxOptions.ServiceNotification);
-                                   }));
+        this.processingService = null;
+        this.dataSetBindingSource.DataSource = null;
+        this.controlsFlowPanel.Enabled = true;
+        MessageBox.Show(messageText, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
     }
 
     /// <summary>The layout data set_ click.</summary>
     /// <param name="sender">The <paramref name="sender" /> .</param>
     /// <param name="eventArgs">The event args.</param>
-    private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
+    private void LayoutDataSet_Click(object sender, EventArgs eventArgs)
     {
         if (this.CheckProcessingService())
         {
@@ -131,24 +122,16 @@ public partial class MainForm : Form
 
         try
         {
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.controlsFlowPanel.Enabled = false;
-                                           this.dataSetBindingSource.DataSource = null;
-                                       }));
+            this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
 
             this.logger.LogDebug("Laying out data set");
 
-            await this.processingService!.LayoutDataSetAsync().ConfigureAwait(false);
+            this.processingService!.LayoutDataSet();
 
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
+            this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
 
-                                           this.controlsFlowPanel.Enabled = true;
-                                       }));
+            this.controlsFlowPanel.Enabled = true;
         }
         catch (Exception e) when (e is InvalidOperationException || e is ArgumentNullException)
         {
@@ -156,7 +139,7 @@ public partial class MainForm : Form
         }
     }
 
-    private async void DrawBitmapButton_Click(object sender, EventArgs e)
+    private void DrawBitmapButton_Click(object sender, EventArgs e)
     {
         if (this.CheckProcessingService())
         {
@@ -165,24 +148,14 @@ public partial class MainForm : Form
 
         try
         {
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.controlsFlowPanel.Enabled = false;
-                                           this.dataSetBindingSource.DataSource = null;
-                                       }));
-
+            this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
             this.logger.LogDebug("Laying out data set");
 
-            await this.processingService!.DrawBitmapStructureAsync().ConfigureAwait(false);
+            this.processingService!.DrawBitmapStructure();
+            this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
 
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
-
-                                           this.controlsFlowPanel.Enabled = true;
-                                       }));
+            this.controlsFlowPanel.Enabled = true;
         }
         catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
         {
@@ -193,31 +166,21 @@ public partial class MainForm : Form
     /// <summary>sThe load from iserver database.</summary>
     /// <param name="sender">The event sender.</param>
     /// <param name="e">The click event.</param>
-    private async void LoadFromIServer_Click(object sender, EventArgs e)
+    private void LoadFromIServer_Click(object sender, EventArgs e)
     {
         try
         {
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.controlsFlowPanel.Enabled = false;
-                                           this.dataSetBindingSource.DataSource = null;
-                                           this.processingService = null;
-                                       }));
-
+            this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
+            this.processingService = null;
             this.logger.LogDebug("Loading objects from database");
 
-            await this.databaseService.ProcessDataSetAsync(this.sqlStatementTextBox.Text).ConfigureAwait(false);
+            this.databaseService.ProcessDataSet(this.sqlStatementTextBox.Text);
+            this.logger.LogDebug("Updating dataset");
+            this.dataSetBindingSource.DataSource = this.databaseService.AllShapes;
+            this.processingService = this.databaseService;
 
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.logger.LogDebug("Updating dataset");
-                                           this.dataSetBindingSource.DataSource = this.databaseService.AllShapes;
-                                           this.processingService = this.databaseService;
-
-                                           this.controlsFlowPanel.Enabled = true;
-                                       }));
+            this.controlsFlowPanel.Enabled = true;
         }
         catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
         {
@@ -228,30 +191,20 @@ public partial class MainForm : Form
     /// <summary>Load Visio Object Model.</summary>
     /// <param name="sender">The <paramref name="sender" /> .</param>
     /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
-    private async void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
+    private void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
     {
         try
         {
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.controlsFlowPanel.Enabled = false;
-                                           this.dataSetBindingSource.DataSource = null;
-                                           this.processingService = null;
-                                       }));
-
+            this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
+            this.processingService = null;
             this.logger.LogDebug("Loading objects from visio");
-            await this.visioService.LoadVisioObjectModelAsync().ConfigureAwait(false);
+            this.visioService.LoadVisioObjectModel();
+            this.logger.LogDebug("Updating data set");
+            this.dataSetBindingSource.DataSource = this.visioService.AllShapes;
+            this.processingService = this.visioService;
 
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.logger.LogDebug("Updating data set");
-                                           this.dataSetBindingSource.DataSource = this.visioService.AllShapes;
-                                           this.processingService = this.visioService;
-
-                                           this.controlsFlowPanel.Enabled = true;
-                                       }));
+            this.controlsFlowPanel.Enabled = true;
         }
         catch (Exception e) when (e is InvalidOperationException || e is ArgumentNullException)
         {
@@ -262,31 +215,21 @@ public partial class MainForm : Form
     /// <summary>Activate the processing of Excel data set.</summary>
     /// <param name="sender">The <paramref name="sender" /> .</param>
     /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
-    private async void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
+    private void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
     {
         try
         {
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.controlsFlowPanel.Enabled = false;
-                                           this.dataSetBindingSource.DataSource = null;
-                                           this.processingService = null;
-                                       }));
-
+            this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
+            this.processingService = null;
             this.logger.LogDebug("Loading objects from excel");
 
-            await this.excelService.ProcessDataSetAsync().ConfigureAwait(false);
+            this.excelService.ProcessDataSet();
+            this.logger.LogDebug("Updating dataset");
+            this.dataSetBindingSource.DataSource = this.excelService.AllShapes;
+            this.processingService = this.excelService;
 
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.logger.LogDebug("Updating dataset");
-                                           this.dataSetBindingSource.DataSource = this.excelService.AllShapes;
-                                           this.processingService = this.excelService;
-
-                                           this.controlsFlowPanel.Enabled = true;
-                                       }));
+            this.controlsFlowPanel.Enabled = true;
         }
         catch (Exception e) when (e is InvalidOperationException || e is ArgumentNullException)
         {
@@ -313,7 +256,7 @@ public partial class MainForm : Form
     /// <summary>sThe update visio drawing_ click.</summary>
     /// <param name="sender">The event sender.</param>
     /// <param name="e">The DPI change details.</param>
-    private async void UpdateVisioDrawing_Click(object sender, EventArgs e)
+    private void UpdateVisioDrawing_Click(object sender, EventArgs e)
     {
         if (this.CheckProcessingService())
         {
@@ -322,24 +265,14 @@ public partial class MainForm : Form
 
         try
         {
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.controlsFlowPanel.Enabled = false;
-                                           this.dataSetBindingSource.DataSource = null;
-                                       }));
-
+            this.controlsFlowPanel.Enabled = false;
+            this.dataSetBindingSource.DataSource = null;
             this.logger.LogDebug("Drawing visio");
 
-            await this.processingService!.UpdateVisioAsync().ConfigureAwait(false);
+            this.processingService!.UpdateVisio();
+            this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
 
-            this.Invoke(
-                (MethodInvoker)(() =>
-                                       {
-                                           this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
-
-                                           this.controlsFlowPanel.Enabled = true;
-                                       }));
+            this.controlsFlowPanel.Enabled = true;
         }
         catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
         {

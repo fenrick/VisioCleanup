@@ -8,7 +8,6 @@
 namespace VisioCleanup.Core.Services;
 
 using System;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,5 +30,5 @@ public class DatabaseService : AbstractProcessingService, IDatabaseService
         this.iserverDatabaseApplication = iserverDatabaseApplication ?? throw new ArgumentNullException(nameof(iserverDatabaseApplication));
 
     /// <inheritdoc />
-    public Task ProcessDataSetAsync(string sqlCommand) => this.ProcessDataSetInternalAsync(this.iserverDatabaseApplication, sqlCommand);
+    public void ProcessDataSet(string sqlCommand) => this.ProcessDataSetInternal(this.iserverDatabaseApplication, sqlCommand);
 }

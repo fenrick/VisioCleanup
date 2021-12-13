@@ -10,11 +10,20 @@ namespace Serilog.Sinks.RichTextWinForm.Themes;
 using System;
 using System.Windows.Forms;
 
-internal readonly struct StyleReset : IDisposable
+internal readonly struct StyleReset : IDisposable, IEquatable<StyleReset>
 {
     private readonly RichTextBox output;
 
     internal StyleReset(RichTextBox output) => this.output = output;
 
     public void Dispose() => RichTextTheme.Reset(this.output);
+
+    /// <inheritdoc />
+    public bool Equals(StyleReset other) => this.output.Equals(other.output);
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is StyleReset other && this.Equals(other);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => this.output.GetHashCode();
 }

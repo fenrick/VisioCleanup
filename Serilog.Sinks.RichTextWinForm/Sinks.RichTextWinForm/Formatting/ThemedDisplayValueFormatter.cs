@@ -26,87 +26,29 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 
     internal void FormatLiteralValue(ScalarValue scalar, RichTextBox output, string format)
     {
-        var value = scalar.Value;
-
-        switch (value)
+        switch (scalar.Value)
         {
             case null:
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Null))
-                    {
-                        output.AppendText("null");
-                    }
-
-                    break;
-                }
-
+                this.FormatNullValue(output);
+                break;
             case string str:
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.String))
-                    {
-                        if (!string.Equals(format, "l", StringComparison.Ordinal))
-                        {
-                            using StringWriter buffer = new();
-                            JsonValueFormatter.WriteQuotedJsonString(str, buffer);
-                            output.AppendText(buffer.ToString());
-
-                            break;
-                        }
-
-                        output.AppendText(str);
-
-                        break;
-                    }
-                }
-
+                this.FormatStringValue(output, format, str);
+                break;
             case ValueType and (int or uint or long):
             case ValueType and (ulong or decimal or byte):
             case ValueType and (sbyte or short or ushort):
             case ValueType and (float or double):
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Number))
-                    {
-                        using StringWriter buffer = new();
-                        scalar.Render(buffer, format, this.formatProvider);
-                        output.AppendText(buffer.ToString());
-                    }
-
-                    break;
-                }
-
+                this.FormatNumberValue(scalar, output, format);
+                break;
             case bool b:
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
-                    {
-                        output.AppendText(b.ToString(CultureInfo.CurrentCulture));
-                    }
-
-                    break;
-                }
-
+                this.FormatBooleanValue(output, b);
+                break;
             case char ch:
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
-                    {
-                        output.AppendText("'");
-                        output.AppendText(ch.ToString(CultureInfo.CurrentCulture));
-                        output.AppendText("'");
-                    }
-
-                    break;
-                }
-
+                this.FormatCharacterValue(output, ch);
+                break;
             default:
-                {
-                    using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
-                    {
-                        using StringWriter buffer = new();
-                        scalar.Render(buffer, format, this.formatProvider);
-                        output.AppendText(buffer.ToString());
-                    }
-
-                    break;
-                }
+                this.FormatScalarValue(scalar, output, format);
+                break;
         }
     }
 
@@ -261,5 +203,68 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         }
 
         return count;
+    }
+
+    private void FormatScalarValue(LogEventPropertyValue scalar, RichTextBox output, string format)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
+        {
+            using StringWriter buffer = new();
+            scalar.Render(buffer, format, this.formatProvider);
+            output.AppendText(buffer.ToString());
+        }
+    }
+
+    private void FormatCharacterValue(RichTextBox output, char charValue)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
+        {
+            output.AppendText("'");
+            output.AppendText(charValue.ToString(CultureInfo.CurrentCulture));
+            output.AppendText("'");
+        }
+    }
+
+    private void FormatBooleanValue(RichTextBox output, bool booleanValue)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
+        {
+            output.AppendText(booleanValue.ToString(CultureInfo.CurrentCulture));
+        }
+    }
+
+    private void FormatNumberValue(LogEventPropertyValue scalar, RichTextBox output, string format)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+        {
+            using StringWriter buffer = new();
+            scalar.Render(buffer, format, this.formatProvider);
+            output.AppendText(buffer.ToString());
+        }
+    }
+
+    private void FormatStringValue(RichTextBox output, string format, string stringValue)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.String))
+        {
+            if (!string.Equals(format, "l", StringComparison.Ordinal))
+            {
+                using StringWriter buffer = new();
+                JsonValueFormatter.WriteQuotedJsonString(stringValue, buffer);
+                output.AppendText(buffer.ToString());
+
+                return;
+            }
+
+            output.AppendText(stringValue);
+        }
+    }
+
+    private void FormatNullValue(RichTextBox output)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Null))
+        {
+            output.AppendText("null");
+        }
     }
 }

@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -65,113 +64,98 @@ public class AbstractProcessingService : IProcessingService
     protected IVisioApplication VisioApplication { get; }
 
     /// <inheritdoc />
-    public Task LayoutDataSetAsync()
+    public void LayoutDataSet()
     {
-        return Task.Run(
-            () =>
-                {
-                    for (var counter = 1; counter <= MaxCorrectRuns; counter++)
-                    {
-                        this.Logger.LogInformation("Correcting diagram: pass {Count}", counter);
+        for (var counter = 1; counter <= MaxCorrectRuns; counter++)
+        {
+            this.Logger.LogInformation("Correcting diagram: pass {Count}", counter);
 
-                        if (!this.MasterShape!.CorrectDiagram())
-                        {
-                            return;
-                        }
-                    }
-                });
+            if (!this.MasterShape!.CorrectDiagram())
+            {
+                return;
+            }
+        }
     }
 
     /// <inheritdoc />
-    public Task UpdateVisioAsync()
+    public void UpdateVisio()
     {
-        return Task.Run(
-            () =>
-                {
-                    try
-                    {
-                        this.VisioApplication.Open();
-                        this.VisioApplication.VisualChanges(state: true);
-                        this.Logger.LogInformation("Modelling changes to visio");
+        try
+        {
+            this.VisioApplication.Open();
+            this.VisioApplication.VisualChanges(state: true);
+            this.Logger.LogInformation("Modelling changes to visio");
 
-                        if (this.MasterShape is not null)
-                        {
-                            this.DrawShape(this.MasterShape);
-                        }
-                    }
-                    finally
-                    {
-                        this.Logger.LogInformation("Recalculating diagrams");
-                        this.VisioApplication.VisualChanges(state: true);
-                        this.VisioApplication.Close();
-                        this.Logger.LogInformation("Visio closed");
-                    }
-                });
+            if (this.MasterShape is not null)
+            {
+                this.DrawShape(this.MasterShape);
+            }
+        }
+        finally
+        {
+            this.Logger.LogInformation("Recalculating diagrams");
+            this.VisioApplication.VisualChanges(state: true);
+            this.VisioApplication.Close();
+            this.Logger.LogInformation("Visio closed");
+        }
     }
 
     /// <inheritdoc />
-    public Task DrawBitmapStructureAsync()
-    {
-        return Task.Run(
-            () =>
-                {
-                    this.MasterShape!.Bitmap();
-                });
-    }
+    public void DrawBitmapStructure() => this.MasterShape!.Bitmap();
 
     /// <summary>private process data sets.</summary>
     /// <param name="dataSource">Data source to process.</param>
     /// <param name="parameters">Parameters for process.</param>
-    /// <returns>Task tracking progress.</returns>
-    protected Task ProcessDataSetInternalAsync(IDataSource dataSource, string parameters)
+    protected void ProcessDataSetInternal(IDataSource dataSource, string parameters)
     {
-        return Task.Run(
-            () =>
-                {
-                    try
-                    {
-                        // open connection to excel
-                        dataSource.Open();
-                        this.VisioApplication.Open();
+        if (dataSource is null)
+        {
+            throw new ArgumentNullException(nameof(dataSource));
+        }
 
-                        // master shape
-                        this.Logger.LogInformation("Create a fake parent shape");
-                        this.MasterShape = new DiagramShape(0)
-                        {
-                            ShapeText = "FAKE MASTER",
-                            SortValue = "FAKE MASTER",
-                            ShapeType = ShapeType.FakeShape,
-                            LeftSide = this.VisioApplication.PageLeftSide,
-                            TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
-                            RightSide = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
-                        };
+        try
+        {
+            // open connection to excel
+            dataSource.Open();
+            this.VisioApplication.Open();
 
-                        // retrieve records
-                        this.Logger.LogInformation("Loading {dataSource} data", dataSource.Name);
+            // master shape
+            this.Logger.LogInformation("Create a fake parent shape");
+            this.MasterShape = new DiagramShape(0)
+            {
+                ShapeText = "FAKE MASTER",
+                SortValue = "FAKE MASTER",
+                ShapeType = ShapeType.FakeShape,
+                LeftSide = this.VisioApplication.PageLeftSide,
+                TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                RightSide = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
+            };
 
-                        dataSource.RetrieveRecords(parameters, this.MasterShape);
-                        if (this.MasterShape.Children.Count == 0)
-                        {
-                            return;
-                        }
+            // retrieve records
+            this.Logger.LogInformation("Loading {dataSource} data", dataSource.Name);
 
-                        // need to set children relationships.
-                        this.Logger.LogInformation("Creating all shapes");
-                        this.AllShapes.Clear();
-                        this.PopulateAllShapes(this.MasterShape);
+            dataSource.RetrieveRecords(parameters, this.MasterShape);
+            if (this.MasterShape.Children.Count == 0)
+            {
+                return;
+            }
 
-                        // sort
-                        this.SortChildren(this.MasterShape, this.MasterShape.RightSide);
-                    }
-                    finally
-                    {
-                        this.Logger.LogInformation("Closing connection to data source");
-                        dataSource.Close();
+            // need to set children relationships.
+            this.Logger.LogInformation("Creating all shapes");
+            this.AllShapes.Clear();
+            this.PopulateAllShapes(this.MasterShape);
 
-                        this.Logger.LogInformation("Closing connection to visio");
-                        this.VisioApplication.Close();
-                    }
-                });
+            // sort
+            this.SortChildren(this.MasterShape, this.MasterShape.RightSide);
+        }
+        finally
+        {
+            this.Logger.LogInformation("Closing connection to data source");
+            dataSource.Close();
+
+            this.Logger.LogInformation("Closing connection to visio");
+            this.VisioApplication.Close();
+        }
     }
 
     private static void ClearExistingRelationships(IEnumerable<DiagramShape> children)

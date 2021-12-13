@@ -10,7 +10,6 @@ namespace VisioCleanup.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,68 +32,64 @@ public class VisioService : AbstractProcessingService, IVisioService
     }
 
     /// <inheritdoc />
-    public Task LoadVisioObjectModelAsync()
+    public void LoadVisioObjectModel()
     {
-        return Task.Run(
-            () =>
-                {
-                    try
-                    {
-                        this.VisioApplication.Open();
+        try
+        {
+            this.VisioApplication.Open();
 
-                        List<DiagramShape> shapes = new();
+            List<DiagramShape> shapes = new();
 
-                        this.Logger.LogInformation("Create a fake parent shape");
-                        this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE MASTER", ShapeType = ShapeType.FakeShape };
-                        shapes.Add(this.MasterShape);
+            this.Logger.LogInformation("Create a fake parent shape");
+            this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE MASTER", ShapeType = ShapeType.FakeShape };
+            shapes.Add(this.MasterShape);
 
-                        this.Logger.LogInformation("Retrieving selected shapes");
-                        shapes.AddRange(this.VisioApplication.RetrieveShapes());
+            this.Logger.LogInformation("Retrieving selected shapes");
+            shapes.AddRange(this.VisioApplication.RetrieveShapes());
 
-                        if (shapes.Count == 1)
-                        {
-                            return;
-                        }
+            if (shapes.Count == 1)
+            {
+                return;
+            }
 
-                        this.AllShapes.Clear();
-                        foreach (var diagramShape in shapes)
-                        {
-                            this.AllShapes.Add(diagramShape);
-                        }
+            this.AllShapes.Clear();
+            foreach (var diagramShape in shapes)
+            {
+                this.AllShapes.Add(diagramShape);
+            }
 
-                        // turn overlaps into parents
-                        this.Logger.LogInformation("Finding parent shapes");
-                        foreach (var diagramShape in this.AllShapes)
-                        {
-                            var parentShape = this.FindClosestOverlap(diagramShape);
-                            parentShape?.AddChildShape(diagramShape);
-                        }
+            // turn overlaps into parents
+            this.Logger.LogInformation("Finding parent shapes");
+            foreach (var diagramShape in this.AllShapes)
+            {
+                var parentShape = this.FindClosestOverlap(diagramShape);
+                parentShape?.AddChildShape(diagramShape);
+            }
 
-                        // add children to master shape.
-                        this.Logger.LogInformation("Assigning fake parent");
-                        foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
-                        {
-                            this.MasterShape!.AddChildShape(shape);
-                        }
+            // add children to master shape.
+            this.Logger.LogInformation("Assigning fake parent");
+            foreach (var shape in this.AllShapes.Where(shape => !shape.HasParent() && (shape.ShapeType != ShapeType.FakeShape)))
+            {
+                this.MasterShape!.AddChildShape(shape);
+            }
 
-                        // set master shape size.
-                        this.MasterShape!.LeftSide = this.MasterShape.Children.Values.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
-                        this.MasterShape!.TopSide = this.MasterShape.Children.Values.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
+            // set master shape size.
+            this.MasterShape!.LeftSide = this.MasterShape.Children.Values.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
+            this.MasterShape!.TopSide = this.MasterShape.Children.Values.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
 
-                        this.MasterShape.ResizeShape();
+            this.MasterShape.ResizeShape();
 
-                        this.Logger.LogInformation("Finding shape neighours");
-                        foreach (var shape in this.AllShapes)
-                        {
-                            shape.FindNeighbours();
-                        }
-                    }
-                    finally
-                    {
-                        this.Logger.LogInformation("Closing connection to visio");
-                        this.VisioApplication.Close();
-                    }
-                });
+            this.Logger.LogInformation("Finding shape neighours");
+            foreach (var shape in this.AllShapes)
+            {
+                shape.FindNeighbours();
+            }
+        }
+        finally
+        {
+            this.Logger.LogInformation("Closing connection to visio");
+            this.VisioApplication.Close();
+        }
     }
 
     private DiagramShape? FindClosestOverlap(DiagramShape diagramShape)
