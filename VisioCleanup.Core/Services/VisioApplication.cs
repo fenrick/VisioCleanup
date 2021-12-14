@@ -265,10 +265,10 @@ public class VisioApplication : IVisioApplication
 
         var updates = new[]
         {
-            CreateUpdateObject(diagramShape.VisioId, (short)VisCellIndices.visXFormWidth, width),
-            CreateUpdateObject(diagramShape.VisioId, (short)VisCellIndices.visXFormHeight, height),
-            CreateUpdateObject(diagramShape.VisioId, (short)VisCellIndices.visXFormPinX, newPinX),
-            CreateUpdateObject(diagramShape.VisioId, (short)VisCellIndices.visXFormPinY, newPinY),
+            CreateUpdateObject((short)VisCellIndices.visXFormWidth, width),
+            CreateUpdateObject((short)VisCellIndices.visXFormHeight, height),
+            CreateUpdateObject((short)VisCellIndices.visXFormPinX, newPinX),
+            CreateUpdateObject((short)VisCellIndices.visXFormPinY, newPinY),
         };
 
         this.ExecuteVisioShapeUpdate(diagramShape, updates);
@@ -289,10 +289,12 @@ public class VisioApplication : IVisioApplication
         this.visioApplication.DeferRecalc = state ? (short)1 : (short)0;
     }
 
-    private static Dictionary<VisioFields, object> CreateUpdateObject(int visioId, short cell, double result)
+    private static object[] CreateUpdateObject(short cell, double newValue)
     {
-        var updateObject = new Dictionary<VisioFields, object>() { { VisioFields.SheetId, visioId }, { VisioFields.Cell, cell }, { VisioFields.Result, result } };
-        return updateObject;
+        var result = new object[2];
+        result[(int)VisioFields.Cell] = cell;
+        result[(int)VisioFields.Result] = newValue;
+        return result;
     }
 
     private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
@@ -301,7 +303,7 @@ public class VisioApplication : IVisioApplication
         return shapeCell.Result[VisUnitCodes.visMillimeters];
     }
 
-    private void ExecuteVisioShapeUpdate(DiagramShape diagramShape, Dictionary<VisioFields, object>[] updates)
+    private void ExecuteVisioShapeUpdate(DiagramShape diagramShape, object[][] updates)
     {
         // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
         const int srcStreamFields = 3;
@@ -317,8 +319,8 @@ public class VisioApplication : IVisioApplication
             srcStreamTracker++;
             srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16((short)VisRowIndices.visRowXFormOut, CultureInfo.InvariantCulture);
             srcStreamTracker++;
-            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Cell], CultureInfo.InvariantCulture);
-            resultsArray[i] = item[VisioFields.Result];
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[(int)VisioFields.Cell], CultureInfo.InvariantCulture);
+            resultsArray[i] = item[(int)VisioFields.Result];
             unitsArray[i] = VisUnitCodes.visMillimeters;
         }
 
