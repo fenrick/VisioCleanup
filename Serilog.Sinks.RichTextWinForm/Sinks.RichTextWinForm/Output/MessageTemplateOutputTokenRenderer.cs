@@ -47,6 +47,7 @@ internal sealed class MessageTemplateOutputTokenRenderer : IOutputTemplateTokenR
                     case 'j':
                         isJson = true;
                         break;
+
                     // ReSharper disable once RedundantEmptySwitchSection
                     default:
                         // do nothing
