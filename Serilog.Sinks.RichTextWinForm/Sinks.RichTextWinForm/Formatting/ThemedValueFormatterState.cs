@@ -28,7 +28,18 @@ internal readonly struct ThemedValueFormatterState : IEquatable<ThemedValueForma
     /// <inheritdoc />
     public bool Equals(ThemedValueFormatterState other)
     {
-        return this.Output.Equals(other.Output) && string.Equals(this.Format, other.Format, StringComparison.InvariantCulture) && (this.IsTopLevel == other.IsTopLevel);
+        if (this.Output.Equals(other.Output))
+        {
+            if (string.Equals(this.Format, other.Format, StringComparison.InvariantCulture))
+            {
+                if (this.IsTopLevel == other.IsTopLevel)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /// <inheritdoc />
