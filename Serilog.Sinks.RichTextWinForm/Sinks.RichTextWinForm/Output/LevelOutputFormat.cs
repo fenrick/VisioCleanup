@@ -67,37 +67,39 @@ internal static class LevelOutputFormat
             width += format[shortLength] - '0';
         }
 
-        switch (width)
+        if (width < 1)
         {
-            case < 1:
-                return string.Empty;
-            case > maxWidth:
-                {
-                    var stringValue = value.ToString();
-                    if (stringValue.Length > width)
-                    {
-                        stringValue = stringValue[..width];
-                    }
-
-                    return Casing.Format(stringValue, formatString: null);
-                }
-
-            default:
-                {
-                    var index = (int)value;
-                    if (index is < 0 or > (int)LogEventLevel.Fatal)
-                    {
-                        return Casing.Format(value.ToString(), format);
-                    }
-
-                    return format[0] switch
-                    {
-                        'w' => LowercaseLevelMap[index][width - 1],
-                        'u' => UppercaseLevelMap[index][width - 1],
-                        't' => TitleCaseLevelMap[index][width - 1],
-                        _ => Casing.Format(value.ToString(), format),
-                    };
-                }
+            return string.Empty;
         }
+
+        if (width > maxWidth)
+        {
+            var stringValue = value.ToString();
+            if (stringValue.Length > width)
+            {
+                stringValue = stringValue[..width];
+            }
+
+            return Casing.Format(stringValue, formatString: null);
+        }
+
+        var index = (int)value;
+        if (index is >= 0 and <= (int)LogEventLevel.Fatal)
+        {
+            return MapCaseLevelMoniker(format, index, width, value.ToString());
+        }
+
+        return Casing.Format(value.ToString(), format);
+    }
+
+    private static string MapCaseLevelMoniker(string format, int index, int width, string value)
+    {
+        return format[0] switch
+        {
+            'w' => LowercaseLevelMap[index][width - 1],
+            'u' => UppercaseLevelMap[index][width - 1],
+            't' => TitleCaseLevelMap[index][width - 1],
+            _ => Casing.Format(value, format),
+        };
     }
 }
