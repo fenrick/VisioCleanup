@@ -600,14 +600,13 @@ public class DiagramShape
     private string CornerString()
     {
         var culture = CultureInfo.CurrentCulture;
-        var cornerString = string.Format(
+        return string.Format(
             culture,
             CornerStringFormat,
             ConvertMeasurement(this.TopSide),
             ConvertMeasurement(this.LeftSide),
             ConvertMeasurement(this.Width()),
             ConvertMeasurement(this.Height()));
-        return cornerString;
     }
 
     private bool FixPosition()
