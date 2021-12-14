@@ -42,7 +42,12 @@ public readonly struct ThemeColours : IEquatable<ThemeColours>
     /// <inheritdoc />
     public readonly bool Equals(ThemeColours other)
     {
-        return EqualityComparer<Color?>.Default.Equals(this.Foreground, other.Foreground) && EqualityComparer<Color?>.Default.Equals(this.Background, other.Background);
+        if (!EqualityComparer<Color?>.Default.Equals(this.Foreground, other.Foreground))
+        {
+            return false;
+        }
+
+        return EqualityComparer<Color?>.Default.Equals(this.Background, other.Background);
     }
 
     /// <inheritdoc />

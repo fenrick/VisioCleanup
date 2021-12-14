@@ -31,6 +31,8 @@ public class DiagramShape
 
     private const string HorizontalDirection = "horizontal";
 
+    private const string CornerStringFormat = "Top: {0}, Left: {1}, Width: {2}, Height: {3}";
+
     private readonly ILogger logger;
 
     private int baseSide;
@@ -597,9 +599,10 @@ public class DiagramShape
 
     private string CornerString()
     {
+        var culture = CultureInfo.CurrentCulture;
         return string.Format(
-            CultureInfo.CurrentCulture,
-            "Top: {0}, Left: {1}, Width: {2}, Height: {3}",
+            culture,
+            CornerStringFormat,
             ConvertMeasurement(this.TopSide),
             ConvertMeasurement(this.LeftSide),
             ConvertMeasurement(this.Width()),
