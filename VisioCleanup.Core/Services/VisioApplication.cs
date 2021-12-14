@@ -51,13 +51,7 @@ public class VisioApplication : IVisioApplication
     {
         SheetId,
 
-        Section,
-
-        Row,
-
         Cell,
-
-        Unit,
 
         Result,
     }
@@ -271,30 +265,10 @@ public class VisioApplication : IVisioApplication
 
         var updates = new[]
         {
-            CreateUpdateObject(
-                diagramShape.VisioId,
-                (short)VisSectionIndices.visSectionObject,
-                (short)VisRowIndices.visRowXFormOut,
-                (short)VisCellIndices.visXFormWidth,
-                width),
-            CreateUpdateObject(
-                diagramShape.VisioId,
-                (short)VisSectionIndices.visSectionObject,
-                (short)VisRowIndices.visRowXFormOut,
-                (short)VisCellIndices.visXFormHeight,
-                height),
-            CreateUpdateObject(
-                diagramShape.VisioId,
-                (short)VisSectionIndices.visSectionObject,
-                (short)VisRowIndices.visRowXFormOut,
-                (short)VisCellIndices.visXFormPinX,
-                newPinX),
-            CreateUpdateObject(
-                diagramShape.VisioId,
-                (short)VisSectionIndices.visSectionObject,
-                (short)VisRowIndices.visRowXFormOut,
-                (short)VisCellIndices.visXFormPinY,
-                newPinY),
+            CreateUpdateObject(diagramShape.VisioId, (short)VisCellIndices.visXFormWidth, width),
+            CreateUpdateObject(diagramShape.VisioId, (short)VisCellIndices.visXFormHeight, height),
+            CreateUpdateObject(diagramShape.VisioId, (short)VisCellIndices.visXFormPinX, newPinX),
+            CreateUpdateObject(diagramShape.VisioId, (short)VisCellIndices.visXFormPinY, newPinY),
         };
 
         this.ExecuteVisioShapeUpdate(diagramShape, updates);
@@ -315,17 +289,10 @@ public class VisioApplication : IVisioApplication
         this.visioApplication.DeferRecalc = state ? (short)1 : (short)0;
     }
 
-    private static Dictionary<VisioFields, object> CreateUpdateObject(int visioId, short section, short row, short cell, double result)
+    private static Dictionary<VisioFields, object> CreateUpdateObject(int visioId, short cell, double result)
     {
-        return new Dictionary<VisioFields, object>
-        {
-            { VisioFields.SheetId, visioId },
-            { VisioFields.Section, section },
-            { VisioFields.Row, row },
-            { VisioFields.Cell, cell },
-            { VisioFields.Unit, VisUnitCodes.visMillimeters },
-            { VisioFields.Result, result },
-        };
+        var updateObject = new Dictionary<VisioFields, object>() { { VisioFields.SheetId, visioId }, { VisioFields.Cell, cell }, { VisioFields.Result, result } };
+        return updateObject;
     }
 
     private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
@@ -346,13 +313,13 @@ public class VisioApplication : IVisioApplication
             var item = updates[i];
             var srcStreamTracker = 0;
 
-            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Section], CultureInfo.CurrentCulture);
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16((short)VisSectionIndices.visSectionObject, CultureInfo.InvariantCulture);
             srcStreamTracker++;
-            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Row], CultureInfo.CurrentCulture);
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16((short)VisRowIndices.visRowXFormOut, CultureInfo.InvariantCulture);
             srcStreamTracker++;
-            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Cell], CultureInfo.CurrentCulture);
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[VisioFields.Cell], CultureInfo.InvariantCulture);
             resultsArray[i] = item[VisioFields.Result];
-            unitsArray[i] = item[VisioFields.Unit];
+            unitsArray[i] = VisUnitCodes.visMillimeters;
         }
 
         // EXECUTE THE REQUEST
