@@ -355,7 +355,7 @@ public class DiagramShape
         var result = this.FixPosition();
 
         // depth first correction process
-        foreach (var shape in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
+        foreach (var _ in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
         {
             result = true;
         }
