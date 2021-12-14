@@ -49,8 +49,6 @@ public class VisioApplication : IVisioApplication
 
     private enum VisioFields
     {
-        SheetId,
-
         Cell,
 
         Result,

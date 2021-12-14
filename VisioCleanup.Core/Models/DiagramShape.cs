@@ -355,7 +355,7 @@ public class DiagramShape
         var result = this.FixPosition();
 
         // depth first correction process
-        foreach (var shape in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
+        foreach (var _ in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
         {
             result = true;
         }
@@ -513,7 +513,7 @@ public class DiagramShape
             child.DiagramShapeBelow = null;
         }
 
-        var tolerance = ((AppConfig!.HorizontalSpacing + AppConfig!.VerticalSpacing) * ConversionFactor) / 2d;
+        var tolerance = ((AppConfig!.HorizontalSpacing + AppConfig.VerticalSpacing) * ConversionFactor) / 2d;
 
         var lines = children.Values.OrderBy(shape => shape.LeftSide).Select(shape => shape.LeftSide);
         foreach (var line in lines.Distinct())
