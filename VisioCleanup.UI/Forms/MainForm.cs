@@ -9,6 +9,7 @@ namespace VisioCleanup.UI.Forms;
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Extensions.Logging;
@@ -113,7 +114,7 @@ public partial class MainForm : Form
     /// <summary>The layout data set_ click.</summary>
     /// <param name="sender">The <paramref name="sender" /> .</param>
     /// <param name="eventArgs">The event args.</param>
-    private void LayoutDataSet_Click(object sender, EventArgs eventArgs)
+    private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
     {
         if (this.CheckProcessingService())
         {
@@ -125,9 +126,12 @@ public partial class MainForm : Form
             this.controlsFlowPanel.Enabled = false;
             this.dataSetBindingSource.DataSource = null;
 
-            this.logger.LogDebug("Laying out data set");
-
-            this.processingService!.LayoutDataSet();
+            await Task.Run(
+                () =>
+                    {
+                        this.logger.LogDebug("Laying out data set");
+                        this.processingService!.LayoutDataSet();
+                    });
 
             this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
 
@@ -150,7 +154,7 @@ public partial class MainForm : Form
         {
             this.controlsFlowPanel.Enabled = false;
             this.dataSetBindingSource.DataSource = null;
-            this.logger.LogDebug("Laying out data set");
+            this.logger.LogDebug("Generating bitmap");
 
             this.processingService!.DrawBitmapStructure();
             this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
@@ -166,16 +170,22 @@ public partial class MainForm : Form
     /// <summary>sThe load from iserver database.</summary>
     /// <param name="sender">The event sender.</param>
     /// <param name="e">The click event.</param>
-    private void LoadFromIServer_Click(object sender, EventArgs e)
+    private async void LoadFromIServer_Click(object sender, EventArgs e)
     {
         try
         {
             this.controlsFlowPanel.Enabled = false;
             this.dataSetBindingSource.DataSource = null;
             this.processingService = null;
-            this.logger.LogDebug("Loading objects from database");
 
-            this.databaseService.ProcessDataSet(this.sqlStatementTextBox.Text);
+            await Task.Run(
+                () =>
+                    {
+                        this.logger.LogDebug("Loading objects from database");
+
+                        this.databaseService.ProcessDataSet(this.sqlStatementTextBox.Text);
+                    });
+
             this.logger.LogDebug("Updating dataset");
             this.dataSetBindingSource.DataSource = this.databaseService.AllShapes;
             this.processingService = this.databaseService;
@@ -191,15 +201,22 @@ public partial class MainForm : Form
     /// <summary>Load Visio Object Model.</summary>
     /// <param name="sender">The <paramref name="sender" /> .</param>
     /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
-    private void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
+    private async void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
     {
         try
         {
             this.controlsFlowPanel.Enabled = false;
             this.dataSetBindingSource.DataSource = null;
             this.processingService = null;
-            this.logger.LogDebug("Loading objects from visio");
-            this.visioService.LoadVisioObjectModel();
+
+            await Task.Run(
+                () =>
+                    {
+                        this.logger.LogDebug("Loading objects from visio");
+                        this.visioService.LoadVisioObjectModel();
+                    });
+
+
             this.logger.LogDebug("Updating data set");
             this.dataSetBindingSource.DataSource = this.visioService.AllShapes;
             this.processingService = this.visioService;
@@ -215,16 +232,21 @@ public partial class MainForm : Form
     /// <summary>Activate the processing of Excel data set.</summary>
     /// <param name="sender">The <paramref name="sender" /> .</param>
     /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
-    private void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
+    private async void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
     {
         try
         {
             this.controlsFlowPanel.Enabled = false;
             this.dataSetBindingSource.DataSource = null;
             this.processingService = null;
-            this.logger.LogDebug("Loading objects from excel");
 
-            this.excelService.ProcessDataSet();
+            await Task.Run(
+                () =>
+                    {
+                        this.logger.LogDebug("Loading objects from excel");
+                        this.excelService.ProcessDataSet();
+                    });
+
             this.logger.LogDebug("Updating dataset");
             this.dataSetBindingSource.DataSource = this.excelService.AllShapes;
             this.processingService = this.excelService;
@@ -256,7 +278,7 @@ public partial class MainForm : Form
     /// <summary>sThe update visio drawing_ click.</summary>
     /// <param name="sender">The event sender.</param>
     /// <param name="e">The DPI change details.</param>
-    private void UpdateVisioDrawing_Click(object sender, EventArgs e)
+    private async void UpdateVisioDrawing_Click(object sender, EventArgs e)
     {
         if (this.CheckProcessingService())
         {
@@ -267,9 +289,14 @@ public partial class MainForm : Form
         {
             this.controlsFlowPanel.Enabled = false;
             this.dataSetBindingSource.DataSource = null;
-            this.logger.LogDebug("Drawing visio");
 
-            this.processingService!.UpdateVisio();
+            await Task.Run(
+                () =>
+                    {
+                        this.logger.LogDebug("Drawing visio");
+                        this.processingService!.UpdateVisio();
+                    });
+
             this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
 
             this.controlsFlowPanel.Enabled = true;
