@@ -217,6 +217,7 @@ public class VisioApplication : IVisioApplication
             DiagramShape diagramShape = new(sheetId)
             {
                 ShapeText = selected.Text,
+                SortValue = selected.Text,
                 ShapeType = ShapeType.Existing,
                 LeftSide = this.CalculateLeftSide(sheetId),
                 RightSide = this.CalculateRightSide(sheetId),
