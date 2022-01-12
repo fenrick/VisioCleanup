@@ -298,7 +298,7 @@ public class AbstractProcessingService : IProcessingService
             this.SortChildren(child, internalMaxRight);
         }
 
-        var maxLine = this.CalculateMaxLine(diagramShape, children);
+        var maxLine = this.CalculateMaxLine(diagramShape);
 
         var lineCount = 0;
         var lines = 1;
@@ -377,10 +377,10 @@ public class AbstractProcessingService : IProcessingService
         diagramShape.CorrectDiagram();
     }
 
-    private double CalculateMaxLine(DiagramShape diagramShape, IEnumerable<DiagramShape> children)
+    private double CalculateMaxLine(DiagramShape diagramShape )
     {
         double maxLine;
-        var childrenCount = children.Count();
+        var childrenCount = diagramShape.Children.Count;
         if (childrenCount == (diagramShape.TotalChildrenCount() - 1))
         {
             maxLine = Math.Round(Math.Sqrt(childrenCount), MidpointRounding.AwayFromZero);
