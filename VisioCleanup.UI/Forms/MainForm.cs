@@ -109,7 +109,7 @@ public partial class MainForm : Form
     /// <summary>The layout data set_ click.</summary>
     /// <param name="sender">The <paramref name="sender" /> .</param>
     /// <param name="eventArgs">The event args.</param>
-    private async void LayoutDataSet_Click(object sender, EventArgs eventArgs)
+    private async Task LayoutDataSet_ClickAsync(object sender, EventArgs eventArgs)
     {
         if (this.CheckProcessingService())
         {
@@ -165,7 +165,7 @@ public partial class MainForm : Form
     /// <summary>sThe load from iserver database.</summary>
     /// <param name="sender">The event sender.</param>
     /// <param name="e">The click event.</param>
-    private async void LoadFromIServer_Click(object sender, EventArgs e)
+    private async Task LoadFromIServer_ClickAsync(object sender, EventArgs e)
     {
         try
         {
@@ -196,7 +196,7 @@ public partial class MainForm : Form
     /// <summary>Load Visio Object Model.</summary>
     /// <param name="sender">The <paramref name="sender" /> .</param>
     /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
-    private async void LoadVisioObjects_Click(object sender, EventArgs eventArgs)
+    private async Task LoadVisioObjects_ClickAsync(object sender, EventArgs eventArgs)
     {
         try
         {
@@ -226,7 +226,7 @@ public partial class MainForm : Form
     /// <summary>Activate the processing of Excel data set.</summary>
     /// <param name="sender">The <paramref name="sender" /> .</param>
     /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
-    private async void ProcessExcelDataSet_Click(object sender, EventArgs eventArgs)
+    private async Task ProcessExcelDataSet_ClickAsync(object sender, EventArgs eventArgs)
     {
         try
         {
@@ -272,7 +272,7 @@ public partial class MainForm : Form
     /// <summary>sThe update visio drawing_ click.</summary>
     /// <param name="sender">The event sender.</param>
     /// <param name="e">The DPI change details.</param>
-    private async void UpdateVisioDrawing_Click(object sender, EventArgs e)
+    private async Task UpdateVisioDrawing_ClickAsync(object sender, EventArgs e)
     {
         if (this.CheckProcessingService())
         {
