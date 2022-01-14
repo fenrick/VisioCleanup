@@ -30,7 +30,7 @@ internal readonly struct ThemedValueFormatterState : IEquatable<ThemedValueForma
             return false;
         }
 
-        if (!string.Equals(this.Format, other.Format, StringComparison.InvariantCulture))
+        if (!string.Equals(this.Format, other.Format, StringComparison.Ordinal))
         {
             return false;
         }
