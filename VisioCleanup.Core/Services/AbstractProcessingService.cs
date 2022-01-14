@@ -219,7 +219,7 @@ public class AbstractProcessingService : IProcessingService
         }
 
         var maxLine = this.CalculateMaxLine(diagramShape);
-        this.ClearExistingRelationships(diagramShape);
+        ClearExistingRelationships(diagramShape);
         Queue<DiagramShape> childrenQueue = new(children);
 
         while (childrenQueue.Count > 0)
