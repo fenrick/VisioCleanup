@@ -406,12 +406,14 @@ public class DiagramShape
         if (this.Children.Count > 0)
         {
             // default values
-            var minLeftSide = this.Children.Values.Select(shape => shape.LeftSide).Min() - ConvertMeasurement(AppConfig!.Left);
-            var maxRightSide = this.Children.Values.Select(shape => shape.RightSide).Max() + ConvertMeasurement(AppConfig.Right);
+            var childShapes = this.Children.Values;
+
+            var minLeftSide = childShapes.Min(shape => shape.LeftSide) - ConvertMeasurement(AppConfig!.Left);
+            var maxRightSide = childShapes.Max(shape => shape.RightSide) + ConvertMeasurement(AppConfig.Right);
             width = maxRightSide - minLeftSide;
 
-            var minBaseSide = this.Children.Values.Select(shape => shape.BaseSide).Min() - ConvertMeasurement(AppConfig.Base);
-            var maxTopSide = this.Children.Values.Select(shape => shape.TopSide).Max() + ConvertMeasurement(AppConfig.Top);
+            var minBaseSide = childShapes.Min(shape => shape.BaseSide) - ConvertMeasurement(AppConfig.Base);
+            var maxTopSide = childShapes.Max(shape => shape.TopSide) + ConvertMeasurement(AppConfig.Top);
             height = maxTopSide - minBaseSide;
 
             // compare to left
