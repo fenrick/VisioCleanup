@@ -106,7 +106,7 @@ public partial class MainForm
             processExcelDataSet.TabIndex = 2;
             processExcelDataSet.Text = "Excel Load";
             processExcelDataSet.UseVisualStyleBackColor = true;
-            processExcelDataSet.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.ProcessExcelDataSet_ClickAsync(o, args); });
+            processExcelDataSet.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.ProcessExcelDataSet_ClickAsync(); });
             // 
             // loadVisioObjects
             // 
@@ -118,7 +118,7 @@ public partial class MainForm
             loadVisioObjects.TabIndex = 3;
             loadVisioObjects.Text = "Visio Load";
             loadVisioObjects.UseVisualStyleBackColor = true;
-            loadVisioObjects.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.LoadVisioObjects_ClickAsync(o, args); });
+            loadVisioObjects.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.LoadVisioObjects_ClickAsync(); });
             // 
             // logSplitContainer
             // 
@@ -196,7 +196,7 @@ public partial class MainForm
             loadFromIServerButton.TabIndex = 1;
             loadFromIServerButton.Text = "iServer Load";
             loadFromIServerButton.UseVisualStyleBackColor = true;
-            loadFromIServerButton.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.LoadFromIServer_ClickAsync(o, args); });
+            loadFromIServerButton.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.LoadFromIServer_ClickAsync(); });
             // 
             // layoutDataSet
             // 
@@ -208,7 +208,7 @@ public partial class MainForm
             layoutDataSet.TabIndex = 4;
             layoutDataSet.Text = "Layout";
             layoutDataSet.UseVisualStyleBackColor = true;
-            layoutDataSet.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.LayoutDataSet_ClickAsync(o, args); });
+            layoutDataSet.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.LayoutDataSet_ClickAsync(); });
             // 
             // updateVisioDrawing
             // 
@@ -220,7 +220,7 @@ public partial class MainForm
             updateVisioDrawing.TabIndex = 5;
             updateVisioDrawing.Text = "Update Visio";
             updateVisioDrawing.UseVisualStyleBackColor = true;
-            updateVisioDrawing.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.UpdateVisioDrawing_ClickAsync(o, args); });
+            updateVisioDrawing.Click += new System.EventHandler(async delegate(object? o, EventArgs args) { await this.UpdateVisioDrawing_ClickAsync(); });
             // 
             // drawBitmapButton
             // 
