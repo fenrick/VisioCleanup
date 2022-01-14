@@ -13,6 +13,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
         <NeutralLanguage>en-AU</NeutralLanguage>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
