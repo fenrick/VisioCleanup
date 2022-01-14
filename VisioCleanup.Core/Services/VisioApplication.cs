@@ -7,12 +7,9 @@
 
 namespace VisioCleanup.Core.Services;
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 using Microsoft.Extensions.Logging;
@@ -217,6 +214,7 @@ public class VisioApplication : IVisioApplication
             DiagramShape diagramShape = new(sheetId)
             {
                 ShapeText = selected.Text,
+                SortValue = selected.Text,
                 ShapeType = ShapeType.Existing,
                 LeftSide = this.CalculateLeftSide(sheetId),
                 RightSide = this.CalculateRightSide(sheetId),

@@ -7,7 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Themes;
 
-using System;
 using System.ComponentModel;
 
 /// <summary>Elements styled by a console theme.</summary>

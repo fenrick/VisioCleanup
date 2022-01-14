@@ -7,10 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Output;
 
-using System;
-using System.IO;
-using System.Windows.Forms;
-
 using Serilog.Events;
 using Serilog.Sinks.RichTextWinForm.Themes;
 

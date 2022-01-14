@@ -7,7 +7,6 @@
 
 namespace VisioCleanup.Core;
 
-using System;
 using System.Security;
 
 using Serilog;

@@ -7,14 +7,10 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Output;
 
-using System.Collections.Generic;
-using System.Windows.Forms;
-
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Sinks.RichTextWinForm.Rendering;
 using Serilog.Sinks.RichTextWinForm.Themes;
-
-using Padding = Serilog.Sinks.RichTextWinForm.Rendering.Padding;
 
 internal sealed class LevelTokenRenderer : IOutputTemplateTokenRenderer
 {

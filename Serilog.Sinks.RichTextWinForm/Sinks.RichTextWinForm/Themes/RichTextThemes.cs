@@ -7,9 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Themes;
 
-using System.Collections.Generic;
-using System.Drawing;
-
 /// <summary>Themes.</summary>
 internal static class RichTextThemes
 {

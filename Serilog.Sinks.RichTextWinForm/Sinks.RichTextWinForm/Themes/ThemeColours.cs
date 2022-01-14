@@ -7,9 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Themes;
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
 /// <summary>Styling applied using the <see cref="System.ConsoleColor" />enumeration.</summary>

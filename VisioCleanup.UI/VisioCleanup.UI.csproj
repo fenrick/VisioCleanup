@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <RootNamespace>VisioCleanup.UI</RootNamespace>
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -13,21 +13,28 @@
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
         <NeutralLanguage>en-AU</NeutralLanguage>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DocumentationFile>VisioCleanup.UI.xml</DocumentationFile>
+        <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     </PropertyGroup>
 
 
     <PropertyGroup>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisLevel>6.0-recommended</AnalysisLevel>
     </PropertyGroup>
 
     <PropertyGroup>
         <CodeAnalysisRuleSet>VisioCleanup.UI.ruleset</CodeAnalysisRuleSet>
         <StartupObject>VisioCleanup.UI.Program</StartupObject>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     </PropertyGroup>
 
     <ItemGroup>
@@ -73,7 +80,7 @@
     <ItemGroup>
         <PackageReference Include="Serilog.Enrichers.Thread" Version="3.2.0-dev-00752" />
         <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
-        <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.1-dev-00296" />
         <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>

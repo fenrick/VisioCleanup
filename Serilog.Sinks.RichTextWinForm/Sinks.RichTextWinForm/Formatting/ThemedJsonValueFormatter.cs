@@ -7,10 +7,7 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Formatting;
 
-using System;
 using System.Globalization;
-using System.IO;
-using System.Windows.Forms;
 
 using Serilog.Events;
 using Serilog.Formatting.Json;

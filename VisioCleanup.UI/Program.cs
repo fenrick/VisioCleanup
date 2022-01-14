@@ -5,14 +5,11 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-
 [assembly: CLSCompliant(true)]
 
 namespace VisioCleanup.UI;
 
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

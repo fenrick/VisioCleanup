@@ -7,9 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Rendering;
 
-using System.IO;
-using System.Windows.Forms;
-
 using Serilog.Parsing;
 
 internal static class Padding

@@ -7,10 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Rendering;
 
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextWinForm.Formatting;

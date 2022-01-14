@@ -7,9 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Formatting;
 
-using System;
-using System.Windows.Forms;
-
 /// <summary>Formatter State.</summary>
 internal readonly struct ThemedValueFormatterState : IEquatable<ThemedValueFormatterState>
 {
@@ -33,7 +30,7 @@ internal readonly struct ThemedValueFormatterState : IEquatable<ThemedValueForma
             return false;
         }
 
-        if (!string.Equals(this.Format, other.Format, StringComparison.InvariantCulture))
+        if (!string.Equals(this.Format, other.Format, StringComparison.Ordinal))
         {
             return false;
         }

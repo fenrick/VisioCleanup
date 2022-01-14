@@ -7,9 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Themes;
 
-using System;
-using System.Windows.Forms;
-
 internal readonly struct StyleReset : IDisposable, IEquatable<StyleReset>
 {
     private readonly RichTextBox output;

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <Authors>Jolyon Suthers</Authors>
         <Product>Visio Cleanup</Product>
@@ -13,6 +13,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
         <NeutralLanguage>en-AU</NeutralLanguage>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,7 +26,7 @@
 
     <PropertyGroup>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisLevel>6.0-recommended</AnalysisLevel>
     </PropertyGroup>
 
     <ItemGroup>

@@ -7,11 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Themes;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-
 /// <summary>The class for styled rich text output.</summary>
 public class RichTextTheme
 {
