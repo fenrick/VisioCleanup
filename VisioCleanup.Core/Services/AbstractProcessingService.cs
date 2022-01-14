@@ -155,7 +155,7 @@ public class AbstractProcessingService : IProcessingService
         }
     }
 
-    private void ClearExistingRelationships(DiagramShape diagramShape)
+    private static void ClearExistingRelationships(DiagramShape diagramShape)
     {
         // clear existing relationships.
         foreach (var child in diagramShape.Children.Values)
