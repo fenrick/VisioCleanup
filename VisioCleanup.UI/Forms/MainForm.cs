@@ -211,7 +211,6 @@ public partial class MainForm : Form
                         this.visioService.LoadVisioObjectModel();
                     });
 
-
             this.logger.LogDebug("Updating data set");
             this.dataSetBindingSource.DataSource = this.visioService.AllShapes;
             this.processingService = this.visioService;
