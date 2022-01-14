@@ -382,8 +382,22 @@ resharper_web_config_wrong_module_highlighting = warning
 ####################
 # Analysers        #
 ####################
-dotnet_diagnostic.gcop209.severity = none
-dotnet_diagnostic.gcop317.severity = none
+dotnet_diagnostic.ca1848.severity = none
+dotnet_diagnostic.gcop111.severity = warning
 dotnet_diagnostic.gcop132.severity = none
-dotnet_diagnostic.sa1600.severity = none
+dotnet_diagnostic.gcop187.severity = warning
+dotnet_diagnostic.gcop205.severity = warning
+dotnet_diagnostic.gcop209.severity = none
+dotnet_diagnostic.gcop212.severity = warning
+dotnet_diagnostic.gcop317.severity = none
+dotnet_diagnostic.gcop403.severity = warning
 dotnet_diagnostic.gcop406.severity = suggestion
+dotnet_diagnostic.gcop434.severity = warning
+dotnet_diagnostic.gcop438.severity = warning
+dotnet_diagnostic.gcop444.severity = warning
+dotnet_diagnostic.gcop546.severity = warning
+dotnet_diagnostic.ma0003.severity = warning
+dotnet_diagnostic.sa1305.severity = warning
+dotnet_diagnostic.sa1412.severity = warning
+dotnet_diagnostic.sa1600.severity = none
+dotnet_diagnostic.sa1609.severity = warning
