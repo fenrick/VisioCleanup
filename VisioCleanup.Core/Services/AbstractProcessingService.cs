@@ -43,7 +43,7 @@ public class AbstractProcessingService : IProcessingService
     }
 
     /// <inheritdoc />
-    public Collection<DiagramShape> AllShapes { get; } = new();
+    public ICollection<DiagramShape> AllShapes { get; } = new Collection<DiagramShape>();
 
     /// <inheritdoc />
     public DiagramShape? MasterShape { get; protected set; }

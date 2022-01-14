@@ -14,7 +14,7 @@ public interface IProcessingService
 {
     /// <summary>Gets collection of all diagram shapes.</summary>
     /// <value>all diagram spaces.</value>
-    Collection<DiagramShape> AllShapes { get; }
+    ICollection<DiagramShape> AllShapes { get; }
 
     /// <summary>Gets the digram shape at the top of the tree.</summary>
     /// <value>Master shape.</value>
