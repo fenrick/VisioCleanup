@@ -31,7 +31,7 @@ public static class RichTextWinFormLoggerConfigurationExtensions
     {
         OutputTemplateRenderer formatter = new(RichTextThemes.Default, outputTemplate, formatProvider: null);
 
-        return loggerSinkConfiguration.Sink(new RichTextWinFormSink(formatter), restrictedToMinimumLevel, levelSwitch: null);
+        return loggerSinkConfiguration.Sink(new RichTextWinFormSink(formatter), restrictedToMinimumLevel);
     }
 
     /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
