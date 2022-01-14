@@ -290,4 +290,16 @@ public partial class MainForm : Form
             this.HandleException(exception, @"Visio need to be setup for this to work.");
         }
     }
+
+#pragma warning disable VSTHRD100 // Avoid async void methods
+    private async void UpdateVisioDrawingEventHandler(object o, EventArgs args) => await this.UpdateVisioDrawing_ClickAsync();
+
+    private async void LayoutDataSetEventHandler(object o, EventArgs args) => await this.LayoutDataSet_ClickAsync();
+
+    private async void LoadFromIServerButtonEventHandler(object o, EventArgs args) => await this.LoadFromIServer_ClickAsync();
+
+    private async void LoadVisioObjectsEventHandler(object o, EventArgs args) => await this.LoadVisioObjects_ClickAsync();
+
+    private async void ProcessExcelDataSetEventHandler(object o, EventArgs args) => await this.ProcessExcelDataSet_ClickAsync();
+#pragma warning restore VSTHRD100 // Avoid async void methods
 }
