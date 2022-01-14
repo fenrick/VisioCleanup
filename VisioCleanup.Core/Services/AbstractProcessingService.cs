@@ -262,7 +262,7 @@ public class AbstractProcessingService : IProcessingService
             childShape = childrenQueue.Peek();
 
             // find current width
-            var lineWidth = currentLine.Max(diagramShape => diagramShape.RightSide);
+            var lineWidth = currentLine.Max(shape => shape.RightSide);
             var newlineWidth = lineWidth + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing);
 
             // we can put shape into line
