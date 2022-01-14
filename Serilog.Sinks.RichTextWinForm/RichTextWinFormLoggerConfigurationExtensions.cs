@@ -17,8 +17,6 @@ using Serilog.Sinks.RichTextWinForm.Themes;
 /// <summary>Extends <see cref="LoggerConfiguration" /> with methods for configuring Rich Text Windows Forms logging.</summary>
 public static class RichTextWinFormLoggerConfigurationExtensions
 {
-    private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
-
     /// <summary>Writes log events to a <see cref="System.Windows.Forms.RichTextBox" /> .</summary>
     /// <param name="loggerSinkConfiguration">Logger sink configuration.</param>
     /// <param name="outputTemplate">
