@@ -22,7 +22,7 @@
 
     <PropertyGroup>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisLevel>6.0-recommended</AnalysisLevel>
     </PropertyGroup>
 
     <PropertyGroup>
