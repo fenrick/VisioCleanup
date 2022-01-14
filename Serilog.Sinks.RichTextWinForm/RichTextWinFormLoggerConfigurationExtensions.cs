@@ -7,8 +7,6 @@
 
 namespace Serilog;
 
-using System;
-
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;

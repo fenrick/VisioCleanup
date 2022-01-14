@@ -7,8 +7,6 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Rendering;
 
-using System;
-
 /// <summary>Set the case of a string.</summary>
 internal static class Casing
 {

@@ -7,8 +7,6 @@
 
 namespace VisioCleanup.Core.Contracts;
 
-using System.Collections.Generic;
-
 using VisioCleanup.Core.Models;
 
 /// <summary>Handle creation and management of visio.</summary>

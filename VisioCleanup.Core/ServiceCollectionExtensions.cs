@@ -5,8 +5,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-
 [assembly: CLSCompliant(true)]
 
 namespace VisioCleanup.Core;

@@ -7,8 +7,6 @@
 
 namespace VisioCleanup.Core.Contracts;
 
-using System.Collections.ObjectModel;
-
 using VisioCleanup.Core.Models;
 
 /// <summary>Implementers store and process diagram shapes for representing in visio.</summary>

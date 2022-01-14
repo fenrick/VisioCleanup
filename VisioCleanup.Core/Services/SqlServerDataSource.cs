@@ -7,12 +7,9 @@
 
 namespace VisioCleanup.Core.Services;
 
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;

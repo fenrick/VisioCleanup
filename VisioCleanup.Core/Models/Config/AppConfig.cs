@@ -7,8 +7,6 @@
 
 namespace VisioCleanup.Core.Models.Config;
 
-using System.Collections.Generic;
-
 using JetBrains.Annotations;
 
 /// <summary>The app config.</summary>
