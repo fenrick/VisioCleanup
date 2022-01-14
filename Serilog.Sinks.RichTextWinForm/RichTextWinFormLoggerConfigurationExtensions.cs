@@ -23,9 +23,7 @@ public static class RichTextWinFormLoggerConfigurationExtensions
     /// A message template describing the format used to write to the sink. The default is
     /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
     /// </param>
-    /// <param name="restrictedToMinimumLevel">
-    /// The minimum level for events passed through the sink.
-    /// </param>
+    /// <param name="restrictedToMinimumLevel">The minimum level for events passed through the sink.</param>
     /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
     /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
     /// <returns>Configuration object allowing method chaining.</returns>

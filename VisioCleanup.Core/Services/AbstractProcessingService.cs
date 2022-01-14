@@ -91,7 +91,7 @@ public class AbstractProcessingService : IProcessingService
         finally
         {
             this.Logger.LogInformation("Recalculating diagrams");
-            this.VisioApplication.VisualChanges(state: true);
+            this.VisioApplication.VisualChanges(true);
             this.VisioApplication.Close();
             this.Logger.LogInformation("Visio closed");
         }
@@ -122,7 +122,7 @@ public class AbstractProcessingService : IProcessingService
             {
                 ShapeText = "FAKE MASTER",
                 SortValue = "FAKE MASTER",
-                ShapeType = ShapeType.FakeShape,
+                ShapeType = ShapeType.NewShape,
                 LeftSide = this.VisioApplication.PageLeftSide,
                 TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
                 RightSide = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
