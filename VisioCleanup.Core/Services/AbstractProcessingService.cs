@@ -129,7 +129,7 @@ public class AbstractProcessingService : IProcessingService
             };
 
             // retrieve records
-            this.Logger.LogInformation("Loading {dataSource} data", dataSource.Name);
+            this.Logger.LogInformation("Loading {DataSource} data", dataSource.Name);
 
             dataSource.RetrieveRecords(parameters, this.MasterShape);
             if (this.MasterShape.Children.Count == 0)
