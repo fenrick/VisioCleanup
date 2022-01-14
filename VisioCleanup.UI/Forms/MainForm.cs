@@ -107,8 +107,6 @@ public partial class MainForm : Form
     }
 
     /// <summary>The layout data set_ click.</summary>
-    /// <param name="sender">The <paramref name="sender" /> .</param>
-    /// <param name="eventArgs">The event args.</param>
     private async Task LayoutDataSet_ClickAsync()
     {
         if (this.CheckProcessingService())
@@ -163,8 +161,6 @@ public partial class MainForm : Form
     }
 
     /// <summary>sThe load from iserver database.</summary>
-    /// <param name="sender">The event sender.</param>
-    /// <param name="e">The click event.</param>
     private async Task LoadFromIServer_ClickAsync()
     {
         try
@@ -194,8 +190,6 @@ public partial class MainForm : Form
     }
 
     /// <summary>Load Visio Object Model.</summary>
-    /// <param name="sender">The <paramref name="sender" /> .</param>
-    /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
     private async Task LoadVisioObjects_ClickAsync()
     {
         try
@@ -224,8 +218,6 @@ public partial class MainForm : Form
     }
 
     /// <summary>Activate the processing of Excel data set.</summary>
-    /// <param name="sender">The <paramref name="sender" /> .</param>
-    /// <param name="eventArgs">The <paramref name="eventArgs" /> .</param>
     private async Task ProcessExcelDataSet_ClickAsync()
     {
         try
@@ -270,8 +262,6 @@ public partial class MainForm : Form
     }
 
     /// <summary>sThe update visio drawing_ click.</summary>
-    /// <param name="sender">The event sender.</param>
-    /// <param name="e">The DPI change details.</param>
     private async Task UpdateVisioDrawing_ClickAsync()
     {
         if (this.CheckProcessingService())
