@@ -58,6 +58,7 @@ public class DiagramShape
         this.Master = string.Empty;
         this.ShapeText = string.Empty;
         this.SortValue = string.Empty;
+        this.Matrix = new() { new() };
     }
 
     /// <summary>Noifty on shape resize.</summary>
@@ -328,6 +329,8 @@ public class DiagramShape
     /// <summary>Gets or sets how deep is the rendered children.</summary>
     /// <value>depth of children.</value>
     internal int ChildrenDepth { get; set; }
+
+    internal List<List<DiagramShape>> Matrix { get; set; }
 
     /// <inheritdoc />
     public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
