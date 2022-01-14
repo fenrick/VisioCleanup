@@ -91,7 +91,7 @@ public class AbstractProcessingService : IProcessingService
         finally
         {
             this.Logger.LogInformation("Recalculating diagrams");
-            this.VisioApplication.VisualChanges(true);
+            this.VisioApplication.VisualChanges(state: true);
             this.VisioApplication.Close();
             this.Logger.LogInformation("Visio closed");
         }
