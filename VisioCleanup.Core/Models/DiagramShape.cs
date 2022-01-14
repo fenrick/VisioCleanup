@@ -600,7 +600,11 @@ public class DiagramShape
         handler?.Invoke(this, EventArgs.Empty);
     }
 
-    private void ChildShape_ShapeResize(object? sender, EventArgs e) => this.logger.Debug("Child shape was resized!");
+    private void ChildShape_ShapeResize(object? sender, EventArgs e)
+    {
+        this.logger.Debug("Child shape was resized!");
+        this.ResizeShape();
+    }
 
     private string CornerString()
     {
