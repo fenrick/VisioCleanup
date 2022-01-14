@@ -98,6 +98,11 @@ public class DiagramShape
         get => this.baseSide;
         set
         {
+            if (this.baseSide == value)
+            {
+                return;
+            }
+
             this.baseSide = value;
             this.OnShapeResize();
 
@@ -190,6 +195,11 @@ public class DiagramShape
         get => this.leftSide;
         set
         {
+            if (this.leftSide == value)
+            {
+                return;
+            }
+
             this.leftSide = value;
             this.OnShapeResize();
         }
@@ -247,6 +257,11 @@ public class DiagramShape
         get => this.rightSide;
         set
         {
+            if (this.rightSide == value)
+            {
+                return;
+            }
+
             this.rightSide = value;
             this.OnShapeResize();
 
@@ -290,6 +305,11 @@ public class DiagramShape
         get => this.topSide;
         set
         {
+            if (this.topSide == value)
+            {
+                return;
+            }
+
             this.topSide = value;
             this.OnShapeResize();
         }
