@@ -29,10 +29,7 @@ public static class RichTextWinFormLoggerConfigurationExtensions
     /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
     /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
     /// <returns>Configuration object allowing method chaining.</returns>
-    public static LoggerConfiguration RichTextWinForm(
-        this LoggerSinkConfiguration loggerSinkConfiguration,
-        string outputTemplate,
-        LogEventLevel restrictedToMinimumLevel)
+    public static LoggerConfiguration RichTextWinForm(this LoggerSinkConfiguration loggerSinkConfiguration, string outputTemplate, LogEventLevel restrictedToMinimumLevel)
     {
         OutputTemplateRenderer formatter = new(RichTextThemes.Default, outputTemplate, formatProvider: null);
 
