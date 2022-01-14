@@ -363,35 +363,7 @@ public class DiagramShape
             result = true;
         }
 
-        if (this.Children.Count <= 0)
-        {
-            return result;
-        }
-
-        // if shape to left is bigger
-        if (this.Left is not null && (this.Left.Height() > this.Height()))
-        {
-            this.logger.Debug("Resizing: {Shape}", this);
-            this.BaseSide = this.TopSide - this.Left.Height();
-            this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
-            result = true;
-        }
-
-        // if share to right is bigger
-        if (this.DiagramShapeRight is null)
-        {
-            return result;
-        }
-
-        if (this.DiagramShapeRight.Height() <= this.Height())
-        {
-            return result;
-        }
-
-        this.logger.Debug("Resizing: {Shape}", this);
-        this.BaseSide = this.TopSide - this.DiagramShapeRight.Height();
-        this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
-        return true;
+        return result;
     }
 
     /// <summary>Does this shape have a parent.</summary>
@@ -410,6 +382,7 @@ public class DiagramShape
         int height;
         if (this.Children.Count > 0)
         {
+            // default values
             var minLeftSide = this.Children.Values.Select(shape => shape.LeftSide).Min() - ConvertMeasurement(AppConfig!.Left);
             var maxRightSide = this.Children.Values.Select(shape => shape.RightSide).Max() + ConvertMeasurement(AppConfig.Right);
             width = maxRightSide - minLeftSide;
@@ -417,6 +390,18 @@ public class DiagramShape
             var minBaseSide = this.Children.Values.Select(shape => shape.BaseSide).Min() - ConvertMeasurement(AppConfig.Base);
             var maxTopSide = this.Children.Values.Select(shape => shape.TopSide).Max() + ConvertMeasurement(AppConfig.Top);
             height = maxTopSide - minBaseSide;
+
+            // compare to left
+            if (this.ShapeOnLeft?.Height() > height)
+            {
+                height = this.ShapeOnLeft.Height();
+            }
+
+            // compare to right
+            if (this.ShapeToRight?.Height() > height)
+            {
+                height = this.ShapeToRight.Height();
+            }
         }
         else
         {
