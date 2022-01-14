@@ -292,14 +292,14 @@ public partial class MainForm : Form
     }
 
 #pragma warning disable VSTHRD100 // Avoid async void methods
-    private async void UpdateVisioDrawingEventHandler(object o, EventArgs args) => await this.UpdateVisioDrawing_ClickAsync();
+    private async void UpdateVisioDrawingEventHandler(object eventObject, EventArgs args) => await this.UpdateVisioDrawing_ClickAsync();
 
-    private async void LayoutDataSetEventHandler(object o, EventArgs args) => await this.LayoutDataSet_ClickAsync();
+    private async void LayoutDataSetEventHandler(object eventObject, EventArgs args) => await this.LayoutDataSet_ClickAsync();
 
-    private async void LoadFromIServerButtonEventHandler(object o, EventArgs args) => await this.LoadFromIServer_ClickAsync();
+    private async void LoadFromIServerButtonEventHandler(object eventObject, EventArgs args) => await this.LoadFromIServer_ClickAsync();
 
-    private async void LoadVisioObjectsEventHandler(object o, EventArgs args) => await this.LoadVisioObjects_ClickAsync();
+    private async void LoadVisioObjectsEventHandler(object eventObject, EventArgs args) => await this.LoadVisioObjects_ClickAsync();
 
-    private async void ProcessExcelDataSetEventHandler(object o, EventArgs args) => await this.ProcessExcelDataSet_ClickAsync();
+    private async void ProcessExcelDataSetEventHandler(object eventObject, EventArgs args) => await this.ProcessExcelDataSet_ClickAsync();
 #pragma warning restore VSTHRD100 // Avoid async void methods
 }
