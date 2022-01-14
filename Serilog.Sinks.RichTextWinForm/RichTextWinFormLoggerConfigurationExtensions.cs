@@ -24,8 +24,7 @@ public static class RichTextWinFormLoggerConfigurationExtensions
     /// "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}".
     /// </param>
     /// <param name="restrictedToMinimumLevel">
-    /// The minimum level for events passed through the sink. Ignored when
-    /// <paramref name="levelSwitch" /> is specified.
+    /// The minimum level for events passed through the sink.
     /// </param>
     /// <exception cref="System.ArgumentNullException">When <paramref name="loggerSinkConfiguration" /> is null.</exception>
     /// <exception cref="System.ArgumentNullException">When <paramref name="outputTemplate" /> is null.</exception>
