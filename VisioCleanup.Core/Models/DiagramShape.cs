@@ -58,7 +58,7 @@ public class DiagramShape
         this.Master = string.Empty;
         this.ShapeText = string.Empty;
         this.SortValue = string.Empty;
-        this.Matrix = new() { new() };
+        this.Matrix = new List<List<DiagramShape>> { new() };
     }
 
     /// <summary>Noifty on shape resize.</summary>
