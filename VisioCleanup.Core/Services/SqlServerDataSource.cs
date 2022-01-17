@@ -48,6 +48,9 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
     }
 
     /// <inheritdoc />
+    public void Dispose() => this.Dispose(native: true);
+
+    /// <inheritdoc />
     public void Open()
     {
         SqlConnectionStringBuilder builder = new()
@@ -104,9 +107,6 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
             }
         }
     }
-
-    /// <inheritdoc />
-    public void Dispose() => this.Dispose(native: true);
 
     /// <summary>Native/Managed Dispose.</summary>
     /// <param name="native">Is this a native dispose.</param>

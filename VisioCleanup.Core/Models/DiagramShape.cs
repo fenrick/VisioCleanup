@@ -22,27 +22,27 @@ public class DiagramShape
 
     private const int ConversionFactor = 1000;
 
-    private const string MovingShapeByMovementDirection = "Moving {Shape} by {Movement} {Direction}";
-
-    private const string VerticalDirection = "vertical";
+    private const string CornerStringFormat = "Top: {0}, Left: {1}, Width: {2}, Height: {3}";
 
     private const string HorizontalDirection = "horizontal";
 
-    private const string CornerStringFormat = "Top: {0}, Left: {1}, Width: {2}, Height: {3}";
+    private const string MovingShapeByMovementDirection = "Moving {Shape} by {Movement} {Direction}";
+
+    private const string VerticalDirection = "vertical";
 
     private readonly ILogger logger;
 
     private int baseSide;
 
-    private DiagramShape? shapeBelow;
-
-    private DiagramShape? shapeRight;
-
-    private int rightSide;
-
     private int positionX;
 
     private int positionY;
+
+    private int rightSide;
+
+    private DiagramShape? shapeBelow;
+
+    private DiagramShape? shapeRight;
 
     /// <summary>Initialises a new instance of the <see cref="DiagramShape" /> class.</summary>
     /// <param name="visioId">Visio shape ID.</param>
@@ -63,34 +63,6 @@ public class DiagramShape
 
     /// <summary>Noifty on shape resize.</summary>
     public event EventHandler? ShapeResized;
-
-    /// <summary>Gets the stencil used for drawing shape.</summary>
-    /// <value>Master shape stencil.</value>
-    public string Master { get; init; }
-
-    /// <summary>Gets parent shape of curent shape.</summary>
-    /// <value>Parent shape.</value>
-    public DiagramShape? ParentShape { get; private set; }
-
-    /// <summary>Gets a unique shape identifier.</summary>
-    /// <value>Unique identifer.</value>
-    public string? ShapeIdentifier { get; init; }
-
-    /// <summary>Gets the shape text.</summary>
-    /// <value>Shape text.</value>
-    public string ShapeText { get; init; }
-
-    /// <summary>Gets or sets the shape type.</summary>
-    /// <value>Shape type.</value>
-    public ShapeType ShapeType { get; set; }
-
-    /// <summary>Gets value used to sort shapes.</summary>
-    /// <value>Sort value.</value>
-    public string SortValue { get; init; }
-
-    /// <summary>Gets or sets the shape above.</summary>
-    /// <value>Shape above.</value>
-    public DiagramShape? ShapeAbove { get; set; }
 
     /// <summary>Gets or sets base of the shape.</summary>
     /// <value>Bottom of shape.</value>
@@ -139,55 +111,13 @@ public class DiagramShape
         }
     }
 
-    /// <summary>Gets or sets the shape below.</summary>
-    /// <value>Shape below.</value>
-    public DiagramShape? ShapeBelow
-    {
-        get => this.shapeBelow;
-        set
-        {
-            // remove existing relationship.
-            if (this.shapeBelow is not null)
-            {
-                this.shapeBelow.ShapeAbove = null;
-            }
+    /// <summary>Gets the stencil used for drawing shape.</summary>
+    /// <value>Master shape stencil.</value>
+    public string Master { get; init; }
 
-            // set value.
-            this.shapeBelow = value;
-
-            if (this.shapeBelow is null)
-            {
-                return;
-            }
-
-            // set relationship.
-            this.shapeBelow.ShapeAbove = this;
-
-            // calculate movement
-            var movement = this.shapeBelow.PositionX - this.PositionX;
-
-            if (movement != 0)
-            {
-                this.logger.Debug(MovingShapeByMovementDirection, this.shapeBelow, movement, HorizontalDirection);
-                this.shapeBelow.MoveHorizontal(movement);
-            }
-
-            // calculate movement
-            movement = this.shapeBelow.PositionY - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
-
-            if (movement == 0)
-            {
-                return;
-            }
-
-            this.logger.Debug(MovingShapeByMovementDirection, this.shapeBelow, movement, VerticalDirection);
-            this.shapeBelow.MoveVertical(movement);
-        }
-    }
-
-    /// <summary>Gets or sets the shape to the left.</summary>
-    /// <value>Left shape.</value>
-    public DiagramShape? ShapeLeft { get; set; }
+    /// <summary>Gets parent shape of curent shape.</summary>
+    /// <value>Parent shape.</value>
+    public DiagramShape? ParentShape { get; private set; }
 
     /// <summary>Gets or sets left side of the shape.</summary>
     /// <value>Left side of shape.</value>
@@ -206,48 +136,20 @@ public class DiagramShape
         }
     }
 
-    /// <summary>Gets or sets the shape to the right.</summary>
-    /// <value>Shape to right.</value>
-    public DiagramShape? ShapeRight
+    /// <summary>Gets or sets top of the shape.</summary>
+    /// <value>Top side of shape.</value>
+    public int PositionY
     {
-        get => this.shapeRight;
+        get => this.positionY;
         set
         {
-            // remove existing relationship.
-            if (this.shapeRight is not null)
-            {
-                this.shapeRight.ShapeLeft = null;
-            }
-
-            // set value.
-            this.shapeRight = value;
-
-            if (this.shapeRight is null)
+            if (this.positionY == value)
             {
                 return;
             }
 
-            // set relationship.
-            this.shapeRight.ShapeLeft = this;
-
-            // calculate movement
-            var movement = this.shapeRight.PositionX - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
-
-            if (movement != 0)
-            {
-                this.logger.Debug(MovingShapeByMovementDirection, this.shapeRight, movement, HorizontalDirection);
-                this.shapeRight.MoveHorizontal(movement);
-            }
-
-            // calculate movement
-            movement = this.shapeRight.PositionY - this.PositionY;
-            if (movement == 0)
-            {
-                return;
-            }
-
-            this.logger.Debug(MovingShapeByMovementDirection, this.shapeRight, movement, VerticalDirection);
-            this.shapeRight.MoveVertical(movement);
+            this.positionY = value;
+            this.OnShapeResize();
         }
     }
 
@@ -299,22 +201,120 @@ public class DiagramShape
         }
     }
 
-    /// <summary>Gets or sets top of the shape.</summary>
-    /// <value>Top side of shape.</value>
-    public int PositionY
+    /// <summary>Gets or sets the shape above.</summary>
+    /// <value>Shape above.</value>
+    public DiagramShape? ShapeAbove { get; set; }
+
+    /// <summary>Gets or sets the shape below.</summary>
+    /// <value>Shape below.</value>
+    public DiagramShape? ShapeBelow
     {
-        get => this.positionY;
+        get => this.shapeBelow;
         set
         {
-            if (this.positionY == value)
+            // remove existing relationship.
+            if (this.shapeBelow is not null)
+            {
+                this.shapeBelow.ShapeAbove = null;
+            }
+
+            // set value.
+            this.shapeBelow = value;
+
+            if (this.shapeBelow is null)
             {
                 return;
             }
 
-            this.positionY = value;
-            this.OnShapeResize();
+            // set relationship.
+            this.shapeBelow.ShapeAbove = this;
+
+            // calculate movement
+            var movement = this.shapeBelow.PositionX - this.PositionX;
+
+            if (movement != 0)
+            {
+                this.logger.Debug(MovingShapeByMovementDirection, this.shapeBelow, movement, HorizontalDirection);
+                this.shapeBelow.MoveHorizontal(movement);
+            }
+
+            // calculate movement
+            movement = this.shapeBelow.PositionY - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
+
+            if (movement == 0)
+            {
+                return;
+            }
+
+            this.logger.Debug(MovingShapeByMovementDirection, this.shapeBelow, movement, VerticalDirection);
+            this.shapeBelow.MoveVertical(movement);
         }
     }
+
+    /// <summary>Gets a unique shape identifier.</summary>
+    /// <value>Unique identifer.</value>
+    public string? ShapeIdentifier { get; init; }
+
+    /// <summary>Gets or sets the shape to the left.</summary>
+    /// <value>Left shape.</value>
+    public DiagramShape? ShapeLeft { get; set; }
+
+    /// <summary>Gets or sets the shape to the right.</summary>
+    /// <value>Shape to right.</value>
+    public DiagramShape? ShapeRight
+    {
+        get => this.shapeRight;
+        set
+        {
+            // remove existing relationship.
+            if (this.shapeRight is not null)
+            {
+                this.shapeRight.ShapeLeft = null;
+            }
+
+            // set value.
+            this.shapeRight = value;
+
+            if (this.shapeRight is null)
+            {
+                return;
+            }
+
+            // set relationship.
+            this.shapeRight.ShapeLeft = this;
+
+            // calculate movement
+            var movement = this.shapeRight.PositionX - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+
+            if (movement != 0)
+            {
+                this.logger.Debug(MovingShapeByMovementDirection, this.shapeRight, movement, HorizontalDirection);
+                this.shapeRight.MoveHorizontal(movement);
+            }
+
+            // calculate movement
+            movement = this.shapeRight.PositionY - this.PositionY;
+            if (movement == 0)
+            {
+                return;
+            }
+
+            this.logger.Debug(MovingShapeByMovementDirection, this.shapeRight, movement, VerticalDirection);
+            this.shapeRight.MoveVertical(movement);
+        }
+    }
+
+    /// <summary>Gets the shape text.</summary>
+    /// <value>Shape text.</value>
+    public string ShapeText { get; init; }
+
+    /// <summary>Gets or sets the shape type.</summary>
+    /// <value>Shape type.</value>
+    public ShapeType ShapeType { get; set; }
+
+    /// <summary>Gets value used to sort shapes.</summary>
+    /// <value>Sort value.</value>
+    public string SortValue { get; init; }
 
     /// <summary>Gets or sets visio shape id.</summary>
     /// <value>Visio identifer.</value>
@@ -368,91 +368,6 @@ public class DiagramShape
         childShape.ParentShape = this;
     }
 
-    /// <summary>Correct shape and child shapes.</summary>
-    /// <returns>If any shape was changed.</returns>
-    internal bool CorrectDiagram()
-    {
-        var result = this.FixPosition();
-
-        // depth first correction process
-        foreach (var diagramShape in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
-        {
-            result = true;
-        }
-
-        // resize shape
-        if (this.ResizeShape())
-        {
-            result = true;
-        }
-
-        return result;
-    }
-
-    /// <summary>Does this shape have a parent.</summary>
-    /// <returns>True if a parent.</returns>
-    internal bool HasParent() => this.ParentShape is not null;
-
-    /// <summary>Calculate the height of the shape.</summary>
-    /// <returns>Height.</returns>
-    internal int Height() => this.PositionY - this.BaseSide;
-
-    /// <summary>Resize the shape based on appconfig.</summary>
-    /// <returns>If shape changed.</returns>
-    internal bool ResizeShape()
-    {
-        int width;
-        int height;
-        if (this.Children.Count > 0)
-        {
-            // default values
-            var childShapes = this.Children.Values;
-
-            var minLeftSide = childShapes.Min(shape => shape.PositionX) - ConvertMeasurement(AppConfig!.Left);
-            var maxRightSide = childShapes.Max(shape => shape.RightSide) + ConvertMeasurement(AppConfig.Right);
-            width = maxRightSide - minLeftSide;
-
-            var minBaseSide = childShapes.Min(shape => shape.BaseSide) - ConvertMeasurement(AppConfig.Base);
-            var maxTopSide = childShapes.Max(shape => shape.PositionY) + ConvertMeasurement(AppConfig.Top);
-            height = maxTopSide - minBaseSide;
-
-            // compare to left
-            if (this.ShapeLeft?.Height() > height)
-            {
-                height = this.ShapeLeft.Height();
-            }
-
-            // compare to right
-            if (this.ShapeRight?.Height() > height)
-            {
-                height = this.ShapeRight.Height();
-            }
-        }
-        else
-        {
-            height = ConvertMeasurement(AppConfig!.Height);
-            width = ConvertMeasurement(AppConfig.Width);
-        }
-
-        var newBaseSide = this.PositionY - height;
-        var newRightSide = this.PositionX + width;
-
-        if ((this.RightSide == newRightSide) && (this.BaseSide == newBaseSide))
-        {
-            return false;
-        }
-
-        this.logger.Debug("Resizing: {Shape}", this);
-        this.RightSide = newRightSide;
-        this.BaseSide = newBaseSide;
-        this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
-        return true;
-    }
-
-    /// <summary>Calculate the width of the shape.</summary>
-    /// <returns>Width.</returns>
-    internal int Width() => this.RightSide - this.PositionX;
-
     internal Matrix<float> Bitmap()
     {
         var bitmap = Matrix<float>.Build.Sparse(this.TotalChildrenCount(), this.TotalChildrenCount(), 0);
@@ -501,6 +416,27 @@ public class DiagramShape
         var rows = bitmap.EnumerateRows().Count(values => values.Sum() > 0);
 
         return bitmap.SubMatrix(0, rows, 0, columns);
+    }
+
+    /// <summary>Correct shape and child shapes.</summary>
+    /// <returns>If any shape was changed.</returns>
+    internal bool CorrectDiagram()
+    {
+        var result = this.FixPosition();
+
+        // depth first correction process
+        foreach (var diagramShape in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
+        {
+            result = true;
+        }
+
+        // resize shape
+        if (this.ResizeShape())
+        {
+            result = true;
+        }
+
+        return result;
     }
 
     /// <summary>Map all neighbour shapes within tolerance of 10.</summary>
@@ -593,12 +529,76 @@ public class DiagramShape
         }
     }
 
+    /// <summary>Does this shape have a parent.</summary>
+    /// <returns>True if a parent.</returns>
+    internal bool HasParent() => this.ParentShape is not null;
+
+    /// <summary>Calculate the height of the shape.</summary>
+    /// <returns>Height.</returns>
+    internal int Height() => this.PositionY - this.BaseSide;
+
+    /// <summary>Resize the shape based on appconfig.</summary>
+    /// <returns>If shape changed.</returns>
+    internal bool ResizeShape()
+    {
+        int width;
+        int height;
+        if (this.Children.Count > 0)
+        {
+            // default values
+            var childShapes = this.Children.Values;
+
+            var minLeftSide = childShapes.Min(shape => shape.PositionX) - ConvertMeasurement(AppConfig!.Left);
+            var maxRightSide = childShapes.Max(shape => shape.RightSide) + ConvertMeasurement(AppConfig.Right);
+            width = maxRightSide - minLeftSide;
+
+            var minBaseSide = childShapes.Min(shape => shape.BaseSide) - ConvertMeasurement(AppConfig.Base);
+            var maxTopSide = childShapes.Max(shape => shape.PositionY) + ConvertMeasurement(AppConfig.Top);
+            height = maxTopSide - minBaseSide;
+
+            // compare to left
+            if (this.ShapeLeft?.Height() > height)
+            {
+                height = this.ShapeLeft.Height();
+            }
+
+            // compare to right
+            if (this.ShapeRight?.Height() > height)
+            {
+                height = this.ShapeRight.Height();
+            }
+        }
+        else
+        {
+            height = ConvertMeasurement(AppConfig!.Height);
+            width = ConvertMeasurement(AppConfig.Width);
+        }
+
+        var newBaseSide = this.PositionY - height;
+        var newRightSide = this.PositionX + width;
+
+        if ((this.RightSide == newRightSide) && (this.BaseSide == newBaseSide))
+        {
+            return false;
+        }
+
+        this.logger.Debug("Resizing: {Shape}", this);
+        this.RightSide = newRightSide;
+        this.BaseSide = newBaseSide;
+        this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
+        return true;
+    }
+
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Values.Sum(child => child.TotalChildrenCount());
+
+    /// <summary>Calculate the width of the shape.</summary>
+    /// <returns>Width.</returns>
+    internal int Width() => this.RightSide - this.PositionX;
 
     /// <summary>Notify of a shape resize.</summary>
     protected virtual void OnShapeResize()
     {
-        var handler = ShapeResized;
+        var handler = this.ShapeResized;
         handler?.Invoke(this, EventArgs.Empty);
     }
 

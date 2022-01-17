@@ -30,6 +30,18 @@ public static class Program
     [STAThread]
     public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
+    /// <summary>Configure services.</summary>
+    /// <param name="hostBuilderContext">The host builder context.</param>
+    /// <param name="serviceCollection">The service collection.</param>
+    private static void ConfigureApplicationServices(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection) =>
+        serviceCollection.AddVisioCleanupCore(hostBuilderContext.Configuration);
+
+    /// <summary>Configure Serilog.</summary>
+    /// <param name="hostBuilderContext">The host builder context.</param>
+    /// <param name="loggerConfiguration">The logger configuration.</param>
+    private static void ConfigureSerilog(HostBuilderContext hostBuilderContext, LoggerConfiguration loggerConfiguration) =>
+        loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration);
+
     private static IHostBuilder CreateHostBuilder(string[] args)
     {
         var hostBuilder = Host.CreateDefaultBuilder(args);
@@ -46,16 +58,4 @@ public static class Program
                 });
         return hostBuilder;
     }
-
-    /// <summary>Configure services.</summary>
-    /// <param name="hostBuilderContext">The host builder context.</param>
-    /// <param name="serviceCollection">The service collection.</param>
-    private static void ConfigureApplicationServices(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection) =>
-        serviceCollection.AddVisioCleanupCore(hostBuilderContext.Configuration);
-
-    /// <summary>Configure Serilog.</summary>
-    /// <param name="hostBuilderContext">The host builder context.</param>
-    /// <param name="loggerConfiguration">The logger configuration.</param>
-    private static void ConfigureSerilog(HostBuilderContext hostBuilderContext, LoggerConfiguration loggerConfiguration) =>
-        loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration);
 }

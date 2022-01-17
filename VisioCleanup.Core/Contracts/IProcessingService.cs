@@ -20,12 +20,12 @@ public interface IProcessingService
     /// <value>Master shape.</value>
     DiagramShape? MasterShape { get; }
 
+    /// <summary>Draws a bitmap of the diagram structure.</summary>
+    void DrawBitmapStructure();
+
     /// <summary>Lays outs the diagramshapes based on appconfig.</summary>
     void LayoutDataSet();
 
     /// <summary>Draws new data set onto visio.</summary>
     void UpdateVisio();
-
-    /// <summary>Draws a bitmap of the diagram structure.</summary>
-    void DrawBitmapStructure();
 }

@@ -299,39 +299,6 @@ public class VisioApplication : IVisioApplication
         return shapeCell.Result[VisUnitCodes.visMillimeters];
     }
 
-    private void ExecuteVisioShapeUpdate(DiagramShape diagramShape, object[][] updates)
-    {
-        // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
-        const int srcStreamFields = 3;
-        var srcStream = new short[updates.Length * srcStreamFields];
-        var unitsArray = new object[updates.Length];
-        var resultsArray = new object[updates.Length];
-        for (var i = 0; i < updates.Length; i++)
-        {
-            var item = updates[i];
-            var srcStreamTracker = 0;
-
-            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16((short)VisSectionIndices.visSectionObject, CultureInfo.InvariantCulture);
-            srcStreamTracker++;
-            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16((short)VisRowIndices.visRowXFormOut, CultureInfo.InvariantCulture);
-            srcStreamTracker++;
-            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[(int)VisioFields.Cell], CultureInfo.InvariantCulture);
-            resultsArray[i] = item[(int)VisioFields.Result];
-            unitsArray[i] = VisUnitCodes.visMillimeters;
-        }
-
-        // EXECUTE THE REQUEST
-        const short flags = 0;
-        try
-        {
-            this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, flags);
-        }
-        catch (COMException e)
-        {
-            this.logger.LogError(e, "Error occured during updating {Shape}", diagramShape);
-        }
-    }
-
     private int CalculateBaseSide(int visioId)
     {
         var shape = this.GetShape(visioId);
@@ -372,6 +339,39 @@ public class VisioApplication : IVisioApplication
         var height = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
 
         return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
+    }
+
+    private void ExecuteVisioShapeUpdate(DiagramShape diagramShape, object[][] updates)
+    {
+        // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
+        const int srcStreamFields = 3;
+        var srcStream = new short[updates.Length * srcStreamFields];
+        var unitsArray = new object[updates.Length];
+        var resultsArray = new object[updates.Length];
+        for (var i = 0; i < updates.Length; i++)
+        {
+            var item = updates[i];
+            var srcStreamTracker = 0;
+
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16((short)VisSectionIndices.visSectionObject, CultureInfo.InvariantCulture);
+            srcStreamTracker++;
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16((short)VisRowIndices.visRowXFormOut, CultureInfo.InvariantCulture);
+            srcStreamTracker++;
+            srcStream[(i * srcStreamFields) + srcStreamTracker] = Convert.ToInt16(item[(int)VisioFields.Cell], CultureInfo.InvariantCulture);
+            resultsArray[i] = item[(int)VisioFields.Result];
+            unitsArray[i] = VisUnitCodes.visMillimeters;
+        }
+
+        // EXECUTE THE REQUEST
+        const short flags = 0;
+        try
+        {
+            this.GetShape(diagramShape.VisioId).SetResults(srcStream, unitsArray, resultsArray, flags);
+        }
+        catch (COMException e)
+        {
+            this.logger.LogError(e, "Error occured during updating {Shape}", diagramShape);
+        }
     }
 
     private IVShape GetShape(int visioId)
