@@ -95,6 +95,11 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
             foreach (var i in Enumerable.Range(1, columnMapping.Count))
             {
                 result = this.CreateShape(rowResults[i], allShapes, result);
+
+                if (result is not null && result.ParentShape is null)
+                {
+                    masterShape.AddChildShape(result);
+                }
             }
         }
     }
