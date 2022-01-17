@@ -62,7 +62,7 @@ public class DiagramShape
     }
 
     /// <summary>Noifty on shape resize.</summary>
-    public event EventHandler? ShapeResized;
+    public event EventHandler? ShapeChanged;
 
     /// <summary>Gets or sets the height of the shape.</summary>
     /// <value>Height of the shape in visio units.</value>
@@ -77,7 +77,7 @@ public class DiagramShape
             }
 
             this.height = value;
-            this.OnShapeResize();
+            this.OnShapeChange();
 
             // move shape below
             int movement;
@@ -134,7 +134,7 @@ public class DiagramShape
             }
 
             this.positionX = value;
-            this.OnShapeResize();
+            this.OnShapeChange();
         }
     }
 
@@ -151,7 +151,7 @@ public class DiagramShape
             }
 
             this.positionY = value;
-            this.OnShapeResize();
+            this.OnShapeChange();
         }
     }
 
@@ -289,7 +289,7 @@ public class DiagramShape
             }
 
             this.width = value;
-            this.OnShapeResize();
+            this.OnShapeChange();
 
             // move shape to right to spacing width
             int movement;
@@ -365,7 +365,7 @@ public class DiagramShape
             return;
         }
 
-        childShape.ShapeResized += this.ChildShapeShapeResized;
+        childShape.ShapeChanged += this.ChildShapeShapeChanged;
 
         // add to list of all children
         this.Children.Add(childShape.SortValue, childShape);
@@ -591,13 +591,13 @@ public class DiagramShape
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Values.Sum(child => child.TotalChildrenCount());
 
     /// <summary>Notify of a shape resize.</summary>
-    protected virtual void OnShapeResize()
+    protected virtual void OnShapeChange()
     {
-        var handler = this.ShapeResized;
+        var handler = this.ShapeChanged;
         handler?.Invoke(this, EventArgs.Empty);
     }
 
-    private void ChildShapeShapeResized(object? sender, EventArgs e)
+    private void ChildShapeShapeChanged(object? sender, EventArgs e)
     {
         this.logger.Debug("Child shape was resized!");
         this.ResizeShape();
