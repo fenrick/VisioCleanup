@@ -241,13 +241,11 @@ public class AbstractProcessingService : IProcessingService
                     shapeAbove.ShapeBelow = childShape;
                     currentLine.Add(childShape);
                     diagramShape.CorrectDiagram();
-
                     continue;
                 }
 
                 currentLine.Add(childrenQueue.Dequeue());
                 diagramShape.CorrectDiagram();
-
                 continue;
             }
 
