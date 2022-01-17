@@ -145,18 +145,18 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
             Array.Resize(ref columnMapping, level + 1);
             for (var i = 1; i <= header?.GetLength(1); i++)
             {
-                var value = header.GetValue(1, i);
+                var value = header.GetValue(1, i)?.ToString();
 
-                if (value!.Equals(fieldName))
+                if (value!.Equals(fieldName, StringComparison.Ordinal))
                 {
                     mappings[FieldType.ShapeText] = i;
                     columnMapping[level] = mappings;
                 }
-                else if (value.Equals(sortFieldName))
+                else if (value.Equals(sortFieldName, StringComparison.Ordinal))
                 {
                     mappings[FieldType.SortValue] = i;
                 }
-                else if (value.Equals(shapeFieldName))
+                else if (value.Equals(shapeFieldName, StringComparison.Ordinal))
                 {
                     mappings[FieldType.ShapeType] = i;
                 }
