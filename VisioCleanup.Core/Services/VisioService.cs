@@ -93,11 +93,11 @@ public class VisioService : AbstractProcessingService, IVisioService
         var diagramShapeTopSide = diagramShape.PositionY;
         var diagramShapeLeftSide = diagramShape.PositionX;
         var diagramShapeRightSide = diagramShape.RightSide;
-        var diagramShapeBaseSide = diagramShape.BaseSide;
+        var diagramShapeBaseSide = diagramShape.PositionY - diagramShape.Height;
 
         bool AllSidesOverlap(DiagramShape shape) =>
             (shape.PositionX < diagramShapeLeftSide) && (shape.PositionY > diagramShapeTopSide) && (shape.RightSide > diagramShapeRightSide)
-            && (shape.BaseSide < diagramShapeBaseSide);
+            && ((shape.PositionY - shape.Height) < diagramShapeBaseSide);
 
         var allOverlaps = this.AllShapes.Where(AllSidesOverlap);
 
@@ -105,7 +105,7 @@ public class VisioService : AbstractProcessingService, IVisioService
         DiagramShape? minShape = null;
         foreach (var shape in allOverlaps.ToList())
         {
-            var shapeArea = Math.BigMul(shape.Width(), shape.Height());
+            var shapeArea = Math.BigMul(shape.Width(), shape.Height);
             if (minShapeArea <= shapeArea)
             {
                 continue;
