@@ -133,19 +133,14 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
         var header = dataTable.HeaderRowRange.Value as object[,];
         var columnMapping = Array.Empty<Dictionary<FieldType, int>>();
 
-        if (this.AppConfig.FieldLabelFormat is null || this.AppConfig.SortFieldLabelFormat is null || this.AppConfig.ShapeTypeLabelFormat is null)
-        {
-            throw new InvalidOperationException("Excel parameters not set in configuration.");
-        }
-
         do
         {
             level++;
 
             var mappings = new Dictionary<FieldType, int>();
-            var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat, level);
-            var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat, level);
-            var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat, level);
+            var fieldName = string.Format(CultureInfo.InvariantCulture, this.AppConfig.FieldLabelFormat!, level);
+            var sortFieldName = string.Format(CultureInfo.InvariantCulture, this.AppConfig.SortFieldLabelFormat!, level);
+            var shapeFieldName = string.Format(CultureInfo.InvariantCulture, this.AppConfig.ShapeTypeLabelFormat!, level);
 
             Array.Resize(ref columnMapping, level + 1);
             for (var i = 1; i <= header?.GetLength(1); i++)
