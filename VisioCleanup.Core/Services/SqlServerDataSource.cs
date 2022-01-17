@@ -56,6 +56,7 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
             Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated,
             InitialCatalog = this.AppConfig.DatabaseCatalog,
             ApplicationIntent = ApplicationIntent.ReadOnly,
+            TrustServerCertificate = true,
         };
 
         this.databaseConnection = new SqlConnection(builder.ConnectionString);
