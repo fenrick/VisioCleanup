@@ -132,7 +132,7 @@ public class VisioApplication : IVisioApplication
 
         var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
         var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
-        var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
+        var newPinX = DiagramShape.ConvertMeasurement(diagramShape.PositionX) + newLocPinX;
         var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
 
         var shapeMaster = "Rectangle";
@@ -216,9 +216,9 @@ public class VisioApplication : IVisioApplication
                 ShapeText = selected.Text,
                 SortValue = selected.Text,
                 ShapeType = ShapeType.Existing,
-                LeftSide = this.CalculateLeftSide(sheetId),
+                PositionX = this.CalculateLeftSide(sheetId),
                 RightSide = this.CalculateRightSide(sheetId),
-                TopSide = this.CalculateTopSide(sheetId),
+                PositionY = this.CalculateTopSide(sheetId),
                 BaseSide = this.CalculateBaseSide(sheetId),
             };
             this.logger.LogDebug("Adding shape to collection");
@@ -253,7 +253,7 @@ public class VisioApplication : IVisioApplication
 
         var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
         var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
-        var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
+        var newPinX = DiagramShape.ConvertMeasurement(diagramShape.PositionX) + newLocPinX;
         var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
 
         var width = DiagramShape.ConvertMeasurement(diagramShape.Width());

@@ -123,8 +123,8 @@ public class AbstractProcessingService : IProcessingService
                 ShapeText = "FAKE MASTER",
                 SortValue = "FAKE MASTER",
                 ShapeType = ShapeType.NewShape,
-                LeftSide = this.VisioApplication.PageLeftSide,
-                TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                PositionX = this.VisioApplication.PageLeftSide,
+                PositionY = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
                 RightSide = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
             };
 
@@ -160,7 +160,7 @@ public class AbstractProcessingService : IProcessingService
         // clear existing relationships.
         foreach (var child in diagramShape.Children.Values)
         {
-            child.ShapeToRight = null;
+            child.ShapeRight = null;
             child.ShapeBelow = null;
         }
 
@@ -271,7 +271,7 @@ public class AbstractProcessingService : IProcessingService
             }
 
             var previousShape = currentLine[^1];
-            previousShape.ShapeToRight = childShape;
+            previousShape.ShapeRight = childShape;
             diagramShape.CorrectDiagram();
             currentLine.Add(childrenQueue.Dequeue());
         }
