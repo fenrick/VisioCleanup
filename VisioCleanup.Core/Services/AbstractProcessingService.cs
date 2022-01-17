@@ -125,7 +125,7 @@ public class AbstractProcessingService : IProcessingService
                 ShapeType = ShapeType.NewShape,
                 PositionX = this.VisioApplication.PageLeftSide,
                 PositionY = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
-                RightSide = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
+                Width = this.VisioApplication.PageRightSide - this.VisioApplication.PageLeftSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
             };
 
             // retrieve records
@@ -143,7 +143,7 @@ public class AbstractProcessingService : IProcessingService
             this.PopulateAllShapes(this.MasterShape);
 
             // sort
-            this.SortChildren(this.MasterShape, this.MasterShape.RightSide);
+            this.SortChildren(this.MasterShape, this.MasterShape.Width + this.MasterShape.PositionX);
         }
         finally
         {
@@ -282,8 +282,8 @@ public class AbstractProcessingService : IProcessingService
             childShape = childrenQueue.Peek();
 
             // find current width
-            var lineWidth = currentLine.Max(shape => shape.RightSide);
-            var newlineWidth = lineWidth + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing);
+            var lineWidth = currentLine.Max(shape => (shape.PositionX + shape.Width));
+            var newlineWidth = lineWidth + childShape.Width + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing);
 
             // we can put shape into line
             if (newlineWidth >= internalMaxRight)

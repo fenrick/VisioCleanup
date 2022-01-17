@@ -130,7 +130,7 @@ public class VisioApplication : IVisioApplication
             throw new ArgumentNullException(nameof(diagramShape));
         }
 
-        var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
+        var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width / 2);
         var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height / 2);
         var newPinX = DiagramShape.ConvertMeasurement(diagramShape.PositionX) + newLocPinX;
         var newPinY = DiagramShape.ConvertMeasurement(diagramShape.PositionY) - newLocPinY;
@@ -217,7 +217,7 @@ public class VisioApplication : IVisioApplication
                 SortValue = selected.Text,
                 ShapeType = ShapeType.Existing,
                 PositionX = this.CalculateLeftSide(sheetId),
-                RightSide = this.CalculateRightSide(sheetId),
+                Width = this.CalculateWidth(sheetId),
                 PositionY = this.CalculateTopSide(sheetId),
                 Height = this.CalculateHeight(sheetId),
             };
@@ -251,12 +251,12 @@ public class VisioApplication : IVisioApplication
             throw new ArgumentNullException(nameof(diagramShape));
         }
 
-        var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
+        var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width / 2);
         var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height / 2);
         var newPinX = DiagramShape.ConvertMeasurement(diagramShape.PositionX) + newLocPinX;
         var newPinY = DiagramShape.ConvertMeasurement(diagramShape.PositionY) - newLocPinY;
 
-        var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
+        var width = DiagramShape.ConvertMeasurement(diagramShape.Width);
         var height = DiagramShape.ConvertMeasurement(diagramShape.Height);
 
         var updates = new[]
@@ -317,17 +317,6 @@ public class VisioApplication : IVisioApplication
         return DiagramShape.ConvertMeasurement(pinX - locPinX);
     }
 
-    private int CalculateRightSide(int visioId)
-    {
-        var shape = this.GetShape(visioId);
-
-        var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
-        var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
-        var width = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormWidth);
-
-        return DiagramShape.ConvertMeasurement((pinX - locPinX) + width);
-    }
-
     private int CalculateTopSide(int visioId)
     {
         var shape = this.GetShape(visioId);
@@ -337,6 +326,15 @@ public class VisioApplication : IVisioApplication
         var height = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
 
         return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
+    }
+
+    private int CalculateWidth(int visioId)
+    {
+        var shape = this.GetShape(visioId);
+
+        var width = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormWidth);
+
+        return DiagramShape.ConvertMeasurement(width);
     }
 
     private void ExecuteVisioShapeUpdate(DiagramShape diagramShape, object[][] updates)
