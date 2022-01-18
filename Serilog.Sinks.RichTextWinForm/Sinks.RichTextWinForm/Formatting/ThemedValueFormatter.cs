@@ -17,6 +17,8 @@ internal abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<Them
 
     protected ThemedValueFormatter(RichTextTheme theme) => this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
 
+    protected delegate void VisitDictionaryValueLine(KeyValuePair<ScalarValue, LogEventPropertyValue> pair, ref string delim, ref int count);
+
     internal void Format(LogEventPropertyValue value, RichTextBox output, string formatString, bool literalTopLevel = false)
     {
         var themedValueFormatterState = new ThemedValueFormatterState { Output = output, Format = formatString, IsTopLevel = literalTopLevel };
@@ -33,10 +35,7 @@ internal abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<Them
         }
     }
 
-    protected int VisitDictionaryValueInternal(
-        ThemedValueFormatterState state,
-        DictionaryValue dictionary,
-        Func<KeyValuePair<ScalarValue, LogEventPropertyValue>, string, int, int> lineFormatting)
+    protected int VisitDictionaryValueInternal(ThemedValueFormatterState state, DictionaryValue dictionary, VisitDictionaryValueLine lineFormatting)
     {
         var count = 0;
 
@@ -45,7 +44,7 @@ internal abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<Them
         var delim = string.Empty;
         foreach (var pair in dictionary.Elements)
         {
-            count = lineFormatting(pair, delim, count);
+            lineFormatting(pair, ref delim, ref count);
         }
 
         this.OutputText(state.Output, "}", RichTextThemeStyle.TertiaryText);

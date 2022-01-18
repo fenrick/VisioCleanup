@@ -26,7 +26,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
         return this.VisitDictionaryValueInternal(
             state,
             dictionary,
-            (pair, delim, count) =>
+            (KeyValuePair<ScalarValue, LogEventPropertyValue> pair, ref string delim, ref int count) =>
                 {
                     var scalarValue = pair.Key;
                     var logEventPropertyValue = pair.Value;
@@ -55,8 +55,6 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
                     this.OutputText(state.Output, ": ", RichTextThemeStyle.TertiaryText);
 
                     count += this.Visit(state.Nest(), logEventPropertyValue);
-
-                    return count;
                 });
     }
 
@@ -172,8 +170,10 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
         }
     }
 
-    private void FormatDateTimeValue(RichTextBox output, object value) =>
+    private void FormatDateTimeValue(RichTextBox output, object value)
+    {
         this.OutputText(output, string.Concat("\"", ((IFormattable)value).ToString("O", CultureInfo.CurrentCulture), "\""), RichTextThemeStyle.Scalar);
+    }
 
     private void FormatDoubleValue(RichTextBox output, double doubleValue)
     {
@@ -244,8 +244,10 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
     private void FormatNullValue(RichTextBox output) => this.OutputText(output, "null", RichTextThemeStyle.Null);
 
-    private void FormatNumberValue(RichTextBox output, object value) =>
+    private void FormatNumberValue(RichTextBox output, object value)
+    {
         this.OutputText(output, ((IFormattable)value).ToString(format: null, CultureInfo.CurrentCulture), RichTextThemeStyle.Number);
+    }
 
     private void FormatScalarValue(RichTextBox output, object value)
     {

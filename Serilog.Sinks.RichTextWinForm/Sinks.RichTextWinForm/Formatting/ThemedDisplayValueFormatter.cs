@@ -51,7 +51,7 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         return this.VisitDictionaryValueInternal(
             state,
             dictionary,
-            (pair, delim, count) =>
+            (KeyValuePair<ScalarValue, LogEventPropertyValue> pair, ref string delim, ref int count) =>
                 {
                     var scalarValue = pair.Key;
                     var logEventPropertyValue = pair.Value;
@@ -73,7 +73,6 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
                     this.OutputText(state.Output, "]=", RichTextThemeStyle.TertiaryText);
 
                     count += this.Visit(state.Nest(), logEventPropertyValue);
-                    return count;
                 });
     }
 
@@ -146,11 +145,15 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         return count;
     }
 
-    private void FormatBooleanValue(RichTextBox output, bool booleanValue) =>
+    private void FormatBooleanValue(RichTextBox output, bool booleanValue)
+    {
         this.OutputText(output, booleanValue.ToString(CultureInfo.CurrentCulture), RichTextThemeStyle.Boolean);
+    }
 
-    private void FormatCharacterValue(RichTextBox output, char charValue) =>
+    private void FormatCharacterValue(RichTextBox output, char charValue)
+    {
         this.OutputText(output, string.Concat("'", charValue.ToString(CultureInfo.CurrentCulture), "'"), RichTextThemeStyle.Scalar);
+    }
 
     private void FormatNullValue(RichTextBox output) => this.OutputText(output, "null", RichTextThemeStyle.Null);
 
