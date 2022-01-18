@@ -61,6 +61,9 @@ public class AbstractProcessingService : IProcessingService
     protected IVisioApplication VisioApplication { get; }
 
     /// <inheritdoc />
+    public void DrawBitmapStructure() => this.MasterShape!.Bitmap();
+
+    /// <inheritdoc />
     public void LayoutDataSet()
     {
         for (var counter = 1; counter <= MaxCorrectRuns; counter++)
@@ -97,9 +100,6 @@ public class AbstractProcessingService : IProcessingService
         }
     }
 
-    /// <inheritdoc />
-    public void DrawBitmapStructure() => this.MasterShape!.Bitmap();
-
     /// <summary>private process data sets.</summary>
     /// <param name="dataSource">Data source to process.</param>
     /// <param name="parameters">Parameters for process.</param>
@@ -123,9 +123,9 @@ public class AbstractProcessingService : IProcessingService
                 ShapeText = "FAKE MASTER",
                 SortValue = "FAKE MASTER",
                 ShapeType = ShapeType.NewShape,
-                LeftSide = this.VisioApplication.PageLeftSide,
-                TopSide = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
-                RightSide = this.VisioApplication.PageRightSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
+                PositionX = this.VisioApplication.PageLeftSide,
+                PositionY = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
+                Width = this.VisioApplication.PageRightSide - this.VisioApplication.PageLeftSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
             };
 
             // retrieve records
@@ -143,7 +143,7 @@ public class AbstractProcessingService : IProcessingService
             this.PopulateAllShapes(this.MasterShape);
 
             // sort
-            this.SortChildren(this.MasterShape, this.MasterShape.RightSide);
+            this.SortChildren(this.MasterShape, this.MasterShape.Width + this.MasterShape.PositionX);
         }
         finally
         {
@@ -160,21 +160,33 @@ public class AbstractProcessingService : IProcessingService
         // clear existing relationships.
         foreach (var child in diagramShape.Children.Values)
         {
-            child.ShapeToRight = null;
+            child.ShapeRight = null;
             child.ShapeBelow = null;
         }
 
         diagramShape.Matrix = new List<List<DiagramShape>> { new() };
     }
 
-    private void PopulateAllShapes(DiagramShape diagramShape)
+    private double CalculateMaxLine(DiagramShape diagramShape)
     {
-        this.AllShapes.Add(diagramShape);
-
-        foreach (var child in diagramShape.Children.Values)
+        double maxLine;
+        var childrenCount = diagramShape.Children.Count;
+        if (childrenCount == (diagramShape.TotalChildrenCount() - 1))
         {
-            this.PopulateAllShapes(child);
+            maxLine = Math.Round(Math.Sqrt(childrenCount), MidpointRounding.AwayFromZero);
+            var drawLines = childrenCount / maxLine;
+            var appConfigMaxBoxLines = this.AppConfig.MaxBoxLines ?? 5d;
+            if (drawLines > appConfigMaxBoxLines)
+            {
+                maxLine = Math.Round(childrenCount / appConfigMaxBoxLines, MidpointRounding.AwayFromZero);
+            }
         }
+        else
+        {
+            maxLine = int.MaxValue;
+        }
+
+        return maxLine;
     }
 
     private void DrawShape(DiagramShape diagramShape)
@@ -202,6 +214,16 @@ public class AbstractProcessingService : IProcessingService
         foreach (var child in diagramShape.Children.Values)
         {
             this.DrawShape(child);
+        }
+    }
+
+    private void PopulateAllShapes(DiagramShape diagramShape)
+    {
+        this.AllShapes.Add(diagramShape);
+
+        foreach (var child in diagramShape.Children.Values)
+        {
+            this.PopulateAllShapes(child);
         }
     }
 
@@ -241,13 +263,11 @@ public class AbstractProcessingService : IProcessingService
                     shapeAbove.ShapeBelow = childShape;
                     currentLine.Add(childShape);
                     diagramShape.CorrectDiagram();
-
                     continue;
                 }
 
                 currentLine.Add(childrenQueue.Dequeue());
                 diagramShape.CorrectDiagram();
-
                 continue;
             }
 
@@ -262,8 +282,8 @@ public class AbstractProcessingService : IProcessingService
             childShape = childrenQueue.Peek();
 
             // find current width
-            var lineWidth = currentLine.Max(shape => shape.RightSide);
-            var newlineWidth = lineWidth + childShape.Width() + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing);
+            var lineWidth = currentLine.Max(shape => (shape.PositionX + shape.Width));
+            var newlineWidth = lineWidth + childShape.Width + DiagramShape.ConvertMeasurement(this.AppConfig.HorizontalSpacing);
 
             // we can put shape into line
             if (newlineWidth >= internalMaxRight)
@@ -273,7 +293,7 @@ public class AbstractProcessingService : IProcessingService
             }
 
             var previousShape = currentLine[^1];
-            previousShape.ShapeToRight = childShape;
+            previousShape.ShapeRight = childShape;
             diagramShape.CorrectDiagram();
             currentLine.Add(childrenQueue.Dequeue());
         }
@@ -281,27 +301,5 @@ public class AbstractProcessingService : IProcessingService
         diagramShape.ChildrenDepth = diagramShape.Matrix.Count;
         diagramShape.FindNeighbours();
         diagramShape.CorrectDiagram();
-    }
-
-    private double CalculateMaxLine(DiagramShape diagramShape)
-    {
-        double maxLine;
-        var childrenCount = diagramShape.Children.Count;
-        if (childrenCount == (diagramShape.TotalChildrenCount() - 1))
-        {
-            maxLine = Math.Round(Math.Sqrt(childrenCount), MidpointRounding.AwayFromZero);
-            var drawLines = childrenCount / maxLine;
-            var appConfigMaxBoxLines = this.AppConfig.MaxBoxLines ?? 5d;
-            if (drawLines > appConfigMaxBoxLines)
-            {
-                maxLine = Math.Round(childrenCount / appConfigMaxBoxLines, MidpointRounding.AwayFromZero);
-            }
-        }
-        else
-        {
-            maxLine = int.MaxValue;
-        }
-
-        return maxLine;
     }
 }

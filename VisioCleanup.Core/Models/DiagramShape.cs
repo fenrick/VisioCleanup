@@ -22,27 +22,27 @@ public class DiagramShape
 
     private const int ConversionFactor = 1000;
 
+    private const string CornerStringFormat = "Top: {0}, Left: {1}, Width: {2}, Height: {3}";
+
+    private const string HorizontalDirection = "horizontal";
+
     private const string MovingShapeByMovementDirection = "Moving {Shape} by {Movement} {Direction}";
 
     private const string VerticalDirection = "vertical";
 
-    private const string HorizontalDirection = "horizontal";
-
-    private const string CornerStringFormat = "Top: {0}, Left: {1}, Width: {2}, Height: {3}";
-
     private readonly ILogger logger;
 
-    private int baseSide;
+    private int height;
 
-    private DiagramShape? shapeBelowThisShape;
+    private int positionX;
 
-    private DiagramShape? shapeToToRightOfThisShapeTo;
+    private int positionY;
 
-    private int rightSide;
+    private DiagramShape? shapeBelow;
 
-    private int leftSide;
+    private DiagramShape? shapeRight;
 
-    private int topSide;
+    private int width;
 
     /// <summary>Initialises a new instance of the <see cref="DiagramShape" /> class.</summary>
     /// <param name="visioId">Visio shape ID.</param>
@@ -51,10 +51,10 @@ public class DiagramShape
         this.logger = Log.ForContext<DiagramShape>();
         this.VisioId = visioId;
         this.Children = new SortedList<string, DiagramShape>(StringComparer.Ordinal);
-        this.TopSide = ConvertMeasurement(AppConfig!.Height);
-        this.LeftSide = 0;
-        this.RightSide = ConvertMeasurement(AppConfig.Width);
-        this.BaseSide = 0;
+        this.PositionY = 0;
+        this.PositionX = 0;
+        this.Width = ConvertMeasurement(AppConfig!.Width);
+        this.Height = ConvertMeasurement(AppConfig!.Height);
         this.Master = string.Empty;
         this.ShapeText = string.Empty;
         this.SortValue = string.Empty;
@@ -62,7 +62,56 @@ public class DiagramShape
     }
 
     /// <summary>Noifty on shape resize.</summary>
-    public event EventHandler? ShapeResize;
+    public event EventHandler? ShapeChanged;
+
+    /// <summary>Gets or sets the height of the shape.</summary>
+    /// <value>Height of the shape in visio units.</value>
+    public int Height
+    {
+        get => this.height;
+        set
+        {
+            if (this.height == value)
+            {
+                return;
+            }
+
+            this.height = value;
+            this.OnShapeChange();
+
+            // move shape below
+            int movement;
+            if (this.ShapeBelow is not null)
+            {
+                var shapeSize = this.PositionY - this.Height - ConvertMeasurement(AppConfig!.VerticalSpacing);
+
+                // calculate movement
+                movement = this.ShapeBelow.PositionY - shapeSize;
+
+                if (movement != 0)
+                {
+                    this.logger.Debug(MovingShapeByMovementDirection, this.ShapeBelow, movement, VerticalDirection);
+                    this.ShapeBelow.MoveVertical(movement);
+                }
+            }
+
+            // move shape on right
+            if (this.ShapeRight is null)
+            {
+                return;
+            }
+
+            // calculate movement
+            movement = this.ShapeRight.PositionY - this.PositionY;
+            if (movement == 0)
+            {
+                return;
+            }
+
+            this.logger.Debug(MovingShapeByMovementDirection, this.ShapeRight, movement, VerticalDirection);
+            this.ShapeRight.MoveVertical(movement);
+        }
+    }
 
     /// <summary>Gets the stencil used for drawing shape.</summary>
     /// <value>Master shape stencil.</value>
@@ -72,9 +121,144 @@ public class DiagramShape
     /// <value>Parent shape.</value>
     public DiagramShape? ParentShape { get; private set; }
 
+    /// <summary>Gets or sets left side of the shape.</summary>
+    /// <value>Left side of shape.</value>
+    public int PositionX
+    {
+        get => this.positionX;
+        set
+        {
+            if (this.positionX == value)
+            {
+                return;
+            }
+
+            this.positionX = value;
+            this.OnShapeChange();
+        }
+    }
+
+    /// <summary>Gets or sets top of the shape.</summary>
+    /// <value>Top side of shape.</value>
+    public int PositionY
+    {
+        get => this.positionY;
+        set
+        {
+            if (this.positionY == value)
+            {
+                return;
+            }
+
+            this.positionY = value;
+            this.OnShapeChange();
+        }
+    }
+
+    /// <summary>Gets or sets the shape above.</summary>
+    /// <value>Shape above.</value>
+    public DiagramShape? ShapeAbove { get; set; }
+
+    /// <summary>Gets or sets the shape below.</summary>
+    /// <value>Shape below.</value>
+    public DiagramShape? ShapeBelow
+    {
+        get => this.shapeBelow;
+        set
+        {
+            // remove existing relationship.
+            if (this.shapeBelow is not null)
+            {
+                this.shapeBelow.ShapeAbove = null;
+            }
+
+            // set value.
+            this.shapeBelow = value;
+
+            if (this.shapeBelow is null)
+            {
+                return;
+            }
+
+            // set relationship.
+            this.shapeBelow.ShapeAbove = this;
+
+            // calculate movement
+            var movement = this.shapeBelow.PositionX - this.PositionX;
+
+            if (movement != 0)
+            {
+                this.logger.Debug(MovingShapeByMovementDirection, this.shapeBelow, movement, HorizontalDirection);
+                this.shapeBelow.MoveHorizontal(movement);
+            }
+
+            // calculate movement
+            var shapeSize = this.PositionY - this.Height - ConvertMeasurement(AppConfig!.VerticalSpacing);
+            movement = this.shapeBelow.PositionY - shapeSize;
+
+            if (movement == 0)
+            {
+                return;
+            }
+
+            this.logger.Debug(MovingShapeByMovementDirection, this.shapeBelow, movement, VerticalDirection);
+            this.shapeBelow.MoveVertical(movement);
+        }
+    }
+
     /// <summary>Gets a unique shape identifier.</summary>
     /// <value>Unique identifer.</value>
     public string? ShapeIdentifier { get; init; }
+
+    /// <summary>Gets or sets the shape to the left.</summary>
+    /// <value>Left shape.</value>
+    public DiagramShape? ShapeLeft { get; set; }
+
+    /// <summary>Gets or sets the shape to the right.</summary>
+    /// <value>Shape to right.</value>
+    public DiagramShape? ShapeRight
+    {
+        get => this.shapeRight;
+        set
+        {
+            // remove existing relationship.
+            if (this.shapeRight is not null)
+            {
+                this.shapeRight.ShapeLeft = null;
+            }
+
+            // set value.
+            this.shapeRight = value;
+
+            if (this.shapeRight is null)
+            {
+                return;
+            }
+
+            // set relationship.
+            this.shapeRight.ShapeLeft = this;
+
+            // calculate movement
+            var shapeSize = this.PositionX + this.Width + ConvertMeasurement(AppConfig!.HorizontalSpacing);
+            var movement = this.shapeRight.PositionX - shapeSize;
+
+            if (movement != 0)
+            {
+                this.logger.Debug(MovingShapeByMovementDirection, this.shapeRight, movement, HorizontalDirection);
+                this.shapeRight.MoveHorizontal(movement);
+            }
+
+            // calculate movement
+            movement = this.shapeRight.PositionY - this.PositionY;
+            if (movement == 0)
+            {
+                return;
+            }
+
+            this.logger.Debug(MovingShapeByMovementDirection, this.shapeRight, movement, VerticalDirection);
+            this.shapeRight.MoveVertical(movement);
+        }
+    }
 
     /// <summary>Gets the shape text.</summary>
     /// <value>Shape text.</value>
@@ -88,195 +272,38 @@ public class DiagramShape
     /// <value>Sort value.</value>
     public string SortValue { get; init; }
 
-    /// <summary>Gets or sets the shape above.</summary>
-    /// <value>Shape above.</value>
-    public DiagramShape? ShapeAbove { get; set; }
+    /// <summary>Gets or sets visio shape id.</summary>
+    /// <value>Visio identifer.</value>
+    public int VisioId { get; set; }
 
-    /// <summary>Gets or sets base of the shape.</summary>
-    /// <value>Bottom of shape.</value>
-    public int BaseSide
+    /// <summary>Gets or sets the width of the shape.</summary>
+    /// <value>Width.</value>
+    public int Width
     {
-        get => this.baseSide;
+        get => this.width;
         set
         {
-            if (this.baseSide == value)
+            if (this.width == value)
             {
                 return;
             }
 
-            this.baseSide = value;
-            this.OnShapeResize();
-
-            // move shape below
-            int movement;
-            if (this.ShapeBelow is not null)
-            {
-                // calculate movement
-                movement = this.ShapeBelow.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
-
-                if (movement != 0)
-                {
-                    this.logger.Debug(MovingShapeByMovementDirection, this.ShapeBelow, movement, VerticalDirection);
-                    this.ShapeBelow.MoveVertical(movement);
-                }
-            }
-
-            // move shape on right
-            if (this.ShapeToRight is null)
-            {
-                return;
-            }
-
-            // calculate movement
-            movement = this.ShapeToRight.TopSide - this.TopSide;
-            if (movement == 0)
-            {
-                return;
-            }
-
-            this.logger.Debug(MovingShapeByMovementDirection, this.ShapeToRight, movement, VerticalDirection);
-            this.ShapeToRight.MoveVertical(movement);
-        }
-    }
-
-    /// <summary>Gets or sets the shape below.</summary>
-    /// <value>Shape below.</value>
-    public DiagramShape? ShapeBelow
-    {
-        get => this.shapeBelowThisShape;
-        set
-        {
-            // remove existing relationship.
-            if (this.shapeBelowThisShape is not null)
-            {
-                this.shapeBelowThisShape.ShapeAbove = null;
-            }
-
-            // set value.
-            this.shapeBelowThisShape = value;
-
-            if (this.shapeBelowThisShape is null)
-            {
-                return;
-            }
-
-            // set relationship.
-            this.shapeBelowThisShape.ShapeAbove = this;
-
-            // calculate movement
-            var movement = this.shapeBelowThisShape.LeftSide - this.LeftSide;
-
-            if (movement != 0)
-            {
-                this.logger.Debug(MovingShapeByMovementDirection, this.shapeBelowThisShape, movement, HorizontalDirection);
-                this.shapeBelowThisShape.MoveHorizontal(movement);
-            }
-
-            // calculate movement
-            movement = this.shapeBelowThisShape.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
-
-            if (movement == 0)
-            {
-                return;
-            }
-
-            this.logger.Debug(MovingShapeByMovementDirection, this.shapeBelowThisShape, movement, VerticalDirection);
-            this.shapeBelowThisShape.MoveVertical(movement);
-        }
-    }
-
-    /// <summary>Gets or sets the shape to the left.</summary>
-    /// <value>Left shape.</value>
-    public DiagramShape? ShapeOnLeft { get; set; }
-
-    /// <summary>Gets or sets left side of the shape.</summary>
-    /// <value>Left side of shape.</value>
-    public int LeftSide
-    {
-        get => this.leftSide;
-        set
-        {
-            if (this.leftSide == value)
-            {
-                return;
-            }
-
-            this.leftSide = value;
-            this.OnShapeResize();
-        }
-    }
-
-    /// <summary>Gets or sets the shape to the right.</summary>
-    /// <value>Shape to right.</value>
-    public DiagramShape? ShapeToRight
-    {
-        get => this.shapeToToRightOfThisShapeTo;
-        set
-        {
-            // remove existing relationship.
-            if (this.shapeToToRightOfThisShapeTo is not null)
-            {
-                this.shapeToToRightOfThisShapeTo.ShapeOnLeft = null;
-            }
-
-            // set value.
-            this.shapeToToRightOfThisShapeTo = value;
-
-            if (this.shapeToToRightOfThisShapeTo is null)
-            {
-                return;
-            }
-
-            // set relationship.
-            this.shapeToToRightOfThisShapeTo.ShapeOnLeft = this;
-
-            // calculate movement
-            var movement = this.shapeToToRightOfThisShapeTo.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
-
-            if (movement != 0)
-            {
-                this.logger.Debug(MovingShapeByMovementDirection, this.shapeToToRightOfThisShapeTo, movement, HorizontalDirection);
-                this.shapeToToRightOfThisShapeTo.MoveHorizontal(movement);
-            }
-
-            // calculate movement
-            movement = this.shapeToToRightOfThisShapeTo.TopSide - this.TopSide;
-            if (movement == 0)
-            {
-                return;
-            }
-
-            this.logger.Debug(MovingShapeByMovementDirection, this.shapeToToRightOfThisShapeTo, movement, VerticalDirection);
-            this.shapeToToRightOfThisShapeTo.MoveVertical(movement);
-        }
-    }
-
-    /// <summary>Gets or sets <see cref="shapeToToRightOfThisShapeTo" /> side of the shape.</summary>
-    /// <value>Right side of shape.</value>
-    public int RightSide
-    {
-        get => this.rightSide;
-        set
-        {
-            if (this.rightSide == value)
-            {
-                return;
-            }
-
-            this.rightSide = value;
-            this.OnShapeResize();
+            this.width = value;
+            this.OnShapeChange();
 
             // move shape to right to spacing width
             int movement;
-            if (this.ShapeToRight is not null)
+            if (this.ShapeRight is not null)
             {
                 // calculate movement
-                movement = this.ShapeToRight.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+                var shapeSize = this.PositionX + this.Width + ConvertMeasurement(AppConfig!.HorizontalSpacing);
+
+                movement = this.ShapeRight.PositionX - shapeSize;
 
                 if (movement != 0)
                 {
-                    this.logger.Debug(MovingShapeByMovementDirection, this.ShapeToRight, movement, HorizontalDirection);
-                    this.ShapeToRight.MoveHorizontal(movement);
+                    this.logger.Debug(MovingShapeByMovementDirection, this.ShapeRight, movement, HorizontalDirection);
+                    this.ShapeRight.MoveHorizontal(movement);
                 }
             }
 
@@ -287,7 +314,7 @@ public class DiagramShape
             }
 
             // calculate movement
-            movement = this.ShapeBelow.LeftSide - this.LeftSide;
+            movement = this.ShapeBelow.PositionX - this.PositionX;
 
             if (movement == 0)
             {
@@ -298,27 +325,6 @@ public class DiagramShape
             this.ShapeBelow.MoveHorizontal(movement);
         }
     }
-
-    /// <summary>Gets or sets top of the shape.</summary>
-    /// <value>Top side of shape.</value>
-    public int TopSide
-    {
-        get => this.topSide;
-        set
-        {
-            if (this.topSide == value)
-            {
-                return;
-            }
-
-            this.topSide = value;
-            this.OnShapeResize();
-        }
-    }
-
-    /// <summary>Gets or sets visio shape id.</summary>
-    /// <value>Visio identifer.</value>
-    public int VisioId { get; set; }
 
     internal static AppConfig? AppConfig { get; set; }
 
@@ -359,7 +365,7 @@ public class DiagramShape
             return;
         }
 
-        childShape.ShapeResize += this.ChildShape_ShapeResize;
+        childShape.ShapeChanged += this.ChildShapeShapeChanged;
 
         // add to list of all children
         this.Children.Add(childShape.SortValue, childShape);
@@ -367,91 +373,6 @@ public class DiagramShape
         // set parent shape
         childShape.ParentShape = this;
     }
-
-    /// <summary>Correct shape and child shapes.</summary>
-    /// <returns>If any shape was changed.</returns>
-    internal bool CorrectDiagram()
-    {
-        var result = this.FixPosition();
-
-        // depth first correction process
-        foreach (var diagramShape in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
-        {
-            result = true;
-        }
-
-        // resize shape
-        if (this.ResizeShape())
-        {
-            result = true;
-        }
-
-        return result;
-    }
-
-    /// <summary>Does this shape have a parent.</summary>
-    /// <returns>True if a parent.</returns>
-    internal bool HasParent() => this.ParentShape is not null;
-
-    /// <summary>Calculate the height of the shape.</summary>
-    /// <returns>Height.</returns>
-    internal int Height() => this.TopSide - this.BaseSide;
-
-    /// <summary>Resize the shape based on appconfig.</summary>
-    /// <returns>If shape changed.</returns>
-    internal bool ResizeShape()
-    {
-        int width;
-        int height;
-        if (this.Children.Count > 0)
-        {
-            // default values
-            var childShapes = this.Children.Values;
-
-            var minLeftSide = childShapes.Min(shape => shape.LeftSide) - ConvertMeasurement(AppConfig!.Left);
-            var maxRightSide = childShapes.Max(shape => shape.RightSide) + ConvertMeasurement(AppConfig.Right);
-            width = maxRightSide - minLeftSide;
-
-            var minBaseSide = childShapes.Min(shape => shape.BaseSide) - ConvertMeasurement(AppConfig.Base);
-            var maxTopSide = childShapes.Max(shape => shape.TopSide) + ConvertMeasurement(AppConfig.Top);
-            height = maxTopSide - minBaseSide;
-
-            // compare to left
-            if (this.ShapeOnLeft?.Height() > height)
-            {
-                height = this.ShapeOnLeft.Height();
-            }
-
-            // compare to right
-            if (this.ShapeToRight?.Height() > height)
-            {
-                height = this.ShapeToRight.Height();
-            }
-        }
-        else
-        {
-            height = ConvertMeasurement(AppConfig!.Height);
-            width = ConvertMeasurement(AppConfig.Width);
-        }
-
-        var newBaseSide = this.TopSide - height;
-        var newRightSide = this.LeftSide + width;
-
-        if ((this.RightSide == newRightSide) && (this.BaseSide == newBaseSide))
-        {
-            return false;
-        }
-
-        this.logger.Debug("Resizing: {Shape}", this);
-        this.RightSide = newRightSide;
-        this.BaseSide = newBaseSide;
-        this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
-        return true;
-    }
-
-    /// <summary>Calculate the width of the shape.</summary>
-    /// <returns>Width.</returns>
-    internal int Width() => this.RightSide - this.LeftSide;
 
     internal Matrix<float> Bitmap()
     {
@@ -463,7 +384,7 @@ public class DiagramShape
         }
 
         var rowCount = 0;
-        var rowChild = this.Children.Values.First(child => child.ShapeOnLeft is null && child.ShapeAbove is null);
+        var rowChild = this.Children.Values.First(child => child.ShapeLeft is null && child.ShapeAbove is null);
 
         while (rowChild is not null)
         {
@@ -489,7 +410,7 @@ public class DiagramShape
                     continue;
                 }
 
-                columnChild = columnChild.ShapeToRight;
+                columnChild = columnChild.ShapeRight;
             }
 
             rowChild = rowChild.ShapeBelow;
@@ -501,6 +422,27 @@ public class DiagramShape
         var rows = bitmap.EnumerateRows().Count(values => values.Sum() > 0);
 
         return bitmap.SubMatrix(0, rows, 0, columns);
+    }
+
+    /// <summary>Correct shape and child shapes.</summary>
+    /// <returns>If any shape was changed.</returns>
+    internal bool CorrectDiagram()
+    {
+        var result = this.FixPosition();
+
+        // depth first correction process
+        foreach (var diagramShape in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
+        {
+            result = true;
+        }
+
+        // resize shape
+        if (this.ResizeShape())
+        {
+            result = true;
+        }
+
+        return result;
     }
 
     /// <summary>Map all neighbour shapes within tolerance of 10.</summary>
@@ -516,36 +458,36 @@ public class DiagramShape
         var children = this.Children;
         foreach (var child in children.Values)
         {
-            child.ShapeToRight = null;
+            child.ShapeRight = null;
             child.ShapeBelow = null;
         }
 
         var tolerance = ((AppConfig!.HorizontalSpacing + AppConfig.VerticalSpacing) * ConversionFactor) / 2d;
 
-        var lines = children.Values.OrderBy(shape => shape.LeftSide).Select(shape => shape.LeftSide);
+        var lines = children.Values.OrderBy(shape => shape.PositionX).Select(shape => shape.PositionX);
         foreach (var line in lines.Distinct())
         {
             bool AbsoluteShapeSize(DiagramShape shape)
             {
-                var side = shape.LeftSide - line;
+                var side = shape.PositionX - line;
                 return Math.Abs(side) < tolerance;
             }
 
             var diagramShapes = children.Values.Where(AbsoluteShapeSize);
-            var bottomOrdered = diagramShapes.OrderBy(shape => shape.BaseSide).ToList();
+            var topOrdered = diagramShapes.OrderBy(shape => shape.PositionY).ToList();
             DiagramShape? currentShape = null;
 
-            foreach (var shape in bottomOrdered)
+            foreach (var shape in topOrdered)
             {
                 switch (currentShape)
                 {
-                    case not null when currentShape.BaseSide.Equals(shape.BaseSide):
+                    case not null when currentShape.PositionY.Equals(shape.PositionY):
                         // overlap!
                         this.logger.Error("Weird circumstances, check diagram for overlaps between {Shape} and {Shape2}", currentShape, shape);
                         continue;
-                    case not null when currentShape.BaseSide >= shape.BaseSide:
+                    case not null when currentShape.PositionY >= shape.PositionY:
                         continue;
-                    case not null when (shape.BaseSide - currentShape.TopSide) < (tolerance + tolerance):
+                    case not null when (shape.PositionY - shape.Height - currentShape.PositionY) < (tolerance + tolerance):
                         shape.ShapeBelow = currentShape;
 
                         currentShape = shape;
@@ -557,31 +499,31 @@ public class DiagramShape
             }
         }
 
-        lines = children.Values.OrderBy(shape => shape.TopSide).Select(shape => shape.TopSide);
+        lines = children.Values.OrderBy(shape => shape.PositionY).Select(shape => shape.PositionY);
         foreach (var line in lines.Distinct())
         {
             bool AbsoluteShapeSize(DiagramShape shape)
             {
-                var side = shape.TopSide - line;
+                var side = shape.PositionY - line;
                 return Math.Abs(side) < tolerance;
             }
 
             var diagramShapes = children.Values.Where(AbsoluteShapeSize);
-            var bottomOrdered = diagramShapes.OrderBy(shape => shape.LeftSide);
+            var bottomOrdered = diagramShapes.OrderBy(shape => shape.PositionX);
             DiagramShape? currentShape = null;
 
             foreach (var shape in bottomOrdered)
             {
                 switch (currentShape)
                 {
-                    case not null when currentShape.LeftSide.Equals(shape.LeftSide):
+                    case not null when currentShape.PositionX.Equals(shape.PositionX):
                         // overlap!
                         this.logger.Error("Weird circumstances, check diagram for overlaps between {Shape} and {Shape2}", currentShape, shape);
                         continue;
-                    case not null when currentShape.LeftSide >= shape.LeftSide:
+                    case not null when currentShape.PositionX >= shape.PositionX:
                         continue;
-                    case not null when (shape.LeftSide - currentShape.RightSide) < (tolerance + tolerance):
-                        currentShape.ShapeToRight = shape;
+                    case not null when (shape.PositionX - (currentShape.PositionX + currentShape.Width)) < (tolerance + tolerance):
+                        currentShape.ShapeRight = shape;
 
                         currentShape = shape;
                         break;
@@ -593,16 +535,69 @@ public class DiagramShape
         }
     }
 
+    /// <summary>Does this shape have a parent.</summary>
+    /// <returns>True if a parent.</returns>
+    internal bool HasParent() => this.ParentShape is not null;
+
+    /// <summary>Resize the shape based on appconfig.</summary>
+    /// <returns>If shape changed.</returns>
+    internal bool ResizeShape()
+    {
+        int newWidth;
+        int newHeight;
+        if (this.Children.Count > 0)
+        {
+            // default values
+            var childShapes = this.Children.Values;
+
+            var minLeftSide = childShapes.Min(shape => shape.PositionX) - ConvertMeasurement(AppConfig!.Left);
+            var maxRightSide = childShapes.Max(shape => shape.PositionX + shape.Width) + ConvertMeasurement(AppConfig.Right);
+            newWidth = maxRightSide - minLeftSide;
+
+            var minBaseSide = childShapes.Min(shape => shape.PositionY - shape.Height) - ConvertMeasurement(AppConfig.Base);
+            var maxTopSide = childShapes.Max(shape => shape.PositionY) + ConvertMeasurement(AppConfig.Top);
+            newHeight = maxTopSide - minBaseSide;
+
+            // compare to left
+            if (this.ShapeLeft?.Height > newHeight)
+            {
+                newHeight = this.ShapeLeft.Height;
+            }
+
+            // compare to right
+            if (this.ShapeRight?.Height > newHeight)
+            {
+                newHeight = this.ShapeRight.Height;
+            }
+        }
+        else
+        {
+            newHeight = ConvertMeasurement(AppConfig!.Height);
+            newWidth = ConvertMeasurement(AppConfig.Width);
+        }
+
+        if ((this.Width == newWidth) && (this.Height == newHeight))
+        {
+            return false;
+        }
+
+        this.logger.Debug("Resizing: {Shape}", this);
+        this.Width = newWidth;
+        this.Height = newHeight;
+        this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
+        return true;
+    }
+
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Values.Sum(child => child.TotalChildrenCount());
 
     /// <summary>Notify of a shape resize.</summary>
-    protected virtual void OnShapeResize()
+    protected virtual void OnShapeChange()
     {
-        var handler = this.ShapeResize;
+        var handler = this.ShapeChanged;
         handler?.Invoke(this, EventArgs.Empty);
     }
 
-    private void ChildShape_ShapeResize(object? sender, EventArgs e)
+    private void ChildShapeShapeChanged(object? sender, EventArgs e)
     {
         this.logger.Debug("Child shape was resized!");
         this.ResizeShape();
@@ -614,10 +609,10 @@ public class DiagramShape
         return string.Format(
             culture,
             CornerStringFormat,
-            ConvertMeasurement(this.TopSide),
-            ConvertMeasurement(this.LeftSide),
-            ConvertMeasurement(this.Width()),
-            ConvertMeasurement(this.Height()));
+            ConvertMeasurement(this.PositionY),
+            ConvertMeasurement(this.PositionX),
+            ConvertMeasurement(this.Width),
+            ConvertMeasurement(this.Height));
     }
 
     private bool FixPosition()
@@ -631,14 +626,14 @@ public class DiagramShape
         }
 
         // top left
-        if (this.ShapeAbove is null && this.ShapeOnLeft is null)
+        if (this.ShapeAbove is null && this.ShapeLeft is null)
         {
-            var newLeft = this.ParentShape.LeftSide + ConvertMeasurement(AppConfig!.Left);
-            var newTop = this.ParentShape.TopSide - ConvertMeasurement(AppConfig.Top);
+            var newLeft = this.ParentShape.PositionX + ConvertMeasurement(AppConfig!.Left);
+            var newTop = this.ParentShape.PositionY - ConvertMeasurement(AppConfig.Top);
 
-            var topMovement = this.TopSide - newTop;
+            var topMovement = this.PositionY - newTop;
 
-            var leftMovement = this.LeftSide - newLeft;
+            var leftMovement = this.PositionX - newLeft;
 
             if (topMovement != 0)
             {
@@ -657,24 +652,26 @@ public class DiagramShape
 
         // move shape to right to spacing width
         int movement;
-        if (this.ShapeToRight is not null)
+        if (this.ShapeRight is not null)
         {
             // calculate movement
-            movement = this.ShapeToRight.LeftSide - (this.rightSide + ConvertMeasurement(AppConfig!.HorizontalSpacing));
+            var shapeSize = this.PositionX + this.Width + ConvertMeasurement(AppConfig!.HorizontalSpacing);
+
+            movement = this.ShapeRight.PositionX - shapeSize;
 
             if (movement != 0)
             {
-                this.logger.Debug(MovingShapeByMovementDirection, this.ShapeToRight, movement, HorizontalDirection);
-                this.ShapeToRight.MoveHorizontal(movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.ShapeRight, movement, HorizontalDirection);
+                this.ShapeRight.MoveHorizontal(movement);
                 result = true;
             }
 
             // calculate movement
-            movement = this.ShapeToRight.TopSide - this.TopSide;
+            movement = this.ShapeRight.PositionY - this.PositionY;
             if (movement != 0)
             {
-                this.logger.Debug(MovingShapeByMovementDirection, this.ShapeToRight, movement, VerticalDirection);
-                this.ShapeToRight.MoveVertical(movement);
+                this.logger.Debug(MovingShapeByMovementDirection, this.ShapeRight, movement, VerticalDirection);
+                this.ShapeRight.MoveVertical(movement);
                 result = true;
             }
         }
@@ -682,7 +679,7 @@ public class DiagramShape
         // align shape below to left hand side.
         if (this.ShapeBelow is not null)
         {
-            movement = this.ShapeBelow.LeftSide - this.LeftSide;
+            movement = this.ShapeBelow.PositionX - this.PositionX;
 
             if (movement != 0)
             {
@@ -692,7 +689,8 @@ public class DiagramShape
             }
 
             // calculate movement
-            movement = this.ShapeBelow.TopSide - (this.baseSide - ConvertMeasurement(AppConfig!.VerticalSpacing));
+            var shapeSize = this.PositionY - this.Height - ConvertMeasurement(AppConfig!.VerticalSpacing);
+            movement = this.ShapeBelow.PositionY - shapeSize;
 
             if (movement == 0)
             {
@@ -708,15 +706,7 @@ public class DiagramShape
         return result;
     }
 
-    private void MoveHorizontal(int movement)
-    {
-        this.LeftSide -= movement;
-        this.RightSide -= movement;
-    }
+    private void MoveHorizontal(int movement) => this.PositionX -= movement;
 
-    private void MoveVertical(int movement)
-    {
-        this.TopSide -= movement;
-        this.BaseSide -= movement;
-    }
+    private void MoveVertical(int movement) => this.PositionY -= movement;
 }

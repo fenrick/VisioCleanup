@@ -48,6 +48,9 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
     }
 
     /// <inheritdoc />
+    public void Dispose() => this.Dispose(native: true);
+
+    /// <inheritdoc />
     public void Open()
     {
         SqlConnectionStringBuilder builder = new()
@@ -56,6 +59,7 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
             Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated,
             InitialCatalog = this.AppConfig.DatabaseCatalog,
             ApplicationIntent = ApplicationIntent.ReadOnly,
+            TrustServerCertificate = true,
         };
 
         this.databaseConnection = new SqlConnection(builder.ConnectionString);
@@ -77,30 +81,39 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
 
         while (reader.Read())
         {
-            Dictionary<int, Dictionary<FieldType, string>> rowResults = new();
-            foreach (var cellIndex in Enumerable.Range(1, columnMapping.Count))
-            {
-                Dictionary<FieldType, string> values = new();
-                foreach (var pair in columnMapping[cellIndex])
-                {
-                    var key = pair.Key;
-                    var value = pair.Value;
-                    values[key] = !reader.IsDBNull(value) ? reader.GetFieldValue<string>(value) : string.Empty;
-                }
-
-                rowResults.Add(cellIndex, values);
-            }
+            var rowResults = ConvertRowToValues(columnMapping, reader);
 
             DiagramShape? result = null;
-            foreach (var i in Enumerable.Range(1, columnMapping.Count))
+            foreach (var i in Enumerable.Range(1, columnMapping.Length))
             {
                 result = this.CreateShape(rowResults[i], allShapes, result);
+
+                if (result is not null && result.ParentShape is null)
+                {
+                    masterShape.AddChildShape(result);
+                }
             }
         }
     }
 
-    /// <inheritdoc />
-    public void Dispose() => this.Dispose(native: true);
+    private static Dictionary<FieldType, string>[] ConvertRowToValues(Dictionary<FieldType, int>[] columnMapping, SqlDataReader reader)
+    {
+        var rowResults = new Dictionary<FieldType, string>[columnMapping.Length];
+        for (var cellIndex = 0; cellIndex < columnMapping.Length; cellIndex++)
+        {
+            var columnMap = columnMapping[cellIndex];
+            Dictionary<FieldType, string> values = new();
+
+            foreach (var (key, value) in columnMap)
+            {
+                values[key] = !reader.IsDBNull(value) ? reader.GetFieldValue<string>(value) : string.Empty;
+            }
+
+            rowResults[cellIndex] = values;
+        }
+
+        return rowResults;
+    }
 
     /// <summary>Native/Managed Dispose.</summary>
     /// <param name="native">Is this a native dispose.</param>
@@ -121,52 +134,50 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
         this.databaseConnection = null;
     }
 
-    private SortedList<int, Dictionary<FieldType, int>> MapColumns(IReadOnlyCollection<DbColumn> columnSchema)
+    private Dictionary<FieldType, int>[] MapColumns(IReadOnlyCollection<DbColumn> columnSchema)
     {
-        SortedList<int, Dictionary<FieldType, int>> columnMapping = new();
-        var level = 0;
+        var columnMapping = Array.Empty<Dictionary<FieldType, int>>();
+        var level = -1;
+
         do
         {
-            Dictionary<FieldType, int> mappings = new();
-            var fieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.FieldLabelFormat ?? "{0}", level);
-            var sortFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.SortFieldLabelFormat ?? "{0} SortValue", level);
-            var shapeFieldName = string.Format(CultureInfo.CurrentCulture, this.AppConfig.ShapeTypeLabelFormat ?? "{0} Shape", level);
-
             level++;
+            Dictionary<FieldType, int> mappings = new();
 
+            var fieldName = string.Format(CultureInfo.InvariantCulture, this.AppConfig.FieldLabelFormat!, level);
+            var sortFieldName = string.Format(CultureInfo.InvariantCulture, this.AppConfig.SortFieldLabelFormat!, level);
+            var shapeFieldName = string.Format(CultureInfo.InvariantCulture, this.AppConfig.ShapeTypeLabelFormat!, level);
+
+            Array.Resize(ref columnMapping, level + 1);
             foreach (var column in columnSchema)
             {
                 Debug.Assert(column.ColumnOrdinal is not null, "column.ColumnOrdinal is not  null");
-                var columnColumnOrdinal = (int)column.ColumnOrdinal;
-                var columnColumnName = column.ColumnName;
-                FieldType fieldMapping;
 
-                if (columnColumnName.Equals(fieldName, StringComparison.Ordinal))
+                var columnOrdinal = (int)column.ColumnOrdinal;
+                var columnName = column.ColumnName;
+
+                if (columnName!.Equals(fieldName, StringComparison.Ordinal))
                 {
-                    fieldMapping = FieldType.ShapeText;
+                    mappings[FieldType.ShapeText] = columnOrdinal;
+                    columnMapping[level] = mappings;
                 }
-                else if (columnColumnName.Equals(sortFieldName, StringComparison.Ordinal))
+                else if (columnName.Equals(sortFieldName, StringComparison.Ordinal))
                 {
-                    fieldMapping = FieldType.SortValue;
+                    mappings[FieldType.SortValue] = columnOrdinal;
                 }
-                else if (columnColumnName.Equals(shapeFieldName, StringComparison.Ordinal))
+                else if (columnName.Equals(shapeFieldName, StringComparison.Ordinal))
                 {
-                    fieldMapping = FieldType.ShapeType;
+                    mappings[FieldType.ShapeType] = columnOrdinal;
                 }
                 else
                 {
-                    continue;
+                    // ignoring value
                 }
-
-                mappings.Add(fieldMapping, columnColumnOrdinal);
-            }
-
-            if (mappings.ContainsKey(FieldType.ShapeText))
-            {
-                columnMapping.Add(level, mappings);
             }
         }
-        while (columnMapping.ContainsKey(level));
+        while (columnMapping.ElementAtOrDefault(level) is not null);
+
+        Array.Resize(ref columnMapping, level);
 
         return columnMapping;
     }

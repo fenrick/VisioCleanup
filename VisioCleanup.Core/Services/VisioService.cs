@@ -70,8 +70,8 @@ public class VisioService : AbstractProcessingService, IVisioService
             }
 
             // set master shape size.
-            this.MasterShape!.LeftSide = this.MasterShape.Children.Values.Select(shape => shape.LeftSide).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
-            this.MasterShape!.TopSide = this.MasterShape.Children.Values.Select(shape => shape.TopSide).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
+            this.MasterShape!.PositionX = this.MasterShape.Children.Values.Select(shape => shape.PositionX).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
+            this.MasterShape!.PositionY = this.MasterShape.Children.Values.Select(shape => shape.PositionY).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
 
             this.MasterShape.ResizeShape();
 
@@ -90,14 +90,14 @@ public class VisioService : AbstractProcessingService, IVisioService
 
     private DiagramShape? FindClosestOverlap(DiagramShape diagramShape)
     {
-        var diagramShapeTopSide = diagramShape.TopSide;
-        var diagramShapeLeftSide = diagramShape.LeftSide;
-        var diagramShapeRightSide = diagramShape.RightSide;
-        var diagramShapeBaseSide = diagramShape.BaseSide;
+        var diagramShapeTopSide = diagramShape.PositionY;
+        var diagramShapeLeftSide = diagramShape.PositionX;
+        var diagramShapeRightSide = diagramShape.PositionX + diagramShape.Width;
+        var diagramShapeBaseSide = diagramShape.PositionY - diagramShape.Height;
 
         bool AllSidesOverlap(DiagramShape shape) =>
-            (shape.LeftSide < diagramShapeLeftSide) && (shape.TopSide > diagramShapeTopSide) && (shape.RightSide > diagramShapeRightSide)
-            && (shape.BaseSide < diagramShapeBaseSide);
+            (shape.PositionX < diagramShapeLeftSide) && (shape.PositionY > diagramShapeTopSide) && ((shape.PositionX + shape.Width) > diagramShapeRightSide)
+            && ((shape.PositionY - shape.Height) < diagramShapeBaseSide);
 
         var allOverlaps = this.AllShapes.Where(AllSidesOverlap);
 
@@ -105,7 +105,7 @@ public class VisioService : AbstractProcessingService, IVisioService
         DiagramShape? minShape = null;
         foreach (var shape in allOverlaps.ToList())
         {
-            var shapeArea = Math.BigMul(shape.Width(), shape.Height());
+            var shapeArea = Math.BigMul(shape.Width, shape.Height);
             if (minShapeArea <= shapeArea)
             {
                 continue;

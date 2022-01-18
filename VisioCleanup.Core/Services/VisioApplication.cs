@@ -130,10 +130,10 @@ public class VisioApplication : IVisioApplication
             throw new ArgumentNullException(nameof(diagramShape));
         }
 
-        var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
-        var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
-        var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
-        var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
+        var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width / 2);
+        var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height / 2);
+        var newPinX = DiagramShape.ConvertMeasurement(diagramShape.PositionX) + newLocPinX;
+        var newPinY = DiagramShape.ConvertMeasurement(diagramShape.PositionY) - newLocPinY;
 
         var shapeMaster = "Rectangle";
 
@@ -216,10 +216,10 @@ public class VisioApplication : IVisioApplication
                 ShapeText = selected.Text,
                 SortValue = selected.Text,
                 ShapeType = ShapeType.Existing,
-                LeftSide = this.CalculateLeftSide(sheetId),
-                RightSide = this.CalculateRightSide(sheetId),
-                TopSide = this.CalculateTopSide(sheetId),
-                BaseSide = this.CalculateBaseSide(sheetId),
+                PositionX = this.CalculateLeftSide(sheetId),
+                Width = this.CalculateWidth(sheetId),
+                PositionY = this.CalculateTopSide(sheetId),
+                Height = this.CalculateHeight(sheetId),
             };
             this.logger.LogDebug("Adding shape to collection");
             allShapes.Add(sheetId, diagramShape);
@@ -251,13 +251,13 @@ public class VisioApplication : IVisioApplication
             throw new ArgumentNullException(nameof(diagramShape));
         }
 
-        var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width() / 2);
-        var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height() / 2);
-        var newPinX = DiagramShape.ConvertMeasurement(diagramShape.LeftSide) + newLocPinX;
-        var newPinY = DiagramShape.ConvertMeasurement(diagramShape.BaseSide) + newLocPinY;
+        var newLocPinX = DiagramShape.ConvertMeasurement(diagramShape.Width / 2);
+        var newLocPinY = DiagramShape.ConvertMeasurement(diagramShape.Height / 2);
+        var newPinX = DiagramShape.ConvertMeasurement(diagramShape.PositionX) + newLocPinX;
+        var newPinY = DiagramShape.ConvertMeasurement(diagramShape.PositionY) - newLocPinY;
 
-        var width = DiagramShape.ConvertMeasurement(diagramShape.Width());
-        var height = DiagramShape.ConvertMeasurement(diagramShape.Height());
+        var width = DiagramShape.ConvertMeasurement(diagramShape.Width);
+        var height = DiagramShape.ConvertMeasurement(diagramShape.Height);
 
         var updates = new[]
         {
@@ -299,6 +299,44 @@ public class VisioApplication : IVisioApplication
         return shapeCell.Result[VisUnitCodes.visMillimeters];
     }
 
+    private int CalculateHeight(int visioId)
+    {
+        var shape = this.GetShape(visioId);
+        var height = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
+
+        return DiagramShape.ConvertMeasurement(height);
+    }
+
+    private int CalculateLeftSide(int visioId)
+    {
+        var shape = this.GetShape(visioId);
+
+        var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
+        var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
+
+        return DiagramShape.ConvertMeasurement(pinX - locPinX);
+    }
+
+    private int CalculateTopSide(int visioId)
+    {
+        var shape = this.GetShape(visioId);
+
+        var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
+        var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
+        var height = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
+
+        return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
+    }
+
+    private int CalculateWidth(int visioId)
+    {
+        var shape = this.GetShape(visioId);
+
+        var width = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormWidth);
+
+        return DiagramShape.ConvertMeasurement(width);
+    }
+
     private void ExecuteVisioShapeUpdate(DiagramShape diagramShape, object[][] updates)
     {
         // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
@@ -330,48 +368,6 @@ public class VisioApplication : IVisioApplication
         {
             this.logger.LogError(e, "Error occured during updating {Shape}", diagramShape);
         }
-    }
-
-    private int CalculateBaseSide(int visioId)
-    {
-        var shape = this.GetShape(visioId);
-
-        var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
-        var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
-
-        return DiagramShape.ConvertMeasurement(pinY - locPinY);
-    }
-
-    private int CalculateLeftSide(int visioId)
-    {
-        var shape = this.GetShape(visioId);
-
-        var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
-        var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
-
-        return DiagramShape.ConvertMeasurement(pinX - locPinX);
-    }
-
-    private int CalculateRightSide(int visioId)
-    {
-        var shape = this.GetShape(visioId);
-
-        var pinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinX);
-        var locPinX = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinX);
-        var width = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormWidth);
-
-        return DiagramShape.ConvertMeasurement((pinX - locPinX) + width);
-    }
-
-    private int CalculateTopSide(int visioId)
-    {
-        var shape = this.GetShape(visioId);
-
-        var pinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormPinY);
-        var locPinY = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormLocPinY);
-        var height = GetCellValue(shape, VisSectionIndices.visSectionObject, VisRowIndices.visRowXFormOut, VisCellIndices.visXFormHeight);
-
-        return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
     }
 
     private IVShape GetShape(int visioId)

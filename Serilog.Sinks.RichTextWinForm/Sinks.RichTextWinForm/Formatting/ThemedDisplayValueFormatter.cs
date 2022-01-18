@@ -199,13 +199,11 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         return count;
     }
 
-    private void FormatScalarValue(LogEventPropertyValue scalar, RichTextBox output, string format)
+    private void FormatBooleanValue(RichTextBox output, bool booleanValue)
     {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
+        using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
         {
-            using StringWriter buffer = new();
-            scalar.Render(buffer, format, this.formatProvider);
-            output.AppendText(buffer.ToString());
+            output.AppendText(booleanValue.ToString(CultureInfo.CurrentCulture));
         }
     }
 
@@ -219,17 +217,27 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         }
     }
 
-    private void FormatBooleanValue(RichTextBox output, bool booleanValue)
+    private void FormatNullValue(RichTextBox output)
     {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
+        using (this.ApplyStyle(output, RichTextThemeStyle.Null))
         {
-            output.AppendText(booleanValue.ToString(CultureInfo.CurrentCulture));
+            output.AppendText("null");
         }
     }
 
     private void FormatNumberValue(LogEventPropertyValue scalar, RichTextBox output, string format)
     {
         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
+        {
+            using StringWriter buffer = new();
+            scalar.Render(buffer, format, this.formatProvider);
+            output.AppendText(buffer.ToString());
+        }
+    }
+
+    private void FormatScalarValue(LogEventPropertyValue scalar, RichTextBox output, string format)
+    {
+        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
         {
             using StringWriter buffer = new();
             scalar.Render(buffer, format, this.formatProvider);
@@ -251,14 +259,6 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
             }
 
             output.AppendText(stringValue);
-        }
-    }
-
-    private void FormatNullValue(RichTextBox output)
-    {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Null))
-        {
-            output.AppendText("null");
         }
     }
 }
