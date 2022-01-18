@@ -23,63 +23,39 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
     protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
     {
-        if (dictionary is null)
-        {
-            throw new ArgumentNullException(nameof(dictionary));
-        }
-
-        var count = 0;
-
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("{");
-        }
-
-        var delim = string.Empty;
-        foreach (var pair in dictionary.Elements)
-        {
-            var scalarValue = pair.Key;
-            var logEventPropertyValue = pair.Value;
-
-            if (delim.Length != 0)
-            {
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
+        return this.VisitDictionaryValueInternal(
+            state,
+            dictionary,
+            (KeyValuePair<ScalarValue, LogEventPropertyValue> pair, ref string delim, ref int count) =>
                 {
-                    state.Output.AppendText(delim);
-                }
-            }
+                    var scalarValue = pair.Key;
+                    var logEventPropertyValue = pair.Value;
 
-            delim = ", ";
+                    if (delim.Length != 0)
+                    {
+                        this.OutputText(state.Output, delim, RichTextThemeStyle.TertiaryText);
+                    }
 
-            var style = scalarValue.Value switch
-            {
-                string => RichTextThemeStyle.String,
-                null => RichTextThemeStyle.Null,
-                _ => RichTextThemeStyle.Scalar,
-            };
+                    delim = ", ";
 
-            using (this.ApplyStyle(state.Output, style))
-            {
-                using StringWriter buffer = new();
-                JsonValueFormatter.WriteQuotedJsonString((scalarValue.Value ?? "null").ToString(), buffer);
-                state.Output.AppendText(buffer.ToString());
-            }
+                    var style = scalarValue.Value switch
+                    {
+                        string => RichTextThemeStyle.String,
+                        null => RichTextThemeStyle.Null,
+                        _ => RichTextThemeStyle.Scalar,
+                    };
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-            {
-                state.Output.AppendText(":");
-                state.Output.AppendText(" ");
-            }
+                    using (this.ApplyStyle(state.Output, style))
+                    {
+                        using StringWriter buffer = new();
+                        JsonValueFormatter.WriteQuotedJsonString((scalarValue.Value ?? "null").ToString(), buffer);
+                        state.Output.AppendText(buffer.ToString());
+                    }
 
-            count += this.Visit(state.Nest(), logEventPropertyValue);
-        }
+                    this.OutputText(state.Output, ": ", RichTextThemeStyle.TertiaryText);
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("}");
-        }
-
-        return count;
+                    count += this.Visit(state.Nest(), logEventPropertyValue);
+                });
     }
 
     protected override int VisitScalarValue(ThemedValueFormatterState state, ScalarValue scalar)
@@ -107,57 +83,37 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
             throw new ArgumentNullException(nameof(sequence));
         }
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("[");
-        }
+        this.OutputText(state.Output, "[", RichTextThemeStyle.TertiaryText);
 
         var delim = string.Empty;
         foreach (var t in sequence.Elements)
         {
             if (delim.Length != 0)
             {
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-                {
-                    state.Output.AppendText(delim);
-                }
+                this.OutputText(state.Output, delim, RichTextThemeStyle.TertiaryText);
             }
 
             delim = ", ";
             this.Visit(state.Nest(), t);
         }
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("]");
-        }
+        this.OutputText(state.Output, "]", RichTextThemeStyle.TertiaryText);
 
         return 0;
     }
 
     protected override int VisitStructureValue(ThemedValueFormatterState state, StructureValue structure)
     {
-        if (structure is null)
-        {
-            throw new ArgumentNullException(nameof(structure));
-        }
-
         var count = 0;
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("{");
-        }
+        this.OutputText(state.Output, "{", RichTextThemeStyle.TertiaryText);
 
         var delim = string.Empty;
         foreach (var logEventProperty in structure.Properties)
         {
             if (delim.Length != 0)
             {
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-                {
-                    state.Output.AppendText(delim);
-                }
+                this.OutputText(state.Output, delim, RichTextThemeStyle.TertiaryText);
             }
 
             delim = ", ";
@@ -171,21 +127,14 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
                 state.Output.AppendText(buffer.ToString());
             }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-            {
-                state.Output.AppendText(":");
-                state.Output.AppendText(" ");
-            }
+            this.OutputText(state.Output, ": ", RichTextThemeStyle.TertiaryText);
 
             count += this.Visit(state.Nest(), property.Value);
         }
 
         if (structure.TypeTag is not null)
         {
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-            {
-                state.Output.AppendText(delim);
-            }
+            this.OutputText(state.Output, delim, RichTextThemeStyle.TertiaryText);
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name))
             {
@@ -194,11 +143,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
                 state.Output.AppendText(buffer.ToString());
             }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-            {
-                state.Output.AppendText(":");
-                state.Output.AppendText(" ");
-            }
+            this.OutputText(state.Output, ": ", RichTextThemeStyle.TertiaryText);
 
             using (this.ApplyStyle(state.Output, RichTextThemeStyle.String))
             {
@@ -208,21 +153,12 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
             }
         }
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("}");
-        }
+        this.OutputText(state.Output, "}", RichTextThemeStyle.TertiaryText);
 
         return count;
     }
 
-    private void FormatBooleanValue(RichTextBox output, bool booleanValue)
-    {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
-        {
-            output.AppendText(booleanValue ? "true" : "false");
-        }
-    }
+    private void FormatBooleanValue(RichTextBox output, bool booleanValue) => this.OutputText(output, booleanValue ? "true" : "false", RichTextThemeStyle.Boolean);
 
     private void FormatCharacterValue(RichTextBox output, char characterValue)
     {
@@ -236,12 +172,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
     private void FormatDateTimeValue(RichTextBox output, object value)
     {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
-        {
-            output.AppendText("\"");
-            output.AppendText(((IFormattable)value).ToString("O", CultureInfo.CurrentCulture));
-            output.AppendText("\"");
-        }
+        this.OutputText(output, string.Concat("\"", ((IFormattable)value).ToString("O", CultureInfo.CurrentCulture), "\""), RichTextThemeStyle.Scalar);
     }
 
     private void FormatDoubleValue(RichTextBox output, double doubleValue)
@@ -311,20 +242,11 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
         }
     }
 
-    private void FormatNullValue(RichTextBox output)
-    {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Null))
-        {
-            output.AppendText("null");
-        }
-    }
+    private void FormatNullValue(RichTextBox output) => this.OutputText(output, "null", RichTextThemeStyle.Null);
 
     private void FormatNumberValue(RichTextBox output, object value)
     {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Number))
-        {
-            output.AppendText(((IFormattable)value).ToString(format: null, CultureInfo.CurrentCulture));
-        }
+        this.OutputText(output, ((IFormattable)value).ToString(format: null, CultureInfo.CurrentCulture), RichTextThemeStyle.Number);
     }
 
     private void FormatScalarValue(RichTextBox output, object value)
