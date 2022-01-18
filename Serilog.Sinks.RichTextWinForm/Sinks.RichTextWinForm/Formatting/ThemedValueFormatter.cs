@@ -24,4 +24,32 @@ internal abstract class ThemedValueFormatter : LogEventPropertyValueVisitor<Them
     }
 
     protected StyleReset ApplyStyle(RichTextBox output, RichTextThemeStyle style) => this.theme.Apply(output, style);
+
+    protected void OutputText(RichTextBox output, string text, RichTextThemeStyle richTextThemeStyle)
+    {
+        using (this.ApplyStyle(output, richTextThemeStyle))
+        {
+            output.AppendText(text);
+        }
+    }
+
+    protected int VisitDictionaryValueInternal(
+        ThemedValueFormatterState state,
+        DictionaryValue dictionary,
+        Func<KeyValuePair<ScalarValue, LogEventPropertyValue>, string, int, int> lineFormatting)
+    {
+        var count = 0;
+
+        this.OutputText(state.Output, "{", RichTextThemeStyle.TertiaryText);
+
+        var delim = string.Empty;
+        foreach (var pair in dictionary.Elements)
+        {
+            count = lineFormatting(pair, delim, count);
+        }
+
+        this.OutputText(state.Output, "}", RichTextThemeStyle.TertiaryText);
+
+        return count;
+    }
 }

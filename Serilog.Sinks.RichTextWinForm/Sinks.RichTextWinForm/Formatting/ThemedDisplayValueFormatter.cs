@@ -48,54 +48,33 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 
     protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
     {
-        var count = 0;
-
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("{");
-        }
-
-        var delim = string.Empty;
-        foreach (var pair in dictionary.Elements)
-        {
-            var scalarValue = pair.Key;
-            var logEventPropertyValue = pair.Value;
-
-            if (delim.Length != 0)
-            {
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
+        return this.VisitDictionaryValueInternal(
+            state,
+            dictionary,
+            (pair, delim, count) =>
                 {
-                    state.Output.AppendText(delim);
-                }
-            }
+                    var scalarValue = pair.Key;
+                    var logEventPropertyValue = pair.Value;
 
-            delim = ", ";
+                    if (delim.Length != 0)
+                    {
+                        this.OutputText(state.Output, delim, RichTextThemeStyle.TertiaryText);
+                    }
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-            {
-                state.Output.AppendText("[");
-            }
+                    delim = ", ";
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.String))
-            {
-                count += this.Visit(state.Nest(), scalarValue);
-            }
+                    this.OutputText(state.Output, "[", RichTextThemeStyle.TertiaryText);
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-            {
-                state.Output.AppendText("]");
-                state.Output.AppendText("=");
-            }
+                    using (this.ApplyStyle(state.Output, RichTextThemeStyle.String))
+                    {
+                        count += this.Visit(state.Nest(), scalarValue);
+                    }
 
-            count += this.Visit(state.Nest(), logEventPropertyValue);
-        }
+                    this.OutputText(state.Output, "]=", RichTextThemeStyle.TertiaryText);
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("}");
-        }
-
-        return count;
+                    count += this.Visit(state.Nest(), logEventPropertyValue);
+                    return count;
+                });
     }
 
     protected override int VisitScalarValue(ThemedValueFormatterState state, ScalarValue scalar)
@@ -116,30 +95,21 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
             throw new ArgumentNullException(nameof(sequence));
         }
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("[");
-        }
+        this.OutputText(state.Output, "[", RichTextThemeStyle.TertiaryText);
 
         var delim = string.Empty;
         foreach (var t in sequence.Elements)
         {
             if (delim.Length != 0)
             {
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-                {
-                    state.Output.AppendText(delim);
-                }
+                this.OutputText(state.Output, delim, RichTextThemeStyle.TertiaryText);
             }
 
             delim = ", ";
             this.Visit(state, t);
         }
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("]");
-        }
+        this.OutputText(state.Output, "]", RichTextThemeStyle.TertiaryText);
 
         return 0;
     }
@@ -150,80 +120,39 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 
         if (structure.TypeTag is not null)
         {
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name))
-            {
-                state.Output.AppendText(structure.TypeTag);
-            }
-
+            this.OutputText(state.Output, structure.TypeTag, RichTextThemeStyle.Name);
             state.Output.AppendText(" ");
         }
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("{");
-        }
+        this.OutputText(state.Output, "{", RichTextThemeStyle.TertiaryText);
 
         var delim = string.Empty;
         foreach (var logEventProperty in structure.Properties)
         {
             if (delim.Length != 0)
             {
-                using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-                {
-                    state.Output.AppendText(delim);
-                }
+                this.OutputText(state.Output, delim, RichTextThemeStyle.TertiaryText);
             }
 
             delim = ", ";
 
-            var property = logEventProperty;
+            this.OutputText(state.Output, logEventProperty.Name, RichTextThemeStyle.Name);
+            this.OutputText(state.Output, "=", RichTextThemeStyle.TertiaryText);
 
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.Name))
-            {
-                state.Output.AppendText(property.Name);
-            }
-
-            using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-            {
-                state.Output.AppendText("=");
-            }
-
-            count += this.Visit(state.Nest(), property.Value);
+            count += this.Visit(state.Nest(), logEventProperty.Value);
         }
 
-        using (this.ApplyStyle(state.Output, RichTextThemeStyle.TertiaryText))
-        {
-            state.Output.AppendText("}");
-        }
-
+        this.OutputText(state.Output, "}", RichTextThemeStyle.TertiaryText);
         return count;
     }
 
-    private void FormatBooleanValue(RichTextBox output, bool booleanValue)
-    {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Boolean))
-        {
-            output.AppendText(booleanValue.ToString(CultureInfo.CurrentCulture));
-        }
-    }
+    private void FormatBooleanValue(RichTextBox output, bool booleanValue) =>
+        this.OutputText(output, booleanValue.ToString(CultureInfo.CurrentCulture), RichTextThemeStyle.Boolean);
 
-    private void FormatCharacterValue(RichTextBox output, char charValue)
-    {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
-        {
-            output.AppendText("'");
-            output.AppendText(charValue.ToString(CultureInfo.CurrentCulture));
-            output.AppendText("'");
-        }
-    }
+    private void FormatCharacterValue(RichTextBox output, char charValue) =>
+        this.OutputText(output, string.Concat("'", charValue.ToString(CultureInfo.CurrentCulture), "'"), RichTextThemeStyle.Scalar);
 
-    private void FormatNullValue(RichTextBox output)
-    {
-        using (this.ApplyStyle(output, RichTextThemeStyle.Null))
-        {
-            output.AppendText("null");
-        }
-    }
+    private void FormatNullValue(RichTextBox output) => this.OutputText(output, "null", RichTextThemeStyle.Null);
 
     private void FormatNumberValue(LogEventPropertyValue scalar, RichTextBox output, string format)
     {
