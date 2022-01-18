@@ -84,7 +84,7 @@ public sealed class SqlServerDataSource : AbstractDataSource, ISqlServerDataSour
             var rowResults = ConvertRowToValues(columnMapping, reader);
 
             DiagramShape? result = null;
-            foreach (var i in Enumerable.Range(1, columnMapping.Length))
+            for (var i = 0; i < columnMapping.Length; i++)
             {
                 result = this.CreateShape(rowResults[i], allShapes, result);
 
