@@ -299,7 +299,7 @@ public class AbstractProcessingService : IProcessingService
         }
 
         diagramShape.ChildrenDepth = diagramShape.Matrix.Count;
-        //diagramShape.FindNeighbours();
+        diagramShape.FindNeighbours();
         diagramShape.CorrectDiagram();
     }
 }
