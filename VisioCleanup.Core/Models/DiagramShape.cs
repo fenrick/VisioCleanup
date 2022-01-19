@@ -606,8 +606,13 @@ public class DiagramShape
             return false;
         }
 
+        // don't change width of fakeshape
         this.logger.Debug("Resizing: {Shape}", this);
-        this.Width = newWidth;
+        if (this.ShapeType != ShapeType.FakeShape)
+        {
+            this.Width = newWidth;
+        }
+
         this.Height = newHeight;
         this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
         return true;
@@ -653,8 +658,6 @@ public class DiagramShape
         // top left
         if (this.ShapeAbove is null && this.ShapeLeft is null)
         {
-            var newLeft = this.ParentShape.PositionX + ConvertMeasurement(AppConfig!.Left);
-            var newTop = this.ParentShape.PositionY - ConvertMeasurement(AppConfig.Top);
 
             var topMovement = this.PositionY - newTop;
 
