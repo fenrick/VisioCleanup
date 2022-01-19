@@ -566,10 +566,6 @@ public class DiagramShape
         }
     }
 
-    /// <summary>Does this shape have a parent.</summary>
-    /// <returns>True if a parent.</returns>
-    internal bool HasParent() => this.ParentShape is not null;
-
     internal int FindMaxHeightOnLine(int newHeight)
     {
         var maxHeight = newHeight;
@@ -600,6 +596,10 @@ public class DiagramShape
 
         return maxHeight;
     }
+
+    /// <summary>Does this shape have a parent.</summary>
+    /// <returns>True if a parent.</returns>
+    internal bool HasParent() => this.ParentShape is not null;
 
     /// <summary>Resize the shape based on appconfig.</summary>
     /// <returns>If shape changed.</returns>
