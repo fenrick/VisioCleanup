@@ -445,6 +445,37 @@ public class DiagramShape
         return result;
     }
 
+    internal int FindMaxHeightOnLine(int newHeight)
+    {
+        var maxHeight = newHeight;
+
+        // goto left
+        var shape = this.ShapeLeft;
+        while (shape is not null)
+        {
+            if (maxHeight <= shape.Height)
+            {
+                maxHeight = shape.Height;
+            }
+
+            shape = shape.ShapeLeft;
+        }
+
+        // goto right
+        shape = this.ShapeRight;
+        while (shape is not null)
+        {
+            if (maxHeight <= shape.Height)
+            {
+                maxHeight = shape.Height;
+            }
+
+            shape = shape.ShapeRight;
+        }
+
+        return maxHeight;
+    }
+
     /// <summary>Map all neighbour shapes within tolerance of 10.</summary>
     /// <exception cref="System.NotImplementedException">No idea what to do yet with this.</exception>
     internal void FindNeighbours()
