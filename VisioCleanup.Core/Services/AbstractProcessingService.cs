@@ -232,7 +232,7 @@ public class AbstractProcessingService : IProcessingService
     /// <param name="maxRight">Maximum right side.</param>
     private void SortChildren(DiagramShape diagramShape, int maxRight)
     {
-        var internalMaxRight = maxRight - DiagramShape.ConvertMeasurement(this.AppConfig.Right);
+        var internalMaxRight = maxRight - diagramShape.GetInternalMargin(Side.Right);
         var children = diagramShape.Children.Values;
 
         foreach (var child in children.Where(child => child.Children.Count > 0))

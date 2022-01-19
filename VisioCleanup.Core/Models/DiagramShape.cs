@@ -566,35 +566,21 @@ public class DiagramShape
         }
     }
 
-    internal int FindMaxHeightOnLine(int newHeight)
+    internal int GetInternalMargin(Side side)
     {
-        var maxHeight = newHeight;
-
-        // goto left
-        DiagramShape? shape = this.ShapeLeft;
-        while (shape is not null)
+        if (this.ShapeType == ShapeType.FakeShape)
         {
-            if (maxHeight <= shape.Height)
-            {
-                maxHeight = shape.Height;
-            }
-
-            shape = shape.ShapeLeft;
+            return 0;
         }
 
-        // goto right
-        shape = this.ShapeRight;
-        while (shape is not null)
+        return side switch
         {
-            if (maxHeight <= shape.Height)
-            {
-                maxHeight = shape.Height;
-            }
-
-            shape = shape.ShapeRight;
-        }
-
-        return maxHeight;
+            Side.Left => ConvertMeasurement(AppConfig!.Left),
+            Side.Right => ConvertMeasurement(AppConfig!.Right),
+            Side.Top => ConvertMeasurement(AppConfig!.Top),
+            Side.Base => ConvertMeasurement(AppConfig!.Base),
+            _ => 0,
+        };
     }
 
     /// <summary>Does this shape have a parent.</summary>
@@ -612,12 +598,12 @@ public class DiagramShape
             // default values
             var childShapes = this.Children.Values;
 
-            var minLeftSide = childShapes.Min(shape => shape.PositionX) - ConvertMeasurement(AppConfig!.Left);
-            var maxRightSide = childShapes.Max(shape => shape.PositionX + shape.Width) + ConvertMeasurement(AppConfig.Right);
+            var minLeftSide = childShapes.Min(shape => shape.PositionX) - this.GetInternalMargin(Side.Left);
+            var maxRightSide = childShapes.Max(shape => shape.PositionX + shape.Width) + this.GetInternalMargin(Side.Right);
             newWidth = maxRightSide - minLeftSide;
 
-            var minBaseSide = childShapes.Min(shape => shape.PositionY - shape.Height) - ConvertMeasurement(AppConfig.Base);
-            var maxTopSide = childShapes.Max(shape => shape.PositionY) + ConvertMeasurement(AppConfig.Top);
+            var minBaseSide = childShapes.Min(shape => shape.PositionY - shape.Height) - this.GetInternalMargin(Side.Base);
+            var maxTopSide = childShapes.Max(shape => shape.PositionY) + this.GetInternalMargin(Side.Top);
             newHeight = maxTopSide - minBaseSide;
 
             var maxHeight = this.FindMaxHeightOnLine(newHeight);
@@ -689,6 +675,8 @@ public class DiagramShape
         // top left
         if (this.ShapeAbove is null && this.ShapeLeft is null)
         {
+            var newLeft = this.ParentShape.PositionX + this.ParentShape.GetInternalMargin(Side.Left);
+            var newTop = this.ParentShape.PositionY - this.ParentShape.GetInternalMargin(Side.Top);
 
             var topMovement = this.PositionY - newTop;
 
