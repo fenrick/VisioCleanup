@@ -122,7 +122,7 @@ public class AbstractProcessingService : IProcessingService
             {
                 ShapeText = "FAKE MASTER",
                 SortValue = "FAKE MASTER",
-                ShapeType = ShapeType.NewShape,
+                ShapeType = ShapeType.FakeShape,
                 PositionX = this.VisioApplication.PageLeftSide,
                 PositionY = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
                 Width = this.VisioApplication.PageRightSide - this.VisioApplication.PageLeftSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
