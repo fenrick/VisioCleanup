@@ -539,6 +539,37 @@ public class DiagramShape
     /// <returns>True if a parent.</returns>
     internal bool HasParent() => this.ParentShape is not null;
 
+    internal int FindMaxHeightOnLine(int newHeight)
+    {
+        var maxHeight = newHeight;
+
+        // goto left
+        DiagramShape? shape = this.ShapeLeft;
+        while (shape is not null)
+        {
+            if (maxHeight <= shape.Height)
+            {
+                maxHeight = shape.Height;
+            }
+
+            shape = shape.ShapeLeft;
+        }
+
+        // goto right
+        shape = this.ShapeRight;
+        while (shape is not null)
+        {
+            if (maxHeight <= shape.Height)
+            {
+                maxHeight = shape.Height;
+            }
+
+            shape = shape.ShapeRight;
+        }
+
+        return maxHeight;
+    }
+
     /// <summary>Resize the shape based on appconfig.</summary>
     /// <returns>If shape changed.</returns>
     internal bool ResizeShape()
@@ -558,16 +589,10 @@ public class DiagramShape
             var maxTopSide = childShapes.Max(shape => shape.PositionY) + ConvertMeasurement(AppConfig.Top);
             newHeight = maxTopSide - minBaseSide;
 
-            // compare to left
-            if (this.ShapeLeft?.Height > newHeight)
+            var maxHeight = this.FindMaxHeightOnLine(newHeight);
+            if (maxHeight > newHeight)
             {
-                newHeight = this.ShapeLeft.Height;
-            }
-
-            // compare to right
-            if (this.ShapeRight?.Height > newHeight)
-            {
-                newHeight = this.ShapeRight.Height;
+                newHeight = maxHeight;
             }
         }
         else
