@@ -413,6 +413,7 @@ public partial class MainForm
             this.MinimumSize = new System.Drawing.Size(749, 478);
             this.Name = "MainForm";
             this.Padding = new System.Windows.Forms.Padding(9);
+            this.Text = "Visio clean-up";
             logSplitContainer.Panel1.ResumeLayout(false);
             logSplitContainer.Panel1.PerformLayout();
             logSplitContainer.Panel2.ResumeLayout(false);

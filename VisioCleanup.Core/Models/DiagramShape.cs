@@ -117,6 +117,10 @@ public class DiagramShape
     /// <value>Master shape stencil.</value>
     public string Master { get; init; }
 
+    /// <summary>Gets or sets the theoretical maximum right side of for this shape.</summary>
+    /// <value> The theoretical maximum right side of for this shape. </value>
+    public int MaxRight { get; set; }
+
     /// <summary>Gets parent shape of curent shape.</summary>
     /// <value>Parent shape.</value>
     public DiagramShape? ParentShape { get; private set; }
@@ -332,10 +336,6 @@ public class DiagramShape
     /// <value>child shapes.</value>
     internal SortedList<string, DiagramShape> Children { get; }
 
-    /// <summary>Gets or sets how deep is the rendered children.</summary>
-    /// <value>depth of children.</value>
-    internal int ChildrenDepth { get; set; }
-
     internal List<List<DiagramShape>> Matrix { get; set; }
 
     /// <inheritdoc />
@@ -372,6 +372,13 @@ public class DiagramShape
 
         // set parent shape
         childShape.ParentShape = this;
+
+        // if new shape
+        if (childShape.ShapeType == ShapeType.NewShape)
+        {
+            // set max right
+            childShape.MaxRight = this.MaxRight - this.GetInternalMargin(Side.Right);
+        }
     }
 
     internal Matrix<float> Bitmap()
@@ -443,6 +450,37 @@ public class DiagramShape
         }
 
         return result;
+    }
+
+    internal int FindMaxHeightOnLine(int newHeight)
+    {
+        var maxHeight = newHeight;
+
+        // goto left
+        var shape = this.ShapeLeft;
+        while (shape is not null)
+        {
+            if (maxHeight <= shape.Height)
+            {
+                maxHeight = shape.Height;
+            }
+
+            shape = shape.ShapeLeft;
+        }
+
+        // goto right
+        shape = this.ShapeRight;
+        while (shape is not null)
+        {
+            if (maxHeight <= shape.Height)
+            {
+                maxHeight = shape.Height;
+            }
+
+            shape = shape.ShapeRight;
+        }
+
+        return maxHeight;
     }
 
     /// <summary>Map all neighbour shapes within tolerance of 10.</summary>
@@ -535,6 +573,23 @@ public class DiagramShape
         }
     }
 
+    internal int GetInternalMargin(Side side)
+    {
+        if (this.ShapeType == ShapeType.FakeShape)
+        {
+            return 0;
+        }
+
+        return side switch
+        {
+            Side.Left => ConvertMeasurement(AppConfig!.Left),
+            Side.Right => ConvertMeasurement(AppConfig!.Right),
+            Side.Top => ConvertMeasurement(AppConfig!.Top),
+            Side.Base => ConvertMeasurement(AppConfig!.Base),
+            _ => 0,
+        };
+    }
+
     /// <summary>Does this shape have a parent.</summary>
     /// <returns>True if a parent.</returns>
     internal bool HasParent() => this.ParentShape is not null;
@@ -550,24 +605,18 @@ public class DiagramShape
             // default values
             var childShapes = this.Children.Values;
 
-            var minLeftSide = childShapes.Min(shape => shape.PositionX) - ConvertMeasurement(AppConfig!.Left);
-            var maxRightSide = childShapes.Max(shape => shape.PositionX + shape.Width) + ConvertMeasurement(AppConfig.Right);
+            var minLeftSide = childShapes.Min(shape => shape.PositionX) - this.GetInternalMargin(Side.Left);
+            var maxRightSide = childShapes.Max(shape => shape.PositionX + shape.Width) + this.GetInternalMargin(Side.Right);
             newWidth = maxRightSide - minLeftSide;
 
-            var minBaseSide = childShapes.Min(shape => shape.PositionY - shape.Height) - ConvertMeasurement(AppConfig.Base);
-            var maxTopSide = childShapes.Max(shape => shape.PositionY) + ConvertMeasurement(AppConfig.Top);
+            var minBaseSide = childShapes.Min(shape => shape.PositionY - shape.Height) - this.GetInternalMargin(Side.Base);
+            var maxTopSide = childShapes.Max(shape => shape.PositionY) + this.GetInternalMargin(Side.Top);
             newHeight = maxTopSide - minBaseSide;
 
-            // compare to left
-            if (this.ShapeLeft?.Height > newHeight)
+            var maxHeight = this.FindMaxHeightOnLine(newHeight);
+            if (maxHeight > newHeight)
             {
-                newHeight = this.ShapeLeft.Height;
-            }
-
-            // compare to right
-            if (this.ShapeRight?.Height > newHeight)
-            {
-                newHeight = this.ShapeRight.Height;
+                newHeight = maxHeight;
             }
         }
         else
@@ -581,11 +630,77 @@ public class DiagramShape
             return false;
         }
 
+        // don't change width of fakeshape
         this.logger.Debug("Resizing: {Shape}", this);
-        this.Width = newWidth;
+        if (this.ShapeType != ShapeType.FakeShape)
+        {
+            this.Width = newWidth;
+        }
+
         this.Height = newHeight;
         this.logger.Debug("New size for {Shape}: {Corners}", this, this.CornerString());
         return true;
+    }
+
+    /// <summary>Sort the children of the diagram shape.</summary>
+    internal void SortChildren()
+    {
+        var children = this.Children.Values;
+
+        foreach (var child in children.Where(child => child.Children.Count > 0))
+        {
+            child.SortChildren();
+        }
+
+        var maxShapesPerLine = this.CalculateMaxShapesPerLine();
+        this.ClearExistingRelationships();
+        Queue<DiagramShape> childrenQueue = new(children);
+
+        while (childrenQueue.Count > 0)
+        {
+            // what is the current line we're adding to.
+            var currentLineNumber = this.Matrix.Count - 1;
+            var currentLine = this.Matrix[currentLineNumber];
+
+            if (currentLine.Count == 0)
+            {
+                if (currentLineNumber > 0)
+                {
+                    var shapeAbove = this.Matrix[currentLineNumber - 1][0];
+                    shapeAbove.ShapeBelow = childrenQueue.Peek();
+                    this.AddShapeToLine(currentLine, childrenQueue.Dequeue());
+                    continue;
+                }
+
+                this.AddShapeToLine(currentLine, childrenQueue.Dequeue());
+                continue;
+            }
+
+            // if we're at maxline, then add new line and loop again.
+            if (currentLine.Count >= maxShapesPerLine)
+            {
+                this.Matrix.Add(new List<DiagramShape>());
+                continue;
+            }
+
+            // find current width
+            var lineWidth = currentLine.Max(shape => shape.PositionX + shape.Width);
+            var newlineWidth = lineWidth + childrenQueue.Peek().Width + ConvertMeasurement(AppConfig!.HorizontalSpacing);
+
+            // we can't fit shape on line
+            if (newlineWidth >= childrenQueue.Peek().MaxRight)
+            {
+                this.Matrix.Add(new List<DiagramShape>());
+                continue;
+            }
+
+            var previousShape = currentLine[^1];
+            previousShape.ShapeRight = childrenQueue.Peek();
+            this.AddShapeToLine(currentLine, childrenQueue.Dequeue());
+        }
+
+        this.FindNeighbours();
+        this.CorrectDiagram();
     }
 
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Values.Sum(child => child.TotalChildrenCount());
@@ -597,10 +712,47 @@ public class DiagramShape
         handler?.Invoke(this, EventArgs.Empty);
     }
 
+    private void AddShapeToLine(ICollection<DiagramShape> currentLine, DiagramShape childShape)
+    {
+        currentLine.Add(childShape);
+        this.CorrectDiagram();
+    }
+
+    private int CalculateMaxShapesPerLine()
+    {
+        var defaultMaxBoxLines = (int)(AppConfig!.MaxBoxLines ?? 5d);
+        var childrenCount = this.Children.Count;
+        if (childrenCount != (this.TotalChildrenCount() - 1))
+        {
+            return int.MaxValue;
+        }
+
+        var temp = Math.Round(Math.Sqrt(childrenCount), MidpointRounding.AwayFromZero);
+        var drawLines = childrenCount / temp;
+        if (drawLines > defaultMaxBoxLines)
+        {
+            return childrenCount / defaultMaxBoxLines;
+        }
+
+        return (int)temp;
+    }
+
     private void ChildShapeShapeChanged(object? sender, EventArgs e)
     {
         this.logger.Debug("Child shape was resized!");
         this.ResizeShape();
+    }
+
+    private void ClearExistingRelationships()
+    {
+        // clear existing relationships.
+        foreach (var child in this.Children.Values)
+        {
+            child.ShapeRight = null;
+            child.ShapeBelow = null;
+        }
+
+        this.Matrix = new List<List<DiagramShape>> { new() };
     }
 
     private string CornerString()
@@ -628,8 +780,8 @@ public class DiagramShape
         // top left
         if (this.ShapeAbove is null && this.ShapeLeft is null)
         {
-            var newLeft = this.ParentShape.PositionX + ConvertMeasurement(AppConfig!.Left);
-            var newTop = this.ParentShape.PositionY - ConvertMeasurement(AppConfig.Top);
+            var newLeft = this.ParentShape.PositionX + this.ParentShape.GetInternalMargin(Side.Left);
+            var newTop = this.ParentShape.PositionY - this.ParentShape.GetInternalMargin(Side.Top);
 
             var topMovement = this.PositionY - newTop;
 
