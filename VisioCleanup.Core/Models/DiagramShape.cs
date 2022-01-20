@@ -338,6 +338,14 @@ public class DiagramShape
 
     internal List<List<DiagramShape>> Matrix { get; set; }
 
+    /// <summary>
+    /// Gets or sets the theoretical maximum right side of for this shape.
+    /// </summary>
+    /// <value>
+    /// <placeholder>The theoretical maximum right side of for this shape.</placeholder>
+    /// </value>
+    public int MaxRight { get; set; }
+
     /// <inheritdoc />
     public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
 
@@ -372,6 +380,117 @@ public class DiagramShape
 
         // set parent shape
         childShape.ParentShape = this;
+
+        // if new shape
+        if (childShape.ShapeType == ShapeType.NewShape)
+        {
+            // set max right
+            childShape.MaxRight = this.MaxRight - this.GetInternalMargin(Side.Right);
+        }
+    }
+
+    private int CalculateMaxLine()
+    {
+        var defaultMaxBoxLines = (int)(AppConfig!.MaxBoxLines ?? 5d);
+        var childrenCount = this.Children.Count;
+        if (childrenCount != (this.TotalChildrenCount() - 1))
+        {
+            return int.MaxValue;
+        }
+
+        var temp = Math.Round(Math.Sqrt(childrenCount), MidpointRounding.AwayFromZero);
+        var drawLines = childrenCount / temp;
+        if (drawLines > defaultMaxBoxLines)
+        {
+            return childrenCount / defaultMaxBoxLines;
+        }
+
+        return (int)temp;
+    }
+
+    private void ClearExistingRelationships()
+    {
+        // clear existing relationships.
+        foreach (var child in this.Children.Values)
+        {
+            child.ShapeRight = null;
+            child.ShapeBelow = null;
+        }
+
+        this.Matrix = new List<List<DiagramShape>> { new() };
+    }
+
+    /// <summary>Sort the children of the diagram shape.</summary>
+    internal void SortChildren()
+    {
+        var children = this.Children.Values;
+
+        foreach (var child in children.Where(child => child.Children.Count > 0))
+        {
+            child.SortChildren();
+        }
+
+        var maxLine = this.CalculateMaxLine();
+        this.ClearExistingRelationships();
+        Queue<DiagramShape> childrenQueue = new(children);
+
+        while (childrenQueue.Count > 0)
+        {
+            // what is the current line we're adding to.
+            var currentLineNumber = this.Matrix.Count - 1;
+            var currentLine = this.Matrix[currentLineNumber];
+            DiagramShape childShape;
+
+            // if we've not got anything, then add one.
+            if (currentLine.Count == 0)
+            {
+                // see if there is a line above this one
+                if (currentLineNumber > 0)
+                {
+                    var shapeAbove = this.Matrix[currentLineNumber - 1][0];
+
+                    childShape = childrenQueue.Dequeue();
+                    shapeAbove.ShapeBelow = childShape;
+                    currentLine.Add(childShape);
+                    this.CorrectDiagram();
+                    continue;
+                }
+
+                currentLine.Add(childrenQueue.Dequeue());
+                this.CorrectDiagram();
+                continue;
+            }
+
+            // if we're at maxline, then add new line and loop again.
+            if (currentLine.Count >= maxLine)
+            {
+                this.Matrix.Add(new List<DiagramShape>());
+                continue;
+            }
+
+            // peek at shape
+            childShape = childrenQueue.Peek();
+
+            // find current width
+            var lineWidth = currentLine.Max(shape => shape.PositionX + shape.Width);
+            var newlineWidth = lineWidth + childShape.Width + ConvertMeasurement(AppConfig!.HorizontalSpacing);
+
+            // we can put shape into line
+            if (newlineWidth >= childShape.MaxRight)
+            {
+                this.Matrix.Add(new List<DiagramShape>());
+                continue;
+            }
+
+            var previousShape = currentLine[^1];
+            previousShape.ShapeRight = childShape;
+            this.CorrectDiagram();
+            currentLine.Add(childrenQueue.Dequeue());
+        }
+
+        this.ChildrenDepth = this.Matrix.Count;
+        this.FindNeighbours();
+        this.CorrectDiagram();
     }
 
     internal Matrix<float> Bitmap()
