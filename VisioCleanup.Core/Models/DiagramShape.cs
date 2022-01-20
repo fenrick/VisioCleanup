@@ -336,10 +336,6 @@ public class DiagramShape
     /// <value>child shapes.</value>
     internal SortedList<string, DiagramShape> Children { get; }
 
-    /// <summary>Gets or sets how deep is the rendered children.</summary>
-    /// <value>depth of children.</value>
-    internal int ChildrenDepth { get; set; }
-
     internal List<List<DiagramShape>> Matrix { get; set; }
 
     /// <inheritdoc />
@@ -656,7 +652,7 @@ public class DiagramShape
             child.SortChildren();
         }
 
-        var maxLine = this.CalculateMaxLine();
+        var maxShapesPerLine = this.CalculateMaxShapesPerLine();
         this.ClearExistingRelationships();
         Queue<DiagramShape> childrenQueue = new(children);
 
@@ -665,56 +661,44 @@ public class DiagramShape
             // what is the current line we're adding to.
             var currentLineNumber = this.Matrix.Count - 1;
             var currentLine = this.Matrix[currentLineNumber];
-            DiagramShape childShape;
 
-            // if we've not got anything, then add one.
             if (currentLine.Count == 0)
             {
-                // see if there is a line above this one
                 if (currentLineNumber > 0)
                 {
                     var shapeAbove = this.Matrix[currentLineNumber - 1][0];
-
-                    childShape = childrenQueue.Dequeue();
-                    shapeAbove.ShapeBelow = childShape;
-                    currentLine.Add(childShape);
-                    this.CorrectDiagram();
+                    shapeAbove.ShapeBelow = childrenQueue.Peek();
+                    this.AddShapeToLine(currentLine, childrenQueue.Dequeue());
                     continue;
                 }
 
-                currentLine.Add(childrenQueue.Dequeue());
-                this.CorrectDiagram();
+                this.AddShapeToLine(currentLine, childrenQueue.Dequeue());
                 continue;
             }
 
             // if we're at maxline, then add new line and loop again.
-            if (currentLine.Count >= maxLine)
+            if (currentLine.Count >= maxShapesPerLine)
             {
                 this.Matrix.Add(new List<DiagramShape>());
                 continue;
             }
 
-            // peek at shape
-            childShape = childrenQueue.Peek();
-
             // find current width
             var lineWidth = currentLine.Max(shape => shape.PositionX + shape.Width);
-            var newlineWidth = lineWidth + childShape.Width + ConvertMeasurement(AppConfig!.HorizontalSpacing);
+            var newlineWidth = lineWidth + childrenQueue.Peek().Width + ConvertMeasurement(AppConfig!.HorizontalSpacing);
 
-            // we can put shape into line
-            if (newlineWidth >= childShape.MaxRight)
+            // we can't fit shape on line
+            if (newlineWidth >= childrenQueue.Peek().MaxRight)
             {
                 this.Matrix.Add(new List<DiagramShape>());
                 continue;
             }
 
             var previousShape = currentLine[^1];
-            previousShape.ShapeRight = childShape;
-            this.CorrectDiagram();
-            currentLine.Add(childrenQueue.Dequeue());
+            previousShape.ShapeRight = childrenQueue.Peek();
+            this.AddShapeToLine(currentLine, childrenQueue.Dequeue());
         }
 
-        this.ChildrenDepth = this.Matrix.Count;
         this.FindNeighbours();
         this.CorrectDiagram();
     }
@@ -728,7 +712,13 @@ public class DiagramShape
         handler?.Invoke(this, EventArgs.Empty);
     }
 
-    private int CalculateMaxLine()
+    private void AddShapeToLine(List<DiagramShape> currentLine, DiagramShape childShape)
+    {
+        currentLine.Add(childShape);
+        this.CorrectDiagram();
+    }
+
+    private int CalculateMaxShapesPerLine()
     {
         var defaultMaxBoxLines = (int)(AppConfig!.MaxBoxLines ?? 5d);
         var childrenCount = this.Children.Count;
