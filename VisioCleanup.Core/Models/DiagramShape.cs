@@ -712,7 +712,7 @@ public class DiagramShape
         handler?.Invoke(this, EventArgs.Empty);
     }
 
-    private void AddShapeToLine(List<DiagramShape> currentLine, DiagramShape childShape)
+    private void AddShapeToLine(ICollection<DiagramShape> currentLine, DiagramShape childShape)
     {
         currentLine.Add(childShape);
         this.CorrectDiagram();
