@@ -70,16 +70,19 @@ public class VisioService : AbstractProcessingService, IVisioService
             }
 
             // set master shape size.
-            this.MasterShape!.PositionX = this.MasterShape.Children.Values.Select(shape => shape.PositionX).Min() - DiagramShape.ConvertMeasurement(this.AppConfig.Left);
-            this.MasterShape!.PositionY = this.MasterShape.Children.Values.Select(shape => shape.PositionY).Max() + DiagramShape.ConvertMeasurement(this.AppConfig.Top);
+            this.MasterShape!.PositionX = this.MasterShape.Children.Values.Select(shape => shape.PositionX).Min() - this.MasterShape.GetInternalMargin(Side.Left);
+            this.MasterShape!.PositionY = this.MasterShape.Children.Values.Select(shape => shape.PositionY).Max() + this.MasterShape.GetInternalMargin(Side.Top);
 
-            this.MasterShape.ResizeShape();
+            this.MasterShape.ResizeShape(matchLine: true);
 
             this.Logger.LogInformation("Finding shape neighours");
             foreach (var shape in this.AllShapes)
             {
                 shape.FindNeighbours();
             }
+
+            // shrink all shapes
+            this.MasterShape.CorrectDiagram(matchLine: false);
         }
         finally
         {
