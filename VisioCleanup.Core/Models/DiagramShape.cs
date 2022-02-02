@@ -432,7 +432,7 @@ public class DiagramShape
     }
 
     /// <summary>Correct shape and child shapes.</summary>
-    /// <param name="matchLine"></param>
+    /// <param name="matchLine">Do we match the maximum height of the line.</param>
     /// <returns>If any shape was changed.</returns>
     internal bool CorrectDiagram(bool matchLine = true)
     {
@@ -596,7 +596,7 @@ public class DiagramShape
     internal bool HasParent() => this.ParentShape is not null;
 
     /// <summary>Resize the shape based on appconfig.</summary>
-    /// <param name="matchLine"></param>
+    /// <param name="matchLine">Do we match is maximum height of the line.</param>
     /// <returns>If shape changed.</returns>
     internal bool ResizeShape(bool matchLine)
     {
