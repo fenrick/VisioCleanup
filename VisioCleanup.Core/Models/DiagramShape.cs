@@ -432,19 +432,20 @@ public class DiagramShape
     }
 
     /// <summary>Correct shape and child shapes.</summary>
+    /// <param name="matchLine"></param>
     /// <returns>If any shape was changed.</returns>
-    internal bool CorrectDiagram()
+    internal bool CorrectDiagram(bool matchLine = true)
     {
         var result = this.FixPosition();
 
         // depth first correction process
-        foreach (var diagramShape in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram()))
+        foreach (var diagramShape in this.Children.Values.Where(diagramShape => diagramShape.CorrectDiagram(matchLine)))
         {
             result = true;
         }
 
         // resize shape
-        if (this.ResizeShape())
+        if (this.ResizeShape(matchLine: matchLine))
         {
             result = true;
         }
@@ -595,8 +596,9 @@ public class DiagramShape
     internal bool HasParent() => this.ParentShape is not null;
 
     /// <summary>Resize the shape based on appconfig.</summary>
+    /// <param name="matchLine"></param>
     /// <returns>If shape changed.</returns>
-    internal bool ResizeShape()
+    internal bool ResizeShape(bool matchLine)
     {
         int newWidth;
         int newHeight;
@@ -613,10 +615,13 @@ public class DiagramShape
             var maxTopSide = childShapes.Max(shape => shape.PositionY) + this.GetInternalMargin(Side.Top);
             newHeight = maxTopSide - minBaseSide;
 
-            var maxHeight = this.FindMaxHeightOnLine(newHeight);
-            if (maxHeight > newHeight)
+            if (matchLine)
             {
-                newHeight = maxHeight;
+                var maxHeight = this.FindMaxHeightOnLine(newHeight);
+                if (maxHeight > newHeight)
+                {
+                    newHeight = maxHeight;
+                }
             }
         }
         else
@@ -740,7 +745,7 @@ public class DiagramShape
     private void ChildShapeShapeChanged(object? sender, EventArgs e)
     {
         this.logger.Debug("Child shape was resized!");
-        this.ResizeShape();
+        this.ResizeShape(matchLine: false);
     }
 
     private void ClearExistingRelationships()
