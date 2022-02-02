@@ -280,7 +280,6 @@ public class VisioApplication : IVisioApplication
         }
 
         this.visioApplication.ShowChanges = state;
-        this.visioApplication.UndoEnabled = state;
         this.visioApplication.ScreenUpdating = state ? (short)1 : (short)0;
         this.visioApplication.DeferRecalc = state ? (short)1 : (short)0;
     }

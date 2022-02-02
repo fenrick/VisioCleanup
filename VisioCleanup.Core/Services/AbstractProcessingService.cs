@@ -83,7 +83,7 @@ public class AbstractProcessingService : IProcessingService
         try
         {
             this.VisioApplication.Open();
-            this.VisioApplication.VisualChanges(state: true);
+            this.VisioApplication.VisualChanges(state: false);
             this.Logger.LogInformation("Modelling changes to visio");
 
             if (this.MasterShape is not null)
