@@ -45,7 +45,6 @@ public partial class MainForm
             System.Windows.Forms.Button loadFromIServerButton;
             System.Windows.Forms.Button layoutDataSet;
             System.Windows.Forms.Button updateVisioDrawing;
-            System.Windows.Forms.Button drawBitmapButton;
             System.Windows.Forms.TabControl tabControl1;
             System.Windows.Forms.TabPage dataSetTab;
             System.Windows.Forms.TabPage parametersTab;
@@ -70,7 +69,6 @@ public partial class MainForm
             loadFromIServerButton = new System.Windows.Forms.Button();
             layoutDataSet = new System.Windows.Forms.Button();
             updateVisioDrawing = new System.Windows.Forms.Button();
-            drawBitmapButton = new System.Windows.Forms.Button();
             tabControl1 = new System.Windows.Forms.TabControl();
             dataSetTab = new System.Windows.Forms.TabPage();
             parametersTab = new System.Windows.Forms.TabPage();
@@ -178,7 +176,6 @@ public partial class MainForm
             this.controlsFlowPanel.Controls.Add(loadVisioObjects);
             this.controlsFlowPanel.Controls.Add(layoutDataSet);
             this.controlsFlowPanel.Controls.Add(updateVisioDrawing);
-            this.controlsFlowPanel.Controls.Add(drawBitmapButton);
             this.controlsFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.controlsFlowPanel.Location = new System.Drawing.Point(2, 18);
             this.controlsFlowPanel.Margin = new System.Windows.Forms.Padding(2);
@@ -221,18 +218,6 @@ public partial class MainForm
             updateVisioDrawing.Text = "Update Visio";
             updateVisioDrawing.UseVisualStyleBackColor = true;
             updateVisioDrawing.Click += new System.EventHandler(this.UpdateVisioDrawingEventHandler);
-            // 
-            // drawBitmapButton
-            // 
-            drawBitmapButton.AutoSize = true;
-            drawBitmapButton.Location = new System.Drawing.Point(411, 2);
-            drawBitmapButton.Margin = new System.Windows.Forms.Padding(2);
-            drawBitmapButton.Name = "drawBitmapButton";
-            drawBitmapButton.Size = new System.Drawing.Size(85, 25);
-            drawBitmapButton.TabIndex = 6;
-            drawBitmapButton.Text = "Draw Bitmap";
-            drawBitmapButton.UseVisualStyleBackColor = true;
-            drawBitmapButton.Click += new System.EventHandler(this.DrawBitmapButton_Click);
             // 
             // tabControl1
             // 

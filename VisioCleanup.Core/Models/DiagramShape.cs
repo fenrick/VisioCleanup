@@ -9,8 +9,6 @@ namespace VisioCleanup.Core.Models;
 
 using System.Globalization;
 
-using MathNet.Numerics.LinearAlgebra;
-
 using Serilog;
 
 using VisioCleanup.Core.Models.Config;
@@ -379,56 +377,6 @@ public class DiagramShape
             // set max right
             childShape.MaxRight = this.MaxRight - this.GetInternalMargin(Side.Right);
         }
-    }
-
-    internal Matrix<float> Bitmap()
-    {
-        var bitmap = Matrix<float>.Build.Sparse(this.TotalChildrenCount(), this.TotalChildrenCount(), 0);
-
-        if (this.Children.Count == 0)
-        {
-            return Matrix<float>.Build.Dense(1, 1, 0);
-        }
-
-        var rowCount = 0;
-        var rowChild = this.Children.Values.First(child => child.ShapeLeft is null && child.ShapeAbove is null);
-
-        while (rowChild is not null)
-        {
-            var columnCount = 0;
-            var columnChild = rowChild;
-
-            while (columnChild is not null)
-            {
-                var childBitmap = columnChild.Bitmap().Add(1);
-
-                var existingSpace = bitmap.SubMatrix(rowCount, childBitmap.RowCount, columnCount, childBitmap.ColumnCount);
-
-                // space is empty!
-                if (existingSpace.ColumnSums().Sum() <= 0)
-                {
-                    bitmap.SetSubMatrix(rowCount, columnCount, childBitmap);
-                    columnCount += childBitmap.ColumnCount;
-                }
-                else
-                {
-                    // where do we put it?
-                    rowCount++;
-                    continue;
-                }
-
-                columnChild = columnChild.ShapeRight;
-            }
-
-            rowChild = rowChild.ShapeBelow;
-            rowCount++;
-        }
-
-        // remove empty rows & columns
-        var columns = bitmap.EnumerateColumns().Count(values => values.Sum() > 0);
-        var rows = bitmap.EnumerateRows().Count(values => values.Sum() > 0);
-
-        return bitmap.SubMatrix(0, rows, 0, columns);
     }
 
     /// <summary>Correct shape and child shapes.</summary>

@@ -61,9 +61,6 @@ public class AbstractProcessingService : IProcessingService
     protected IVisioApplication VisioApplication { get; }
 
     /// <inheritdoc />
-    public void DrawBitmapStructure() => this.MasterShape!.Bitmap();
-
-    /// <inheritdoc />
     public void LayoutDataSet()
     {
         for (var counter = 1; counter <= MaxCorrectRuns; counter++)

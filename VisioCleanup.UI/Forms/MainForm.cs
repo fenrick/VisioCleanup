@@ -97,30 +97,6 @@ public partial class MainForm : Form
         return true;
     }
 
-    private void DrawBitmapButton_Click(object sender, EventArgs e)
-    {
-        if (this.CheckProcessingService())
-        {
-            return;
-        }
-
-        try
-        {
-            this.controlsFlowPanel.Enabled = false;
-            this.dataSetBindingSource.DataSource = null;
-            this.logger.LogDebug("Generating bitmap");
-
-            this.processingService!.DrawBitmapStructure();
-            this.dataSetBindingSource.DataSource = this.processingService!.AllShapes;
-
-            this.controlsFlowPanel.Enabled = true;
-        }
-        catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentNullException)
-        {
-            this.HandleException(exception, "@Processing error.");
-        }
-    }
-
     private void HandleException(Exception exception, string messageText)
     {
         this.logger.LogError(exception, "Exception");
