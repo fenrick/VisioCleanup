@@ -7,8 +7,6 @@
 
 namespace VisioCleanup.Core.Models.Config;
 
-using JetBrains.Annotations;
-
 /// <summary>The app config.</summary>
 public class AppConfig
 {
@@ -17,7 +15,6 @@ public class AppConfig
     public double Base
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -26,7 +23,6 @@ public class AppConfig
     public string? DatabaseCatalog
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -35,7 +31,6 @@ public class AppConfig
     public IReadOnlyCollection<Dictionary<string, string>>? DatabaseQueries
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -44,7 +39,6 @@ public class AppConfig
     public string? DatabaseServer
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -53,7 +47,6 @@ public class AppConfig
     public string? FieldLabelFormat
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -62,7 +55,6 @@ public class AppConfig
     public double HeaderHeight
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -71,7 +63,6 @@ public class AppConfig
     public double Height
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -80,7 +71,6 @@ public class AppConfig
     public double HorizontalSpacing
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -89,7 +79,6 @@ public class AppConfig
     public double Left
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -98,7 +87,6 @@ public class AppConfig
     public double? MaxBoxLines
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -107,7 +95,6 @@ public class AppConfig
     public double Right
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -116,7 +103,6 @@ public class AppConfig
     public string? ShapeTypeLabelFormat
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -125,7 +111,6 @@ public class AppConfig
     public double SidePanelWidth
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -134,7 +119,6 @@ public class AppConfig
     public string? SortFieldLabelFormat
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -143,7 +127,6 @@ public class AppConfig
     public double Top
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -152,7 +135,6 @@ public class AppConfig
     public double VerticalSpacing
     {
         get;
-        [UsedImplicitly]
         set;
     }
 
@@ -161,7 +143,6 @@ public class AppConfig
     public double Width
     {
         get;
-        [UsedImplicitly]
         set;
     }
 }
