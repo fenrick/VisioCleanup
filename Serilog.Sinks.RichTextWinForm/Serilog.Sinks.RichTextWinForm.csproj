@@ -12,10 +12,11 @@
         <LangVersion>default</LangVersion>
         <NeutralLanguage>en-AU</NeutralLanguage>
         <ImplicitUsings>enable</ImplicitUsings>
+        <Platforms>x64</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DocumentationFile>Serilog.Sinks.RichTextWinForm.xml</DocumentationFile>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <DocumentationFile>Serilog.Sinks.RichTextWinForm.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup>

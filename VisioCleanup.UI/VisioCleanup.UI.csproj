@@ -14,11 +14,12 @@
         <LangVersion>default</LangVersion>
         <NeutralLanguage>en-AU</NeutralLanguage>
         <ImplicitUsings>enable</ImplicitUsings>
+        <Platforms>x64</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DocumentationFile>VisioCleanup.UI.xml</DocumentationFile>
-        <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <DocumentationFile>VisioCleanup.UI.xml</DocumentationFile>
+      <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     </PropertyGroup>
 
 
@@ -33,8 +34,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     </PropertyGroup>
 
     <ItemGroup>
@@ -91,9 +92,9 @@
 
     <ItemGroup>
         <None Remove="appsettings.Development.json" />
-        <Content Include="appsettings.Development.json" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <TransformOnBuild>true</TransformOnBuild>
+        <Content Include="appsettings.Development.json" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <TransformOnBuild>true</TransformOnBuild>
         </Content>
         <None Remove="appsettings.json" />
         <Content Include="appsettings.json">
