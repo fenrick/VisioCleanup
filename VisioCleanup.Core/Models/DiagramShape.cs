@@ -56,6 +56,7 @@ public class DiagramShape
         this.Master = string.Empty;
         this.ShapeText = string.Empty;
         this.SortValue = string.Empty;
+        this.HasCalculatedSortValue = true;
         this.Matrix = new List<List<DiagramShape>> { new() };
     }
 
@@ -272,11 +273,17 @@ public class DiagramShape
 
     /// <summary>Gets value used to sort shapes.</summary>
     /// <value>Sort value.</value>
-    public string SortValue { get; init; }
+    public string SortValue { get; set; }
 
     /// <summary>Gets or sets visio shape id.</summary>
     /// <value>Visio identifer.</value>
     public int VisioId { get; set; }
+
+    internal bool HasCalculatedSortValue
+    {
+        get;
+        set;
+    }
 
     /// <summary>Gets or sets the width of the shape.</summary>
     /// <value>Width.</value>
@@ -365,6 +372,11 @@ public class DiagramShape
 
         childShape.ShapeChanged += this.ChildShapeShapeChanged;
 
+        if (childShape.HasCalculatedSortValue)
+        {
+            childShape.SortValue = $"{99999 - childShape.TotalChildrenCount():D5} - {childShape.ShapeText}";
+        }
+
         // add to list of all children
         this.Children.Add(childShape.SortValue, childShape);
 
@@ -377,6 +389,25 @@ public class DiagramShape
             // set max right
             childShape.MaxRight = this.MaxRight - this.GetInternalMargin(Side.Right);
         }
+
+        // notify parent of new child
+        this.ParentShape?.UpdateChildSort(this);
+    }
+
+    private void UpdateChildSort(DiagramShape diagramShape)
+    {
+        if (!diagramShape.HasCalculatedSortValue)
+        {
+            return;
+        }
+
+        var newSortValue = $"{99999 - diagramShape.TotalChildrenCount():D5} - {diagramShape.ShapeText}";
+
+        this.Children.Remove(diagramShape.SortValue);
+
+        diagramShape.SortValue = newSortValue;
+
+        this.Children.Add(diagramShape.SortValue, diagramShape);
     }
 
     /// <summary>Correct shape and child shapes.</summary>
@@ -652,7 +683,7 @@ public class DiagramShape
             this.AddShapeToLine(currentLine, childrenQueue.Dequeue());
         }
 
-        this.FindNeighbours();
+        // this.FindNeighbours();
         this.CorrectDiagram();
     }
 

@@ -215,6 +215,7 @@ public class VisioApplication : IVisioApplication
             {
                 ShapeText = selected.Text,
                 SortValue = selected.Text,
+                HasCalculatedSortValue = true,
                 ShapeType = ShapeType.Existing,
                 PositionX = this.CalculateLeftSide(sheetId),
                 Width = this.CalculateWidth(sheetId),
