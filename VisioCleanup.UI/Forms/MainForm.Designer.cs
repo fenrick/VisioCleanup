@@ -349,6 +349,7 @@ public partial class MainForm
             this.sqlStatementTextBox.AcceptsReturn = true;
             this.sqlStatementTextBox.AllowDrop = true;
             this.sqlStatementTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sqlStatementTextBox.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.sqlStatementTextBox.Location = new System.Drawing.Point(2, 29);
             this.sqlStatementTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.sqlStatementTextBox.Multiline = true;
