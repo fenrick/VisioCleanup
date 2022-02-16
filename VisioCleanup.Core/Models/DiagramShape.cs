@@ -279,12 +279,6 @@ public class DiagramShape
     /// <value>Visio identifer.</value>
     public int VisioId { get; set; }
 
-    internal bool HasCalculatedSortValue
-    {
-        get;
-        set;
-    }
-
     /// <summary>Gets or sets the width of the shape.</summary>
     /// <value>Width.</value>
     public int Width
@@ -341,6 +335,12 @@ public class DiagramShape
     /// <value>child shapes.</value>
     internal SortedList<string, DiagramShape> Children { get; }
 
+    internal bool HasCalculatedSortValue
+    {
+        get;
+        set;
+    }
+
     internal List<List<DiagramShape>> Matrix { get; set; }
 
     /// <inheritdoc />
@@ -392,22 +392,6 @@ public class DiagramShape
 
         // notify parent of new child
         this.ParentShape?.UpdateChildSort(this);
-    }
-
-    private void UpdateChildSort(DiagramShape diagramShape)
-    {
-        if (!diagramShape.HasCalculatedSortValue)
-        {
-            return;
-        }
-
-        var newSortValue = $"{99999 - diagramShape.TotalChildrenCount():D5} - {diagramShape.ShapeText}";
-
-        this.Children.Remove(diagramShape.SortValue);
-
-        diagramShape.SortValue = newSortValue;
-
-        this.Children.Add(diagramShape.SortValue, diagramShape);
     }
 
     /// <summary>Correct shape and child shapes.</summary>
@@ -845,4 +829,20 @@ public class DiagramShape
     private void MoveHorizontal(int movement) => this.PositionX -= movement;
 
     private void MoveVertical(int movement) => this.PositionY -= movement;
+
+    private void UpdateChildSort(DiagramShape diagramShape)
+    {
+        if (!diagramShape.HasCalculatedSortValue)
+        {
+            return;
+        }
+
+        var newSortValue = $"{99999 - diagramShape.TotalChildrenCount():D5} - {diagramShape.ShapeText}";
+
+        this.Children.Remove(diagramShape.SortValue);
+
+        diagramShape.SortValue = newSortValue;
+
+        this.Children.Add(diagramShape.SortValue, diagramShape);
+    }
 }
