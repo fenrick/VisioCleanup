@@ -37,7 +37,7 @@ public class VisioService : AbstractProcessingService, IVisioService
             List<DiagramShape> shapes = new();
 
             this.Logger.LogInformation("Create a fake parent shape");
-            this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE MASTER", ShapeType = ShapeType.FakeShape, HasCalculatedSortValue = false};
+            this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE MASTER", ShapeType = ShapeType.FakeShape, HasCalculatedSortValue = false };
             shapes.Add(this.MasterShape);
 
             this.Logger.LogInformation("Retrieving selected shapes");
