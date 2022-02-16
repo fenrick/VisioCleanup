@@ -81,7 +81,7 @@ public class DiagramShape
             int movement;
             if (this.ShapeBelow is not null)
             {
-                var shapeSize = this.PositionY - this.Height - ConvertMeasurement(AppConfig!.VerticalSpacing);
+                var shapeSize = this.PositionY - this.FindMaxHeightOnLine(this.Height) - ConvertMeasurement(AppConfig!.VerticalSpacing);
 
                 // calculate movement
                 movement = this.ShapeBelow.PositionY - shapeSize;
@@ -195,7 +195,7 @@ public class DiagramShape
             }
 
             // calculate movement
-            var shapeSize = this.PositionY - this.Height - ConvertMeasurement(AppConfig!.VerticalSpacing);
+            var shapeSize = this.PositionY - this.FindMaxHeightOnLine(this.Height) - ConvertMeasurement(AppConfig!.VerticalSpacing);
             movement = this.shapeBelow.PositionY - shapeSize;
 
             if (movement == 0)
@@ -794,7 +794,7 @@ public class DiagramShape
             }
 
             // calculate movement
-            var shapeSize = this.PositionY - this.Height - ConvertMeasurement(AppConfig!.VerticalSpacing);
+            var shapeSize = this.PositionY - this.FindMaxHeightOnLine(this.Height) - ConvertMeasurement(AppConfig!.VerticalSpacing);
             movement = this.ShapeBelow.PositionY - shapeSize;
 
             if (movement == 0)
