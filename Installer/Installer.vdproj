@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_9FF1EF03A0FC4470BB318B3C584CC939"
+        "MsmKey" = "8:_97F32F946D9045CDB5AB1C508066ED28"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -168,7 +168,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Visio Cleanup"
         "ProductCode" = "8:{E42887E8-6A3A-4937-9F61-3125B70F2CA8}"
-        "PackageCode" = "8:{780DBCC5-0B46-4FDE-9648-F3129D6FF93D}"
+        "PackageCode" = "8:{00B6E5FC-AC3B-4B28-BBEC-3F40568F7BBF}"
         "UpgradeCode" = "8:{6295A043-A955-4D67-B97A-26B4F3EBE9F0}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -189,9 +189,9 @@
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
-        "TargetPlatform" = "3:0"
+        "TargetPlatform" = "3:1"
         "PreBuildEvent" = "8:"
-        "PostBuildEvent" = "8:"
+        "PostBuildEvent" = "8:\"C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.19041.0\\x86\\MsiInfo.exe\" $(BuiltOuputPath) -w 10\r\n"
         "RunPostBuildEvent" = "3:0"
         }
         "Registry"
@@ -200,40 +200,12 @@
             {
                 "Keys"
                 {
-                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_1BD809B502F54837B96EDACC28FE5DB2"
-                    {
-                    "Name" = "8:Software"
-                    "Condition" = "8:"
-                    "AlwaysCreate" = "11:FALSE"
-                    "DeleteAtUninstall" = "11:FALSE"
-                    "Transitive" = "11:FALSE"
-                        "Keys"
-                        {
-                        }
-                        "Values"
-                        {
-                        }
-                    }
                 }
             }
             "HKCU"
             {
                 "Keys"
                 {
-                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_8851222A7F6743FEBCF810CCFBCC0D2C"
-                    {
-                    "Name" = "8:Software"
-                    "Condition" = "8:"
-                    "AlwaysCreate" = "11:FALSE"
-                    "DeleteAtUninstall" = "11:FALSE"
-                    "Transitive" = "11:FALSE"
-                        "Keys"
-                        {
-                        }
-                        "Values"
-                        {
-                        }
-                    }
                 }
             }
             "HKCR"
@@ -260,29 +232,29 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_BFEE9DC7D836498A9AA277D0D6EC220F"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_97806B369C6A4605BA9622B4CE571081"
             {
-            "Name" = "8:VisioCleanup"
+            "Name" = "8:Visio Cleanup"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_9FF1EF03A0FC4470BB318B3C584CC939"
+            "Target" = "8:_97F32F946D9045CDB5AB1C508066ED28"
             "Folder" = "8:_61F8F2D816B34907BF3F33F351AC9E0B"
             "WorkingFolder" = "8:_7B490BC627F041B097071C755C93B9E9"
             "Icon" = "8:"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E03D21142F3E41E6B4F95B465C534EAD"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_FD0EEB87F4EA4AD98EC694B37A1A8912"
             {
-            "Name" = "8:VisioCleanup"
+            "Name" = "8:Visio Cleanup"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_9FF1EF03A0FC4470BB318B3C584CC939"
+            "Target" = "8:_97F32F946D9045CDB5AB1C508066ED28"
             "Folder" = "8:_FB6C6884145A4877AEF07C9D523803D9"
             "WorkingFolder" = "8:_7B490BC627F041B097071C755C93B9E9"
             "Icon" = "8:"
@@ -687,9 +659,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_9FF1EF03A0FC4470BB318B3C584CC939"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_97F32F946D9045CDB5AB1C508066ED28"
             {
-            "SourcePath" = "8:..\\VisioCleanup.UI\\bin\\Release\\net5.0-windows\\publish\\VisioCleanup.UI.exe"
+            "SourcePath" = "8:..\\VisioCleanup.UI\\bin\\Release\\net6.0-windows\\publish\\VisioCleanup.UI.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_7B490BC627F041B097071C755C93B9E9"
@@ -707,7 +679,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
+            "OutputConfiguration" = "8:Release|x64"
             "OutputGroupCanonicalName" = "8:PublishItems"
             "OutputProjectGuid" = "8:{47CD338B-0762-4076-BB0E-4A366FA78825}"
             "ShowKeyOutput" = "11:TRUE"

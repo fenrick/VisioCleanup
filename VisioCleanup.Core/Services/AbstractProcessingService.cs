@@ -123,6 +123,7 @@ public class AbstractProcessingService : IProcessingService
                 PositionX = this.VisioApplication.PageLeftSide,
                 PositionY = this.VisioApplication.PageTopSide - DiagramShape.ConvertMeasurement(this.AppConfig.HeaderHeight),
                 Width = this.VisioApplication.PageRightSide - this.VisioApplication.PageLeftSide - DiagramShape.ConvertMeasurement(this.AppConfig.SidePanelWidth),
+                HasCalculatedSortValue = false,
             };
             this.MasterShape.MaxRight = this.MasterShape.Width + this.MasterShape.PositionX;
 

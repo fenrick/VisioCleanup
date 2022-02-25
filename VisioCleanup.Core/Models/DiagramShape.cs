@@ -56,6 +56,7 @@ public class DiagramShape
         this.Master = string.Empty;
         this.ShapeText = string.Empty;
         this.SortValue = string.Empty;
+        this.HasCalculatedSortValue = true;
         this.Matrix = new List<List<DiagramShape>> { new() };
     }
 
@@ -81,7 +82,7 @@ public class DiagramShape
             int movement;
             if (this.ShapeBelow is not null)
             {
-                var shapeSize = this.PositionY - this.Height - ConvertMeasurement(AppConfig!.VerticalSpacing);
+                var shapeSize = this.PositionY - this.FindMaxHeightOnLine(this.Height) - ConvertMeasurement(AppConfig!.VerticalSpacing);
 
                 // calculate movement
                 movement = this.ShapeBelow.PositionY - shapeSize;
@@ -195,7 +196,7 @@ public class DiagramShape
             }
 
             // calculate movement
-            var shapeSize = this.PositionY - this.Height - ConvertMeasurement(AppConfig!.VerticalSpacing);
+            var shapeSize = this.PositionY - this.FindMaxHeightOnLine(this.Height) - ConvertMeasurement(AppConfig!.VerticalSpacing);
             movement = this.shapeBelow.PositionY - shapeSize;
 
             if (movement == 0)
@@ -270,9 +271,9 @@ public class DiagramShape
     /// <value>Shape type.</value>
     public ShapeType ShapeType { get; set; }
 
-    /// <summary>Gets value used to sort shapes.</summary>
+    /// <summary>Gets or sets value used to sort shapes.</summary>
     /// <value>Sort value.</value>
-    public string SortValue { get; init; }
+    public string SortValue { get; set; }
 
     /// <summary>Gets or sets visio shape id.</summary>
     /// <value>Visio identifer.</value>
@@ -334,6 +335,12 @@ public class DiagramShape
     /// <value>child shapes.</value>
     internal SortedList<string, DiagramShape> Children { get; }
 
+    internal bool HasCalculatedSortValue
+    {
+        get;
+        set;
+    }
+
     internal List<List<DiagramShape>> Matrix { get; set; }
 
     /// <inheritdoc />
@@ -365,6 +372,11 @@ public class DiagramShape
 
         childShape.ShapeChanged += this.ChildShapeShapeChanged;
 
+        if (childShape.HasCalculatedSortValue)
+        {
+            childShape.SortValue = $"{99999 - childShape.TotalChildrenCount():D5} - {childShape.ShapeText}";
+        }
+
         // add to list of all children
         this.Children.Add(childShape.SortValue, childShape);
 
@@ -377,6 +389,9 @@ public class DiagramShape
             // set max right
             childShape.MaxRight = this.MaxRight - this.GetInternalMargin(Side.Right);
         }
+
+        // notify parent of new child
+        this.ParentShape?.UpdateChildSort(this);
     }
 
     /// <summary>Correct shape and child shapes.</summary>
@@ -651,8 +666,7 @@ public class DiagramShape
             previousShape.ShapeRight = childrenQueue.Peek();
             this.AddShapeToLine(currentLine, childrenQueue.Dequeue());
         }
-
-        this.FindNeighbours();
+        
         this.CorrectDiagram();
     }
 
@@ -794,7 +808,7 @@ public class DiagramShape
             }
 
             // calculate movement
-            var shapeSize = this.PositionY - this.Height - ConvertMeasurement(AppConfig!.VerticalSpacing);
+            var shapeSize = this.PositionY - this.FindMaxHeightOnLine(this.Height) - ConvertMeasurement(AppConfig!.VerticalSpacing);
             movement = this.ShapeBelow.PositionY - shapeSize;
 
             if (movement == 0)
@@ -814,4 +828,20 @@ public class DiagramShape
     private void MoveHorizontal(int movement) => this.PositionX -= movement;
 
     private void MoveVertical(int movement) => this.PositionY -= movement;
+
+    private void UpdateChildSort(DiagramShape diagramShape)
+    {
+        if (!diagramShape.HasCalculatedSortValue)
+        {
+            return;
+        }
+
+        var newSortValue = $"{99999 - diagramShape.TotalChildrenCount():D5} - {diagramShape.ShapeText}";
+
+        this.Children.Remove(diagramShape.SortValue);
+
+        diagramShape.SortValue = newSortValue;
+
+        this.Children.Add(diagramShape.SortValue, diagramShape);
+    }
 }
