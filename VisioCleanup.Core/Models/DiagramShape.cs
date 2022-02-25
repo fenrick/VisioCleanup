@@ -666,8 +666,7 @@ public class DiagramShape
             previousShape.ShapeRight = childrenQueue.Peek();
             this.AddShapeToLine(currentLine, childrenQueue.Dequeue());
         }
-
-        // this.FindNeighbours();
+        
         this.CorrectDiagram();
     }
 
