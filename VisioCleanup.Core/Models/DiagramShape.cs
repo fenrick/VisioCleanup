@@ -271,7 +271,7 @@ public class DiagramShape
     /// <value>Shape type.</value>
     public ShapeType ShapeType { get; set; }
 
-    /// <summary>Gets value used to sort shapes.</summary>
+    /// <summary>Gets or sets value used to sort shapes.</summary>
     /// <value>Sort value.</value>
     public string SortValue { get; set; }
 
