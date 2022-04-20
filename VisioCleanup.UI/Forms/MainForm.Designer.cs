@@ -104,7 +104,7 @@ public partial class MainForm
             processExcelDataSet.TabIndex = 2;
             processExcelDataSet.Text = "Excel Load";
             processExcelDataSet.UseVisualStyleBackColor = true;
-            processExcelDataSet.Click += new System.EventHandler(this.ProcessExcelDataSetEventHandler);
+            processExcelDataSet.Click += this.ProcessExcelDataSetEventHandler;
             // 
             // loadVisioObjects
             // 
@@ -116,7 +116,7 @@ public partial class MainForm
             loadVisioObjects.TabIndex = 3;
             loadVisioObjects.Text = "Visio Load";
             loadVisioObjects.UseVisualStyleBackColor = true;
-            loadVisioObjects.Click += new System.EventHandler(this.LoadVisioObjectsEventHandler);
+            loadVisioObjects.Click += this.LoadVisioObjectsEventHandler;
             // 
             // logSplitContainer
             // 
@@ -193,7 +193,7 @@ public partial class MainForm
             loadFromIServerButton.TabIndex = 1;
             loadFromIServerButton.Text = "iServer Load";
             loadFromIServerButton.UseVisualStyleBackColor = true;
-            loadFromIServerButton.Click += new System.EventHandler(this.LoadFromIServerButtonEventHandler);
+            loadFromIServerButton.Click += this.LoadFromIServerButtonEventHandler;
             // 
             // layoutDataSet
             // 
@@ -205,7 +205,7 @@ public partial class MainForm
             layoutDataSet.TabIndex = 4;
             layoutDataSet.Text = "Layout";
             layoutDataSet.UseVisualStyleBackColor = true;
-            layoutDataSet.Click += new System.EventHandler(this.LayoutDataSetEventHandler);
+            layoutDataSet.Click += this.LayoutDataSetEventHandler;
             // 
             // updateVisioDrawing
             // 
@@ -217,7 +217,7 @@ public partial class MainForm
             updateVisioDrawing.TabIndex = 5;
             updateVisioDrawing.Text = "Update Visio";
             updateVisioDrawing.UseVisualStyleBackColor = true;
-            updateVisioDrawing.Click += new System.EventHandler(this.UpdateVisioDrawingEventHandler);
+            updateVisioDrawing.Click += this.UpdateVisioDrawingEventHandler;
             // 
             // tabControl1
             // 
@@ -342,7 +342,7 @@ public partial class MainForm
             this.selectSqlStatementComboBox.Name = "selectSqlStatementComboBox";
             this.selectSqlStatementComboBox.Size = new System.Drawing.Size(709, 23);
             this.selectSqlStatementComboBox.TabIndex = 0;
-            this.selectSqlStatementComboBox.SelectionChangeCommitted += new System.EventHandler(this.SelectSqlStatementComboBoxSelectionChangeCommitted);
+            this.selectSqlStatementComboBox.SelectionChangeCommitted += this.SelectSqlStatementComboBoxSelectionChangeCommitted;
             // 
             // sqlStatementTextBox
             // 
