@@ -28,6 +28,8 @@ public class DiagramShape
 
     private const string VerticalDirection = "vertical";
 
+    private const int LargeSortNumber = 99999;
+
     private readonly ILogger logger;
 
     private int height;
@@ -374,7 +376,7 @@ public class DiagramShape
 
         if (childShape.HasCalculatedSortValue)
         {
-            childShape.SortValue = $"{99999 - childShape.TotalChildrenCount():D5} - {childShape.ShapeText}";
+            childShape.SortValue = FormattableString.Invariant($"{LargeSortNumber - childShape.TotalChildrenCount():D5} - {childShape.ShapeText}");
         }
 
         // add to list of all children
@@ -836,7 +838,7 @@ public class DiagramShape
             return;
         }
 
-        var newSortValue = $"{99999 - diagramShape.TotalChildrenCount():D5} - {diagramShape.ShapeText}";
+        var newSortValue = FormattableString.Invariant($"{LargeSortNumber - diagramShape.TotalChildrenCount():D5} - {diagramShape.ShapeText}");
 
         this.Children.Remove(diagramShape.SortValue);
 
