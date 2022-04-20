@@ -57,9 +57,9 @@ public class AbstractDataSource
             throw new ArgumentNullException(nameof(allShapes));
         }
 
-        var shapeType = rowResult.ContainsKey(FieldType.ShapeType) ? rowResult[FieldType.ShapeType] : string.Empty;
-        var shapeText = rowResult.ContainsKey(FieldType.ShapeText) ? rowResult[FieldType.ShapeText] : string.Empty;
-        var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : string.Empty;
+        var shapeType = rowResult[FieldType.ShapeType];
+        var shapeText = rowResult[FieldType.ShapeText];
+        var sortValue = rowResult[FieldType.SortValue];
         var calculatedSortValue = false;
 
         if (string.IsNullOrWhiteSpace(sortValue))
