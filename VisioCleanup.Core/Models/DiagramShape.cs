@@ -746,27 +746,29 @@ public class DiagramShape
             return false;
         }
 
+        int verticalMovement, horizontalMovement;
+
         // top left
         if (this.ShapeAbove is null && this.ShapeLeft is null)
         {
             var newLeft = this.ParentShape.PositionX + this.ParentShape.GetInternalMargin(Side.Left);
             var newTop = this.ParentShape.PositionY - this.ParentShape.GetInternalMargin(Side.Top);
 
-            var topMovement = this.PositionY - newTop;
+            verticalMovement = this.PositionY - newTop;
 
-            var leftMovement = this.PositionX - newLeft;
+            horizontalMovement = this.PositionX - newLeft;
 
-            if (topMovement != 0)
+            if (verticalMovement != 0)
             {
-                this.logger.Debug("Aligning {Shape} to {Parent}", this, this.ParentShape);
-                this.MoveVertical(topMovement);
+                this.logger.Debug(MovingShapeByMovementDirection, this, verticalMovement, VerticalDirection);
+                this.MoveVertical(verticalMovement);
                 result = true;
             }
 
-            if (leftMovement != 0)
+            if (horizontalMovement != 0)
             {
-                this.logger.Debug("Aligning {Shape} to {Parent}", this, this.ParentShape);
-                this.MoveHorizontal(leftMovement);
+                this.logger.Debug(MovingShapeByMovementDirection, this, horizontalMovement, HorizontalDirection);
+                this.MoveHorizontal(horizontalMovement);
                 result = true;
             }
         }
