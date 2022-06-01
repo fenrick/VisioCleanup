@@ -241,7 +241,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
     private void FormatNullValue(RichTextBox output) => this.OutputText(output, "null", RichTextThemeStyle.Null);
 
     private void FormatNumberValue(RichTextBox output, object value) =>
-        this.OutputText(output, ((IFormattable)value).ToString(null, CultureInfo.CurrentCulture), RichTextThemeStyle.Number);
+        this.OutputText(output, ((IFormattable)value).ToString(format: null, CultureInfo.CurrentCulture), RichTextThemeStyle.Number);
 
     private void FormatScalarValue(RichTextBox output, object value)
     {

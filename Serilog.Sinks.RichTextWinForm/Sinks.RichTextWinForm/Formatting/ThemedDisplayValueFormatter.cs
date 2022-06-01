@@ -12,16 +12,11 @@ using System.Globalization;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.RichTextWinForm.Themes;
-
-/// <summary></summary>
 internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 {
     private readonly IFormatProvider? formatProvider;
 
-    /// <summary>Initializes a new instance of the <see cref="ThemedDisplayValueFormatter" /> class.</summary>
-    /// <param name="theme"></param>
-    /// <param name="formatProvider"></param>
-    internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
+internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
         : base(theme) =>
         this.formatProvider = formatProvider;
 
