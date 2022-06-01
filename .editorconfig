@@ -28,10 +28,10 @@ dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = true
 
 # this. preferences
-dotnet_style_qualification_for_field = true
-dotnet_style_qualification_for_property = true
-dotnet_style_qualification_for_method = true
-dotnet_style_qualification_for_event = false
+dotnet_style_qualification_for_field = true:silent
+dotnet_style_qualification_for_property = true:silent
+dotnet_style_qualification_for_method = true:silent
+dotnet_style_qualification_for_event = false:silent
 
 # Language keywords vs BCL types preferences
 dotnet_style_predefined_type_for_locals_parameters_members = true:silent
@@ -59,7 +59,7 @@ dotnet_style_prefer_inferred_anonymous_type_member_names = true:silent
 dotnet_style_prefer_auto_properties = true:silent
 dotnet_style_prefer_conditional_expression_over_assignment = true:silent
 dotnet_style_prefer_conditional_expression_over_return = true:silent
-dotnet_style_prefer_compound_assignment = true
+dotnet_style_prefer_compound_assignment = true:suggestion
 
 ###############################
 # Naming Conventions          #
@@ -76,7 +76,15 @@ dotnet_naming_symbols.constant_fields.applicable_kinds = field
 dotnet_naming_symbols.constant_fields.applicable_accessibilities = *
 dotnet_naming_symbols.constant_fields.required_modifiers = const
 
-dotnet_code_quality_unused_parameters = false
+dotnet_code_quality_unused_parameters = non_public:suggestion
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
+tab_width = 4
+end_of_line = crlf
+dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
+dotnet_style_prefer_simplified_interpolation = true:suggestion
+dotnet_style_namespace_match_folder = true:suggestion
+dotnet_style_allow_multiple_blank_lines_experimental = true:silent
+dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
 
 ###############################
 # C# Code Style Rules         #
@@ -84,7 +92,7 @@ dotnet_code_quality_unused_parameters = false
 
 [*.cs]
 # Optimise using
-csharp_using_directive_placement = inside_namespace
+csharp_using_directive_placement = inside_namespace:silent
 
 # var preferences
 csharp_style_var_for_built_in_types = true:silent
@@ -118,13 +126,13 @@ csharp_style_pattern_local_over_anonymous_function = true:suggestion
 csharp_style_inlined_variable_declaration = true:suggestion
 
 # Do not prefer static local functions
-csharp_prefer_static_local_function = false
+csharp_prefer_static_local_function = false:suggestion
 
 # Prefer simple using statements
 csharp_prefer_simple_using_statement = true:silent
 
-csharp_style_unused_value_assignment_preference = unused_local_variable
-csharp_style_unused_value_expression_statement_preference = unused_local_variable
+csharp_style_unused_value_assignment_preference = unused_local_variable:suggestion
+csharp_style_unused_value_expression_statement_preference = unused_local_variable:silent
 
 ###############################
 # C# Formatting Rules         #
@@ -404,3 +412,21 @@ dotnet_diagnostic.sa1305.severity = warning
 dotnet_diagnostic.sa1412.severity = warning
 dotnet_diagnostic.sa1600.severity = none
 dotnet_diagnostic.sa1609.severity = warning
+csharp_style_namespace_declarations = block_scoped:silent
+csharp_style_prefer_method_group_conversion = true:silent
+csharp_style_expression_bodied_lambdas = true:silent
+csharp_style_expression_bodied_local_functions = false:silent
+csharp_style_prefer_null_check_over_type_check = true:suggestion
+csharp_style_prefer_local_over_anonymous_function = true:suggestion
+csharp_style_prefer_index_operator = true:suggestion
+csharp_style_prefer_range_operator = true:suggestion
+csharp_style_implicit_object_creation_when_type_is_apparent = true:suggestion
+csharp_style_prefer_tuple_swap = true:suggestion
+csharp_style_allow_embedded_statements_on_same_line_experimental = true:silent
+csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = true:silent
+csharp_style_allow_blank_lines_between_consecutive_braces_experimental = true:silent
+csharp_style_prefer_parameter_null_checking = true:suggestion
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_pattern_matching = true:silent
+csharp_style_prefer_not_pattern = true:suggestion
+csharp_style_prefer_extended_property_pattern = true:suggestion
