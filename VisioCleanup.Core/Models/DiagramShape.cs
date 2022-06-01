@@ -24,11 +24,11 @@ public class DiagramShape
 
     private const string HorizontalDirection = "horizontal";
 
+    private const int LargeSortNumber = 99999;
+
     private const string MovingShapeByMovementDirection = "Moving {Shape} by {Movement} {Direction}";
 
     private const string VerticalDirection = "vertical";
-
-    private const int LargeSortNumber = 99999;
 
     private readonly ILogger logger;
 

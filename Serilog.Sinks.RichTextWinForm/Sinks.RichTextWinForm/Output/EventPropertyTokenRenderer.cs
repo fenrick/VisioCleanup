@@ -16,6 +16,7 @@ internal sealed class EventPropertyTokenRenderer : IOutputTemplateTokenRenderer
 {
     private readonly IFormatProvider? formatProvider;
 
+    /// <summary></summary>
     private readonly RichTextTheme theme;
 
     private readonly PropertyToken token;

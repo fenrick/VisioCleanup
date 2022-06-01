@@ -21,9 +21,8 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
         : base(theme) =>
         this.displayFormatter = new ThemedDisplayValueFormatter(theme, formatProvider);
 
-    protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
-    {
-        return this.VisitDictionaryValueInternal(
+    protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary) =>
+        this.VisitDictionaryValueInternal(
             state,
             dictionary,
             (KeyValuePair<ScalarValue, LogEventPropertyValue> pair, ref string delim, ref int count) =>
@@ -56,7 +55,6 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
                     count += this.Visit(state.Nest(), logEventPropertyValue);
                 });
-    }
 
     protected override int VisitScalarValue(ThemedValueFormatterState state, ScalarValue scalar)
     {
@@ -170,10 +168,8 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
         }
     }
 
-    private void FormatDateTimeValue(RichTextBox output, object value)
-    {
+    private void FormatDateTimeValue(RichTextBox output, object value) =>
         this.OutputText(output, string.Concat("\"", ((IFormattable)value).ToString("O", CultureInfo.CurrentCulture), "\""), RichTextThemeStyle.Scalar);
-    }
 
     private void FormatDoubleValue(RichTextBox output, double doubleValue)
     {
@@ -244,10 +240,8 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
 
     private void FormatNullValue(RichTextBox output) => this.OutputText(output, "null", RichTextThemeStyle.Null);
 
-    private void FormatNumberValue(RichTextBox output, object value)
-    {
-        this.OutputText(output, ((IFormattable)value).ToString(format: null, CultureInfo.CurrentCulture), RichTextThemeStyle.Number);
-    }
+    private void FormatNumberValue(RichTextBox output, object value) =>
+        this.OutputText(output, ((IFormattable)value).ToString(null, CultureInfo.CurrentCulture), RichTextThemeStyle.Number);
 
     private void FormatScalarValue(RichTextBox output, object value)
     {

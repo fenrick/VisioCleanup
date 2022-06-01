@@ -7,13 +7,13 @@
 
 namespace Serilog.Sinks.RichTextWinForm.Output;
 
-using System.IO;
-
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextWinForm.Themes;
+
+using TextWriter = System.IO.TextWriter;
 
 /// <summary>Render output as per theme.</summary>
 public class OutputTemplateRenderer : ITextFormatter
