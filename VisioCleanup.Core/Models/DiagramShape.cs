@@ -24,11 +24,11 @@ public class DiagramShape
 
     private const string HorizontalDirection = "horizontal";
 
+    private const int LargeSortNumber = 99999;
+
     private const string MovingShapeByMovementDirection = "Moving {Shape} by {Movement} {Direction}";
 
     private const string VerticalDirection = "vertical";
-
-    private const int LargeSortNumber = 99999;
 
     private readonly ILogger logger;
 
@@ -344,6 +344,8 @@ public class DiagramShape
     }
 
     internal List<List<DiagramShape>> Matrix { get; set; }
+
+    public string ShapeName { get; set; }
 
     /// <inheritdoc />
     public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);

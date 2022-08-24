@@ -210,11 +210,19 @@ public class VisioApplication : IVisioApplication
                 continue;
             }
 
+            var shapeText = selected.Text;
+
+            if (selected.CellExistsU["User.visCustomLabel", 1] != 0)
+            {
+                shapeText = selected.CellsU["User.visCustomLabel"].ResultStrU[0];
+            }
+
             // create new shape.
             DiagramShape diagramShape = new(sheetId)
             {
-                ShapeText = selected.Text,
-                SortValue = selected.Text,
+                ShapeName = selected.NameU,
+                ShapeText = shapeText,
+                SortValue = shapeText,
                 HasCalculatedSortValue = true,
                 ShapeType = ShapeType.Existing,
                 PositionX = this.CalculateLeftSide(sheetId),

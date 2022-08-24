@@ -13,6 +13,7 @@ internal readonly struct StyleReset : IDisposable, IEquatable<StyleReset>
 
     internal StyleReset(RichTextBox output) => this.output = output;
 
+    /// <summary></summary>
     public void Dispose() => RichTextTheme.Reset(this.output);
 
     /// <inheritdoc />

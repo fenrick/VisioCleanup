@@ -98,9 +98,11 @@ public class VisioService : AbstractProcessingService, IVisioService
         var diagramShapeRightSide = diagramShape.PositionX + diagramShape.Width;
         var diagramShapeBaseSide = diagramShape.PositionY - diagramShape.Height;
 
-        bool AllSidesOverlap(DiagramShape shape) =>
-            (shape.PositionX < diagramShapeLeftSide) && (shape.PositionY > diagramShapeTopSide) && ((shape.PositionX + shape.Width) > diagramShapeRightSide)
-            && ((shape.PositionY - shape.Height) < diagramShapeBaseSide);
+        bool AllSidesOverlap(DiagramShape shape)
+        {
+            return (shape.PositionX < diagramShapeLeftSide) && (shape.PositionY > diagramShapeTopSide) && ((shape.PositionX + shape.Width) > diagramShapeRightSide)
+                   && ((shape.PositionY - shape.Height) < diagramShapeBaseSide);
+        }
 
         var allOverlaps = this.AllShapes.Where(AllSidesOverlap);
 

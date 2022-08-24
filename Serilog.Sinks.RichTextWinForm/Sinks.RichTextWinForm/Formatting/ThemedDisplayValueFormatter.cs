@@ -12,12 +12,11 @@ using System.Globalization;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.RichTextWinForm.Themes;
-
 internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 {
     private readonly IFormatProvider? formatProvider;
 
-    internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
+internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
         : base(theme) =>
         this.formatProvider = formatProvider;
 
@@ -46,9 +45,8 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         }
     }
 
-    protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
-    {
-        return this.VisitDictionaryValueInternal(
+    protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary) =>
+        this.VisitDictionaryValueInternal(
             state,
             dictionary,
             (KeyValuePair<ScalarValue, LogEventPropertyValue> pair, ref string delim, ref int count) =>
@@ -74,7 +72,6 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 
                     count += this.Visit(state.Nest(), logEventPropertyValue);
                 });
-    }
 
     protected override int VisitScalarValue(ThemedValueFormatterState state, ScalarValue scalar)
     {
@@ -145,15 +142,11 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         return count;
     }
 
-    private void FormatBooleanValue(RichTextBox output, bool booleanValue)
-    {
+    private void FormatBooleanValue(RichTextBox output, bool booleanValue) =>
         this.OutputText(output, booleanValue.ToString(CultureInfo.CurrentCulture), RichTextThemeStyle.Boolean);
-    }
 
-    private void FormatCharacterValue(RichTextBox output, char charValue)
-    {
+    private void FormatCharacterValue(RichTextBox output, char charValue) =>
         this.OutputText(output, string.Concat("'", charValue.ToString(CultureInfo.CurrentCulture), "'"), RichTextThemeStyle.Scalar);
-    }
 
     private void FormatNullValue(RichTextBox output) => this.OutputText(output, "null", RichTextThemeStyle.Null);
 

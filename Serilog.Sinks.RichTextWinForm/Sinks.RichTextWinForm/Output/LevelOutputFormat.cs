@@ -92,14 +92,12 @@ internal static class LevelOutputFormat
         return Casing.Format(value.ToString(), format);
     }
 
-    private static string MapCaseLevelMoniker(string format, int index, int width, string value)
-    {
-        return format[0] switch
+    private static string MapCaseLevelMoniker(string format, int index, int width, string value) =>
+        format[0] switch
         {
             'w' => LowercaseLevelMap[index][width - 1],
             'u' => UppercaseLevelMap[index][width - 1],
             't' => TitleCaseLevelMap[index][width - 1],
             _ => Casing.Format(value, format),
         };
-    }
 }
