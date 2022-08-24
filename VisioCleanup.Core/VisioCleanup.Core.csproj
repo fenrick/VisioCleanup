@@ -31,11 +31,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Meziantou.Analyzer" Version="1.0.702">
+        <PackageReference Include="Meziantou.Analyzer" Version="1.0.717">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.2.32">
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
@@ -46,7 +46,7 @@
         <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
         <AdditionalFiles Include="$(SolutionDir)Settings.StyleCop" Link="settings.StyleCop" />
         <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.40.0.48530">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.42.0.51121">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -65,7 +65,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0-preview2.22096.2" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0-preview.4.22229.4" />
         <PackageReference Include="Serilog" Version="2.11.1-dev-01397" />
         <Reference Include="Microsoft.Office.Interop.Excel">
