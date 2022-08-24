@@ -345,6 +345,8 @@ public class DiagramShape
 
     internal List<List<DiagramShape>> Matrix { get; set; }
 
+    public string ShapeName { get; set; }
+
     /// <inheritdoc />
     public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
 

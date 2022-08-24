@@ -220,8 +220,9 @@ public class VisioApplication : IVisioApplication
             // create new shape.
             DiagramShape diagramShape = new(sheetId)
             {
-                ShapeText = selected.Text,
-                SortValue = selected.Text,
+                ShapeName = selected.NameU,
+                ShapeText = shapeText,
+                SortValue = shapeText,
                 HasCalculatedSortValue = true,
                 ShapeType = ShapeType.Existing,
                 PositionX = this.CalculateLeftSide(sheetId),
