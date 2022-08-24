@@ -210,6 +210,13 @@ public class VisioApplication : IVisioApplication
                 continue;
             }
 
+            var shapeText = selected.Text;
+
+            if (selected.CellExistsU["User.visCustomLabel", 1] != 0)
+            {
+                shapeText = selected.CellsU["User.visCustomLabel"].ResultStrU[0];
+            }
+
             // create new shape.
             DiagramShape diagramShape = new(sheetId)
             {
