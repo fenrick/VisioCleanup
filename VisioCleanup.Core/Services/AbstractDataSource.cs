@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="AbstractDataSource.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace VisioCleanup.Core.Services;
 
@@ -18,7 +18,7 @@ using VisioCleanup.Core.Models.Config;
 /// <summary>Abstract data source.</summary>
 public class AbstractDataSource
 {
-    /// <summary>Initialises a new instance of the <see cref="AbstractDataSource" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="AbstractDataSource"/> class.</summary>
     /// <param name="logger">Logging instance.</param>
     /// <param name="options">Application configuration settings.</param>
     protected AbstractDataSource(ILogger logger, IOptions<AppConfig> options)

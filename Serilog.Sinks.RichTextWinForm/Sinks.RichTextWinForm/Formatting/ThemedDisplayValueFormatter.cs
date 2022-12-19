@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ThemedDisplayValueFormatter.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Serilog.Sinks.RichTextWinForm.Formatting;
 
@@ -12,14 +12,25 @@ using System.Globalization;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.RichTextWinForm.Themes;
+
+/// <summary>The themed display value formatter.</summary>
 internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 {
+    /// <summary>The format provider.</summary>
     private readonly IFormatProvider? formatProvider;
 
-internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
+    /// <summary>
+    /// Initialises a new instance of the <see cref="ThemedDisplayValueFormatter"/> class.</summary>
+    /// <param name="theme">The theme.</param>
+    /// <param name="formatProvider">The format provider.</param>
+    internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
         : base(theme) =>
         this.formatProvider = formatProvider;
 
+    /// <summary>The format literal value.</summary>
+    /// <param name="scalar">The scalar.</param>
+    /// <param name="output">The output.</param>
+    /// <param name="format">The format.</param>
     internal void FormatLiteralValue(ScalarValue scalar, RichTextBox output, string format)
     {
         switch (scalar.Value)
@@ -45,6 +56,10 @@ internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? forma
         }
     }
 
+    /// <summary>The visit dictionary value.</summary>
+    /// <param name="state">The state.</param>
+    /// <param name="dictionary">The dictionary.</param>
+    /// <returns>The <see cref="int"/>.</returns>
     protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary) =>
         this.VisitDictionaryValueInternal(
             state,
@@ -73,6 +88,11 @@ internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? forma
                     count += this.Visit(state.Nest(), logEventPropertyValue);
                 });
 
+    /// <summary>The visit scalar value.</summary>
+    /// <param name="state">The state.</param>
+    /// <param name="scalar">The scalar.</param>
+    /// <returns>The <see cref="int"/>.</returns>
+    /// <exception cref="ArgumentNullException">Null argument.</exception>
     protected override int VisitScalarValue(ThemedValueFormatterState state, ScalarValue scalar)
     {
         if (scalar is null)
@@ -84,6 +104,11 @@ internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? forma
         return 0;
     }
 
+    /// <summary>The visit sequence value.</summary>
+    /// <param name="state">The state.</param>
+    /// <param name="sequence">The sequence.</param>
+    /// <returns>The <see cref="int"/>.</returns>
+    /// <exception cref="ArgumentNullException">Null argument.</exception>
     protected override int VisitSequenceValue(ThemedValueFormatterState state, SequenceValue sequence)
     {
         if (sequence is null)
@@ -110,6 +135,10 @@ internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? forma
         return 0;
     }
 
+    /// <summary>The visit structure value.</summary>
+    /// <param name="state">The state.</param>
+    /// <param name="structure">The structure.</param>
+    /// <returns>The <see cref="int"/>.</returns>
     protected override int VisitStructureValue(ThemedValueFormatterState state, StructureValue structure)
     {
         var count = 0;
@@ -142,41 +171,61 @@ internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? forma
         return count;
     }
 
+    /// <summary>The format boolean value.</summary>
+    /// <param name="output">The output.</param>
+    /// <param name="booleanValue">The boolean value.</param>
     private void FormatBooleanValue(RichTextBox output, bool booleanValue) =>
         this.OutputText(output, booleanValue.ToString(CultureInfo.CurrentCulture), RichTextThemeStyle.Boolean);
 
+    /// <summary>The format character value.</summary>
+    /// <param name="output">The output.</param>
+    /// <param name="charValue">The char value.</param>
     private void FormatCharacterValue(RichTextBox output, char charValue) =>
         this.OutputText(output, string.Concat("'", charValue.ToString(CultureInfo.CurrentCulture), "'"), RichTextThemeStyle.Scalar);
 
+    /// <summary>The format null value.</summary>
+    /// <param name="output">The output.</param>
     private void FormatNullValue(RichTextBox output) => this.OutputText(output, "null", RichTextThemeStyle.Null);
 
+    /// <summary>The format number value.</summary>
+    /// <param name="scalar">The scalar.</param>
+    /// <param name="output">The output.</param>
+    /// <param name="format">The format.</param>
     private void FormatNumberValue(LogEventPropertyValue scalar, RichTextBox output, string format)
     {
         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
         {
-            using StringWriter buffer = new();
+            using StringWriter buffer = new ();
             scalar.Render(buffer, format, this.formatProvider);
             output.AppendText(buffer.ToString());
         }
     }
 
+    /// <summary>The format scalar value.</summary>
+    /// <param name="scalar">The scalar.</param>
+    /// <param name="output">The output.</param>
+    /// <param name="format">The format.</param>
     private void FormatScalarValue(LogEventPropertyValue scalar, RichTextBox output, string format)
     {
         using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
         {
-            using StringWriter buffer = new();
+            using StringWriter buffer = new ();
             scalar.Render(buffer, format, this.formatProvider);
             output.AppendText(buffer.ToString());
         }
     }
 
+    /// <summary>The format string value.</summary>
+    /// <param name="output">The output.</param>
+    /// <param name="format">The format.</param>
+    /// <param name="stringValue">The string value.</param>
     private void FormatStringValue(RichTextBox output, string format, string stringValue)
     {
         using (this.ApplyStyle(output, RichTextThemeStyle.String))
         {
             if (!string.Equals(format, "l", StringComparison.Ordinal))
             {
-                using StringWriter buffer = new();
+                using StringWriter buffer = new ();
                 JsonValueFormatter.WriteQuotedJsonString(stringValue, buffer);
                 output.AppendText(buffer.ToString());
 

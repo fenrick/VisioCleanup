@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ServiceCollectionExtensions.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 [assembly: CLSCompliant(true)]
 
@@ -20,9 +20,9 @@ using VisioCleanup.Core.Services;
 public static class ServiceCollectionExtensions
 {
     /// <summary>The add visio cleanup core.</summary>
-    /// <param name="serviceCollection">The <paramref name="serviceCollection" /> .</param>
-    /// <param name="configuration">The <paramref name="configuration" /> .</param>
-    /// <returns>The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" /> .</returns>
+    /// <param name="serviceCollection">The <paramref name="serviceCollection"/> .</param>
+    /// <param name="configuration">The <paramref name="configuration"/> .</param>
+    /// <returns>The <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection"/> .</returns>
     public static IServiceCollection AddVisioCleanupCore(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         if (configuration is null)

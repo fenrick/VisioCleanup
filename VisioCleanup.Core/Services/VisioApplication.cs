@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="VisioApplication.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace VisioCleanup.Core.Services;
 
@@ -23,19 +23,25 @@ using Marshal = VisioCleanup.Core.Marshal;
 /// <inheritdoc />
 public class VisioApplication : IVisioApplication
 {
+    /// <summary>The system not initialised.</summary>
     private const string SystemNotInitialised = "System not initialised.";
 
+    /// <summary>The logger.</summary>
     private readonly ILogger<VisioApplication> logger;
 
-    private readonly ConcurrentDictionary<int, IVShape> shapeCache = new();
+    /// <summary>The shape cache.</summary>
+    private readonly ConcurrentDictionary<int, IVShape> shapeCache = new ();
 
-    private readonly ConcurrentDictionary<string, IVMaster?> stencilCache = new(StringComparer.Ordinal);
+    /// <summary>The stencil cache.</summary>
+    private readonly ConcurrentDictionary<string, IVMaster?> stencilCache = new (StringComparer.Ordinal);
 
+    /// <summary>The active page.</summary>
     private IVPage? activePage;
 
+    /// <summary>The visio application.</summary>
     private Application? visioApplication;
 
-    /// <summary>Initialises a new instance of the <see cref="VisioApplication" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="VisioApplication"/> class. Initialises a new instance of the<see cref="VisioApplication"/> class.</summary>
     /// <param name="logger">Logging instance.</param>
     public VisioApplication(ILogger<VisioApplication> logger)
     {
@@ -44,10 +50,13 @@ public class VisioApplication : IVisioApplication
         this.visioApplication = null;
     }
 
+    /// <summary>The visio fields.</summary>
     private enum VisioFields
     {
+        /// <summary>The cell.</summary>
         Cell,
 
+        /// <summary>The result.</summary>
         Result,
     }
 
@@ -192,7 +201,7 @@ public class VisioApplication : IVisioApplication
             throw new InvalidOperationException(SystemNotInitialised);
         }
 
-        Dictionary<int, DiagramShape> allShapes = new();
+        Dictionary<int, DiagramShape> allShapes = new ();
 
         // get selection.
         var selection = this.visioApplication.ActiveWindow.Selection;
@@ -218,7 +227,7 @@ public class VisioApplication : IVisioApplication
             }
 
             // create new shape.
-            DiagramShape diagramShape = new(sheetId)
+            DiagramShape diagramShape = new (sheetId)
             {
                 ShapeName = selected.NameU,
                 ShapeText = shapeText,
@@ -237,7 +246,7 @@ public class VisioApplication : IVisioApplication
         this.logger.LogDebug("Processed a total of {Count} shapes", allShapes.Count);
 
         // generate final collection
-        Collection<DiagramShape> shapes = new();
+        Collection<DiagramShape> shapes = new ();
 
         foreach (var value in allShapes.Values)
         {
@@ -293,6 +302,10 @@ public class VisioApplication : IVisioApplication
         this.visioApplication.DeferRecalc = state ? (short)1 : (short)0;
     }
 
+    /// <summary>The create update object.</summary>
+    /// <param name="cell">The cell.</param>
+    /// <param name="newValue">The new value.</param>
+    /// <returns>The <see><cref>object[]</cref></see> .</returns>
     private static object[] CreateUpdateObject(short cell, double newValue)
     {
         var result = new object[2];
@@ -301,12 +314,21 @@ public class VisioApplication : IVisioApplication
         return result;
     }
 
+    /// <summary>The get cell value.</summary>
+    /// <param name="shape">The shape.</param>
+    /// <param name="sectionIndex">The section index.</param>
+    /// <param name="rowIndex">The row index.</param>
+    /// <param name="cellIndex">The cell index.</param>
+    /// <returns>The <see cref="double"/>.</returns>
     private static double GetCellValue(IVShape shape, VisSectionIndices sectionIndex, VisRowIndices rowIndex, VisCellIndices cellIndex)
     {
         var shapeCell = shape.CellsSRC[(short)sectionIndex, (short)rowIndex, (short)cellIndex];
         return shapeCell.Result[VisUnitCodes.visMillimeters];
     }
 
+    /// <summary>The calculate height.</summary>
+    /// <param name="visioId">The visio id.</param>
+    /// <returns>The <see cref="int"/>.</returns>
     private int CalculateHeight(int visioId)
     {
         var shape = this.GetShape(visioId);
@@ -315,6 +337,9 @@ public class VisioApplication : IVisioApplication
         return DiagramShape.ConvertMeasurement(height);
     }
 
+    /// <summary>The calculate left side.</summary>
+    /// <param name="visioId">The visio id.</param>
+    /// <returns>The <see cref="int"/>.</returns>
     private int CalculateLeftSide(int visioId)
     {
         var shape = this.GetShape(visioId);
@@ -325,6 +350,9 @@ public class VisioApplication : IVisioApplication
         return DiagramShape.ConvertMeasurement(pinX - locPinX);
     }
 
+    /// <summary>The calculate top side.</summary>
+    /// <param name="visioId">The visio id.</param>
+    /// <returns>The <see cref="int"/>.</returns>
     private int CalculateTopSide(int visioId)
     {
         var shape = this.GetShape(visioId);
@@ -336,6 +364,9 @@ public class VisioApplication : IVisioApplication
         return DiagramShape.ConvertMeasurement((pinY - locPinY) + height);
     }
 
+    /// <summary>The calculate width.</summary>
+    /// <param name="visioId">The visio id.</param>
+    /// <returns>The <see cref="int"/>.</returns>
     private int CalculateWidth(int visioId)
     {
         var shape = this.GetShape(visioId);
@@ -345,6 +376,9 @@ public class VisioApplication : IVisioApplication
         return DiagramShape.ConvertMeasurement(width);
     }
 
+    /// <summary>The execute visio shape update.</summary>
+    /// <param name="diagramShape">The diagram shape.</param>
+    /// <param name="updates">The updates.</param>
     private void ExecuteVisioShapeUpdate(DiagramShape diagramShape, object[][] updates)
     {
         // MAP THE REQUEST TO THE STRUCTURES VISIO EXPECTS
@@ -378,6 +412,10 @@ public class VisioApplication : IVisioApplication
         }
     }
 
+    /// <summary>The get shape.</summary>
+    /// <param name="visioId">The visio id.</param>
+    /// <returns>The <see cref="IVShape"/>.</returns>
+    /// <exception cref="InvalidOperationException">System was not initialised.</exception>
     private IVShape GetShape(int visioId)
     {
         if (this.visioApplication is null || this.activePage is null)
@@ -388,6 +426,8 @@ public class VisioApplication : IVisioApplication
         return this.shapeCache.GetOrAdd(visioId, this.activePage.Shapes.ItemFromID[visioId]);
     }
 
+    /// <summary>The load shape cache.</summary>
+    /// <exception cref="InvalidOperationException">System was not initailised.</exception>
     private void LoadShapeCache()
     {
         if (this.visioApplication is null || this.activePage is null)
@@ -410,6 +450,10 @@ public class VisioApplication : IVisioApplication
         }
     }
 
+    /// <summary>The stencil value factory.</summary>
+    /// <param name="key">The key.</param>
+    /// <returns>The <see><cref>IVMaster?</cref></see> .</returns>
+    /// <exception cref="InvalidOperationException">System was not initialised.</exception>
     private IVMaster? StencilValueFactory(string key)
     {
         if (this.visioApplication is null)

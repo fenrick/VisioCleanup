@@ -1,21 +1,20 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="LevelOutputFormat.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Serilog.Sinks.RichTextWinForm.Output;
 
 using Serilog.Events;
 using Serilog.Sinks.RichTextWinForm.Rendering;
 
-/// <summary>
-/// Implements the {Level} element. can now have a fixed width applied to it, as well as casing rules. Width is
-/// set through formats like "u3" (uppercase three chars), "w1" (one lowercase char), or "t4" (title case four chars).
-/// </summary>
+/// <summary>Implements the {Level} element. can now have a fixed width applied to it, as well as casing rules. Width is
+/// set through formats like "u3" (uppercase three chars), "w1" (one lowercase char), or "t4" (title case four chars).</summary>
 internal static class LevelOutputFormat
 {
+    /// <summary>The lowercase level map.</summary>
     private static readonly string[][] LowercaseLevelMap =
     {
         new[] { "v", "vb", "vrb", "verb" },
@@ -26,6 +25,7 @@ internal static class LevelOutputFormat
         new[] { "f", "fa", "ftl", "fatl" },
     };
 
+    /// <summary>The title case level map.</summary>
     private static readonly string[][] TitleCaseLevelMap =
     {
         new[] { "V", "Vb", "Vrb", "Verb" },
@@ -36,6 +36,7 @@ internal static class LevelOutputFormat
         new[] { "F", "Fa", "Ftl", "Fatl" },
     };
 
+    /// <summary>The uppercase level map.</summary>
     private static readonly string[][] UppercaseLevelMap =
     {
         new[] { "V", "VB", "VRB", "VERB" },
@@ -46,6 +47,10 @@ internal static class LevelOutputFormat
         new[] { "F", "FA", "FTL", "FATL" },
     };
 
+    /// <summary>The get level moniker.</summary>
+    /// <param name="value">The value.</param>
+    /// <param name="format">The format.</param>
+    /// <returns>The <see cref="string"/>.</returns>
     internal static string GetLevelMoniker(LogEventLevel value, string format)
     {
         const int shortLength = 2;
@@ -92,6 +97,12 @@ internal static class LevelOutputFormat
         return Casing.Format(value.ToString(), format);
     }
 
+    /// <summary>The map case level moniker.</summary>
+    /// <param name="format">The format.</param>
+    /// <param name="index">The index.</param>
+    /// <param name="width">The width.</param>
+    /// <param name="value">The value.</param>
+    /// <returns>The <see cref="string"/>.</returns>
     private static string MapCaseLevelMoniker(string format, int index, int width, string value) =>
         format[0] switch
         {

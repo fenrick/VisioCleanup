@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ExcelDataSource.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace VisioCleanup.Core.Services;
 
@@ -23,9 +23,10 @@ using Marshal = VisioCleanup.Core.Marshal;
 /// <inheritdoc cref="IExcelDataSource" />
 public class ExcelDataSource : AbstractDataSource, IExcelDataSource
 {
+    /// <summary>The excel application.</summary>
     private Application? excelApplication;
 
-    /// <summary>Initialises a new instance of the <see cref="ExcelDataSource" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="ExcelDataSource"/> class. Initialises a new instance of the<see cref="ExcelDataSource"/> class.</summary>
     /// <param name="logger">Logging instance.</param>
     /// <param name="options">Application configuration settings.</param>
     public ExcelDataSource(ILogger<ExcelDataSource> logger, IOptions<AppConfig> options)
@@ -77,7 +78,7 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
         }
 
         var dataTable = excelApplicationActiveSheet.ListObjects[1];
-        Dictionary<string, DiagramShape> allShapes = new(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, DiagramShape> allShapes = new (StringComparer.OrdinalIgnoreCase);
 
         // find headers
         var columnMapping = this.FindHeaders(dataTable);
@@ -108,13 +109,18 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
         }
     }
 
+    /// <summary>The convert row to values.</summary>
+    /// <param name="data">The data.</param>
+    /// <param name="columnMapping">The column mapping.</param>
+    /// <param name="rowNumber">The row number.</param>
+    /// <returns>The <see><cref>Dictionary</cref></see> .</returns>
     private static Dictionary<FieldType, string>[] ConvertRowToValues(object[,] data, Dictionary<FieldType, int>[] columnMapping, int rowNumber)
     {
         var rowResults = new Dictionary<FieldType, string>[columnMapping.Length];
         for (var cellIndex = 0; cellIndex < columnMapping.Length; cellIndex++)
         {
             var columnMap = columnMapping[cellIndex];
-            Dictionary<FieldType, string> values = new();
+            Dictionary<FieldType, string> values = new ();
 
             foreach (var (key, value) in columnMap)
             {
@@ -127,6 +133,9 @@ public class ExcelDataSource : AbstractDataSource, IExcelDataSource
         return rowResults;
     }
 
+    /// <summary>The find headers.</summary>
+    /// <param name="dataTable">The data table.</param>
+    /// <returns>The <see><cref>Dictionary</cref></see> .</returns>
     private Dictionary<FieldType, int>[] FindHeaders(ListObject dataTable)
     {
         var level = -1;

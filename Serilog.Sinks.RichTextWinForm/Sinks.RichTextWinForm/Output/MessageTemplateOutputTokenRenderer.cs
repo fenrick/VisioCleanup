@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MessageTemplateOutputTokenRenderer.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Serilog.Sinks.RichTextWinForm.Output;
 
@@ -16,9 +16,11 @@ using Serilog.Sinks.RichTextWinForm.Themes;
 /// <summary>Message Template Output Token Renderer.</summary>
 internal sealed class MessageTemplateOutputTokenRenderer : IOutputTemplateTokenRenderer
 {
+    /// <summary>The renderer.</summary>
     private readonly ThemedMessageTemplateRenderer renderer;
 
-    /// <summary>Initialises a new instance of the <see cref="MessageTemplateOutputTokenRenderer" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="MessageTemplateOutputTokenRenderer"/> class. Initialises a new
+    /// instance of the <see cref="MessageTemplateOutputTokenRenderer"/> class.</summary>
     /// <param name="theme">Theme.</param>
     /// <param name="token">Token.</param>
     /// <param name="formatProvider">Format provider.</param>
@@ -32,7 +34,7 @@ internal sealed class MessageTemplateOutputTokenRenderer : IOutputTemplateTokenR
             throw new ArgumentNullException(nameof(token));
         }
 
-        if (token.Format != null)
+        if (!string.IsNullOrEmpty(token.Format))
         {
             foreach (var character in token.Format)
             {

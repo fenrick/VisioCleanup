@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="AbstractProcessingService.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace VisioCleanup.Core.Services;
 
@@ -20,9 +20,10 @@ using VisioCleanup.Core.Models.Config;
 /// <summary>Abstract implementation of common code for processing services.</summary>
 public class AbstractProcessingService : IProcessingService
 {
+    /// <summary>The max correct runs.</summary>
     private const int MaxCorrectRuns = 10;
 
-    /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="AbstractProcessingService"/> class.</summary>
     /// <param name="logger">Logger.</param>
     /// <param name="options">Application configuration being passed in.</param>
     /// <param name="visioApplication">Visio Application engine.</param>
@@ -154,6 +155,9 @@ public class AbstractProcessingService : IProcessingService
         }
     }
 
+    /// <summary>The draw shape.</summary>
+    /// <param name="diagramShape">The diagram shape.</param>
+    /// <exception cref="InvalidOperationException">ShapeType was not matched.</exception>
     private void DrawShape(DiagramShape diagramShape)
     {
         // draw shapw
@@ -182,6 +186,8 @@ public class AbstractProcessingService : IProcessingService
         }
     }
 
+    /// <summary>The populate all shapes.</summary>
+    /// <param name="diagramShape">The diagram shape.</param>
     private void PopulateAllShapes(DiagramShape diagramShape)
     {
         this.AllShapes.Add(diagramShape);

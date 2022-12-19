@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ExcelService.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace VisioCleanup.Core.Services;
 
@@ -16,9 +16,10 @@ using VisioCleanup.Core.Models.Config;
 /// <summary>The excel service.</summary>
 public class ExcelService : AbstractProcessingService, IExcelService
 {
+    /// <summary>The data source.</summary>
     private readonly IExcelDataSource dataSource;
 
-    /// <summary>Initialises a new instance of the <see cref="ExcelService" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="ExcelService"/> class. Initialises a new instance of the<see cref="ExcelService"/> class.</summary>
     /// <param name="logger">Logging instance.</param>
     /// <param name="visioApplication">Visio application handler.</param>
     /// <param name="dataSource">Excel application handler.</param>
