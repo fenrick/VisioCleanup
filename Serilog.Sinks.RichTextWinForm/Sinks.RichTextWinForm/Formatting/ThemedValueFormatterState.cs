@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ThemedValueFormatterState.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Serilog.Sinks.RichTextWinForm.Formatting;
 
@@ -46,5 +46,5 @@ internal readonly struct ThemedValueFormatterState : IEquatable<ThemedValueForma
 
     /// <summary>Next within a new formatter.</summary>
     /// <returns>New formatter state with this state within it.</returns>
-    internal ThemedValueFormatterState Nest() => new() { Output = this.Output };
+    internal ThemedValueFormatterState Nest() => new () { Output = this.Output };
 }

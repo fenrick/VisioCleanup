@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="RichTextThemeStyle.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Serilog.Sinks.RichTextWinForm.Themes;
 
@@ -18,10 +18,8 @@ internal enum RichTextThemeStyle
     /// <summary>Boilerplate text, for example items specified in an output template.</summary>
     SecondaryText,
 
-    /// <summary>
-    /// De-emphasized text, for example literal text in output templates and punctuation used when writing structured
-    /// data.
-    /// </summary>
+    /// <summary>De-emphasized text, for example literal text in output templates and punctuation used when writing structured
+    /// data.</summary>
     TertiaryText,
 
     /// <summary>Output demonstrating some kind of configuration issue, e.g. an invalid message template token.</summary>

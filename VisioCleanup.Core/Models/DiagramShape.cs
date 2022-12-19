@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="DiagramShape.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace VisioCleanup.Core.Models;
 
@@ -16,35 +16,49 @@ using VisioCleanup.Core.Models.Config;
 /// <summary>Representation of a single shape in a visio diagram.</summary>
 public class DiagramShape
 {
+    /// <summary>The conversion digits.</summary>
     private const int ConversionDigits = 3;
 
+    /// <summary>The conversion factor.</summary>
     private const int ConversionFactor = 1000;
 
+    /// <summary>The corner string format.</summary>
     private const string CornerStringFormat = "Top: {0}, Left: {1}, Width: {2}, Height: {3}";
 
+    /// <summary>The horizontal direction.</summary>
     private const string HorizontalDirection = "horizontal";
 
+    /// <summary>The large sort number.</summary>
     private const int LargeSortNumber = 99999;
 
+    /// <summary>The moving shape by movement direction.</summary>
     private const string MovingShapeByMovementDirection = "Moving {Shape} by {Movement} {Direction}";
 
+    /// <summary>The vertical direction.</summary>
     private const string VerticalDirection = "vertical";
 
+    /// <summary>The logger.</summary>
     private readonly ILogger logger;
 
+    /// <summary>The height.</summary>
     private int height;
 
+    /// <summary>The position x.</summary>
     private int positionX;
 
+    /// <summary>The position y.</summary>
     private int positionY;
 
+    /// <summary>The shape below.</summary>
     private DiagramShape? shapeBelow;
 
+    /// <summary>The shape right.</summary>
     private DiagramShape? shapeRight;
 
+    /// <summary>The width.</summary>
     private int width;
 
-    /// <summary>Initialises a new instance of the <see cref="DiagramShape" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="DiagramShape"/> class. Initialises a new instance of the<see cref="DiagramShape"/> class.</summary>
     /// <param name="visioId">Visio shape ID.</param>
     internal DiagramShape(int visioId)
     {
@@ -59,7 +73,7 @@ public class DiagramShape
         this.ShapeText = string.Empty;
         this.SortValue = string.Empty;
         this.HasCalculatedSortValue = true;
-        this.Matrix = new List<List<DiagramShape>> { new() };
+        this.Matrix = new List<List<DiagramShape>> { new () };
     }
 
     /// <summary>Noifty on shape resize.</summary>
@@ -219,6 +233,10 @@ public class DiagramShape
     /// <value>Left shape.</value>
     public DiagramShape? ShapeLeft { get; set; }
 
+    /// <summary>Gets or sets the shape name.</summary>
+    /// <value>The shape name.</value>
+    public string ShapeName { get; set; }
+
     /// <summary>Gets or sets the shape to the right.</summary>
     /// <value>Shape to right.</value>
     public DiagramShape? ShapeRight
@@ -331,32 +349,36 @@ public class DiagramShape
         }
     }
 
+    /// <summary>Gets or sets the app config.</summary>
+    /// <value>The app config.</value>
     internal static AppConfig? AppConfig { get; set; }
 
     /// <summary>Gets collection of child shapes.</summary>
     /// <value>child shapes.</value>
     internal SortedList<string, DiagramShape> Children { get; }
 
+    /// <summary>Gets or sets a value indicating whether has calculated sort value.</summary>
+    /// <value>A value indicating whether has calculated sort value.</value>
     internal bool HasCalculatedSortValue
     {
         get;
         set;
     }
 
+    /// <summary>Gets or sets the matrix.</summary>
+    /// <value>The matrix.</value>
     internal List<List<DiagramShape>> Matrix { get; set; }
-
-    public string ShapeName { get; set; }
 
     /// <inheritdoc />
     public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", this.VisioId, this.ShapeText);
 
-    /// <summary>Convert a visio <paramref name="measurement" /> into an easier mathematical model.</summary>
+    /// <summary>Convert a visio <paramref name="measurement"/> into an easier mathematical model.</summary>
     /// <param name="measurement">Measurement from visio.</param>
-    /// <returns>Easier <see langword="internal" /> measurement.</returns>
+    /// <returns>Easier <see langword="internal"/> measurement.</returns>
     internal static int ConvertMeasurement(double measurement) => (int)(Math.Round(measurement, ConversionDigits, MidpointRounding.AwayFromZero) * ConversionFactor);
 
-    /// <summary>Convert an easier <paramref name="measurement" /> back to visio model.</summary>
-    /// <param name="measurement">Easier <see langword="internal" /> measurement.</param>
+    /// <summary>Convert an easier <paramref name="measurement"/> back to visio model.</summary>
+    /// <param name="measurement">Easier <see langword="internal"/> measurement.</param>
     /// <returns>Measurement for visio.</returns>
     internal static double ConvertMeasurement(int measurement) => (double)measurement / ConversionFactor;
 
@@ -412,7 +434,7 @@ public class DiagramShape
         }
 
         // resize shape
-        if (this.ResizeShape(matchLine: matchLine))
+        if (this.ResizeShape(matchLine))
         {
             result = true;
         }
@@ -420,6 +442,9 @@ public class DiagramShape
         return result;
     }
 
+    /// <summary>The find max height on line.</summary>
+    /// <param name="newHeight">The new height.</param>
+    /// <returns>The <see cref="int"/>.</returns>
     internal int FindMaxHeightOnLine(int newHeight)
     {
         var maxHeight = newHeight;
@@ -541,6 +566,9 @@ public class DiagramShape
         }
     }
 
+    /// <summary>The get internal margin.</summary>
+    /// <param name="side">The side.</param>
+    /// <returns>The <see cref="int"/>.</returns>
     internal int GetInternalMargin(Side side)
     {
         if (this.ShapeType == ShapeType.FakeShape)
@@ -626,7 +654,7 @@ public class DiagramShape
 
         var maxShapesPerLine = this.CalculateMaxShapesPerLine();
         this.ClearExistingRelationships();
-        Queue<DiagramShape> childrenQueue = new(children);
+        Queue<DiagramShape> childrenQueue = new (children);
 
         while (childrenQueue.Count > 0)
         {
@@ -674,21 +702,28 @@ public class DiagramShape
         this.CorrectDiagram();
     }
 
+    /// <summary>The total children count.</summary>
+    /// <returns>The <see cref="int" />.</returns>
     internal int TotalChildrenCount() => !this.Children.Any() ? 1 : 1 + this.Children.Values.Sum(child => child.TotalChildrenCount());
 
     /// <summary>Notify of a shape resize.</summary>
     protected virtual void OnShapeChange()
     {
-        var handler = this.ShapeChanged;
+        var handler = ShapeChanged;
         handler?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>The add shape to line.</summary>
+    /// <param name="currentLine">The current line.</param>
+    /// <param name="childShape">The child shape.</param>
     private void AddShapeToLine(ICollection<DiagramShape> currentLine, DiagramShape childShape)
     {
         currentLine.Add(childShape);
         this.CorrectDiagram();
     }
 
+    /// <summary>The calculate max shapes per line.</summary>
+    /// <returns>The <see cref="int" />.</returns>
     private int CalculateMaxShapesPerLine()
     {
         var defaultMaxBoxLines = (int)(AppConfig!.MaxBoxLines ?? 5d);
@@ -708,12 +743,16 @@ public class DiagramShape
         return (int)temp;
     }
 
+    /// <summary>The child shape shape changed.</summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The e.</param>
     private void ChildShapeShapeChanged(object? sender, EventArgs e)
     {
         this.logger.Debug("Child shape was resized!");
-        this.ResizeShape(matchLine: false);
+        this.ResizeShape(false);
     }
 
+    /// <summary>The clear existing relationships.</summary>
     private void ClearExistingRelationships()
     {
         // clear existing relationships.
@@ -723,9 +762,11 @@ public class DiagramShape
             child.ShapeBelow = null;
         }
 
-        this.Matrix = new List<List<DiagramShape>> { new() };
+        this.Matrix = new List<List<DiagramShape>> { new () };
     }
 
+    /// <summary>The corner string.</summary>
+    /// <returns>The <see cref="string" />.</returns>
     private string CornerString()
     {
         var culture = CultureInfo.CurrentCulture;
@@ -738,6 +779,8 @@ public class DiagramShape
             ConvertMeasurement(this.Height));
     }
 
+    /// <summary>The fix position.</summary>
+    /// <returns>The <see cref="bool" />.</returns>
     private bool FixPosition()
     {
         var result = false;
@@ -831,10 +874,16 @@ public class DiagramShape
         return result;
     }
 
+    /// <summary>The move horizontal.</summary>
+    /// <param name="movement">The movement.</param>
     private void MoveHorizontal(int movement) => this.PositionX -= movement;
 
+    /// <summary>The move vertical.</summary>
+    /// <param name="movement">The movement.</param>
     private void MoveVertical(int movement) => this.PositionY -= movement;
 
+    /// <summary>The update child sort.</summary>
+    /// <param name="diagramShape">The diagram shape.</param>
     private void UpdateChildSort(DiagramShape diagramShape)
     {
         if (!diagramShape.HasCalculatedSortValue)

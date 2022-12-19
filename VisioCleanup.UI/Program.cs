@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Program.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 [assembly: CLSCompliant(true)]
 
@@ -42,6 +42,9 @@ public static class Program
     private static void ConfigureSerilog(HostBuilderContext hostBuilderContext, LoggerConfiguration loggerConfiguration) =>
         loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration);
 
+    /// <summary>The create host builder.</summary>
+    /// <param name="args">The args.</param>
+    /// <returns>The <see cref="IHostBuilder"/>.</returns>
     private static IHostBuilder CreateHostBuilder(string[] args)
     {
         var hostBuilder = Host.CreateDefaultBuilder(args);

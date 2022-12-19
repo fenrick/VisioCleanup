@@ -9,6 +9,9 @@ root = true
 indent_style = space
 trim_trailing_whitespace = false
 
+# ReSharper properties
+resharper_space_before_new_parentheses = true
+
 [*.Designer.cs]
 generated_code = true
 
@@ -430,5 +433,5 @@ csharp_style_prefer_switch_expression = true:suggestion
 csharp_style_prefer_pattern_matching = true:silent
 csharp_style_prefer_not_pattern = true:suggestion
 csharp_style_prefer_extended_property_pattern = true:suggestion
-dotnet_diagnostic.SA1511.severity = warning
-dotnet_diagnostic.GCop511.severity = silent
+dotnet_diagnostic.sa1511.severity = warning
+dotnet_diagnostic.gcop511.severity = silent

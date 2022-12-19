@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="DatabaseService.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace VisioCleanup.Core.Services;
 
@@ -16,9 +16,10 @@ using VisioCleanup.Core.Models.Config;
 /// <summary>The database service.</summary>
 public class DatabaseService : AbstractProcessingService, IDatabaseService
 {
+    /// <summary>The iserver database application.</summary>
     private readonly ISqlServerDataSource iserverDatabaseApplication;
 
-    /// <summary>Initialises a new instance of the <see cref="DatabaseService" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="DatabaseService"/> class. Initialises a new instance of the<see cref="DatabaseService"/> class.</summary>
     /// <param name="logger">Logging instance.</param>
     /// <param name="visioApplication">Visio application handler.</param>
     /// <param name="iserverDatabaseApplication">iServer Database application handler.</param>

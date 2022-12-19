@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MainForm.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace VisioCleanup.UI.Forms;
 
@@ -18,6 +18,7 @@ using VisioCleanup.Core.Models.Config;
 /// <summary>Main form for system.</summary>
 public partial class MainForm : Form
 {
+    /// <summary>The app config.</summary>
     private readonly AppConfig appConfig;
 
     /// <summary>The database service.</summary>
@@ -35,8 +36,8 @@ public partial class MainForm : Form
     /// <summary>The processing service.</summary>
     private IProcessingService? processingService;
 
-    /// <summary>Initialises a new instance of the <see cref="MainForm" /> class.</summary>
-    /// <param name="logger">The <paramref name="logger" /> .</param>
+    /// <summary>Initialises a new instance of the <see cref="MainForm"/> class.</summary>
+    /// <param name="logger">The <paramref name="logger"/> .</param>
     /// <param name="options">The app config.</param>
     /// <param name="excelService">The excel service.</param>
     /// <param name="visioService">The visio service.</param>
@@ -74,11 +75,13 @@ public partial class MainForm : Form
 
         this.selectSqlStatementComboBox.SelectedIndex = 0;
 
-        this.SelectSqlStatementComboBoxSelectionChangeCommitted(sender: null, e: null);
+        this.SelectSqlStatementComboBoxSelectionChangeCommitted(null, null);
 
         this.logger.LogInformation("Application fully loaded.");
     }
 
+    /// <summary>The check processing service.</summary>
+    /// <returns>The <see cref="bool" />.</returns>
     private bool CheckProcessingService()
     {
         if (this.processingService is not null)
@@ -97,6 +100,9 @@ public partial class MainForm : Form
         return true;
     }
 
+    /// <summary>The handle exception.</summary>
+    /// <param name="exception">The exception.</param>
+    /// <param name="messageText">The message text.</param>
     private void HandleException(Exception exception, string messageText)
     {
         this.logger.LogError(exception, "Exception");
@@ -107,6 +113,7 @@ public partial class MainForm : Form
     }
 
     /// <summary>The layout data set_ click.</summary>
+    /// <returns>The <see cref="Task" />.</returns>
     private async Task LayoutDataSet_ClickAsync()
     {
         if (this.CheckProcessingService())
@@ -137,6 +144,7 @@ public partial class MainForm : Form
     }
 
     /// <summary>sThe load from iserver database.</summary>
+    /// <returns>The <see cref="Task" />.</returns>
     private async Task LoadFromIServer_ClickAsync()
     {
         try
@@ -166,6 +174,7 @@ public partial class MainForm : Form
     }
 
     /// <summary>Load Visio Object Model.</summary>
+    /// <returns>The <see cref="Task" />.</returns>
     private async Task LoadVisioObjects_ClickAsync()
     {
         try
@@ -194,6 +203,7 @@ public partial class MainForm : Form
     }
 
     /// <summary>Activate the processing of Excel data set.</summary>
+    /// <returns>The <see cref="Task" />.</returns>
     private async Task ProcessExcelDataSet_ClickAsync()
     {
         try
@@ -221,6 +231,9 @@ public partial class MainForm : Form
         }
     }
 
+    /// <summary>The select sql statement combo box selection change committed.</summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The e.</param>
     private void SelectSqlStatementComboBoxSelectionChangeCommitted(object? sender, EventArgs? e)
     {
         if (this.appConfig.DatabaseQueries is null)
@@ -238,6 +251,7 @@ public partial class MainForm : Form
     }
 
     /// <summary>sThe update visio drawing_ click.</summary>
+    /// <returns>The <see cref="Task" />.</returns>
     private async Task UpdateVisioDrawing_ClickAsync()
     {
         if (this.CheckProcessingService())
@@ -268,14 +282,29 @@ public partial class MainForm : Form
     }
 
 #pragma warning disable VSTHRD100 // Avoid async void methods
+    /// <summary>The update visio drawing event handler.</summary>
+    /// <param name="eventObject">The event object.</param>
+    /// <param name="args">The args.</param>
     private async void UpdateVisioDrawingEventHandler(object eventObject, EventArgs args) => await this.UpdateVisioDrawing_ClickAsync();
 
+    /// <summary>The layout data set event handler.</summary>
+    /// <param name="eventObject">The event object.</param>
+    /// <param name="args">The args.</param>
     private async void LayoutDataSetEventHandler(object eventObject, EventArgs args) => await this.LayoutDataSet_ClickAsync();
 
+    /// <summary>The load from i server button event handler.</summary>
+    /// <param name="eventObject">The event object.</param>
+    /// <param name="args">The args.</param>
     private async void LoadFromIServerButtonEventHandler(object eventObject, EventArgs args) => await this.LoadFromIServer_ClickAsync();
 
+    /// <summary>The load visio objects event handler.</summary>
+    /// <param name="eventObject">The event object.</param>
+    /// <param name="args">The args.</param>
     private async void LoadVisioObjectsEventHandler(object eventObject, EventArgs args) => await this.LoadVisioObjects_ClickAsync();
 
+    /// <summary>The process excel data set event handler.</summary>
+    /// <param name="eventObject">The event object.</param>
+    /// <param name="args">The args.</param>
     private async void ProcessExcelDataSetEventHandler(object eventObject, EventArgs args) => await this.ProcessExcelDataSet_ClickAsync();
 #pragma warning restore VSTHRD100 // Avoid async void methods
 }

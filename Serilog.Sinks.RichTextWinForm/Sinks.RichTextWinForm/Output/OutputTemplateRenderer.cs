@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="OutputTemplateRenderer.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Serilog.Sinks.RichTextWinForm.Output;
 
@@ -18,9 +18,11 @@ using TextWriter = System.IO.TextWriter;
 /// <summary>Render output as per theme.</summary>
 public class OutputTemplateRenderer : ITextFormatter
 {
+    /// <summary>The output template token renderers.</summary>
     private readonly IOutputTemplateTokenRenderer[] outputTemplateTokenRenderers;
 
-    /// <summary>Initialises a new instance of the <see cref="OutputTemplateRenderer" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="OutputTemplateRenderer"/> class. Initialises a new instance of
+    /// the <see cref="OutputTemplateRenderer"/> class.</summary>
     /// <param name="theme">Rich text theme.</param>
     /// <param name="outputTemplate">Template for output.</param>
     /// <param name="formatProvider">FormatProvider.</param>
@@ -77,7 +79,7 @@ public class OutputTemplateRenderer : ITextFormatter
     public void Format(LogEvent logEvent, TextWriter output) => throw new InvalidOperationException("Not valid for this Sink!");
 
     /// <summary>Render log events to a richtextbox.</summary>
-    /// <param name="logEvent"><see cref="Log" /> event.</param>
+    /// <param name="logEvent"><see cref="Log"/> event.</param>
     /// <param name="output">A rich textbox.</param>
     /// <exception cref="System.ArgumentNullException">Required parameter's not supplied.</exception>
     internal void Format(LogEvent logEvent, RichTextBox output)

@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="RichTextWinFormSink.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 [assembly: CLSCompliant(true)]
 
@@ -21,13 +21,15 @@ public class RichTextWinFormSink : ILogEventSink
 {
     /// <summary>Gets a collection of rich text fields.</summary>
     /// <value>A collection of rich text fields.</value>
-    private static readonly Collection<RichTextBox> RichTextFields = new();
+    private static readonly Collection<RichTextBox> RichTextFields = new ();
 
+    /// <summary>The formatter.</summary>
     private readonly OutputTemplateRenderer formatter;
 
-    private readonly ConcurrentQueue<LogEvent> unprocessedLogEvents = new();
+    /// <summary>The unprocessed log events.</summary>
+    private readonly ConcurrentQueue<LogEvent> unprocessedLogEvents = new ();
 
-    /// <summary>Initialises a new instance of the <see cref="RichTextWinFormSink" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="RichTextWinFormSink"/> class. Initialises a new instance of the<see cref="RichTextWinFormSink"/> class.</summary>
     /// <param name="formatter">Formatter.</param>
     internal RichTextWinFormSink(OutputTemplateRenderer formatter) => this.formatter = formatter;
 
@@ -42,6 +44,7 @@ public class RichTextWinFormSink : ILogEventSink
         this.FlushQueue();
     }
 
+    /// <summary>The flush queue.</summary>
     private void FlushQueue()
     {
         if (RichTextFields.Any(textField => textField.IsDisposed))

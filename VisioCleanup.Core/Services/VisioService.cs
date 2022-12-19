@@ -1,9 +1,9 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="VisioService.cs" company="Jolyon Suthers">
-// Copyright (c) Jolyon Suthers. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//   Copyright (c) Jolyon Suthers. All rights reserved.
+//                       Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace VisioCleanup.Core.Services;
 
@@ -17,7 +17,7 @@ using VisioCleanup.Core.Models.Config;
 /// <summary>The visio service.</summary>
 public class VisioService : AbstractProcessingService, IVisioService
 {
-    /// <summary>Initialises a new instance of the <see cref="VisioService" /> class.</summary>
+    /// <summary>Initialises a new instance of the <see cref="VisioService"/> class. Initialises a new instance of the<see cref="VisioService"/> class.</summary>
     /// <param name="logger">Logging instance.</param>
     /// <param name="visioApplication">Visio application handler.</param>
     /// <param name="options">Application configuration being passed in.</param>
@@ -34,7 +34,7 @@ public class VisioService : AbstractProcessingService, IVisioService
         {
             this.VisioApplication.Open();
 
-            List<DiagramShape> shapes = new();
+            List<DiagramShape> shapes = new ();
 
             this.Logger.LogInformation("Create a fake parent shape");
             this.MasterShape = new DiagramShape(0) { ShapeText = "FAKE MASTER", ShapeType = ShapeType.FakeShape, HasCalculatedSortValue = false };
@@ -91,6 +91,9 @@ public class VisioService : AbstractProcessingService, IVisioService
         }
     }
 
+    /// <summary>The find closest overlap.</summary>
+    /// <param name="diagramShape">The diagram shape.</param>
+    /// <returns>The <see><cref>DiagramShape?</cref></see> .</returns>
     private DiagramShape? FindClosestOverlap(DiagramShape diagramShape)
     {
         var diagramShapeTopSide = diagramShape.PositionY;
