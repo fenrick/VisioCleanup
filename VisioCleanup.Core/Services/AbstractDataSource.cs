@@ -59,7 +59,8 @@ public class AbstractDataSource
 
         var shapeType = rowResult[FieldType.ShapeType];
         var shapeText = rowResult[FieldType.ShapeText];
-        var sortValue = rowResult[FieldType.SortValue];
+        var sortValue = rowResult.ContainsKey(FieldType.SortValue) ? rowResult[FieldType.SortValue] : string.Empty;
+
         var calculatedSortValue = false;
 
         if (string.IsNullOrWhiteSpace(sortValue))
