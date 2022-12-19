@@ -69,7 +69,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
     /// <param name="state">The state.</param>
     /// <param name="scalar">The scalar.</param>
     /// <returns>The <see cref="int"/>.</returns>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException">Null argument.</exception>
     protected override int VisitScalarValue(ThemedValueFormatterState state, ScalarValue scalar)
     {
         if (scalar is null)
@@ -92,7 +92,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
     /// <param name="state">The state.</param>
     /// <param name="sequence">The sequence.</param>
     /// <returns>The <see cref="int"/>.</returns>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException">Null argument.</exception>
     protected override int VisitSequenceValue(ThemedValueFormatterState state, SequenceValue sequence)
     {
         if (sequence == null)
@@ -287,7 +287,7 @@ internal sealed class ThemedJsonValueFormatter : ThemedValueFormatter
     /// <param name="output">The output.</param>
     /// <param name="value">The value.</param>
     private void FormatNumberValue(RichTextBox output, object value) =>
-        this.OutputText(output, ((IFormattable)value).ToString(null, CultureInfo.CurrentCulture), RichTextThemeStyle.Number);
+        this.OutputText(output, ((IFormattable)value).ToString(format: null, CultureInfo.CurrentCulture), RichTextThemeStyle.Number);
 
     /// <summary>The format scalar value.</summary>
     /// <param name="output">The output.</param>

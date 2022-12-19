@@ -427,7 +427,7 @@ public class VisioApplication : IVisioApplication
     }
 
     /// <summary>The load shape cache.</summary>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="InvalidOperationException">System was not initailised.</exception>
     private void LoadShapeCache()
     {
         if (this.visioApplication is null || this.activePage is null)

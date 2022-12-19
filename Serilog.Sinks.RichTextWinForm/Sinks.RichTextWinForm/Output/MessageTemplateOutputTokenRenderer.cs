@@ -34,7 +34,7 @@ internal sealed class MessageTemplateOutputTokenRenderer : IOutputTemplateTokenR
             throw new ArgumentNullException(nameof(token));
         }
 
-        if (string.IsNullOrEmpty(token.Format))
+        if (!string.IsNullOrEmpty(token.Format))
         {
             foreach (var character in token.Format)
             {

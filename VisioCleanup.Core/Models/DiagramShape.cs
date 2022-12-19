@@ -73,6 +73,7 @@ public class DiagramShape
         this.ShapeText = string.Empty;
         this.SortValue = string.Empty;
         this.HasCalculatedSortValue = true;
+        this.ShapeName = string.Empty;
         this.Matrix = new List<List<DiagramShape>> { new () };
     }
 
@@ -709,7 +710,7 @@ public class DiagramShape
     /// <summary>Notify of a shape resize.</summary>
     protected virtual void OnShapeChange()
     {
-        var handler = ShapeChanged;
+        var handler = this.ShapeChanged;
         handler?.Invoke(this, EventArgs.Empty);
     }
 
@@ -749,7 +750,7 @@ public class DiagramShape
     private void ChildShapeShapeChanged(object? sender, EventArgs e)
     {
         this.logger.Debug("Child shape was resized!");
-        this.ResizeShape(false);
+        this.ResizeShape(matchLine: false);
     }
 
     /// <summary>The clear existing relationships.</summary>

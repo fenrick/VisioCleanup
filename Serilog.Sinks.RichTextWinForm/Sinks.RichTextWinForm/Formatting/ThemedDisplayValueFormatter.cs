@@ -20,30 +20,17 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
     private readonly IFormatProvider? formatProvider;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="ThemedDisplayValueFormatter"/> class.
-    /// </summary>
-    /// <param name="theme">
-    /// The theme.
-    /// </param>
-    /// <param name="formatProvider">
-    /// The format provider.
-    /// </param>
+    /// Initialises a new instance of the <see cref="ThemedDisplayValueFormatter"/> class.</summary>
+    /// <param name="theme">The theme.</param>
+    /// <param name="formatProvider">The format provider.</param>
     internal ThemedDisplayValueFormatter(RichTextTheme theme, IFormatProvider? formatProvider)
         : base(theme) =>
         this.formatProvider = formatProvider;
 
-    /// <summary>
-    /// The format literal value.
-    /// </summary>
-    /// <param name="scalar">
-    /// The scalar.
-    /// </param>
-    /// <param name="output">
-    /// The output.
-    /// </param>
-    /// <param name="format">
-    /// The format.
-    /// </param>
+    /// <summary>The format literal value.</summary>
+    /// <param name="scalar">The scalar.</param>
+    /// <param name="output">The output.</param>
+    /// <param name="format">The format.</param>
     internal void FormatLiteralValue(ScalarValue scalar, RichTextBox output, string format)
     {
         switch (scalar.Value)
@@ -69,21 +56,12 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         }
     }
 
-    /// <summary>
-    /// The visit dictionary value.
-    /// </summary>
-    /// <param name="state">
-    /// The state.
-    /// </param>
-    /// <param name="dictionary">
-    /// The dictionary.
-    /// </param>
-    /// <returns>
-    /// The <see cref="int"/>.
-    /// </returns>
-    protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary)
-    {
-        return this.VisitDictionaryValueInternal(
+    /// <summary>The visit dictionary value.</summary>
+    /// <param name="state">The state.</param>
+    /// <param name="dictionary">The dictionary.</param>
+    /// <returns>The <see cref="int"/>.</returns>
+    protected override int VisitDictionaryValue(ThemedValueFormatterState state, DictionaryValue dictionary) =>
+        this.VisitDictionaryValueInternal(
             state,
             dictionary,
             (KeyValuePair<ScalarValue, LogEventPropertyValue> pair, ref string delim, ref int count) =>
@@ -109,22 +87,12 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
 
                     count += this.Visit(state.Nest(), logEventPropertyValue);
                 });
-    }
 
-    /// <summary>
-    /// The visit scalar value.
-    /// </summary>
-    /// <param name="state">
-    /// The state.
-    /// </param>
-    /// <param name="scalar">
-    /// The scalar.
-    /// </param>
-    /// <returns>
-    /// The <see cref="int"/>.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// </exception>
+    /// <summary>The visit scalar value.</summary>
+    /// <param name="state">The state.</param>
+    /// <param name="scalar">The scalar.</param>
+    /// <returns>The <see cref="int"/>.</returns>
+    /// <exception cref="ArgumentNullException">Null argument.</exception>
     protected override int VisitScalarValue(ThemedValueFormatterState state, ScalarValue scalar)
     {
         if (scalar is null)
@@ -136,20 +104,11 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         return 0;
     }
 
-    /// <summary>
-    /// The visit sequence value.
-    /// </summary>
-    /// <param name="state">
-    /// The state.
-    /// </param>
-    /// <param name="sequence">
-    /// The sequence.
-    /// </param>
-    /// <returns>
-    /// The <see cref="int"/>.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// </exception>
+    /// <summary>The visit sequence value.</summary>
+    /// <param name="state">The state.</param>
+    /// <param name="sequence">The sequence.</param>
+    /// <returns>The <see cref="int"/>.</returns>
+    /// <exception cref="ArgumentNullException">Null argument.</exception>
     protected override int VisitSequenceValue(ThemedValueFormatterState state, SequenceValue sequence)
     {
         if (sequence is null)
@@ -176,18 +135,10 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         return 0;
     }
 
-    /// <summary>
-    /// The visit structure value.
-    /// </summary>
-    /// <param name="state">
-    /// The state.
-    /// </param>
-    /// <param name="structure">
-    /// The structure.
-    /// </param>
-    /// <returns>
-    /// The <see cref="int"/>.
-    /// </returns>
+    /// <summary>The visit structure value.</summary>
+    /// <param name="state">The state.</param>
+    /// <param name="structure">The structure.</param>
+    /// <returns>The <see cref="int"/>.</returns>
     protected override int VisitStructureValue(ThemedValueFormatterState state, StructureValue structure)
     {
         var count = 0;
@@ -220,54 +171,26 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         return count;
     }
 
-    /// <summary>
-    /// The format boolean value.
-    /// </summary>
-    /// <param name="output">
-    /// The output.
-    /// </param>
-    /// <param name="booleanValue">
-    /// The boolean value.
-    /// </param>
-    private void FormatBooleanValue(RichTextBox output, bool booleanValue)
-    {
+    /// <summary>The format boolean value.</summary>
+    /// <param name="output">The output.</param>
+    /// <param name="booleanValue">The boolean value.</param>
+    private void FormatBooleanValue(RichTextBox output, bool booleanValue) =>
         this.OutputText(output, booleanValue.ToString(CultureInfo.CurrentCulture), RichTextThemeStyle.Boolean);
-    }
 
-    /// <summary>
-    /// The format character value.
-    /// </summary>
-    /// <param name="output">
-    /// The output.
-    /// </param>
-    /// <param name="charValue">
-    /// The char value.
-    /// </param>
-    private void FormatCharacterValue(RichTextBox output, char charValue)
-    {
+    /// <summary>The format character value.</summary>
+    /// <param name="output">The output.</param>
+    /// <param name="charValue">The char value.</param>
+    private void FormatCharacterValue(RichTextBox output, char charValue) =>
         this.OutputText(output, string.Concat("'", charValue.ToString(CultureInfo.CurrentCulture), "'"), RichTextThemeStyle.Scalar);
-    }
 
-    /// <summary>
-    /// The format null value.
-    /// </summary>
-    /// <param name="output">
-    /// The output.
-    /// </param>
+    /// <summary>The format null value.</summary>
+    /// <param name="output">The output.</param>
     private void FormatNullValue(RichTextBox output) => this.OutputText(output, "null", RichTextThemeStyle.Null);
 
-    /// <summary>
-    /// The format number value.
-    /// </summary>
-    /// <param name="scalar">
-    /// The scalar.
-    /// </param>
-    /// <param name="output">
-    /// The output.
-    /// </param>
-    /// <param name="format">
-    /// The format.
-    /// </param>
+    /// <summary>The format number value.</summary>
+    /// <param name="scalar">The scalar.</param>
+    /// <param name="output">The output.</param>
+    /// <param name="format">The format.</param>
     private void FormatNumberValue(LogEventPropertyValue scalar, RichTextBox output, string format)
     {
         using (this.ApplyStyle(output, RichTextThemeStyle.Number))
@@ -278,18 +201,10 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         }
     }
 
-    /// <summary>
-    /// The format scalar value.
-    /// </summary>
-    /// <param name="scalar">
-    /// The scalar.
-    /// </param>
-    /// <param name="output">
-    /// The output.
-    /// </param>
-    /// <param name="format">
-    /// The format.
-    /// </param>
+    /// <summary>The format scalar value.</summary>
+    /// <param name="scalar">The scalar.</param>
+    /// <param name="output">The output.</param>
+    /// <param name="format">The format.</param>
     private void FormatScalarValue(LogEventPropertyValue scalar, RichTextBox output, string format)
     {
         using (this.ApplyStyle(output, RichTextThemeStyle.Scalar))
@@ -300,18 +215,10 @@ internal sealed class ThemedDisplayValueFormatter : ThemedValueFormatter
         }
     }
 
-    /// <summary>
-    /// The format string value.
-    /// </summary>
-    /// <param name="output">
-    /// The output.
-    /// </param>
-    /// <param name="format">
-    /// The format.
-    /// </param>
-    /// <param name="stringValue">
-    /// The string value.
-    /// </param>
+    /// <summary>The format string value.</summary>
+    /// <param name="output">The output.</param>
+    /// <param name="format">The format.</param>
+    /// <param name="stringValue">The string value.</param>
     private void FormatStringValue(RichTextBox output, string format, string stringValue)
     {
         using (this.ApplyStyle(output, RichTextThemeStyle.String))
