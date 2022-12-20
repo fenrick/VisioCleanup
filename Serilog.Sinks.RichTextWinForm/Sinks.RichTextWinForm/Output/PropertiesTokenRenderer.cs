@@ -31,7 +31,7 @@ internal sealed class PropertiesTokenRenderer : IOutputTemplateTokenRenderer
         this.outputTemplate = outputTemplate;
         var isJson = false;
 
-        if (string.IsNullOrEmpty(token.Format))
+        if (!string.IsNullOrEmpty(token.Format))
         {
             foreach (var dummy in token.Format.Where(c => c == 'j'))
             {
