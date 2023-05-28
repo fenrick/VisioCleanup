@@ -44,7 +44,7 @@
         <AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
         <AdditionalFiles Include="$(SolutionDir)Settings.StyleCop" Link="settings.StyleCop" />
         <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.50.0.58025">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.56.0.67649">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
