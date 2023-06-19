@@ -55,7 +55,7 @@
         <AdditionalFiles Include="$(SolutionDir)Settings.StyleCop" Link="settings.StyleCop" />
         <AdditionalFiles Include="..\.sonarlint\fenrick_visiocleanup\CSharp\SonarLint.xml" Link="SonarLint.xml" />
         <PackageReference Include="OswaldTechnologies.Extensions.Hosting.WindowsFormsLifetime" Version="1.0.2" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.50.0.58025">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.56.0.67649">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
